@@ -1,0 +1,8 @@
+syntax: regexp
+^icon\.h
+^marshal\.h
+^marshal\.c
+syntax: glob
+*.o
+*.patch
+*.diff
