@@ -48,14 +48,52 @@ int read_device(struct usb_dev_handle *handle, int bytes)
 {
     int i, x;
     i = usb_bulk_read(handle, 132, buf, bytes, TIMEOUT);
-    printf("Called read %d. Device returned %d bytes\n", bytes, i);
+    //printf("Called read %d. Device returned %d bytes\n", bytes, i);
     for (x=0; x<i; x++) {
-       printf("0x%02x(%c) ", buf[x], buf[x] ? buf[x] : 32);
+       //printf("0x%02x(%c) ", buf[x], buf[x] ? buf[x] : 32);
     }
 
-    printf("\n");
-    if (bytes == i) return 1;
+    //printf("\n");
+    if (bytes > 0) return i;
     else return 0;
+}
+
+int check_preset(struct usb_dev_handle *handle)
+{
+    int i, x;
+    i = usb_bulk_write(handle, 4, magic3, sizeof(magic3), TIMEOUT);
+
+    /* UGLY - have to figure out reply formatting */
+    do {
+        i = read_device(handle, 12);
+        if (i==12) {
+            if (buf[0]==0x04 && buf[1]==0x20 && buf[2]==0x03 && buf[3]==0x14 && buf[4]==0x04 &&
+                buf[6]==0x02 && buf[7]==0x20 && buf[8]==0x04 && buf[9]==0x04 && buf[10]==0x14)
+                printf("Wah min: %d\nWah max: %d\n", buf[5], buf[11]);
+            if (buf[0]==0x04 && buf[1]==0x00 && buf[2]==0x05 && buf[3]==0x03 && buf[4]==0x04 &&
+                buf[5]==0x11 && buf[7]==0x00 && buf[8]==0x04 && buf[9]==0x41 && buf[10]==0x04)
+                printf("Wah level: %d\nCompressor status (0-off, 1-on): %d\n", buf[6], buf[11]);
+            if (buf[0]==0x04 && buf[1]==0x04 && buf[2]==0x11 && buf[4]==0x04 && buf[5]==0x00 &&
+                //buf[6]==0x53 (for CS comp) buf[6]==0x51 (for digi comp)
+                buf[7]==0x04 && buf[8]==0x04 && buf[10]==0x00 && buf[11]==0x52)
+                printf("Compressor sustain: %d\nCompressor attack: %d\n", buf[3], buf[9]);
+            if (buf[0]==0x04 && buf[1]==0x08 && buf[2]==0x04 && buf[4]==0x04 && buf[5]==0x09 && buf[6]==0x01 &&
+                buf[7]==0x06 && buf[8]==0x04 && buf[9]==0x01 && buf[10]==0x09 && buf[11]==0x51)
+                printf("Compressor level: %d\n", buf[3]);
+            if (buf[0]==0x04 && buf[1]==0x04 && buf[2]==0x11 && buf[3]==0x32 && buf[4]==0x04 && buf[5]==0x00 &&
+                buf[6]==0x51 && buf[7]==0x04 && buf[8]==0x04 && buf[10]==0x00 && buf[11]==0x52)
+                printf("Compressor tone: %d\n", buf[9]);
+            if (buf[0]==0x04 && buf[1]==0x00 && buf[2]==0x4C && buf[3]==0x00 && buf[4]==0x04 && buf[5]==0x41 &&
+                buf[6]==0x02 && buf[7]==0x00 && buf[8]==0x04 && buf[9]==0x00 && buf[10]==0x00 && buf[11]==0x40)
+                printf("Digi Compressor\n");
+            if (buf[0]==0x04 && buf[1]==0x00 && buf[2]==0x4B && buf[3]==0x00 && buf[4]==0x04 && buf[5]==0x41 &&
+                buf[6]==0x02 && buf[7]==0x00 && buf[8]==0x04 && buf[9]==0x00 && buf[10]==0x00 && buf[11]==0x40)
+                printf("CS Compressor\n");
+            if (buf[0]==0x04 && buf[1]==0x03 && buf[3]==0x00 && buf[4]==0x04 && buf[5]==0x00 && buf[6]==0x03 &&
+                buf[7]==0x50 && buf[8]==0x04 && buf[9]==0x02 && buf[10]==0x00 && buf[11]==0x06)
+                printf("Wah status (0-off, 1-on): %d\n", buf[2]);
+        }
+    } while (i > 0);
 }
 
 /* level = 0 to 99 */
