@@ -87,12 +87,9 @@ int check_preset(struct usb_dev_handle *handle)
             if (buf[0]==0x04 && buf[1]==0x04 && buf[2]==0x11 && buf[4]==0x04 && buf[5]==0x00 &&
                 buf[6]==0x51 && buf[7]==0x04 && buf[8]==0x04 && buf[10]==0x00 && buf[11]==0x52)
                 printf("Compressor sustain: %d\nCompressor tone: %d\n", buf[3], buf[9]);
-            if (buf[0]==0x04 && buf[1]==0x00 && buf[2]==0x4C && buf[3]==0x00 && buf[4]==0x04 && buf[5]==0x41 &&
-                buf[6]==0x02 && buf[7]==0x00 && buf[8]==0x04 && buf[9]==0x00 && buf[10]==0x00 && buf[11]==0x40)
-                printf("Digi Compressor\n");
-            if (buf[0]==0x04 && buf[1]==0x00 && buf[2]==0x4B && buf[3]==0x00 && buf[4]==0x04 && buf[5]==0x41 &&
-                buf[6]==0x02 && buf[7]==0x00 && buf[8]==0x04 && buf[9]==0x00 && buf[10]==0x00 && buf[11]==0x40)
-                printf("CS Compressor\n");
+            if (buf[0]==0x04 && buf[1]==0x00 && buf[2]==0x4f && buf[3]==0x2A && buf[4]==0x04 && buf[5]==0x04 &&
+                buf[6]==0x02 && buf[7]==0x00 && buf[8]==0x04 && buf[10]==0x00 && buf[11]==0x50)
+                printf("Compressor (43-DigiComp 44-CS): %02x\n", buf[9]);
             if (buf[0]==0x04 && buf[1]==0x03 && buf[3]==0x00 && buf[4]==0x04 && buf[5]==0x00 && buf[6]==0x03 &&
                 buf[7]==0x50 && buf[8]==0x04 && buf[9]==0x02 && buf[10]==0x00)
                 printf("Wah status (0-off, 1-on): %d\nWah type (4-crywah, 5-fulrng, 6-clyde): %d\n", buf[2], buf[11]);
