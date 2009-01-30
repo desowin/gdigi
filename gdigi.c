@@ -74,11 +74,15 @@ int check_preset(struct usb_dev_handle *handle)
                 buf[5]==0x11 && buf[7]==0x00 && buf[8]==0x04 && buf[9]==0x41 && buf[10]==0x04)
                 printf("Wah level: %d\nCompressor status (0-off, 1-on): %d\n", buf[6], buf[11]);
             if (buf[0]==0x04 && buf[1]==0x04 && buf[2]==0x11 && buf[4]==0x04 && buf[5]==0x00 &&
+                buf[6]==0x53 && // we want to display this only for CS compressor
                 //buf[6]==0x53 (for CS comp) buf[6]==0x51 (for digi comp)
                 buf[7]==0x04 && buf[8]==0x04 && buf[10]==0x00 && buf[11]==0x52)
                 printf("Compressor sustain: %d\nCompressor attack: %d\n", buf[3], buf[9]);
             if (buf[0]==0x04 && buf[1]==0x08 && buf[2]==0x04 && buf[4]==0x04 && buf[5]==0x09 && buf[6]==0x01 &&
-                buf[7]==0x06 && buf[8]==0x04 && buf[9]==0x01 && buf[10]==0x09 && buf[11]==0x51)
+                buf[7]==0x06 && buf[8]==0x04 && buf[9]==0x01 && buf[10]==0x09 && buf[11]==0x51) // CS comp
+                printf("Compressor level: %d\n", buf[3]);
+            if (buf[0]==0x04 && buf[1]==0x08 && buf[2]==0x04 && buf[4]==0x04 && buf[5]==0x00 && buf[6]==0x53 &&
+                buf[7]==0x04 && buf[8]==0x04 && buf[9]==0x00 && buf[10]==0x09 && buf[11]==0x45) // digi comp
                 printf("Compressor level: %d\n", buf[3]);
             if (buf[0]==0x04 && buf[1]==0x04 && buf[2]==0x11 && buf[4]==0x04 && buf[5]==0x00 &&
                 buf[6]==0x51 && buf[7]==0x04 && buf[8]==0x04 && buf[10]==0x00 && buf[11]==0x52)
@@ -90,8 +94,11 @@ int check_preset(struct usb_dev_handle *handle)
                 buf[6]==0x02 && buf[7]==0x00 && buf[8]==0x04 && buf[9]==0x00 && buf[10]==0x00 && buf[11]==0x40)
                 printf("CS Compressor\n");
             if (buf[0]==0x04 && buf[1]==0x03 && buf[3]==0x00 && buf[4]==0x04 && buf[5]==0x00 && buf[6]==0x03 &&
-                buf[7]==0x50 && buf[8]==0x04 && buf[9]==0x02 && buf[10]==0x00 && buf[11]==0x06)
-                printf("Wah status (0-off, 1-on): %d\n", buf[2]);
+                buf[7]==0x50 && buf[8]==0x04 && buf[9]==0x02 && buf[10]==0x00)
+                printf("Wah status (0-off, 1-on): %d\nWah type (4-crywah, 5-fulrng, 6-clyde): %d\n", buf[2], buf[11]);
+            if (buf[0]==0x04 && buf[1]==0x08 && buf[2]==0x04 && buf[4]==0x04 && buf[5]==0x00 &&
+                buf[6]==0x53 && buf[7]==0x04 && buf[8]==0x04 && buf[10]==0x09 && buf[11]==0x45)
+                printf("Compressor level: %d\nCompressor attack (X-Edit only for DigiComp): %d\n", buf[3], buf[9]);
         }
     } while (i > 0);
 }
@@ -505,7 +512,7 @@ static SettingsWidget wah_widgets[] = {
 
 static SettingsWidget comp_widgets[] = {
     {"Compressor sustain", set_comp_sustain, 0.0, 99.0},
-    {"Compressor tone", set_comp_tone, 0.0, 99.0},
+    {"Compressor tone (digi only!)", set_comp_tone, 0.0, 99.0},
     {"Compressor attack", set_comp_attack, 0.0, 99.0},
     {"Compressor level", set_comp_level, 0.0, 99.0},
 };
