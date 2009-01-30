@@ -80,9 +80,9 @@ int check_preset(struct usb_dev_handle *handle)
             if (buf[0]==0x04 && buf[1]==0x08 && buf[2]==0x04 && buf[4]==0x04 && buf[5]==0x09 && buf[6]==0x01 &&
                 buf[7]==0x06 && buf[8]==0x04 && buf[9]==0x01 && buf[10]==0x09 && buf[11]==0x51)
                 printf("Compressor level: %d\n", buf[3]);
-            if (buf[0]==0x04 && buf[1]==0x04 && buf[2]==0x11 && buf[3]==0x32 && buf[4]==0x04 && buf[5]==0x00 &&
+            if (buf[0]==0x04 && buf[1]==0x04 && buf[2]==0x11 && buf[4]==0x04 && buf[5]==0x00 &&
                 buf[6]==0x51 && buf[7]==0x04 && buf[8]==0x04 && buf[10]==0x00 && buf[11]==0x52)
-                printf("Compressor tone: %d\n", buf[9]);
+                printf("Compressor sustain: %d\nCompressor tone: %d\n", buf[3], buf[9]);
             if (buf[0]==0x04 && buf[1]==0x00 && buf[2]==0x4C && buf[3]==0x00 && buf[4]==0x04 && buf[5]==0x41 &&
                 buf[6]==0x02 && buf[7]==0x00 && buf[8]==0x04 && buf[9]==0x00 && buf[10]==0x00 && buf[11]==0x40)
                 printf("Digi Compressor\n");
