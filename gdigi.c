@@ -974,6 +974,181 @@ void set_rodent_level(struct usb_dev_handle *handle, int x)
     printf("wrote: %d\n", i);
 }
 
+void set_mx_dist(struct usb_dev_handle *handle, int x)
+{
+    static char set_dist[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x24, 0x06, 0x07, 0x00 /* value */, 0x00 /* confirm */, 0xF7};
+
+    int val;
+    val = (x & 0xf0);
+    if ((x & 0xf) < 8) {
+        val += (7 - (x & 0xf));
+    } else {
+        val += (0xF - ((x & 0xf) - 8));
+    }
+
+    if (((x & 0xf) % 2) == 0) {
+        val -= 1;
+    } else {
+        val += 1;
+    }
+
+    set_dist[17] = x;
+    set_dist[18] = val;
+
+    int i;
+    i = usb_bulk_write(handle, 4, set_dist, sizeof(set_dist), TIMEOUT);
+    printf("wrote: %d\n", i);
+}
+
+void set_mx_output(struct usb_dev_handle *handle, int x)
+{
+    static char set_output[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x25, 0x06, 0x07, 0x00 /* value */, 0x00 /* confirm */, 0xF7};
+
+    int val;
+    val = (x & 0xf0);
+    if ((x & 0xf) < 8) {
+        val += (7 - (x & 0xf));
+    } else {
+        val += (0xF - ((x & 0xf) - 8));
+    }
+
+    set_output[17] = x;
+    set_output[18] = val;
+
+    int i;
+    i = usb_bulk_write(handle, 4, set_output, sizeof(set_output), TIMEOUT);
+    printf("wrote: %d\n", i);
+}
+
+void set_ds_gain(struct usb_dev_handle *handle, int x)
+{
+    static char set_gain[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x08, 0x06, 0x07, 0x00 /* value */, 0x00 /* confirm */, 0xF7};
+
+    int val;
+    switch ((x & 0xf0) >> 4) {
+        case 0: val = 0x20; break;
+        case 1: val = 0x30; break;
+        case 2: val = 0x00; break;
+        case 3: val = 0x10; break;
+        case 4: val = 0x60; break;
+        case 5: val = 0x70; break;
+        case 6: val = 0x40; break;
+        default: break;
+    }
+    switch (x & 0xf) {
+        case 0: val += 0xA; break;
+        case 1: val += 0xB; break;
+        case 2: val += 8; break;
+        case 3: val += 9; break;
+        case 4: val += 0xE; break;
+        case 5: val += 0xF; break;
+        case 6: val += 0xC; break;
+        case 7: val += 0xD; break;
+        case 8: val += 2; break;
+        case 9: val += 3; break;
+        case 0xA: val += 0; break;
+        case 0xB: val += 1; break;
+        case 0xC: val += 6; break;
+        case 0xD: val += 7; break;
+        case 0xE: val += 4; break;
+        case 0xF: val += 5; break;
+        default: break;
+    }
+
+    set_gain[17] = x;
+    set_gain[18] = val;
+
+    int i;
+    i = usb_bulk_write(handle, 4, set_gain, sizeof(set_gain), TIMEOUT);
+    printf("wrote: %d\n", i);
+}
+
+void set_ds_tone(struct usb_dev_handle *handle, int x)
+{
+    static char set_tone[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x09, 0x06, 0x07, 0x00 /* value */, 0x00 /* confirm */, 0xF7};
+
+    int val;
+    switch ((x & 0xf0) >> 4) {
+        case 0: val = 0x20; break;
+        case 1: val = 0x30; break;
+        case 2: val = 0x00; break;
+        case 3: val = 0x10; break;
+        case 4: val = 0x60; break;
+        case 5: val = 0x70; break;
+        case 6: val = 0x40; break;
+        default: break;
+    }
+    switch (x & 0xf) {
+        case 0: val += 0xB; break;
+        case 1: val += 0xA; break;
+        case 2: val += 9; break;
+        case 3: val += 8; break;
+        case 4: val += 0xF; break;
+        case 5: val += 0xE; break;
+        case 6: val += 0xD; break;
+        case 7: val += 0xC; break;
+        case 8: val += 3; break;
+        case 9: val += 2; break;
+        case 0xA: val += 1; break;
+        case 0xB: val += 0; break;
+        case 0xC: val += 7; break;
+        case 0xD: val += 6; break;
+        case 0xE: val += 5; break;
+        case 0xF: val += 4; break;
+        default: break;
+    }
+
+    set_tone[17] = x;
+    set_tone[18] = val;
+
+    int i;
+    i = usb_bulk_write(handle, 4, set_tone, sizeof(set_tone), TIMEOUT);
+    printf("wrote: %d\n", i);
+}
+
+void set_ds_level(struct usb_dev_handle *handle, int x)
+{
+    static char set_level[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x0A, 0x06, 0x07, 0x00 /* value */, 0x00 /* confirm */, 0xF7};
+
+    int val;
+    switch ((x & 0xf0) >> 4) {
+        case 0: val = 0x20; break;
+        case 1: val = 0x30; break;
+        case 2: val = 0x00; break;
+        case 3: val = 0x10; break;
+        case 4: val = 0x60; break;
+        case 5: val = 0x70; break;
+        case 6: val = 0x40; break;
+        default: break;
+    }
+    switch (x & 0xf) {
+        case 0: val += 8; break;
+        case 1: val += 9; break;
+        case 2: val += 0xA; break;
+        case 3: val += 0xB; break;
+        case 4: val += 0xC; break;
+        case 5: val += 0xD; break;
+        case 6: val += 0xE; break;
+        case 7: val += 0xF; break;
+        case 8: val += 0; break;
+        case 9: val += 1; break;
+        case 0xA: val += 2; break;
+        case 0xB: val += 3; break;
+        case 0xC: val += 4; break;
+        case 0xD: val += 5; break;
+        case 0xE: val += 6; break;
+        case 0xF: val += 7; break;
+        default: break;
+    }
+
+    set_level[17] = x;
+    set_level[18] = val;
+
+    int i;
+    i = usb_bulk_write(handle, 4, set_level, sizeof(set_level), TIMEOUT);
+    printf("wrote: %d\n", i);
+}
+
 void value_changed_cb(GtkSpinButton *spinbutton, void (*callback)(struct usb_dev_handle*, int))
 {
     int val = gtk_spin_button_get_value_as_int(spinbutton);
