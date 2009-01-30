@@ -19,7 +19,7 @@
 #include <glib.h>
 #include <gtk/gtk.h>
 
-#define TIMEOUT 100
+#define TIMEOUT 1000
 
 char buf[255];
 
@@ -65,7 +65,7 @@ int read_device(struct usb_dev_handle *handle, int bytes)
 
 int check_preset(struct usb_dev_handle *handle)
 {
-    int i, x;
+    int i;
     i = usb_bulk_write(handle, 4, magic3, sizeof(magic3), TIMEOUT);
 
     /* UGLY - have to figure out reply formatting */
@@ -105,43 +105,32 @@ int check_preset(struct usb_dev_handle *handle)
     } while (i > 0);
 }
 
+/*
+   calculate checksum
+   array - the command to set over usb
+   length - length of array
+   check - position of checksum byte in array
+*/
+char calculate_checksum(gchar *array, int length, int check)
+{
+    int x;
+    char checksum;
+    checksum = 0;
+    for (x = 0; x<length; x++) {
+        if (x == check) continue;
+        checksum ^= array[x];
+    }
+    return checksum;
+}
+
 /* level = 0 to 99 */
 void set_wah_min(struct usb_dev_handle *handle, int level)
 {
-    static char set_min[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x00, 0x04, 0x20, 0x03, 0x14, 0x07, 0x00 /* level */, 0x00 /* confirm value? */, 0xF7};
-    int val;
+    static char set_min[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x00, 0x04, 0x20, 0x03, 0x14, 0x07, 0x00 /* level */, 0x00 /* checksum */, 0xF7};
 
-    switch((level & 0xf0) >> 4) {
-      case 0: val = 0x30; break;
-      case 1: val = 0x20; break;
-      case 2: val = 0x10; break;
-      case 3: val = 0x00; break;
-      case 4: val = 0x70; break;
-      case 5: val = 0x60; break;
-      case 6: val = 0x50; break;
-      default: break;
-    }
-    switch ((level & 0x0f)) {
-      case 0: val += 0xA; break;
-      case 1: val += 0xB; break;
-      case 2: val += 8; break;
-      case 3: val += 9; break;
-      case 4: val += 0xE; break;
-      case 5: val += 0xF; break;
-      case 6: val += 0xC; break;
-      case 7: val += 0xD; break;
-      case 8: val += 2; break;
-      case 9: val += 3; break;
-      case 0xA: val += 0; break;
-      case 0xB: val += 1; break;
-      case 0xC: val += 6; break;
-      case 0xD: val += 7; break;
-      case 0xE: val += 4; break;
-      case 0xF: val += 5; break;
-      default: break;
-    }
     set_min[17] = level;
-    set_min[18] = val;
+    set_min[18] = calculate_checksum(set_min, sizeof(set_min), 18);
+
     int i;
     i = usb_bulk_write(handle, 4, set_min, sizeof(set_min), TIMEOUT);
     printf("wrote: %d\n", i);
@@ -150,40 +139,11 @@ void set_wah_min(struct usb_dev_handle *handle, int level)
 /* level = 0 to 99 */
 void set_wah_max(struct usb_dev_handle *handle, int level)
 {
-    static char set_max[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x00, 0x04, 0x20, 0x04, 0x14, 0x07, 0x00 /* level */, 0x00 /* confirm value? */, 0xF7};
-    int val;
+    static char set_max[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x00, 0x04, 0x20, 0x04, 0x14, 0x07, 0x00 /* level */, 0x00 /* checksum */, 0xF7};
 
-    switch((level & 0xf0) >> 4) {
-      case 0: val = 0x30; break;
-      case 1: val = 0x20; break;
-      case 2: val = 0x10; break;
-      case 3: val = 0x00; break;
-      case 4: val = 0x70; break;
-      case 5: val = 0x60; break;
-      case 6: val = 0x50; break;
-      default: break;
-    }
-    switch ((level & 0x0f)) {
-      case 0: val += 0xD; break;
-      case 1: val += 0xC; break;
-      case 2: val += 0xF; break;
-      case 3: val += 0xE; break;
-      case 4: val += 9; break;
-      case 5: val += 8; break;
-      case 6: val += 0xB; break;
-      case 7: val += 0xA; break;
-      case 8: val += 5; break;
-      case 9: val += 4; break;
-      case 0xA: val += 7; break;
-      case 0xB: val += 6; break;
-      case 0xC: val += 1; break;
-      case 0xD: val += 0; break;
-      case 0xE: val += 3; break;
-      case 0xF: val += 2; break;
-      default: break;
-    }
     set_max[17] = level;
-    set_max[18] = val;
+    set_max[18] = calculate_checksum(set_max, sizeof(set_max), 18);
+
     int i;
     i = usb_bulk_write(handle, 4, set_max, sizeof(set_max), TIMEOUT);
     printf("wrote: %d\n", i);
@@ -192,27 +152,11 @@ void set_wah_max(struct usb_dev_handle *handle, int level)
 /* level = 0 to 12 */
 void set_wah_level(struct usb_dev_handle *handle, int level)
 {
-    static char set_level[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x00, 0x05, 0x03, 0x07, 0x00 /* level */, 0x00 /* confirm value? */, 0xF7};
-    int val;
+    static char set_level[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x00, 0x05, 0x03, 0x07, 0x00 /* level */, 0x00 /* checksum */, 0xF7};
 
-    switch (level) {
-      case 0: val = 0x2B; break;
-      case 1: val = 0x2A; break;
-      case 2: val = 0x29; break;
-      case 3: val = 0x28; break;
-      case 4: val = 0x2F; break;
-      case 5: val = 0x2E; break;
-      case 6: val = 0x2D; break;
-      case 7: val = 0x2C; break;
-      case 8: val = 0x23; break;
-      case 9: val = 0x22; break;
-      case 0xA: val = 0x21; break;
-      case 0xB: val = 0x20; break;
-      case 0xC: val = 0x27; break;
-      default: break;
-    }
     set_level[17] = level;
-    set_level[18] = val;
+    set_level[18] = calculate_checksum(set_level, sizeof(set_level), 18);
+
     int i;
     i = usb_bulk_write(handle, 4, set_level, sizeof(set_level), TIMEOUT);
     printf("wrote: %d\n", i);
@@ -234,6 +178,7 @@ void set_wah_type(struct usb_dev_handle *handle, int type)
       case WAH_TYPE_CLYDE: set_type[18] = 6; set_type[19] = 0x25; break;
       default: break;
     }
+
     int i;
     i = usb_bulk_write(handle, 4, set_type, sizeof(set_type), TIMEOUT);
     printf("wrote: %d\n", i);
@@ -241,15 +186,15 @@ void set_wah_type(struct usb_dev_handle *handle, int type)
 
 void set_wah_on_off(struct usb_dev_handle *handle, gboolean val)
 {
-    static char set_wah[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x00, 0x01, 0x03, 0x07, 0x00 /* on/off */, 0x00 /* confirm */, 0xF7};
+    static char set_wah[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x00, 0x01, 0x03, 0x07, 0x00 /* on/off */, 0x00 /* checksum */, 0xF7};
 
     if (val == FALSE) { /* turn wah off */
         set_wah[17] = 0;
-        set_wah[18] = 0x2F;
     } else { /* turn wah on */
         set_wah[17] = 1;
-        set_wah[18] = 0x2E;
     }
+
+    set_wah[18] = calculate_checksum(set_wah, sizeof(set_wah), 18);
 
     int i;
     i = usb_bulk_write(handle, 4, set_wah, sizeof(set_wah), TIMEOUT);
@@ -259,32 +204,10 @@ void set_wah_on_off(struct usb_dev_handle *handle, gboolean val)
 /* level = 0 to 99 */
 void set_comp_sustain(struct usb_dev_handle *handle, int level)
 {
-    static char set_sust[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x00, 0x50, 0x04, 0x07, 0x00 /* value */, 0x00 /* confirm */, 0xf7};
-    int val;
-
-    val = (7 - ((level & 0xf0) >> 4)) << 4;
-    switch (level & 0xf) {
-      case 0: val += 9; break;
-      case 1: val += 8; break;
-      case 2: val += 0xB; break;
-      case 3: val += 0xA; break;
-      case 4: val += 0xD; break;
-      case 5: val += 0xC; break;
-      case 6: val += 0xF; break;
-      case 7: val += 0xE; break;
-      case 8: val += 1; break;
-      case 9: val += 0; break;
-      case 0xA: val += 3; break;
-      case 0xB: val += 2; break;
-      case 0xC: val += 5; break;
-      case 0xD: val += 4; break;
-      case 0xE: val += 7; break;
-      case 0xF: val += 6; break;
-      default: break;
-    }
+    static char set_sust[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x00, 0x50, 0x04, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xf7};
 
     set_sust[17] = level;
-    set_sust[18] = val;
+    set_sust[18] = calculate_checksum(set_sust, sizeof(set_sust), 18);
 
     int i;
     i = usb_bulk_write(handle, 4, set_sust, sizeof(set_sust), TIMEOUT);
@@ -294,15 +217,10 @@ void set_comp_sustain(struct usb_dev_handle *handle, int level)
 /* level = 0 to 99, available only in digi comp */
 void set_comp_tone(struct usb_dev_handle *handle, int level)
 {
-    static char set_tone[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x00, 0x51, 0x04, 0x07, 0x00 /* value */, 0x00 /* confirm */, 0xf7};
-    int val;
-
-    val = (7 - ((level & 0xf0) >> 4)) << 4;
-    if ((level & 0xf) >= 8) val += ((level & 0xf) - 8);
-    else val += (8 + (level & 0xf));
+    static char set_tone[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x00, 0x51, 0x04, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xf7};
 
     set_tone[17] = level;
-    set_tone[18] = val;
+    set_tone[18] = calculate_checksum(set_tone, sizeof(set_tone), 18);
 
     int i;
     i = usb_bulk_write(handle, 4, set_tone, sizeof(set_tone), TIMEOUT);
@@ -312,31 +230,10 @@ void set_comp_tone(struct usb_dev_handle *handle, int level)
 /* level = 0 to 99 */
 void set_comp_attack(struct usb_dev_handle *handle, int level)
 {
-    static char set_attack[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x00, 0x53, 0x04, 0x07, 0x00 /* value */, 0x00 /* confirm */, 0xf7};
-    int val;
+    static char set_attack[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x00, 0x53, 0x04, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xf7};
 
-    val = (7 - ((level & 0xf0) >> 4)) << 4;
-    switch (level & 0xf) {
-      case 0: val += 0xA; break;
-      case 1: val += 0xB; break;
-      case 2: val += 8; break;
-      case 3: val += 9; break;
-      case 4: val += 0xE; break;
-      case 5: val += 0xF; break;
-      case 6: val += 0xC; break;
-      case 7: val += 0xD; break;
-      case 8: val += 2; break;
-      case 9: val += 3; break;
-      case 0xA: val += 0; break;
-      case 0xB: val += 1; break;
-      case 0xC: val += 6; break;
-      case 0xD: val += 7; break;
-      case 0xE: val += 4; break;
-      case 0xF: val += 5; break;
-      default: break;
-    }
     set_attack[17] = level;
-    set_attack[18] = val;
+    set_attack[18] = calculate_checksum(set_attack, sizeof(set_attack), 18);
 
     int i;
     i = usb_bulk_write(handle, 4, set_attack, sizeof(set_attack), TIMEOUT);
@@ -346,31 +243,10 @@ void set_comp_attack(struct usb_dev_handle *handle, int level)
 /* level = 0 to 99 */
 void set_comp_level(struct usb_dev_handle *handle, int level)
 {
-    static char set_level[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x00, 0x52, 0x04, 0x07, 0x00 /* value */, 0x00 /* confirm */, 0xf7};
-    int val;
+    static char set_level[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x00, 0x52, 0x04, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xf7};
 
-    val = (7 - ((level & 0xf0) >> 4)) << 4;
-    switch (level & 0xf) {
-      case 0: val += 0xB; break;
-      case 1: val += 0xA; break;
-      case 2: val += 9; break;
-      case 3: val += 8; break;
-      case 4: val += 0xF; break;
-      case 5: val += 0xE; break;
-      case 6: val += 0xD; break;
-      case 7: val += 0xC; break;
-      case 8: val += 3; break;
-      case 9: val += 2; break;
-      case 0xA: val += 1; break;
-      case 0xB: val += 0; break;
-      case 0xC: val += 7; break;
-      case 0xD: val += 6; break;
-      case 0xE: val += 5; break;
-      case 0xF: val += 4; break;
-      default: break;
-    }
     set_level[17] = level;
-    set_level[18] = val;
+    set_level[18] = calculate_checksum(set_level, sizeof(set_level), 18);
 
     int i;
     i = usb_bulk_write(handle, 4, set_level, sizeof(set_level), TIMEOUT);
@@ -384,13 +260,14 @@ enum {
 
 void set_comp_type(struct usb_dev_handle *handle, int type)
 {
-    static char set_type[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x2C, 0x04, 0x00, 0x4F, 0x04, 0x04, 0x01, 0x00 /* type */, 0x00 /* confirm */, 0x05, 0xF7, 0x00, 0x00};
+    static char set_type[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x2C, 0x04, 0x00, 0x4F, 0x04, 0x04, 0x01, 0x00 /* type */, 0x00 /* checksum */, 0x05, 0xF7, 0x00, 0x00};
 
     switch (type) {
       case COMP_TYPE_DIGI: set_type[18] = 0x43; set_type[19] = 0x28; break;
       case COMP_TYPE_CS: set_type[18] = 0x44; set_type[19] = 0x2F; break;
       default: break;
     }
+
     int i;
     i = usb_bulk_write(handle, 4, set_type, sizeof(set_type), TIMEOUT);
     printf("wrote: %d\n", i);
@@ -398,15 +275,15 @@ void set_comp_type(struct usb_dev_handle *handle, int type)
 
 void set_comp_on_off(struct usb_dev_handle *handle, gboolean val)
 {
-    static char set_comp[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x00, 0x41, 0x04, 0x07, 0x00 /* on/off */, 0x00 /* confirm */, 0xF7};
+    static char set_comp[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x00, 0x41, 0x04, 0x07, 0x00 /* on/off */, 0x00 /* checksum */, 0xF7};
 
     if (val == FALSE) { /* turn comp off */
         set_comp[17] = 0;
-        set_comp[18] = 0x68;
     } else { /* turn comp on */
         set_comp[17] = 1;
-        set_comp[18] = 0x69;
     }
+
+    set_comp[18] = calculate_checksum(set_comp, sizeof(set_comp), 18);
 
     int i;
     i = usb_bulk_write(handle, 4, set_comp, sizeof(set_comp), TIMEOUT);
@@ -472,15 +349,15 @@ void set_pickup_type(struct usb_dev_handle *handle, int type)
 
 void set_pickup_on_off(struct usb_dev_handle *handle, gboolean val)
 {
-    static char set_pickup[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x00, 0x04, 0x00, 0x41, 0x02, 0x07, 0x00 /* on/off */, 0x00 /* confirm */, 0xF7};
+    static char set_pickup[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x00, 0x04, 0x00, 0x41, 0x02, 0x07, 0x00 /* on/off */, 0x00 /* checksum */, 0xF7};
 
     if (val == FALSE) { /* turn pickup off */
         set_pickup[17] = 0;
-        set_pickup[18] = 0x4E;
     } else { /* turn pickup on */
         set_pickup[17] = 1;
-        set_pickup[18] = 0x4F;
     }
+
+    set_pickup[18] = calculate_checksum(set_pickup, sizeof(set_pickup), 18);
 
     int i;
     i = usb_bulk_write(handle, 4, set_pickup, sizeof(set_pickup), TIMEOUT);
@@ -531,23 +408,10 @@ void set_dist_type(struct usb_dev_handle *handle, int type)
 
 void set_screamer_drive(struct usb_dev_handle* handle, int x)
 {
-    static char set_drive[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x02, 0x06, 0x07, 0x00 /* value */, 0x00 /* confirm */, 0xF7};
-
-    int val;
-    switch ((x & 0xf0) >> 4) {
-        case 0: val = 0x20; break;
-        case 1: val = 0x30; break;
-        case 2: val = 0x00; break;
-        case 3: val = 0x10; break;
-        case 4: val = 0x60; break;
-        case 5: val = 0x70; break;
-        case 6: val = 0x40; break;
-        default: break;
-    }
-    val += (x & 0xf);
+    static char set_drive[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x02, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
     set_drive[17] = x;
-    set_drive[18] = val;
+    set_drive[18] = calculate_checksum(set_drive, sizeof(set_drive), 18);
 
     int i;
     i = usb_bulk_write(handle, 4, set_drive, sizeof(set_drive), TIMEOUT);
@@ -556,28 +420,10 @@ void set_screamer_drive(struct usb_dev_handle* handle, int x)
 
 void set_screamer_tone(struct usb_dev_handle* handle, int x)
 {
-    static char set_tone[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x03, 0x06, 0x07, 0x00 /* value */, 0x00 /* confirm */, 0xF7};
-
-    int val;
-    switch ((x & 0xf0) >> 4) {
-        case 0: val = 0x20; break;
-        case 1: val = 0x30; break;
-        case 2: val = 0x00; break;
-        case 3: val = 0x10; break;
-        case 4: val = 0x60; break;
-        case 5: val = 0x70; break;
-        case 6: val = 0x40; break;
-        default: break;
-    }
-    val += (x & 0xf);
-    if (((x & 0xf) % 2) == 0) {
-        val += 1;
-    } else {
-        val -= 1;
-    }
+    static char set_tone[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x03, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
     set_tone[17] = x;
-    set_tone[18] = val;
+    set_tone[18] = calculate_checksum(set_tone, sizeof(set_tone), 18);
 
     int i;
     i = usb_bulk_write(handle, 4, set_tone, sizeof(set_tone), TIMEOUT);
@@ -586,41 +432,10 @@ void set_screamer_tone(struct usb_dev_handle* handle, int x)
 
 void set_screamer_level(struct usb_dev_handle* handle, int x)
 {
-    static char set_level[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x04, 0x06, 0x07, 0x00 /* value */, 0x00 /* confirm */, 0xF7};
-
-    int val;
-    switch ((x & 0xf0) >> 4) {
-        case 0: val = 0x20; break;
-        case 1: val = 0x30; break;
-        case 2: val = 0x00; break;
-        case 3: val = 0x10; break;
-        case 4: val = 0x60; break;
-        case 5: val = 0x70; break;
-        case 6: val = 0x40; break;
-        default: break;
-    }
-    switch (x & 0xf) {
-        case 0: val += 0x6; break;
-        case 1: val += 0x7; break;
-        case 2: val += 0x4; break;
-        case 3: val += 0x5; break;
-        case 4: val += 0x2; break;
-        case 5: val += 0x3; break;
-        case 6: val += 0x0; break;
-        case 7: val += 0x1; break;
-        case 8: val += 0xE; break;
-        case 9: val += 0xF; break;
-        case 0xA: val += 0xC; break;
-        case 0xB: val += 0xD; break;
-        case 0xC: val += 0xA; break;
-        case 0xD: val += 0xB; break;
-        case 0xE: val += 0x8; break;
-        case 0xF: val += 0x9; break;
-        default: break;
-    }
+    static char set_level[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x04, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
     set_level[17] = x;
-    set_level[18] = val;
+    set_level[18] = calculate_checksum(set_level, sizeof(set_level), 18);
 
     int i;
     i = usb_bulk_write(handle, 4, set_level, sizeof(set_level), TIMEOUT);
@@ -629,32 +444,10 @@ void set_screamer_level(struct usb_dev_handle* handle, int x)
 
 void set_808_overdrive(struct usb_dev_handle *handle, int x)
 {
-    static char set_overdrive[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x29, 0x06, 0x07, 0x00 /* value */, 0x00 /* confirm */, 0xF7};
-
-    int val;
-    val = (x & 0xf0);
-    switch (x & 0xf) {
-        case 0: val += 0xB; break;
-        case 1: val += 0xA; break;
-        case 2: val += 0x9; break;
-        case 3: val += 0x8; break;
-        case 4: val += 0xF; break;
-        case 5: val += 0xE; break;
-        case 6: val += 0xD; break;
-        case 7: val += 0xC; break;
-        case 8: val += 0x3; break;
-        case 9: val += 0x2; break;
-        case 0xA: val += 0x1; break;
-        case 0xB: val += 0x0; break;
-        case 0xC: val += 0x7; break;
-        case 0xD: val += 0x6; break;
-        case 0xE: val += 0x5; break;
-        case 0xF: val += 0x4; break;
-        default: break;
-    }
+    static char set_overdrive[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x29, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
     set_overdrive[17] = x;
-    set_overdrive[18] = val;
+    set_overdrive[18] = calculate_checksum(set_overdrive, sizeof(set_overdrive), 18);
 
     int i;
     i = usb_bulk_write(handle, 4, set_overdrive, sizeof(set_overdrive), TIMEOUT);
@@ -663,14 +456,10 @@ void set_808_overdrive(struct usb_dev_handle *handle, int x)
 
 void set_808_tone(struct usb_dev_handle *handle, int x)
 {
-    static char set_tone[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x2A, 0x06, 0x07, 0x00 /* value */, 0x00 /* confirm */, 0xF7};
-
-    int val;
-    val = (x & 0xf0);
-    val += (((x & 0xf) + 8) & 0xf);
+    static char set_tone[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x2A, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
     set_tone[17] = x;
-    set_tone[18] = val;
+    set_tone[18] = calculate_checksum(set_tone, sizeof(set_tone), 18);
 
     int i;
     i = usb_bulk_write(handle, 4, set_tone, sizeof(set_tone), TIMEOUT);
@@ -679,19 +468,10 @@ void set_808_tone(struct usb_dev_handle *handle, int x)
 
 void set_808_level(struct usb_dev_handle *handle, int x)
 {
-    static char set_level[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x2B, 0x06, 0x07, 0x00 /* value */, 0x00 /* confirm */, 0xF7};
-
-    int val;
-    val = (x & 0xf0);
-    val += (((x & 0xf) + 8) & 0xf);
-    if (((x & 0xf) % 2) == 0) {
-        val += 1;
-    } else {
-        val -= 1;
-    }
+    static char set_level[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x2B, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
     set_level[17] = x;
-    set_level[18] = val;
+    set_level[18] = calculate_checksum(set_level, sizeof(set_level), 18);
 
     int i;
     i = usb_bulk_write(handle, 4, set_level, sizeof(set_level), TIMEOUT);
@@ -700,41 +480,10 @@ void set_808_level(struct usb_dev_handle *handle, int x)
 
 void set_guyod_drive(struct usb_dev_handle *handle, int x)
 {
-    static char set_drive[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x10, 0x06, 0x07, 0x00 /* value */, 0x00 /* confirm */, 0xF7};
-
-    int val;
-    switch ((x & 0xf0) >> 4) {
-        case 0: val = 0x30; break;
-        case 1: val = 0x20; break;
-        case 2: val = 0x10; break;
-        case 3: val = 0x00; break;
-        case 4: val = 0x70; break;
-        case 5: val = 0x60; break;
-        case 6: val = 0x50; break;
-        default: break;
-    }
-    switch (x & 0xf) {
-        case 0: val += 2; break;
-        case 1: val += 3; break;
-        case 2: val += 0; break;
-        case 3: val += 1; break;
-        case 4: val += 6; break;
-        case 5: val += 7; break;
-        case 6: val += 4; break;
-        case 7: val += 5; break;
-        case 8: val += 0xA; break;
-        case 9: val += 0xB; break;
-        case 0xA: val += 8; break;
-        case 0xB: val += 9; break;
-        case 0xC: val += 0xE; break;
-        case 0xD: val += 0xF; break;
-        case 0xE: val += 0xC; break;
-        case 0xF: val += 0xD; break;
-        default: break;
-    }
+    static char set_drive[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x10, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
     set_drive[17] = x;
-    set_drive[18] = val;
+    set_drive[18] = calculate_checksum(set_drive, sizeof(set_drive), 18);
 
     int i;
     i = usb_bulk_write(handle, 4, set_drive, sizeof(set_drive), TIMEOUT);
@@ -743,41 +492,10 @@ void set_guyod_drive(struct usb_dev_handle *handle, int x)
 
 void set_guyod_level(struct usb_dev_handle *handle, int x)
 {
-    static char set_level[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x11, 0x06, 0x07, 0x00 /* value */, 0x00 /* confirm */, 0xF7};
-
-    int val;
-    switch ((x & 0xf0) >> 4) {
-        case 0: val = 0x30; break;
-        case 1: val = 0x20; break;
-        case 2: val = 0x10; break;
-        case 3: val = 0x00; break;
-        case 4: val = 0x70; break;
-        case 5: val = 0x60; break;
-        case 6: val = 0x50; break;
-        default: break;
-    }
-    switch (x & 0xf) {
-        case 0: val += 3; break;
-        case 1: val += 2; break;
-        case 2: val += 1; break;
-        case 3: val += 0; break;
-        case 4: val += 7; break;
-        case 5: val += 6; break;
-        case 6: val += 5; break;
-        case 7: val += 4; break;
-        case 8: val += 0xB; break;
-        case 9: val += 0xA; break;
-        case 0xA: val += 9; break;
-        case 0xB: val += 8; break;
-        case 0xC: val += 0xF; break;
-        case 0xD: val += 0xE; break;
-        case 0xE: val += 0xD; break;
-        case 0xF: val += 0xC; break;
-        default: break;
-    }
+    static char set_level[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x11, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
     set_level[17] = x;
-    set_level[18] = val;
+    set_level[18] = calculate_checksum(set_level, sizeof(set_level), 18);
 
     int i;
     i = usb_bulk_write(handle, 4, set_level, sizeof(set_level), TIMEOUT);
@@ -786,41 +504,10 @@ void set_guyod_level(struct usb_dev_handle *handle, int x)
 
 void set_dod250_gain(struct usb_dev_handle *handle, int x)
 {
-    static char set_gain[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x0B, 0x06, 0x07, 0x00 /* value */, 0x00 /* confirm */, 0xF7};
-
-    int val;
-    switch ((x & 0xf0) >> 4) {
-        case 0: val = 0x20; break;
-        case 1: val = 0x30; break;
-        case 2: val = 0x00; break;
-        case 3: val = 0x10; break;
-        case 4: val = 0x60; break;
-        case 5: val = 0x70; break;
-        case 6: val = 0x40; break;
-        default: break;
-    }
-    switch (x & 0xf) {
-        case 0: val += 9; break;
-        case 1: val += 8; break;
-        case 2: val += 0xB; break;
-        case 3: val += 0xA; break;
-        case 4: val += 0xD; break;
-        case 5: val += 0xC; break;
-        case 6: val += 0xF; break;
-        case 7: val += 0xE; break;
-        case 8: val += 1; break;
-        case 9: val += 0; break;
-        case 0xA: val += 3; break;
-        case 0xB: val += 2; break;
-        case 0xC: val += 5; break;
-        case 0xD: val += 4; break;
-        case 0xE: val += 7; break;
-        case 0xF: val += 6; break;
-        default: break;
-    }
+    static char set_gain[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x0B, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
     set_gain[17] = x;
-    set_gain[18] = val;
+    set_gain[18] = calculate_checksum(set_gain, sizeof(set_gain), 18);
 
     int i;
     i = usb_bulk_write(handle, 4, set_gain, sizeof(set_gain), TIMEOUT);
@@ -829,28 +516,10 @@ void set_dod250_gain(struct usb_dev_handle *handle, int x)
 
 void set_dod250_level(struct usb_dev_handle *handle, int x)
 {
-    static char set_level[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x0C, 0x06, 0x07, 0x00 /* value */, 0x00 /* confirm */, 0xF7};
-
-    int val;
-    switch ((x & 0xf0) >> 4) {
-        case 0: val = 0x20; break;
-        case 1: val = 0x30; break;
-        case 2: val = 0x00; break;
-        case 3: val = 0x10; break;
-        case 4: val = 0x60; break;
-        case 5: val = 0x70; break;
-        case 6: val = 0x40; break;
-        default: break;
-    }
-    val += (0xF - (x & 0xf));
-    if (((x & 0xf) % 2) == 0) {
-        val -= 1;
-    } else {
-        val += 1;
-    }
+    static char set_level[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x0C, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
     set_level[17] = x;
-    set_level[18] = val;
+    set_level[18] = calculate_checksum(set_level, sizeof(set_level), 18);
 
     int i;
     i = usb_bulk_write(handle, 4, set_level, sizeof(set_level), TIMEOUT);
@@ -859,27 +528,10 @@ void set_dod250_level(struct usb_dev_handle *handle, int x)
 
 void set_rodent_dist(struct usb_dev_handle *handle, int x)
 {
-    static char set_dist[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x05, 0x06, 0x07, 0x00 /* value */, 0x00 /* confirm */, 0xF7};
-
-    int val;
-    switch ((x & 0xf0) >> 4) {
-        case 0: val = 0x20; break;
-        case 1: val = 0x30; break;
-        case 2: val = 0x00; break;
-        case 3: val = 0x10; break;
-        case 4: val = 0x60; break;
-        case 5: val = 0x70; break;
-        case 6: val = 0x40; break;
-        default: break;
-    }
-    if ((x & 0xf) < 8) {
-        val += (7 - (x & 0xf));
-    } else {
-        val += (0xF + (8 - (x & 0xf)));
-    }
+    static char set_dist[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x05, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
     set_dist[17] = x;
-    set_dist[18] = val;
+    set_dist[18] = calculate_checksum(set_dist, sizeof(set_dist), 18);
 
     int i;
     i = usb_bulk_write(handle, 4, set_dist, sizeof(set_dist), TIMEOUT);
@@ -888,42 +540,10 @@ void set_rodent_dist(struct usb_dev_handle *handle, int x)
 
 void set_rodent_filter(struct usb_dev_handle *handle, int x)
 {
-    static char set_filter[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x06, 0x06, 0x07, 0x00 /* value */, 0x00 /* confirm */, 0xF7};
-
-    int val;
-    switch ((x & 0xf0) >> 4) {
-        case 0: val = 0x20; break;
-        case 1: val = 0x30; break;
-        case 2: val = 0x00; break;
-        case 3: val = 0x10; break;
-        case 4: val = 0x60; break;
-        case 5: val = 0x70; break;
-        case 6: val = 0x40; break;
-        default: break;
-    }
-    switch (x & 0xf) {
-        case 0: val += 4; break;
-        case 1: val += 5; break;
-        case 2: val += 6; break;
-        case 3: val += 7; break;
-        case 4: val += 0; break;
-        case 5: val += 1; break;
-        case 6: val += 2; break;
-        case 7: val += 3; break;
-        case 8: val += 0xC; break;
-        case 9: val += 0xD; break;
-        case 0xA: val += 0xE; break;
-        case 0xB: val += 0xF; break;
-        case 0xC: val += 8; break;
-        case 0xD: val += 9; break;
-        case 0xE: val += 0xA; break;
-        case 0xF: val += 0xB; break;
-        default: break;
-    }
-
+    static char set_filter[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x06, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
     set_filter[17] = x;
-    set_filter[18] = val;
+    set_filter[18] = calculate_checksum(set_filter, sizeof(set_filter), 18);
 
     int i;
     i = usb_bulk_write(handle, 4, set_filter, sizeof(set_filter), TIMEOUT);
@@ -932,42 +552,10 @@ void set_rodent_filter(struct usb_dev_handle *handle, int x)
 
 void set_rodent_level(struct usb_dev_handle *handle, int x)
 {
-    static char set_level[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x07, 0x06, 0x07, 0x00 /* value */, 0x00 /* confirm */, 0xF7};
-
-    int val;
-    switch ((x & 0xf0) >> 4) {
-        case 0: val = 0x20; break;
-        case 1: val = 0x30; break;
-        case 2: val = 0x00; break;
-        case 3: val = 0x10; break;
-        case 4: val = 0x60; break;
-        case 5: val = 0x70; break;
-        case 6: val = 0x40; break;
-        default: break;
-    }
-    switch (x & 0xf) {
-        case 0: val += 5; break;
-        case 1: val += 4; break;
-        case 2: val += 7; break;
-        case 3: val += 6; break;
-        case 4: val += 1; break;
-        case 5: val += 0; break;
-        case 6: val += 3; break;
-        case 7: val += 2; break;
-        case 8: val += 0xD; break;
-        case 9: val += 0xC; break;
-        case 0xA: val += 0xF; break;
-        case 0xB: val += 0xE; break;
-        case 0xC: val += 9; break;
-        case 0xD: val += 8; break;
-        case 0xE: val += 0xB; break;
-        case 0xF: val += 0xA; break;
-        default: break;
-    }
-
+    static char set_level[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x07, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
     set_level[17] = x;
-    set_level[18] = val;
+    set_level[18] = calculate_checksum(set_level, sizeof(set_level), 18);
 
     int i;
     i = usb_bulk_write(handle, 4, set_level, sizeof(set_level), TIMEOUT);
@@ -976,24 +564,10 @@ void set_rodent_level(struct usb_dev_handle *handle, int x)
 
 void set_mx_dist(struct usb_dev_handle *handle, int x)
 {
-    static char set_dist[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x24, 0x06, 0x07, 0x00 /* value */, 0x00 /* confirm */, 0xF7};
-
-    int val;
-    val = (x & 0xf0);
-    if ((x & 0xf) < 8) {
-        val += (7 - (x & 0xf));
-    } else {
-        val += (0xF - ((x & 0xf) - 8));
-    }
-
-    if (((x & 0xf) % 2) == 0) {
-        val -= 1;
-    } else {
-        val += 1;
-    }
+    static char set_dist[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x24, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
     set_dist[17] = x;
-    set_dist[18] = val;
+    set_dist[18] = calculate_checksum(set_dist, sizeof(set_dist), 18);
 
     int i;
     i = usb_bulk_write(handle, 4, set_dist, sizeof(set_dist), TIMEOUT);
@@ -1002,18 +576,10 @@ void set_mx_dist(struct usb_dev_handle *handle, int x)
 
 void set_mx_output(struct usb_dev_handle *handle, int x)
 {
-    static char set_output[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x25, 0x06, 0x07, 0x00 /* value */, 0x00 /* confirm */, 0xF7};
-
-    int val;
-    val = (x & 0xf0);
-    if ((x & 0xf) < 8) {
-        val += (7 - (x & 0xf));
-    } else {
-        val += (0xF - ((x & 0xf) - 8));
-    }
+    static char set_output[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x25, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
     set_output[17] = x;
-    set_output[18] = val;
+    set_output[18] = calculate_checksum(set_output, sizeof(set_output), 18);
 
     int i;
     i = usb_bulk_write(handle, 4, set_output, sizeof(set_output), TIMEOUT);
@@ -1022,41 +588,10 @@ void set_mx_output(struct usb_dev_handle *handle, int x)
 
 void set_ds_gain(struct usb_dev_handle *handle, int x)
 {
-    static char set_gain[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x08, 0x06, 0x07, 0x00 /* value */, 0x00 /* confirm */, 0xF7};
-
-    int val;
-    switch ((x & 0xf0) >> 4) {
-        case 0: val = 0x20; break;
-        case 1: val = 0x30; break;
-        case 2: val = 0x00; break;
-        case 3: val = 0x10; break;
-        case 4: val = 0x60; break;
-        case 5: val = 0x70; break;
-        case 6: val = 0x40; break;
-        default: break;
-    }
-    switch (x & 0xf) {
-        case 0: val += 0xA; break;
-        case 1: val += 0xB; break;
-        case 2: val += 8; break;
-        case 3: val += 9; break;
-        case 4: val += 0xE; break;
-        case 5: val += 0xF; break;
-        case 6: val += 0xC; break;
-        case 7: val += 0xD; break;
-        case 8: val += 2; break;
-        case 9: val += 3; break;
-        case 0xA: val += 0; break;
-        case 0xB: val += 1; break;
-        case 0xC: val += 6; break;
-        case 0xD: val += 7; break;
-        case 0xE: val += 4; break;
-        case 0xF: val += 5; break;
-        default: break;
-    }
+    static char set_gain[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x08, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
     set_gain[17] = x;
-    set_gain[18] = val;
+    set_gain[18] = calculate_checksum(set_gain, sizeof(set_gain), 18);
 
     int i;
     i = usb_bulk_write(handle, 4, set_gain, sizeof(set_gain), TIMEOUT);
@@ -1065,41 +600,10 @@ void set_ds_gain(struct usb_dev_handle *handle, int x)
 
 void set_ds_tone(struct usb_dev_handle *handle, int x)
 {
-    static char set_tone[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x09, 0x06, 0x07, 0x00 /* value */, 0x00 /* confirm */, 0xF7};
-
-    int val;
-    switch ((x & 0xf0) >> 4) {
-        case 0: val = 0x20; break;
-        case 1: val = 0x30; break;
-        case 2: val = 0x00; break;
-        case 3: val = 0x10; break;
-        case 4: val = 0x60; break;
-        case 5: val = 0x70; break;
-        case 6: val = 0x40; break;
-        default: break;
-    }
-    switch (x & 0xf) {
-        case 0: val += 0xB; break;
-        case 1: val += 0xA; break;
-        case 2: val += 9; break;
-        case 3: val += 8; break;
-        case 4: val += 0xF; break;
-        case 5: val += 0xE; break;
-        case 6: val += 0xD; break;
-        case 7: val += 0xC; break;
-        case 8: val += 3; break;
-        case 9: val += 2; break;
-        case 0xA: val += 1; break;
-        case 0xB: val += 0; break;
-        case 0xC: val += 7; break;
-        case 0xD: val += 6; break;
-        case 0xE: val += 5; break;
-        case 0xF: val += 4; break;
-        default: break;
-    }
+    static char set_tone[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x09, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
     set_tone[17] = x;
-    set_tone[18] = val;
+    set_tone[18] = calculate_checksum(set_tone, sizeof(set_tone), 18);
 
     int i;
     i = usb_bulk_write(handle, 4, set_tone, sizeof(set_tone), TIMEOUT);
@@ -1108,41 +612,10 @@ void set_ds_tone(struct usb_dev_handle *handle, int x)
 
 void set_ds_level(struct usb_dev_handle *handle, int x)
 {
-    static char set_level[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x0A, 0x06, 0x07, 0x00 /* value */, 0x00 /* confirm */, 0xF7};
-
-    int val;
-    switch ((x & 0xf0) >> 4) {
-        case 0: val = 0x20; break;
-        case 1: val = 0x30; break;
-        case 2: val = 0x00; break;
-        case 3: val = 0x10; break;
-        case 4: val = 0x60; break;
-        case 5: val = 0x70; break;
-        case 6: val = 0x40; break;
-        default: break;
-    }
-    switch (x & 0xf) {
-        case 0: val += 8; break;
-        case 1: val += 9; break;
-        case 2: val += 0xA; break;
-        case 3: val += 0xB; break;
-        case 4: val += 0xC; break;
-        case 5: val += 0xD; break;
-        case 6: val += 0xE; break;
-        case 7: val += 0xF; break;
-        case 8: val += 0; break;
-        case 9: val += 1; break;
-        case 0xA: val += 2; break;
-        case 0xB: val += 3; break;
-        case 0xC: val += 4; break;
-        case 0xD: val += 5; break;
-        case 0xE: val += 6; break;
-        case 0xF: val += 7; break;
-        default: break;
-    }
+    static char set_level[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x0A, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
     set_level[17] = x;
-    set_level[18] = val;
+    set_level[18] = calculate_checksum(set_level, sizeof(set_level), 18);
 
     int i;
     i = usb_bulk_write(handle, 4, set_level, sizeof(set_level), TIMEOUT);
@@ -1247,6 +720,133 @@ void create_window()
     g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(gtk_main_quit), NULL);
 }
 
+void test_all(struct usb_dev_handle *handle)
+{
+    int x;
+    set_wah_type(handle, WAH_TYPE_CRY);
+    for (x=0; x<=99; x++)
+        set_wah_min(handle, x);
+
+    for (x=0; x<=99; x++)
+        set_wah_max(handle, x);
+
+    for (x=0; x<=12; x++)
+        set_wah_level(handle, x);
+
+    set_wah_type(handle, WAH_TYPE_FULLRANGE);
+    for (x=0; x<=99; x++)
+        set_wah_min(handle, x);
+
+    for (x=0; x<=99; x++)
+        set_wah_max(handle, x);
+
+    for (x=0; x<=12; x++)
+        set_wah_level(handle, x);
+
+    set_wah_type(handle, WAH_TYPE_CLYDE);
+    for (x=0; x<=99; x++)
+        set_wah_min(handle, x);
+
+    for (x=0; x<=99; x++)
+        set_wah_max(handle, x);
+
+    for (x=0; x<=12; x++)
+        set_wah_level(handle, x);
+
+    set_comp_type(handle, COMP_TYPE_DIGI);
+    for (x=0; x<=99; x++)
+        set_comp_sustain(handle, x);
+
+    for (x=0; x<=99; x++)
+        set_comp_tone(handle, x);
+
+    for (x=0; x<=99; x++)
+        set_comp_attack(handle, x);
+
+    for (x=0; x<=99; x++)
+        set_comp_level(handle, x);
+
+    set_comp_type(handle, COMP_TYPE_CS);
+    for (x=0; x<=99; x++)
+        set_comp_sustain(handle, x);
+
+    for (x=0; x<=99; x++)
+        set_comp_attack(handle, x);
+
+    for (x=0; x<=99; x++)
+        set_comp_level(handle, x);
+
+    set_dist_type(handle, DIST_TYPE_SCREAMER);
+    for (x=0; x<=99; x++)
+        set_screamer_drive(handle, x);
+
+    for (x=0; x<=99; x++)
+        set_screamer_tone(handle, x);
+
+    for (x=0; x<=99; x++)
+        set_screamer_level(handle, x);
+
+    set_dist_type(handle, DIST_TYPE_808);
+    for (x=0; x<=99; x++)
+        set_808_overdrive(handle, x);
+
+    for (x=0; x<=99; x++)
+        set_808_tone(handle, x);
+
+    for (x=0; x<=99; x++)
+        set_808_level(handle, x);
+
+    set_dist_type(handle, DIST_TYPE_GUYOD);
+    for (x=0; x<=99; x++)
+        set_guyod_drive(handle, x);
+
+    for (x=0; x<=99; x++)
+        set_guyod_level(handle, x);
+
+    set_dist_type(handle, DIST_TYPE_DOD250);
+    for (x=0; x<=99; x++)
+        set_dod250_gain(handle, x);
+
+    for (x=0; x<=99; x++)
+        set_dod250_level(handle, x);
+
+    set_dist_type(handle, DIST_TYPE_RODENT);
+    for (x=0; x<=99; x++)
+        set_rodent_dist(handle, x);
+
+    for (x=0; x<=99; x++)
+        set_rodent_filter(handle, x);
+
+    for (x=0; x<=99; x++)
+        set_rodent_level(handle, x);
+
+    set_dist_type(handle, DIST_TYPE_MX);
+    for (x=0; x<=99; x++)
+        set_mx_dist(handle, x);
+
+    for (x=0; x<=99; x++)
+        set_mx_output(handle, x);
+
+    set_dist_type(handle, DIST_TYPE_DS);
+    for (x=0; x<=99; x++)
+        set_ds_gain(handle, x);
+
+    for (x=0; x<=99; x++)
+        set_ds_tone(handle, x);
+
+    for (x=0; x<=99; x++)
+        set_ds_level(handle, x);
+
+    for (x=0; x<=60; x++)
+        switch_user_preset(handle, x);
+
+    for (x=0; x<=60; x++)
+        switch_system_preset(handle, x);
+
+    set_pickup_on_off(handle, TRUE);
+    set_pickup_on_off(handle, FALSE);
+}
+
 int main(int argc, char **argv) {
     gtk_init(&argc, &argv);
 
@@ -1274,18 +874,6 @@ int main(int argc, char **argv) {
 
                 result = usb_claim_interface(handle, 0);
                 if (result == 0) printf ("claim resulted with %d\n", result);
-
-                /*
-                set_wah_type(handle, WAH_TYPE_CRY);
-                sleep(1);
-                set_wah_type(handle, WAH_TYPE_FULLRANGE);
-                sleep(1);
-                set_wah_type(handle, WAH_TYPE_CLYDE);
-                sleep(1);
-                set_comp_type(handle, COMP_TYPE_DIGI);
-                sleep(1);
-                set_comp_type(handle, COMP_TYPE_CS);
-                */
 
                 /*int i = usb_bulk_write(handle, 4, presets_system, sizeof(presets_system), TIMEOUT);
                 printf("wrote: %d\n", i);*/
