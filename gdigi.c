@@ -556,6 +556,83 @@ void set_eq_treble(struct usb_dev_handle *handle, int x)
     printf("wrote: %d\n", i);
 }
 
+void set_eq_on_off(struct usb_dev_handle *handle, gboolean val)
+{
+    static char set_eq[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x0C, 0x0C, 0x18, 0x07, 0x00 /* on/off */, 0x00 /* checksum */, 0xF7};
+
+    if (val == FALSE) { /* turn eq off */
+        set_eq[17] = 0;
+    } else { /* turn eq on */
+        set_eq[17] = 1;
+    }
+
+    set_eq[18] = calculate_checksum(set_eq, sizeof(set_eq), 18);
+
+    int i;
+    i = usb_bulk_write(handle, 4, set_eq, sizeof(set_eq), TIMEOUT);
+    printf("wrote: %d\n", i);
+}
+
+enum {
+  NOISEGATE_GATE = 0,
+  NOISEGATE_SWELL
+};
+
+void set_noisegate_type(struct usb_dev_handle *handle, int type)
+{
+    static char set_type[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x28, 0x04, 0x02, 0x40, 0x0C, 0x04, 0x02, 0x03, 0x00 /* type1 */, 0x06, 0x00 /* type2 */, 0xF7, 0x00};
+
+    switch (type) {
+        case NOISEGATE_GATE: set_type[19] = 0; set_type[21] = 0x6A; break;
+        case NOISEGATE_SWELL: set_type[19] = 1; set_type[21] = 0x6B; break;
+        default: break;
+    }
+
+    int i;
+    i = usb_bulk_write(handle, 4, set_type, sizeof(set_type), TIMEOUT);
+    printf("wrote: %d\n", i);
+}
+
+/* available only in Gate mode */
+#define NOISEGATE_GATE_TRESHOLD 0x46
+/* available only in Swell mode */
+#define NOISEGATE_SWELL_SENS    0x47
+/* available in both Gate and Swell modes */
+#define NOISEGATE_ATTACK        0x48
+#define NOISEGATE_RELEASE       0x49
+#define NOISEGATE_ATTN          0x4A
+
+/* x = 0 to 99 */
+void set_gate_option(struct usb_dev_handle *handle, char option, int x)
+{
+    static char set_option[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x02, 0x00 /* option */, 0x0C, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+
+    set_option[14] = option;
+    set_option[17] = x;
+    set_option[18] = calculate_checksum(set_option, sizeof(set_option), 18);
+
+    int i;
+    i = usb_bulk_write(handle, 4, set_option, sizeof(set_option), TIMEOUT);
+    printf("wrote: %d\n", i);
+}
+
+void set_noisegate_on_off(struct usb_dev_handle *handle, gboolean val)
+{
+    static char set_gate[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x02, 0x41, 0x0C, 0x07, 0x00 /* on/off */, 0x00 /* checksum */, 0xF7};
+
+    if (val == FALSE) { /* turn noisegate off */
+        set_gate[17] = 0;
+    } else { /* turn noisegate on */
+        set_gate[17] = 1;
+    }
+
+    set_gate[18] = calculate_checksum(set_gate, sizeof(set_gate), 18);
+
+    int i;
+    i = usb_bulk_write(handle, 4, set_gate, sizeof(set_gate), TIMEOUT);
+    printf("wrote: %d\n", i);
+}
+
 void value_changed_cb(GtkSpinButton *spinbutton, void (*callback)(struct usb_dev_handle*, int))
 {
     int val = gtk_spin_button_get_value_as_int(spinbutton);
@@ -844,6 +921,32 @@ void test_all(struct usb_dev_handle *handle)
         set_eq_mid(handle, x);
     for (x=0; x<=0x18; x++)
         set_eq_treble(handle, x);
+
+    set_eq_on_off(handle, TRUE);
+    set_eq_on_off(handle, FALSE);
+
+    set_noisegate_type(handle, NOISEGATE_GATE);
+    for (x=0; x<=99; x++)
+        set_gate_option(handle, NOISEGATE_GATE_TRESHOLD, x);
+    for (x=0; x<=99; x++)
+        set_gate_option(handle, NOISEGATE_ATTACK, x);
+    for (x=0; x<=99; x++)
+        set_gate_option(handle, NOISEGATE_RELEASE, x);
+    for (x=0; x<=99; x++)
+        set_gate_option(handle, NOISEGATE_ATTN, x);
+
+    set_noisegate_type(handle, NOISEGATE_SWELL);
+    for (x=0; x<=99; x++)
+        set_gate_option(handle, NOISEGATE_SWELL_SENS, x);
+    for (x=0; x<=99; x++)
+        set_gate_option(handle, NOISEGATE_ATTACK, x);
+    for (x=0; x<=99; x++)
+        set_gate_option(handle, NOISEGATE_RELEASE, x);
+    for (x=0; x<=99; x++)
+        set_gate_option(handle, NOISEGATE_ATTN, x);
+
+    set_noisegate_on_off(handle, TRUE);
+    set_noisegate_on_off(handle, FALSE);
 }
 
 int main(int argc, char **argv) {
