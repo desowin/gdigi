@@ -406,219 +406,58 @@ void set_dist_type(struct usb_dev_handle *handle, int type)
     printf("wrote: %d\n", i);
 }
 
-void set_screamer_drive(struct usb_dev_handle* handle, int x)
-{
-    static char set_drive[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x02, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+#define DIST_SCREAMER_DRIVE 0x02
+#define DIST_SCREAMER_TONE  0x03
+#define DIST_SCREAMER_LVL   0x04
+#define DIST_808_OVERDRIVE  0x29
+#define DIST_808_TONE       0x2A
+#define DIST_808_LVL        0x2B
+#define DIST_GUYOD_DRIVE    0x10
+#define DIST_GUYOD_LVL      0x11
+#define DIST_DOD250_GAIN    0x0B
+#define DIST_DOD250_LVL     0x0C
+#define DIST_RODENT_DIST    0x05
+#define DIST_RODENT_FILTER  0x06
+#define DIST_RODENT_LVL     0x07
+#define DIST_MX_DIST        0x24
+#define DIST_MX_OUTPUT      0x25
+#define DIST_DS_GAIN        0x08
+#define DIST_DS_TONE        0x09
+#define DIST_DS_LVL         0x0A
+#define DIST_GRUNGE_GRUNGE  0x16
+#define DIST_GRUNGE_FACE    0x18
+#define DIST_GRUNGE_LOUD    0x19
+#define DIST_GRUNGE_BUTT    0x17
+#define DIST_ZONE_GAIN      0x1C
+#define DIST_ZONE_LOW       0x1F
+#define DIST_ZONE_MID_LVL   0x1E
+#define DIST_ZONE_MID_FREQ  0x1D
+#define DIST_ZONE_HIGH      0x20
+#define DIST_ZONE_LEVEL     0x21
+#define DIST_DEATH_LOW      0x2D
+#define DIST_DEATH_MID      0x2C
+#define DIST_DEATH_HIGH     0x2F
+#define DIST_DEATH_LVL      0x2E
+#define DIST_GONK_GONK      0x30
+#define DIST_GONK_SMEAR     0x27
+#define DIST_GONK_SUCK      0x26
+#define DIST_GONK_HEAVE     0x28
+#define DIST_FUZZY_FUZZ     0x1A
+#define DIST_FUZZY_VOLUME   0x1B
+#define DIST_MP_SUSTAIN     0x0D
+#define DIST_MP_TONE        0x0E
+#define DIST_MP_VOLUME      0x0F
 
-    set_drive[17] = x;
-    set_drive[18] = calculate_checksum(set_drive, sizeof(set_drive), 18);
+void set_dist_option(struct usb_dev_handle *handle, char option, int value)
+{
+    static char set_option[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x00 /* option */, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+
+    set_option[14] = option;
+    set_option[17] = value;
+    set_option[18] = calculate_checksum(set_option, sizeof(set_option), 18);
 
     int i;
-    i = usb_bulk_write(handle, 4, set_drive, sizeof(set_drive), TIMEOUT);
-    printf("wrote: %d\n", i);
-}
-
-void set_screamer_tone(struct usb_dev_handle* handle, int x)
-{
-    static char set_tone[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x03, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_tone[17] = x;
-    set_tone[18] = calculate_checksum(set_tone, sizeof(set_tone), 18);
-
-    int i;
-    i = usb_bulk_write(handle, 4, set_tone, sizeof(set_tone), TIMEOUT);
-    printf("wrote: %d\n", i);
-}
-
-void set_screamer_level(struct usb_dev_handle* handle, int x)
-{
-    static char set_level[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x04, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_level[17] = x;
-    set_level[18] = calculate_checksum(set_level, sizeof(set_level), 18);
-
-    int i;
-    i = usb_bulk_write(handle, 4, set_level, sizeof(set_level), TIMEOUT);
-    printf("wrote: %d\n", i);
-}
-
-void set_808_overdrive(struct usb_dev_handle *handle, int x)
-{
-    static char set_overdrive[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x29, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_overdrive[17] = x;
-    set_overdrive[18] = calculate_checksum(set_overdrive, sizeof(set_overdrive), 18);
-
-    int i;
-    i = usb_bulk_write(handle, 4, set_overdrive, sizeof(set_overdrive), TIMEOUT);
-    printf("wrote: %d\n", i);
-}
-
-void set_808_tone(struct usb_dev_handle *handle, int x)
-{
-    static char set_tone[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x2A, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_tone[17] = x;
-    set_tone[18] = calculate_checksum(set_tone, sizeof(set_tone), 18);
-
-    int i;
-    i = usb_bulk_write(handle, 4, set_tone, sizeof(set_tone), TIMEOUT);
-    printf("wrote: %d\n", i);
-}
-
-void set_808_level(struct usb_dev_handle *handle, int x)
-{
-    static char set_level[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x2B, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_level[17] = x;
-    set_level[18] = calculate_checksum(set_level, sizeof(set_level), 18);
-
-    int i;
-    i = usb_bulk_write(handle, 4, set_level, sizeof(set_level), TIMEOUT);
-    printf("wrote: %d\n", i);
-}
-
-void set_guyod_drive(struct usb_dev_handle *handle, int x)
-{
-    static char set_drive[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x10, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_drive[17] = x;
-    set_drive[18] = calculate_checksum(set_drive, sizeof(set_drive), 18);
-
-    int i;
-    i = usb_bulk_write(handle, 4, set_drive, sizeof(set_drive), TIMEOUT);
-    printf("wrote: %d\n", i);
-}
-
-void set_guyod_level(struct usb_dev_handle *handle, int x)
-{
-    static char set_level[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x11, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_level[17] = x;
-    set_level[18] = calculate_checksum(set_level, sizeof(set_level), 18);
-
-    int i;
-    i = usb_bulk_write(handle, 4, set_level, sizeof(set_level), TIMEOUT);
-    printf("wrote: %d\n", i);
-}
-
-void set_dod250_gain(struct usb_dev_handle *handle, int x)
-{
-    static char set_gain[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x0B, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_gain[17] = x;
-    set_gain[18] = calculate_checksum(set_gain, sizeof(set_gain), 18);
-
-    int i;
-    i = usb_bulk_write(handle, 4, set_gain, sizeof(set_gain), TIMEOUT);
-    printf("wrote: %d\n", i);
-}
-
-void set_dod250_level(struct usb_dev_handle *handle, int x)
-{
-    static char set_level[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x0C, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_level[17] = x;
-    set_level[18] = calculate_checksum(set_level, sizeof(set_level), 18);
-
-    int i;
-    i = usb_bulk_write(handle, 4, set_level, sizeof(set_level), TIMEOUT);
-    printf("wrote: %d\n", i);
-}
-
-void set_rodent_dist(struct usb_dev_handle *handle, int x)
-{
-    static char set_dist[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x05, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_dist[17] = x;
-    set_dist[18] = calculate_checksum(set_dist, sizeof(set_dist), 18);
-
-    int i;
-    i = usb_bulk_write(handle, 4, set_dist, sizeof(set_dist), TIMEOUT);
-    printf("wrote: %d\n", i);
-}
-
-void set_rodent_filter(struct usb_dev_handle *handle, int x)
-{
-    static char set_filter[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x06, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_filter[17] = x;
-    set_filter[18] = calculate_checksum(set_filter, sizeof(set_filter), 18);
-
-    int i;
-    i = usb_bulk_write(handle, 4, set_filter, sizeof(set_filter), TIMEOUT);
-    printf("wrote: %d\n", i);
-}
-
-void set_rodent_level(struct usb_dev_handle *handle, int x)
-{
-    static char set_level[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x07, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_level[17] = x;
-    set_level[18] = calculate_checksum(set_level, sizeof(set_level), 18);
-
-    int i;
-    i = usb_bulk_write(handle, 4, set_level, sizeof(set_level), TIMEOUT);
-    printf("wrote: %d\n", i);
-}
-
-void set_mx_dist(struct usb_dev_handle *handle, int x)
-{
-    static char set_dist[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x24, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_dist[17] = x;
-    set_dist[18] = calculate_checksum(set_dist, sizeof(set_dist), 18);
-
-    int i;
-    i = usb_bulk_write(handle, 4, set_dist, sizeof(set_dist), TIMEOUT);
-    printf("wrote: %d\n", i);
-}
-
-void set_mx_output(struct usb_dev_handle *handle, int x)
-{
-    static char set_output[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x25, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_output[17] = x;
-    set_output[18] = calculate_checksum(set_output, sizeof(set_output), 18);
-
-    int i;
-    i = usb_bulk_write(handle, 4, set_output, sizeof(set_output), TIMEOUT);
-    printf("wrote: %d\n", i);
-}
-
-void set_ds_gain(struct usb_dev_handle *handle, int x)
-{
-    static char set_gain[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x08, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_gain[17] = x;
-    set_gain[18] = calculate_checksum(set_gain, sizeof(set_gain), 18);
-
-    int i;
-    i = usb_bulk_write(handle, 4, set_gain, sizeof(set_gain), TIMEOUT);
-    printf("wrote: %d\n", i);
-}
-
-void set_ds_tone(struct usb_dev_handle *handle, int x)
-{
-    static char set_tone[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x09, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_tone[17] = x;
-    set_tone[18] = calculate_checksum(set_tone, sizeof(set_tone), 18);
-
-    int i;
-    i = usb_bulk_write(handle, 4, set_tone, sizeof(set_tone), TIMEOUT);
-    printf("wrote: %d\n", i);
-}
-
-void set_ds_level(struct usb_dev_handle *handle, int x)
-{
-    static char set_level[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x0A, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_level[17] = x;
-    set_level[18] = calculate_checksum(set_level, sizeof(set_level), 18);
-
-    int i;
-    i = usb_bulk_write(handle, 4, set_level, sizeof(set_level), TIMEOUT);
+    i = usb_bulk_write(handle, 4, set_option, sizeof(set_option), TIMEOUT);
     printf("wrote: %d\n", i);
 }
 
@@ -778,64 +617,111 @@ void test_all(struct usb_dev_handle *handle)
 
     set_dist_type(handle, DIST_TYPE_SCREAMER);
     for (x=0; x<=99; x++)
-        set_screamer_drive(handle, x);
-
+        set_dist_option(handle, DIST_SCREAMER_DRIVE, x);
     for (x=0; x<=99; x++)
-        set_screamer_tone(handle, x);
-
+        set_dist_option(handle, DIST_SCREAMER_TONE, x);
     for (x=0; x<=99; x++)
-        set_screamer_level(handle, x);
+        set_dist_option(handle, DIST_SCREAMER_LVL, x);
 
     set_dist_type(handle, DIST_TYPE_808);
     for (x=0; x<=99; x++)
-        set_808_overdrive(handle, x);
-
+        set_dist_option(handle, DIST_808_OVERDRIVE, x);
     for (x=0; x<=99; x++)
-        set_808_tone(handle, x);
-
+        set_dist_option(handle, DIST_808_TONE, x);
     for (x=0; x<=99; x++)
-        set_808_level(handle, x);
+        set_dist_option(handle, DIST_808_LVL, x);
 
     set_dist_type(handle, DIST_TYPE_GUYOD);
     for (x=0; x<=99; x++)
-        set_guyod_drive(handle, x);
-
+        set_dist_option(handle, DIST_GUYOD_DRIVE, x);
     for (x=0; x<=99; x++)
-        set_guyod_level(handle, x);
+        set_dist_option(handle, DIST_GUYOD_LVL, x);
 
     set_dist_type(handle, DIST_TYPE_DOD250);
     for (x=0; x<=99; x++)
-        set_dod250_gain(handle, x);
-
+        set_dist_option(handle, DIST_DOD250_GAIN, x);
     for (x=0; x<=99; x++)
-        set_dod250_level(handle, x);
+        set_dist_option(handle, DIST_DOD250_LVL, x);
 
     set_dist_type(handle, DIST_TYPE_RODENT);
     for (x=0; x<=99; x++)
-        set_rodent_dist(handle, x);
-
+        set_dist_option(handle, DIST_RODENT_DIST, x);
     for (x=0; x<=99; x++)
-        set_rodent_filter(handle, x);
-
+        set_dist_option(handle, DIST_RODENT_FILTER, x);
     for (x=0; x<=99; x++)
-        set_rodent_level(handle, x);
+        set_dist_option(handle, DIST_RODENT_LVL, x);
 
     set_dist_type(handle, DIST_TYPE_MX);
     for (x=0; x<=99; x++)
-        set_mx_dist(handle, x);
-
+        set_dist_option(handle, DIST_MX_DIST, x);
     for (x=0; x<=99; x++)
-        set_mx_output(handle, x);
+        set_dist_option(handle, DIST_MX_OUTPUT, x);
 
     set_dist_type(handle, DIST_TYPE_DS);
     for (x=0; x<=99; x++)
-        set_ds_gain(handle, x);
-
+        set_dist_option(handle, DIST_DS_GAIN, x);
     for (x=0; x<=99; x++)
-        set_ds_tone(handle, x);
-
+        set_dist_option(handle, DIST_DS_TONE, x);
     for (x=0; x<=99; x++)
-        set_ds_level(handle, x);
+        set_dist_option(handle, DIST_DS_LVL, x);
+
+    set_dist_type(handle, DIST_TYPE_GRUNGE);
+    for (x=0; x<=99; x++)
+        set_dist_option(handle, DIST_GRUNGE_GRUNGE, x);
+    for (x=0; x<=99; x++)
+        set_dist_option(handle, DIST_GRUNGE_FACE, x);
+    for (x=0; x<=99; x++)
+        set_dist_option(handle, DIST_GRUNGE_LOUD, x);
+    for (x=0; x<=99; x++)
+        set_dist_option(handle, DIST_GRUNGE_BUTT, x);
+
+    set_dist_type(handle, DIST_TYPE_ZONE);
+    for (x=0; x<=99; x++)
+        set_dist_option(handle, DIST_ZONE_GAIN, x);
+    for (x=0; x<=99; x++)
+        set_dist_option(handle, DIST_ZONE_LOW, x);
+    for (x=0; x<=99; x++)
+        set_dist_option(handle, DIST_ZONE_MID_LVL, x);
+    for (x=0; x<=99; x++)
+        set_dist_option(handle, DIST_ZONE_MID_FREQ, x);
+    for (x=0; x<=99; x++)
+        set_dist_option(handle, DIST_ZONE_HIGH, x);
+    for (x=0; x<=99; x++)
+        set_dist_option(handle, DIST_ZONE_LEVEL, x);
+
+    set_dist_type(handle, DIST_TYPE_DEATH);
+    for (x=0; x<=99; x++)
+        set_dist_option(handle, DIST_DEATH_LOW, x);
+    for (x=0; x<=99; x++)
+        set_dist_option(handle, DIST_DEATH_MID, x);
+    for (x=0; x<=99; x++)
+        set_dist_option(handle, DIST_DEATH_HIGH, x);
+    for (x=0; x<=99; x++)
+        set_dist_option(handle, DIST_DEATH_LVL, x);
+
+    set_dist_type(handle, DIST_TYPE_GONK);
+    for (x=0; x<=99; x++)
+        set_dist_option(handle, DIST_GONK_GONK, x);
+    for (x=0; x<=99; x++)
+        set_dist_option(handle, DIST_GONK_SMEAR, x);
+    for (x=0; x<=99; x++)
+        set_dist_option(handle, DIST_GONK_SUCK, x);
+    for (x=0; x<=99; x++)
+        set_dist_option(handle, DIST_GONK_HEAVE, x);
+
+    set_dist_type(handle, DIST_TYPE_FUZZY);
+    for (x=0; x<=99; x++)
+        set_dist_option(handle, DIST_FUZZY_FUZZ, x);
+    for (x=0; x<=99; x++)
+        set_dist_option(handle, DIST_FUZZY_VOLUME, x);
+
+    set_dist_type(handle, DIST_TYPE_MP);
+    for (x=0; x<=99; x++)
+        set_dist_option(handle, DIST_MP_SUSTAIN, x);
+    for (x=0; x<=99; x++)
+        set_dist_option(handle, DIST_MP_TONE, x);
+    for (x=0; x<=99; x++)
+        set_dist_option(handle, DIST_MP_VOLUME, x);
 
     for (x=0; x<=60; x++)
         switch_user_preset(handle, x);
