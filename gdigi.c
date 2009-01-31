@@ -461,6 +461,101 @@ void set_dist_option(struct usb_dev_handle *handle, char option, int value)
     printf("wrote: %d\n", i);
 }
 
+void set_dist_on_off(struct usb_dev_handle *handle, gboolean val)
+{
+    static char set_dist[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x01, 0x06, 0x07, 0x00 /* on/off */, 0x00 /* checksum */, 0xF7};
+
+    if (val == FALSE) { /* turn dist off */
+        set_dist[17] = 0;
+    } else { /* turn dist on */
+        set_dist[17] = 1;
+    }
+
+    set_dist[18] = calculate_checksum(set_dist, sizeof(set_dist), 18);
+
+    int i;
+    i = usb_bulk_write(handle, 4, set_dist, sizeof(set_dist), TIMEOUT);
+    printf("wrote: %d\n", i);
+}
+
+/* level = 0 to 99 */
+void set_preset_level(struct usb_dev_handle *handle, int level)
+{
+    static char set_level[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x00, 0x04, 0x0A, 0x42, 0x12, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+
+    set_level[17] = level;
+    set_level[18] = calculate_checksum(set_level, sizeof(set_level), 18);
+
+    int i;
+    i = usb_bulk_write(handle, 4, set_level, sizeof(set_level), TIMEOUT);
+    printf("wrote: %d\n", i);
+}
+
+/* x = 0 to 99 */
+void set_eq_gain(struct usb_dev_handle *handle, int x)
+{
+    static char set_gain[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x41, 0x08, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+
+    set_gain[17] = x;
+    set_gain[18] = calculate_checksum(set_gain, sizeof(set_gain), 18);
+
+    int i;
+    i = usb_bulk_write(handle, 4, set_gain, sizeof(set_gain), TIMEOUT);
+    printf("wrote: %d\n", i);
+}
+
+/* x = 0 to 99 */
+void set_eq_level(struct usb_dev_handle *handle, int x)
+{
+    static char set_level[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x42, 0x08, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+
+    set_level[17] = x;
+    set_level[18] = calculate_checksum(set_level, sizeof(set_level), 18);
+
+    int i;
+    i = usb_bulk_write(handle, 4, set_level, sizeof(set_level), TIMEOUT);
+    printf("wrote: %d\n", i);
+}
+
+/* x = 0x00 (-12dB) to 0x18 (12dB) */
+void set_eq_bass(struct usb_dev_handle *handle, int x)
+{
+    static char set_bass[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x0C, 0x03, 0x18, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+
+    set_bass[17] = x;
+    set_bass[18] = calculate_checksum(set_bass, sizeof(set_bass), 18);
+
+    int i;
+    i = usb_bulk_write(handle, 4, set_bass, sizeof(set_bass), TIMEOUT);
+    printf("wrote: %d\n", i);
+}
+
+/* x = 0x00 (-12dB) to 0x18 (12dB) */
+void set_eq_mid(struct usb_dev_handle *handle, int x)
+{
+    static char set_mid[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x0C, 0x04, 0x18, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+
+    set_mid[17] = x;
+    set_mid[18] = calculate_checksum(set_mid, sizeof(set_mid), 18);
+
+    int i;
+    i = usb_bulk_write(handle, 4, set_mid, sizeof(set_mid), TIMEOUT);
+    printf("wrote: %d\n", i);
+}
+
+/* x = 0x00 (-12dB) to 0x18 (12dB) */
+void set_eq_treble(struct usb_dev_handle *handle, int x)
+{
+    static char set_treble[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x0C, 0x05, 0x18, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+
+    set_treble[17] = x;
+    set_treble[18] = calculate_checksum(set_treble, sizeof(set_treble), 18);
+
+    int i;
+    i = usb_bulk_write(handle, 4, set_treble, sizeof(set_treble), TIMEOUT);
+    printf("wrote: %d\n", i);
+}
+
 void value_changed_cb(GtkSpinButton *spinbutton, void (*callback)(struct usb_dev_handle*, int))
 {
     int val = gtk_spin_button_get_value_as_int(spinbutton);
@@ -615,6 +710,9 @@ void test_all(struct usb_dev_handle *handle)
     for (x=0; x<=99; x++)
         set_comp_level(handle, x);
 
+    set_dist_on_off(handle, TRUE);
+    set_dist_on_off(handle, FALSE);
+
     set_dist_type(handle, DIST_TYPE_SCREAMER);
     for (x=0; x<=99; x++)
         set_dist_option(handle, DIST_SCREAMER_DRIVE, x);
@@ -731,6 +829,21 @@ void test_all(struct usb_dev_handle *handle)
 
     set_pickup_on_off(handle, TRUE);
     set_pickup_on_off(handle, FALSE);
+
+    for (x=0; x<=99; x++)
+        set_preset_level(handle, x);
+
+    for (x=0; x<=99; x++)
+        set_eq_gain(handle, x);
+    for (x=0; x<=99; x++)
+        set_eq_level(handle, x);
+
+    for (x=0; x<=0x18; x++)
+        set_eq_bass(handle, x);
+    for (x=0; x<=0x18; x++)
+        set_eq_mid(handle, x);
+    for (x=0; x<=0x18; x++)
+        set_eq_treble(handle, x);
 }
 
 int main(int argc, char **argv) {
