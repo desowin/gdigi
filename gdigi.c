@@ -633,6 +633,345 @@ void set_noisegate_on_off(struct usb_dev_handle *handle, gboolean val)
     printf("wrote: %d\n", i);
 }
 
+#define CE_CHORUS_SPEED 0x45
+#define CE_CHORUS_DEPTH 0x46
+#define DUAL_CHORUS_SPEED 0x45
+#define DUAL_CHORUS_DEPTH 0x46
+#define DUAL_CHORUS_LEVEL 0x44
+#define DUAL_CHORUS_WAVE 0x48
+/* DUAL_CHORUS_WAVE, MULTI_CHORUS_WAVE, FLANGER_WAVE, PHASER_WAVE and VIBROPAN_WAVE valid values */
+#define WAVE_TRI    0x00
+#define WAVE_SINE   0x01
+#define WAVE_SQUARE 0x02
+
+#define MULTI_CHORUS_SPEED 0x45
+#define MULTI_CHORUS_DEPTH 0x46
+#define MULTI_CHORUS_WAVE  0x48
+#define MULTI_CHORUS_LEVEL 0x44
+
+#define FLANGER_SPEED 0x06
+#define FLANGER_DEPTH 0x07
+#define FLANGER_REGEN 0x08
+#define FLANGER_LEVEL 0x05
+#define FLANGER_WAVE 0x09
+
+#define MXR_FLANGER_SPEED 0x06
+#define MXR_FLANGER_WIDTH 0x12
+#define MXR_FLANGER_REGEN 0x08
+#define MXR_FLANGER_MANUAL 0x15
+
+#define PHASER_SPEED 0x42
+#define PHASER_DEPTH 0x43
+#define PHASER_REGEN 0x46
+#define PHASER_LEVEL 0x45
+#define PHASER_WAVE 0x47
+
+#define VIBRATO_SPEED 0x04
+#define VIBRATO_DEPTH 0x05
+
+#define ROTARY_SPEED 0x42
+#define ROTARY_INTENSITY 0x44
+#define ROTARY_DOPPLER 0x46
+#define ROTARY_CROSSOVER 0x47
+
+#define VIBROPAN_SPEED 0x22
+#define VIBROPAN_DEPTH 0x23
+#define VIBROPAN_VIBRA 0x24
+#define VIBROPAN_WAVE 0x25
+
+#define TREMOLO_SPEED 0x04
+#define TREMOLO_DEPTH 0x03
+#define TREMOLO_WAVE 0x05
+
+#define PANNER_SPEED 0x44
+#define PANNER_DEPTH 0x43
+#define PANNER_WAVE 0x45
+
+#define ENVELOPE_SENSITIVITY 0x46
+#define ENVELOPE_RANGE 0x45
+
+#define AUTOYA_SPEED 0x46
+#define AUTOYA_INTENSITY 0x4A
+#define AUTOYA_RANGE 0x4B
+
+#define YAYA_PEDAL 0x02
+#define YAYA_INTENSITY 0x09
+#define YAYA_RANGE 0x0A
+
+#define STEP_FILTER_SPEED 0x42
+#define STEP_FILTER_INTENSITY 0x43
+
+#define WHAMMY_AMOUNT 0x05
+#define WHAMMY_PEDAL 0x03
+#define WHAMMY_MIX 0x04
+/* WHAMMY_AMOUNT valid values */
+#define WHAMMY_OCT_UP 0x00
+#define WHAMMY_2OCT_UP 0x01
+#define WHAMMY_2ND_DN 0x02
+#define WHAMMY_RV_2ND 0x03
+#define WHAMMY_4TH_DN 0x04
+#define WHAMMY_OCT_DN 0x05
+#define WHAMMY_2OCT_DN 0x06
+#define WHAMMY_DIV_BMB 0x07
+#define WHAMMY_M3_MA 0x08
+#define WHAMMY_2ND_MA3 0x09
+#define WHAMMY_3RD_4TH 0x0A
+#define WHAMMY_4TH_5TH 0x0B
+#define WHAMMY_5TH_OCT 0x0C
+#define WHAMMY_HOCT_UP 0x0D
+#define WHAMMY_HOCT_DN 0x0E
+#define WHAMMY_OCT_UD 0x0F
+
+#define PITCH_AMOUNT 0x42
+#define PITCH_MIX 0x51
+
+#define DETUNE_AMOUNT 0x04
+#define DETUNE_LEVEL 0x03
+
+#define IPS_SHIFT_AMOUNT 0x42
+#define IPS_KEY 0x44
+#define IPS_SCALE 0x43
+#define IPS_LEVEL 0x45
+
+/* IPS_SHIFT_AMOUNT valid values */
+#define IPS_OCT_D 0x00
+#define IPS_7TH_DN 0x01
+#define IPS_6TH_DN 0x02
+#define IPS_5TH_DN 0x03
+#define IPS_4TH_DN 0x04
+#define IPS_3RD_DN 0x05
+#define IPS_2ND_DN 0x06
+#define IPS_2ND_UP 0x07
+#define IPS_3RD_UP 0x08
+#define IPS_4TH_UP 0x09
+#define IPS_5TH_UP 0x0A
+#define IPS_6TH_UP 0x0B
+#define IPS_7TH_UP 0x0C
+#define IPS_OCT_U 0x0D
+
+/* IPS_KEY valid values */
+#define IPS_E 0x00
+#define IPS_F 0x01
+#define IPS_GB 0x02
+#define IPS_G 0x03
+#define IPS_AB 0x04
+#define IPS_A 0x05
+#define IPS_BB 0x06
+#define IPS_B 0x07
+#define IPS_C 0x08
+#define IPS_DD 0x09
+#define IPS_D 0x0A
+#define IPS_EB 0x0B
+
+/* IPS_SCALE valid values */
+#define IPS_MAJOR 0x00
+#define IPS_MINOR 0x01
+#define IPS_DORIA 0x02
+#define IPS_MIXLYD 0x03
+#define IPS_LYDIAN 0x04
+#define IPS_HMINO 0x05
+
+void set_chorusfx_option(struct usb_dev_handle *handle, char option, int x)
+{
+    static char set_option[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x00, 0x04, 0x03, 0x00 /* option */, 0x0E, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+
+    set_option[14] = option;
+    set_option[17] = x;
+    set_option[18] = calculate_checksum(set_option, sizeof(set_option), 18);
+
+    int i;
+    i = usb_bulk_write(handle, 4, set_option, sizeof(set_option), TIMEOUT);
+    printf("wrote: %d\n", i);
+}
+
+void set_flanger_option(struct usb_dev_handle *handle, char option, int x)
+{
+    static char set_option[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x03, 0x00 /* option */, 0x0E, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+
+    set_option[14] = option;
+    set_option[17] = x;
+    set_option[18] = calculate_checksum(set_option, sizeof(set_option), 18);
+
+    int i;
+    i = usb_bulk_write(handle, 4, set_option, sizeof(set_option), TIMEOUT);
+    printf("wrote: %d\n", i);
+}
+
+void set_vibrato_option(struct usb_dev_handle *handle, char option, int x)
+{
+    static char set_option[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x00, 0x04, 0x05, 0x00 /* option */, 0x0E, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+
+    set_option[14] = option;
+    set_option[17] = x;
+    set_option[18] = calculate_checksum(set_option, sizeof(set_option), 18);
+
+    int i;
+    i = usb_bulk_write(handle, 4, set_option, sizeof(set_option), TIMEOUT);
+    printf("wrote: %d\n", i);
+}
+
+void set_tremolo_option(struct usb_dev_handle *handle, char option, int x)
+{
+    static char set_option[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x04, 0x00 /* option */, 0x0E, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+
+    set_option[14] = option;
+    set_option[17] = x;
+    set_option[18] = calculate_checksum(set_option, sizeof(set_option), 18);
+
+    int i;
+    i = usb_bulk_write(handle, 4, set_option, sizeof(set_option), TIMEOUT);
+    printf("wrote: %d\n", i);
+}
+
+void set_envelope_option(struct usb_dev_handle *handle, char option, int x)
+{
+    static char set_option[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x00, 0x04, 0x06, 0x00 /* option */, 0x0E, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+
+    set_option[14] = option;
+    set_option[17] = x;
+    set_option[18] = calculate_checksum(set_option, sizeof(set_option), 18);
+
+    int i;
+    i = usb_bulk_write(handle, 4, set_option, sizeof(set_option), TIMEOUT);
+    printf("wrote: %d\n", i);
+}
+
+void set_ya_option(struct usb_dev_handle *handle, char option, int x)
+{
+    static char set_option[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x05, 0x00 /* option */, 0x0E, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+
+    set_option[14] = option;
+    set_option[17] = x;
+    set_option[18] = calculate_checksum(set_option, sizeof(set_option), 18);
+
+    int i;
+    i = usb_bulk_write(handle, 4, set_option, sizeof(set_option), TIMEOUT);
+    printf("wrote: %d\n", i);
+}
+
+void set_filter_option(struct usb_dev_handle *handle, char option, int x)
+{
+    static char set_option[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x0B, 0x00 /* option */, 0x0E, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+
+    set_option[14] = option;
+    set_option[17] = x;
+    set_option[18] = calculate_checksum(set_option, sizeof(set_option), 18);
+
+    int i;
+    i = usb_bulk_write(handle, 4, set_option, sizeof(set_option), TIMEOUT);
+    printf("wrote: %d\n", i);
+}
+
+void set_whammy_option(struct usb_dev_handle *handle, char option, int x)
+{
+    static char set_option[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x00, 0x04, 0x07, 0x00 /* option */, 0x0E, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+
+    set_option[14] = option;
+    set_option[17] = x;
+    set_option[18] = calculate_checksum(set_option, sizeof(set_option), 18);
+
+    int i;
+    i = usb_bulk_write(handle, 4, set_option, sizeof(set_option), TIMEOUT);
+    printf("wrote: %d\n", i);
+}
+
+void set_pitch_option(struct usb_dev_handle *handle, char option, int x)
+{
+    static char set_option[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x06, 0x00 /* option */, 0x0E, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+
+    set_option[14] = option;
+    set_option[17] = x;
+    set_option[18] = calculate_checksum(set_option, sizeof(set_option), 18);
+
+    int i;
+    i = usb_bulk_write(handle, 4, set_option, sizeof(set_option), TIMEOUT);
+    printf("wrote: %d\n", i);
+}
+
+void set_ips_option(struct usb_dev_handle *handle, char option, int x)
+{
+    static char set_option[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x0A, 0x00 /* option */, 0x0E, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+
+    set_option[14] = option;
+    set_option[17] = x;
+    set_option[18] = calculate_checksum(set_option, sizeof(set_option), 18);
+
+    int i;
+    i = usb_bulk_write(handle, 4, set_option, sizeof(set_option), TIMEOUT);
+    printf("wrote: %d\n", i);
+}
+
+enum {
+  CHORUS_TYPE_CE = 0,
+  CHORUS_TYPE_DUAL,
+  CHORUS_TYPE_MULTI,
+  CHORUS_TYPE_FLANGER,
+  CHORUS_TYPE_MXR_FLANGER,
+  CHORUS_TYPE_PHASER,
+  CHORUS_TYPE_VIBRATO,
+  CHORUS_TYPE_ROTARY,
+  CHORUS_TYPE_VIBROPAN,
+  CHORUS_TYPE_TREMOLO,
+  CHORUS_TYPE_PANNER,
+  CHORUS_TYPE_ENVELOPE,
+  CHORUS_TYPE_AUTOYA,
+  CHORUS_TYPE_YAYA,
+  CHORUS_TYPE_STEP_FILTER,
+  CHORUS_TYPE_WHAMMY,
+  CHORUS_TYPE_PITCH_SHIFT,
+  CHORUS_TYPE_DETUNE,
+  CHORUS_TYPE_IPS
+};
+
+void set_chorusfx_type(struct usb_dev_handle *handle, int type)
+{
+    static char set_type[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x00 /* type */, 0x04, 0x03, 0x00, 0x0E, 0x04, 0x02, 0x00 /* type */, 0x00 /* type1 */, 0x06, 0x00 /* type2 */, 0xF7, 0x00};
+
+    switch (type) {
+        case CHORUS_TYPE_CE: set_type[11] = 0x08; set_type[19] = 0x7B; set_type[18] = 0x03; set_type[21] = 0x72; break;
+        case CHORUS_TYPE_DUAL: set_type[11] = 0x08; set_type[19] = 0x79; set_type[18] = 0x03; set_type[21] = 0x70; break;
+        case CHORUS_TYPE_MULTI: set_type[11] = 0x08; set_type[19] = 0x7A; set_type[18] = 0x03; set_type[21] = 0x73; break;
+        case CHORUS_TYPE_FLANGER: set_type[11] = 0x08; set_type[19] = 0x7D; set_type[18] = 0x03; set_type[21] = 0x74; break;
+        case CHORUS_TYPE_MXR_FLANGER: set_type[11] = 0x08; set_type[19] = 0x7F; set_type[18] = 0x03; set_type[21] = 0x76; break;
+        case CHORUS_TYPE_PHASER: set_type[11] = 0x0A; set_type[19] = 0x01; set_type[18] = 0x03; set_type[21] = 0x0A; break;
+        case CHORUS_TYPE_VIBRATO: set_type[11] = 0x08; set_type[19] = 0x60; set_type[18] = 0x03; set_type[21] = 0x69; break;
+        case CHORUS_TYPE_ROTARY: set_type[11] = 0x08; set_type[19] = 0x61; set_type[18] = 0x03; set_type[21] = 0x68; break;
+        case CHORUS_TYPE_VIBROPAN: set_type[11] = 0x0A; set_type[19] = 0x0F; set_type[18] = 0x03; set_type[21] = 0x04; break;
+        case CHORUS_TYPE_TREMOLO: set_type[11] = 0x08; set_type[19] = 0x5E; set_type[18] = 0x03; set_type[21] = 0x57; break;
+        case CHORUS_TYPE_PANNER: set_type[11] = 0x08; set_type[19] = 0x5F; set_type[18] = 0x03; set_type[21] = 0x56; break;
+        case CHORUS_TYPE_ENVELOPE: set_type[11] = 0x0A; set_type[19] = 0x0A; set_type[18] = 0x03; set_type[21] = 0x01; break;
+        case CHORUS_TYPE_AUTOYA: set_type[11] = 0x0A; set_type[19] = 0x0B; set_type[18] = 0x03; set_type[21] = 0x00; break;
+        case CHORUS_TYPE_YAYA: set_type[11] = 0x0A; set_type[19] = 0x0C; set_type[18] = 0x03; set_type[21] = 0x07; break;
+        case CHORUS_TYPE_STEP_FILTER: set_type[11] = 0x0A; set_type[19] = 0x0D; set_type[18] = 0x03; set_type[21] = 0x06; break;
+        case CHORUS_TYPE_WHAMMY: set_type[11] = 0x08; set_type[19] = 0x40; set_type[18] = 0x05; set_type[21] = 0x4F; break;
+        case CHORUS_TYPE_PITCH_SHIFT: set_type[11] = 0x08; set_type[19] = 0x43; set_type[18] = 0x05; set_type[21] = 0x4C; break;
+        case CHORUS_TYPE_DETUNE: set_type[11] = 0x08; set_type[19] = 0x42; set_type[18] = 0x05; set_type[21] = 0x4D; break;
+        case CHORUS_TYPE_IPS: set_type[11] = 0x08; set_type[19] = 0x41; set_type[18] = 0x05; set_type[21] = 0x4E; break;
+        default: break;
+    }
+
+    int i;
+    i = usb_bulk_write(handle, 4, set_type, sizeof(set_type), TIMEOUT);
+    printf("wrote: %d\n", i);
+}
+
+void set_chorusfx_on_off(struct usb_dev_handle *handle, gboolean val)
+{
+    static char set_chorus[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x00, 0x04, 0x03, 0x01, 0x0E, 0x07, 0x00 /* on/off */, 0x00 /* checksum */, 0xF7};
+
+    if (val == FALSE) { /* turn chorusfx off */
+        set_chorus[17] = 0;
+    } else { /* turn chorusfx on */
+        set_chorus[17] = 1;
+    }
+
+    set_chorus[18] = calculate_checksum(set_chorus, sizeof(set_chorus), 18);
+
+    int i;
+    i = usb_bulk_write(handle, 4, set_chorus, sizeof(set_chorus), TIMEOUT);
+    printf("wrote: %d\n", i);
+}
+
 void value_changed_cb(GtkSpinButton *spinbutton, void (*callback)(struct usb_dev_handle*, int))
 {
     int val = gtk_spin_button_get_value_as_int(spinbutton);
@@ -947,6 +1286,216 @@ void test_all(struct usb_dev_handle *handle)
 
     set_noisegate_on_off(handle, TRUE);
     set_noisegate_on_off(handle, FALSE);
+
+    set_chorusfx_type(handle, CHORUS_TYPE_CE);
+    for (x=0; x<=99; x++)
+        set_chorusfx_option(handle, CE_CHORUS_SPEED, x);
+    for (x=0; x<=99; x++)
+        set_chorusfx_option(handle, CE_CHORUS_DEPTH, x);
+
+    set_chorusfx_type(handle, CHORUS_TYPE_DUAL);
+    for (x=0; x<=99; x++)
+        set_chorusfx_option(handle, DUAL_CHORUS_SPEED, x);
+    for (x=0; x<=99; x++)
+        set_chorusfx_option(handle, DUAL_CHORUS_DEPTH, x);
+    for (x=0; x<=99; x++)
+        set_chorusfx_option(handle, DUAL_CHORUS_LEVEL, x);
+    set_chorusfx_option(handle, DUAL_CHORUS_WAVE, WAVE_TRI);
+    set_chorusfx_option(handle, DUAL_CHORUS_WAVE, WAVE_SINE);
+    set_chorusfx_option(handle, DUAL_CHORUS_WAVE, WAVE_SQUARE);
+
+    set_chorusfx_type(handle, CHORUS_TYPE_MULTI);
+    for (x=0; x<=99; x++)
+        set_chorusfx_option(handle, MULTI_CHORUS_SPEED, x);
+    for (x=0; x<=99; x++)
+        set_chorusfx_option(handle, MULTI_CHORUS_DEPTH, x);
+    for (x=0; x<=99; x++)
+        set_chorusfx_option(handle, MULTI_CHORUS_LEVEL, x);
+    set_chorusfx_option(handle, MULTI_CHORUS_WAVE, WAVE_TRI);
+    set_chorusfx_option(handle, MULTI_CHORUS_WAVE, WAVE_SINE);
+    set_chorusfx_option(handle, MULTI_CHORUS_WAVE, WAVE_SQUARE);
+
+    set_chorusfx_type(handle, CHORUS_TYPE_FLANGER);
+    for (x=0; x<=99; x++)
+        set_flanger_option(handle, FLANGER_SPEED, x);
+    for (x=0; x<=99; x++)
+        set_flanger_option(handle, FLANGER_DEPTH, x);
+    for (x=0; x<=99; x++)
+        set_flanger_option(handle, FLANGER_REGEN, x);
+    for (x=0; x<=99; x++)
+        set_flanger_option(handle, FLANGER_LEVEL, x);
+    set_flanger_option(handle, FLANGER_WAVE, WAVE_TRI);
+    set_flanger_option(handle, FLANGER_WAVE, WAVE_SINE);
+    set_flanger_option(handle, FLANGER_WAVE, WAVE_SQUARE);
+
+    set_chorusfx_type(handle, CHORUS_TYPE_MXR_FLANGER);
+    for (x=0; x<=99; x++)
+        set_flanger_option(handle, MXR_FLANGER_SPEED, x);
+    for (x=0; x<=99; x++)
+        set_flanger_option(handle, MXR_FLANGER_WIDTH, x);
+    for (x=0; x<=99; x++)
+        set_flanger_option(handle, MXR_FLANGER_REGEN, x);
+    for (x=0; x<=99; x++)
+        set_flanger_option(handle, MXR_FLANGER_MANUAL, x);
+
+    set_chorusfx_type(handle, CHORUS_TYPE_PHASER);
+    for (x=0; x<=99; x++)
+        set_flanger_option(handle, PHASER_SPEED, x);
+    for (x=0; x<=99; x++)
+        set_flanger_option(handle, PHASER_DEPTH, x);
+    for (x=0; x<=99; x++)
+        set_flanger_option(handle, PHASER_REGEN, x);
+    for (x=0; x<=99; x++)
+        set_flanger_option(handle, PHASER_LEVEL, x);
+    set_flanger_option(handle, PHASER_WAVE, WAVE_TRI);
+    set_flanger_option(handle, PHASER_WAVE, WAVE_SINE);
+    set_flanger_option(handle, PHASER_WAVE, WAVE_SQUARE);
+
+    set_chorusfx_type(handle, CHORUS_TYPE_VIBRATO);
+    for (x=0; x<=99; x++)
+        set_vibrato_option(handle, VIBRATO_SPEED, x);
+    for (x=0; x<=99; x++)
+        set_vibrato_option(handle, VIBRATO_DEPTH, x);
+
+    set_chorusfx_type(handle, CHORUS_TYPE_ROTARY);
+    for (x=0; x<=99; x++)
+        set_vibrato_option(handle, ROTARY_SPEED, x);
+    for (x=0; x<=99; x++)
+        set_vibrato_option(handle, ROTARY_INTENSITY, x);
+    for (x=0; x<=99; x++)
+        set_vibrato_option(handle, ROTARY_DOPPLER, x);
+    for (x=0; x<=99; x++)
+        set_vibrato_option(handle, ROTARY_CROSSOVER, x);
+
+    set_chorusfx_type(handle, CHORUS_TYPE_VIBROPAN);
+    for (x=0; x<=99; x++)
+        set_vibrato_option(handle, VIBROPAN_SPEED, x);
+    for (x=0; x<=99; x++)
+        set_vibrato_option(handle, VIBROPAN_DEPTH, x);
+    for (x=0; x<=99; x++)
+        set_vibrato_option(handle, VIBROPAN_VIBRA, x);
+    set_vibrato_option(handle, VIBROPAN_WAVE, WAVE_TRI);
+    set_vibrato_option(handle, VIBROPAN_WAVE, WAVE_SINE);
+    set_vibrato_option(handle, VIBROPAN_WAVE, WAVE_SQUARE);
+
+    set_chorusfx_type(handle, CHORUS_TYPE_TREMOLO);
+    for (x=0; x<=99; x++)
+        set_tremolo_option(handle, TREMOLO_SPEED, x);
+    for (x=0; x<=99; x++)
+        set_tremolo_option(handle, TREMOLO_DEPTH, x);
+    set_tremolo_option(handle, TREMOLO_WAVE, WAVE_TRI);
+    set_tremolo_option(handle, TREMOLO_WAVE, WAVE_SINE);
+    set_tremolo_option(handle, TREMOLO_WAVE, WAVE_SQUARE);
+
+    set_chorusfx_type(handle, CHORUS_TYPE_PANNER);
+    for (x=0; x<=99; x++)
+        set_tremolo_option(handle, PANNER_SPEED, x);
+    for (x=0; x<=99; x++)
+        set_tremolo_option(handle, PANNER_DEPTH, x);
+    set_tremolo_option(handle, PANNER_WAVE, WAVE_TRI);
+    set_tremolo_option(handle, PANNER_WAVE, WAVE_SINE);
+    set_tremolo_option(handle, PANNER_WAVE, WAVE_SQUARE);
+
+    set_chorusfx_type(handle, CHORUS_TYPE_ENVELOPE);
+    for (x=0; x<=99; x++)
+        set_envelope_option(handle, ENVELOPE_SENSITIVITY, x);
+    for (x=0; x<=99; x++)
+        set_envelope_option(handle, ENVELOPE_RANGE, x);
+
+    set_chorusfx_type(handle, CHORUS_TYPE_AUTOYA);
+    for (x=0; x<=99; x++)
+        set_ya_option(handle, AUTOYA_SPEED, x);
+    for (x=0; x<=99; x++)
+        set_ya_option(handle, AUTOYA_INTENSITY, x);
+    for (x=0; x<=0x31; x++)
+        set_ya_option(handle, AUTOYA_RANGE, x);
+
+    set_chorusfx_type(handle, CHORUS_TYPE_YAYA);
+    for (x=0; x<=99; x++)
+        set_ya_option(handle, YAYA_PEDAL, x);
+    for (x=0; x<=99; x++)
+        set_ya_option(handle, YAYA_INTENSITY, x);
+    for (x=0; x<=0x31; x++)
+        set_ya_option(handle, YAYA_RANGE, x);
+
+    set_chorusfx_type(handle, CHORUS_TYPE_STEP_FILTER);
+    for (x=0; x<=99; x++)
+        set_filter_option(handle, STEP_FILTER_SPEED, x);
+    for (x=0; x<=99; x++)
+        set_filter_option(handle, STEP_FILTER_INTENSITY, x);
+
+    set_chorusfx_type(handle, CHORUS_TYPE_WHAMMY);
+    set_whammy_option(handle, WHAMMY_AMOUNT, WHAMMY_OCT_UP);
+    set_whammy_option(handle, WHAMMY_AMOUNT, WHAMMY_2OCT_UP);
+    set_whammy_option(handle, WHAMMY_AMOUNT, WHAMMY_2ND_DN);
+    set_whammy_option(handle, WHAMMY_AMOUNT, WHAMMY_RV_2ND);
+    set_whammy_option(handle, WHAMMY_AMOUNT, WHAMMY_4TH_DN);
+    set_whammy_option(handle, WHAMMY_AMOUNT, WHAMMY_OCT_DN);
+    set_whammy_option(handle, WHAMMY_AMOUNT, WHAMMY_2OCT_DN);
+    set_whammy_option(handle, WHAMMY_AMOUNT, WHAMMY_DIV_BMB);
+    set_whammy_option(handle, WHAMMY_AMOUNT, WHAMMY_M3_MA);
+    set_whammy_option(handle, WHAMMY_AMOUNT, WHAMMY_2ND_MA3);
+    set_whammy_option(handle, WHAMMY_AMOUNT, WHAMMY_3RD_4TH);
+    set_whammy_option(handle, WHAMMY_AMOUNT, WHAMMY_4TH_5TH);
+    set_whammy_option(handle, WHAMMY_AMOUNT, WHAMMY_5TH_OCT);
+    set_whammy_option(handle, WHAMMY_AMOUNT, WHAMMY_HOCT_UP);
+    set_whammy_option(handle, WHAMMY_AMOUNT, WHAMMY_HOCT_DN);
+    set_whammy_option(handle, WHAMMY_AMOUNT, WHAMMY_OCT_UD);
+    for (x=0; x<=99; x++)
+        set_whammy_option(handle, WHAMMY_PEDAL, x);
+    for (x=0; x<=99; x++)
+        set_whammy_option(handle, WHAMMY_MIX, x);
+
+    set_chorusfx_type(handle, CHORUS_TYPE_PITCH_SHIFT);
+    for (x=0; x<=0x30; x++)
+        set_pitch_option(handle, PITCH_AMOUNT, x);
+    for (x=0; x<=99; x++)
+        set_pitch_option(handle, PITCH_MIX, x);
+
+    set_chorusfx_type(handle, CHORUS_TYPE_DETUNE);
+    for (x=0; x<=0x30; x++)
+        set_pitch_option(handle, DETUNE_AMOUNT, x);
+    for (x=0; x<=99; x++)
+        set_pitch_option(handle, DETUNE_LEVEL, x);
+
+    set_chorusfx_type(handle, CHORUS_TYPE_IPS);
+    set_ips_option(handle, IPS_SHIFT_AMOUNT, IPS_OCT_D);
+    set_ips_option(handle, IPS_SHIFT_AMOUNT, IPS_7TH_DN);
+    set_ips_option(handle, IPS_SHIFT_AMOUNT, IPS_6TH_DN);
+    set_ips_option(handle, IPS_SHIFT_AMOUNT, IPS_5TH_DN);
+    set_ips_option(handle, IPS_SHIFT_AMOUNT, IPS_4TH_DN);
+    set_ips_option(handle, IPS_SHIFT_AMOUNT, IPS_3RD_DN);
+    set_ips_option(handle, IPS_SHIFT_AMOUNT, IPS_2ND_DN);
+    set_ips_option(handle, IPS_SHIFT_AMOUNT, IPS_2ND_UP);
+    set_ips_option(handle, IPS_SHIFT_AMOUNT, IPS_3RD_UP);
+    set_ips_option(handle, IPS_SHIFT_AMOUNT, IPS_4TH_UP);
+    set_ips_option(handle, IPS_SHIFT_AMOUNT, IPS_5TH_UP);
+    set_ips_option(handle, IPS_SHIFT_AMOUNT, IPS_6TH_UP);
+    set_ips_option(handle, IPS_SHIFT_AMOUNT, IPS_7TH_UP);
+    set_ips_option(handle, IPS_SHIFT_AMOUNT, IPS_OCT_U);
+    set_ips_option(handle, IPS_KEY, IPS_E);
+    set_ips_option(handle, IPS_KEY, IPS_F);
+    set_ips_option(handle, IPS_KEY, IPS_GB);
+    set_ips_option(handle, IPS_KEY, IPS_G);
+    set_ips_option(handle, IPS_KEY, IPS_AB);
+    set_ips_option(handle, IPS_KEY, IPS_A);
+    set_ips_option(handle, IPS_KEY, IPS_BB);
+    set_ips_option(handle, IPS_KEY, IPS_B);
+    set_ips_option(handle, IPS_KEY, IPS_C);
+    set_ips_option(handle, IPS_KEY, IPS_DD);
+    set_ips_option(handle, IPS_KEY, IPS_D);
+    set_ips_option(handle, IPS_KEY, IPS_EB);
+    set_ips_option(handle, IPS_SCALE, IPS_MAJOR);
+    set_ips_option(handle, IPS_SCALE, IPS_MINOR);
+    set_ips_option(handle, IPS_SCALE, IPS_DORIA);
+    set_ips_option(handle, IPS_SCALE, IPS_MIXLYD);
+    set_ips_option(handle, IPS_SCALE, IPS_LYDIAN);
+    set_ips_option(handle, IPS_SCALE, IPS_HMINO);
+    for (x=0; x<=99; x++)
+        set_ips_option(handle, IPS_LEVEL, x);
+
+    set_chorusfx_on_off(handle, TRUE);
+    set_chorusfx_on_off(handle, FALSE);
 }
 
 int main(int argc, char **argv) {
