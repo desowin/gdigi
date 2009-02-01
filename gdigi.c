@@ -15,6 +15,7 @@
  */
 
 #include <stdio.h>
+#include <gtk/gtk.h>
 #include "gdigi.h"
 #include "gui.h"
 
@@ -47,6 +48,23 @@ static char magic24[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0
 static char magic8[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x3A, 0x00, 0x04, 0x00, 0x01, 0x77, 0x05, 0xF7, 0x00, 0x00};
 /* X-edit also calls 2 different commands, but those seems to vary each time */
 
+/*
+   calculate checksum
+   array - the command to set over usb
+   length - length of array
+   check - position of checksum byte in array
+*/
+char calculate_checksum(gchar *array, int length, int check)
+{
+    int x;
+    char checksum;
+    checksum = 0;
+    for (x = 0; x<length; x++) {
+        if (x == check) continue;
+        checksum ^= array[x];
+    }
+    return checksum;
+}
 
 int read_device(struct usb_dev_handle *handle, int bytes)
 {
@@ -54,15 +72,15 @@ int read_device(struct usb_dev_handle *handle, int bytes)
     i = usb_bulk_read(handle, 132, buf, bytes, TIMEOUT);
     //printf("Called read %d. Device returned %d bytes\n", bytes, i);
     for (x=0; x<i; x++) {
-       //printf("0x%02x(%c) ", buf[x], buf[x] ? buf[x] : 32);
+       printf("0x%02x(%c) ", (u_char) buf[x], buf[x] ? (u_char) buf[x] : 32);
     }
 
-    //printf("\n");
+    printf("\n");
     if (bytes > 0) return i;
     else return 0;
 }
 
-int check_preset(struct usb_dev_handle *handle)
+void check_preset(struct usb_dev_handle *handle)
 {
     int i;
     i = usb_bulk_write(handle, 4, magic3, sizeof(magic3), TIMEOUT);
@@ -102,24 +120,6 @@ int check_preset(struct usb_dev_handle *handle)
                 printf("Compressor level: %d\nCompressor attack (X-Edit only for DigiComp): %d\n", buf[3], buf[9]);
         }
     } while (i > 0);
-}
-
-/*
-   calculate checksum
-   array - the command to set over usb
-   length - length of array
-   check - position of checksum byte in array
-*/
-char calculate_checksum(gchar *array, int length, int check)
-{
-    int x;
-    char checksum;
-    checksum = 0;
-    for (x = 0; x<length; x++) {
-        if (x == check) continue;
-        checksum ^= array[x];
-    }
-    return checksum;
 }
 
 /* level = 0 to 99 */
@@ -166,11 +166,13 @@ void set_wah_type(struct usb_dev_handle *handle, int type)
     static char set_type[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x2C, 0x04, 0x00, 0x00, 0x03, 0x04, 0x01, 0x00 /* type */, 0x00 /* confirm */, 0x05, 0xF7, 0x00, 0x00};
 
     switch (type) {
-      case WAH_TYPE_CRY: set_type[18] = 4; set_type[19] = 0x27; break;
-      case WAH_TYPE_FULLRANGE: set_type[18] = 5; set_type[19] = 0x26; break;
-      case WAH_TYPE_CLYDE: set_type[18] = 6; set_type[19] = 0x25; break;
+      case WAH_TYPE_CRY: set_type[18] = 4; break;
+      case WAH_TYPE_FULLRANGE: set_type[18] = 5; break;
+      case WAH_TYPE_CLYDE: set_type[18] = 6; break;
       default: break;
     }
+
+    set_type[19] = calculate_checksum(set_type, sizeof(set_type), 19) ^ 0x06;
 
     int i;
     i = usb_bulk_write(handle, 4, set_type, sizeof(set_type), TIMEOUT);
@@ -197,7 +199,7 @@ void set_wah_on_off(struct usb_dev_handle *handle, gboolean val)
 /* level = 0 to 99 */
 void set_comp_sustain(struct usb_dev_handle *handle, int level)
 {
-    static char set_sust[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x00, 0x50, 0x04, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xf7};
+    static char set_sust[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x00, 0x50, 0x04, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
     set_sust[17] = level;
     set_sust[18] = calculate_checksum(set_sust, sizeof(set_sust), 18);
@@ -210,7 +212,7 @@ void set_comp_sustain(struct usb_dev_handle *handle, int level)
 /* level = 0 to 99, available only in digi comp */
 void set_comp_tone(struct usb_dev_handle *handle, int level)
 {
-    static char set_tone[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x00, 0x51, 0x04, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xf7};
+    static char set_tone[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x00, 0x51, 0x04, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
     set_tone[17] = level;
     set_tone[18] = calculate_checksum(set_tone, sizeof(set_tone), 18);
@@ -236,7 +238,7 @@ void set_comp_attack(struct usb_dev_handle *handle, int level)
 /* level = 0 to 99 */
 void set_comp_level(struct usb_dev_handle *handle, int level)
 {
-    static char set_level[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x00, 0x52, 0x04, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xf7};
+    static char set_level[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x00, 0x52, 0x04, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
     set_level[17] = level;
     set_level[18] = calculate_checksum(set_level, sizeof(set_level), 18);
@@ -251,10 +253,12 @@ void set_comp_type(struct usb_dev_handle *handle, int type)
     static char set_type[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x2C, 0x04, 0x00, 0x4F, 0x04, 0x04, 0x01, 0x00 /* type */, 0x00 /* checksum */, 0x05, 0xF7, 0x00, 0x00};
 
     switch (type) {
-      case COMP_TYPE_DIGI: set_type[18] = 0x43; set_type[19] = 0x28; break;
-      case COMP_TYPE_CS: set_type[18] = 0x44; set_type[19] = 0x2F; break;
+      case COMP_TYPE_DIGI: set_type[18] = 0x43; break;
+      case COMP_TYPE_CS: set_type[18] = 0x44; break;
       default: break;
     }
+
+    set_type[19] = calculate_checksum(set_type, sizeof(set_type), 19) ^ 0x06;
 
     int i;
     i = usb_bulk_write(handle, 4, set_type, sizeof(set_type), TIMEOUT);
@@ -282,17 +286,9 @@ void set_comp_on_off(struct usb_dev_handle *handle, gboolean val)
 void switch_user_preset(struct usb_dev_handle *handle, int x)
 {
     static char switch_preset[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x39, 0x00, 0x04, 0x01 /* bank = user */, 0x00 /* no */, 0x04, 0x04, 0x00, 0x00, 0x01, 0x06, 0x00 /* confirm */, 0xF7, 0x00, 0x00};
-    int val;
 
     switch_preset[14] = x;
-    val = (7 - ((x & 0xf0) >> 4)) << 4;
-    val += (x & 0x0f);
-    if (((x & 0x0f) % 2) == 1) {
-        val -= 1;
-    } else {
-        val += 1;
-    }
-    switch_preset[21] = val;
+    switch_preset[21] = calculate_checksum(switch_preset, sizeof(switch_preset), 21) ^ 0x05;
 
     int i;
     i = usb_bulk_write(handle, 4, switch_preset, sizeof(switch_preset), TIMEOUT);
@@ -303,12 +299,9 @@ void switch_user_preset(struct usb_dev_handle *handle, int x)
 void switch_system_preset(struct usb_dev_handle *handle, int x)
 {
     static char switch_preset[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x39, 0x00, 0x04, 0x00 /* bank = system */, 0x00 /* no */, 0x04, 0x04, 0x00, 0x00, 0x01, 0x06, 0x00 /* confirm */, 0xF7, 0x00, 0x00};
-    int val;
 
     switch_preset[14] = x;
-    val = (7 - ((x & 0xf0) >> 4)) << 4;
-    val += (x & 0x0f);
-    switch_preset[21] = val;
+    switch_preset[21] = calculate_checksum(switch_preset, sizeof(switch_preset), 21) ^ 0x05;
 
     int i;
     i = usb_bulk_write(handle, 4, switch_preset, sizeof(switch_preset), TIMEOUT);
@@ -317,13 +310,15 @@ void switch_system_preset(struct usb_dev_handle *handle, int x)
 
 void set_pickup_type(struct usb_dev_handle *handle, int type)
 {
-    static char pickup[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x00, 0x04, 0x00, 0x40, 0x02, 0x07, 0x00 /* type1 */, 0x00 /* type2 */, 0xF7};
+    static char pickup[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x00, 0x04, 0x00, 0x40, 0x02, 0x07, 0x00 /* type1 */, 0x00 /* checksum */, 0xF7};
 
     switch (type) {
-        case PICKUP_TYPE_HB_SC: pickup[17] = 0x42; pickup[18] = 0x0D; break;
-        case PICKUP_TYPE_SC_HB: pickup[17] = 0x41; pickup[18] = 0x0E; break;
+        case PICKUP_TYPE_HB_SC: pickup[17] = 0x42; break;
+        case PICKUP_TYPE_SC_HB: pickup[17] = 0x41; break;
         default: break;
     }
+
+    pickup[18] = calculate_checksum(pickup, sizeof(pickup), 18);
 
     int i;
     i = usb_bulk_write(handle, 4, pickup, sizeof(pickup), TIMEOUT);
@@ -349,24 +344,26 @@ void set_pickup_on_off(struct usb_dev_handle *handle, gboolean val)
 
 void set_dist_type(struct usb_dev_handle *handle, int type)
 {
-    static char set_dist[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x28, 0x04, 0x09, 0x00, 0x06, 0x04, 0x02, 0x05, 0x00 /* type1 */, 0x06, 0x00 /* type2 */, 0xF7, 0x00};
+    static char set_dist[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x28, 0x04, 0x09, 0x00, 0x06, 0x04, 0x02, 0x05, 0x00 /* type1 */, 0x06, 0x00 /* checksum */, 0xF7, 0x00};
 
     switch (type) {
-        case DIST_TYPE_SCREAMER: set_dist[19] = 0x00; set_dist[21] = 0x2D; break;
-        case DIST_TYPE_808:      set_dist[19] = 0x0C; set_dist[21] = 0x21; break;
-        case DIST_TYPE_GUYOD:    set_dist[19] = 0x05; set_dist[21] = 0x28; break;
-        case DIST_TYPE_DOD250:   set_dist[19] = 0x03; set_dist[21] = 0x2E; break;
-        case DIST_TYPE_RODENT:   set_dist[19] = 0x01; set_dist[21] = 0x2C; break;
-        case DIST_TYPE_MX:       set_dist[19] = 0x0B; set_dist[21] = 0x26; break;
-        case DIST_TYPE_DS:       set_dist[19] = 0x02; set_dist[21] = 0x2F; break;
-        case DIST_TYPE_GRUNGE:   set_dist[19] = 0x07; set_dist[21] = 0x2A; break;
-        case DIST_TYPE_ZONE:     set_dist[19] = 0x09; set_dist[21] = 0x24; break;
-        case DIST_TYPE_DEATH:    set_dist[19] = 0x0E; set_dist[21] = 0x23; break;
-        case DIST_TYPE_GONK:     set_dist[19] = 0x0D; set_dist[21] = 0x20; break;
-        case DIST_TYPE_FUZZY:    set_dist[19] = 0x08; set_dist[21] = 0x25; break;
-        case DIST_TYPE_MP:       set_dist[19] = 0x04; set_dist[21] = 0x29; break;
+        case DIST_TYPE_SCREAMER: set_dist[19] = 0x00; break;
+        case DIST_TYPE_808:      set_dist[19] = 0x0C; break;
+        case DIST_TYPE_GUYOD:    set_dist[19] = 0x05; break;
+        case DIST_TYPE_DOD250:   set_dist[19] = 0x03; break;
+        case DIST_TYPE_RODENT:   set_dist[19] = 0x01; break;
+        case DIST_TYPE_MX:       set_dist[19] = 0x0B; break;
+        case DIST_TYPE_DS:       set_dist[19] = 0x02; break;
+        case DIST_TYPE_GRUNGE:   set_dist[19] = 0x07; break;
+        case DIST_TYPE_ZONE:     set_dist[19] = 0x09; break;
+        case DIST_TYPE_DEATH:    set_dist[19] = 0x0E; break;
+        case DIST_TYPE_GONK:     set_dist[19] = 0x0D; break;
+        case DIST_TYPE_FUZZY:    set_dist[19] = 0x08; break;
+        case DIST_TYPE_MP:       set_dist[19] = 0x04; break;
         default: break;
     }
+
+    set_dist[21] = calculate_checksum(set_dist, sizeof(set_dist), 21) ^ 0x05;
 
     int i;
     i = usb_bulk_write(handle, 4, set_dist, sizeof(set_dist), TIMEOUT);
@@ -500,13 +497,15 @@ void set_eq_on_off(struct usb_dev_handle *handle, gboolean val)
 
 void set_noisegate_type(struct usb_dev_handle *handle, int type)
 {
-    static char set_type[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x28, 0x04, 0x02, 0x40, 0x0C, 0x04, 0x02, 0x03, 0x00 /* type1 */, 0x06, 0x00 /* type2 */, 0xF7, 0x00};
+    static char set_type[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x28, 0x04, 0x02, 0x40, 0x0C, 0x04, 0x02, 0x03, 0x00 /* type1 */, 0x06, 0x00 /* checksum */, 0xF7, 0x00};
 
     switch (type) {
-        case NOISEGATE_GATE: set_type[19] = 0; set_type[21] = 0x6A; break;
-        case NOISEGATE_SWELL: set_type[19] = 1; set_type[21] = 0x6B; break;
+        case NOISEGATE_GATE: set_type[19] = 0; break;
+        case NOISEGATE_SWELL: set_type[19] = 1; break;
         default: break;
     }
+
+    set_type[21] = calculate_checksum(set_type, sizeof(set_type), 21) ^ 0x05;
 
     int i;
     i = usb_bulk_write(handle, 4, set_type, sizeof(set_type), TIMEOUT);
@@ -676,30 +675,32 @@ void set_ips_option(struct usb_dev_handle *handle, char option, int x)
 
 void set_chorusfx_type(struct usb_dev_handle *handle, int type)
 {
-    static char set_type[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x00 /* type */, 0x04, 0x03, 0x00, 0x0E, 0x04, 0x02, 0x00 /* type */, 0x00 /* type1 */, 0x06, 0x00 /* type2 */, 0xF7, 0x00};
+    static char set_type[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x00 /* type */, 0x04, 0x03, 0x00, 0x0E, 0x04, 0x02, 0x00 /* type */, 0x00 /* type1 */, 0x06, 0x00 /* checksum */, 0xF7, 0x00};
 
     switch (type) {
-        case CHORUS_TYPE_CE: set_type[11] = 0x08; set_type[19] = 0x7B; set_type[18] = 0x03; set_type[21] = 0x72; break;
-        case CHORUS_TYPE_DUAL: set_type[11] = 0x08; set_type[19] = 0x79; set_type[18] = 0x03; set_type[21] = 0x70; break;
-        case CHORUS_TYPE_MULTI: set_type[11] = 0x08; set_type[19] = 0x7A; set_type[18] = 0x03; set_type[21] = 0x73; break;
-        case CHORUS_TYPE_FLANGER: set_type[11] = 0x08; set_type[19] = 0x7D; set_type[18] = 0x03; set_type[21] = 0x74; break;
-        case CHORUS_TYPE_MXR_FLANGER: set_type[11] = 0x08; set_type[19] = 0x7F; set_type[18] = 0x03; set_type[21] = 0x76; break;
-        case CHORUS_TYPE_PHASER: set_type[11] = 0x0A; set_type[19] = 0x01; set_type[18] = 0x03; set_type[21] = 0x0A; break;
-        case CHORUS_TYPE_VIBRATO: set_type[11] = 0x08; set_type[19] = 0x60; set_type[18] = 0x03; set_type[21] = 0x69; break;
-        case CHORUS_TYPE_ROTARY: set_type[11] = 0x08; set_type[19] = 0x61; set_type[18] = 0x03; set_type[21] = 0x68; break;
-        case CHORUS_TYPE_VIBROPAN: set_type[11] = 0x0A; set_type[19] = 0x0F; set_type[18] = 0x03; set_type[21] = 0x04; break;
-        case CHORUS_TYPE_TREMOLO: set_type[11] = 0x08; set_type[19] = 0x5E; set_type[18] = 0x03; set_type[21] = 0x57; break;
-        case CHORUS_TYPE_PANNER: set_type[11] = 0x08; set_type[19] = 0x5F; set_type[18] = 0x03; set_type[21] = 0x56; break;
-        case CHORUS_TYPE_ENVELOPE: set_type[11] = 0x0A; set_type[19] = 0x0A; set_type[18] = 0x03; set_type[21] = 0x01; break;
-        case CHORUS_TYPE_AUTOYA: set_type[11] = 0x0A; set_type[19] = 0x0B; set_type[18] = 0x03; set_type[21] = 0x00; break;
-        case CHORUS_TYPE_YAYA: set_type[11] = 0x0A; set_type[19] = 0x0C; set_type[18] = 0x03; set_type[21] = 0x07; break;
-        case CHORUS_TYPE_STEP_FILTER: set_type[11] = 0x0A; set_type[19] = 0x0D; set_type[18] = 0x03; set_type[21] = 0x06; break;
-        case CHORUS_TYPE_WHAMMY: set_type[11] = 0x08; set_type[19] = 0x40; set_type[18] = 0x05; set_type[21] = 0x4F; break;
-        case CHORUS_TYPE_PITCH_SHIFT: set_type[11] = 0x08; set_type[19] = 0x43; set_type[18] = 0x05; set_type[21] = 0x4C; break;
-        case CHORUS_TYPE_DETUNE: set_type[11] = 0x08; set_type[19] = 0x42; set_type[18] = 0x05; set_type[21] = 0x4D; break;
-        case CHORUS_TYPE_IPS: set_type[11] = 0x08; set_type[19] = 0x41; set_type[18] = 0x05; set_type[21] = 0x4E; break;
+        case CHORUS_TYPE_CE: set_type[11] = 0x08; set_type[19] = 0x7B; set_type[18] = 0x03; break;
+        case CHORUS_TYPE_DUAL: set_type[11] = 0x08; set_type[19] = 0x79; set_type[18] = 0x03; break;
+        case CHORUS_TYPE_MULTI: set_type[11] = 0x08; set_type[19] = 0x7A; set_type[18] = 0x03; break;
+        case CHORUS_TYPE_FLANGER: set_type[11] = 0x08; set_type[19] = 0x7D; set_type[18] = 0x03; break;
+        case CHORUS_TYPE_MXR_FLANGER: set_type[11] = 0x08; set_type[19] = 0x7F; set_type[18] = 0x03; break;
+        case CHORUS_TYPE_PHASER: set_type[11] = 0x0A; set_type[19] = 0x01; set_type[18] = 0x03; break;
+        case CHORUS_TYPE_VIBRATO: set_type[11] = 0x08; set_type[19] = 0x60; set_type[18] = 0x03; break;
+        case CHORUS_TYPE_ROTARY: set_type[11] = 0x08; set_type[19] = 0x61; set_type[18] = 0x03; break;
+        case CHORUS_TYPE_VIBROPAN: set_type[11] = 0x0A; set_type[19] = 0x0F; set_type[18] = 0x03; break;
+        case CHORUS_TYPE_TREMOLO: set_type[11] = 0x08; set_type[19] = 0x5E; set_type[18] = 0x03; break;
+        case CHORUS_TYPE_PANNER: set_type[11] = 0x08; set_type[19] = 0x5F; set_type[18] = 0x03; break;
+        case CHORUS_TYPE_ENVELOPE: set_type[11] = 0x0A; set_type[19] = 0x0A; set_type[18] = 0x03; break;
+        case CHORUS_TYPE_AUTOYA: set_type[11] = 0x0A; set_type[19] = 0x0B; set_type[18] = 0x03; break;
+        case CHORUS_TYPE_YAYA: set_type[11] = 0x0A; set_type[19] = 0x0C; set_type[18] = 0x03; break;
+        case CHORUS_TYPE_STEP_FILTER: set_type[11] = 0x0A; set_type[19] = 0x0D; set_type[18] = 0x03; break;
+        case CHORUS_TYPE_WHAMMY: set_type[11] = 0x08; set_type[19] = 0x40; set_type[18] = 0x05; break;
+        case CHORUS_TYPE_PITCH_SHIFT: set_type[11] = 0x08; set_type[19] = 0x43; set_type[18] = 0x05; break;
+        case CHORUS_TYPE_DETUNE: set_type[11] = 0x08; set_type[19] = 0x42; set_type[18] = 0x05; break;
+        case CHORUS_TYPE_IPS: set_type[11] = 0x08; set_type[19] = 0x41; set_type[18] = 0x05; break;
         default: break;
     }
+
+    set_type[21] = calculate_checksum(set_type, sizeof(set_type), 21) ^ 0x05;
 
     int i;
     i = usb_bulk_write(handle, 4, set_type, sizeof(set_type), TIMEOUT);
@@ -739,7 +740,7 @@ void set_delay_time(struct usb_dev_handle *handle, int x)
         static char set_time[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x0C, 0x04, 0x07, 0x60, 0x0F, 0x04, 0x01, 0x00 /* value */, 0x00 /* checksum */, 0x05, 0xF7, 0x00, 0x00};
 
         set_time[18] = x - 0x80;
-        set_time[19] = set_time[18] ^ 0x68;
+        set_time[19] = calculate_checksum(set_time, sizeof(set_time), 19) ^ 0x06;
 
         i = usb_bulk_write(handle, 4, set_time, sizeof(set_time), TIMEOUT);
     }
@@ -748,16 +749,18 @@ void set_delay_time(struct usb_dev_handle *handle, int x)
 
 void set_delay_type(struct usb_dev_handle *handle, int type)
 {
-    static char set_type[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x08, 0x04, 0x07, 0x40, 0x0F, 0x04, 0x02, 0x04, 0x00 /* type1 */, 0x06, 0x00 /* type2 */, 0xF7, 0x00};
+    static char set_type[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x08, 0x04, 0x07, 0x40, 0x0F, 0x04, 0x02, 0x04, 0x00 /* type1 */, 0x06, 0x00 /* checksum */, 0xF7, 0x00};
 
     switch (type) {
-        case DELAY_TYPE_ANALOG: set_type[19] = 0x16; set_type[21] = 0x5D; break;
-        case DELAY_TYPE_DIGITAL: set_type[19] = 0x15; set_type[21] = 0x5E; break;
-        case DELAY_TYPE_MODULATED: set_type[19] = 0x17; set_type[21] = 0x5C; break;
-        case DELAY_TYPE_PONG: set_type[19] = 0x18; set_type[21] = 0x53; break;
-        case DELAY_TYPE_TAPE: set_type[19] = 0x19; set_type[21] = 0x52; break;
+        case DELAY_TYPE_ANALOG: set_type[19] = 0x16; break;
+        case DELAY_TYPE_DIGITAL: set_type[19] = 0x15; break;
+        case DELAY_TYPE_MODULATED: set_type[19] = 0x17; break;
+        case DELAY_TYPE_PONG: set_type[19] = 0x18; break;
+        case DELAY_TYPE_TAPE: set_type[19] = 0x19; break;
         default: break;
     }
+
+    set_type[21] = calculate_checksum(set_type, sizeof(set_type), 21) ^ 0x05;
 
     int i;
     i = usb_bulk_write(handle, 4, set_type, sizeof(set_type), TIMEOUT);
@@ -810,17 +813,19 @@ void set_reverb_option(struct usb_dev_handle *handle, char option, int x)
 
 void set_reverb_type(struct usb_dev_handle *handle, int type)
 {
-    static char set_type[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x28, 0x04, 0x07, 0x00, 0x10, 0x04, 0x02, 0x04, 0x00 /* type1 */, 0x06, 0x00 /* type2 */, 0xF7, 0x00};
+    static char set_type[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x28, 0x04, 0x07, 0x00, 0x10, 0x04, 0x02, 0x04, 0x00 /* type1 */, 0x06, 0x00 /* checksum */, 0xF7, 0x00};
 
     switch (type) {
-        case REVERB_TYPE_TWIN: set_type[19] = 0x7A; set_type[21] = 0x4E; break;
-        case REVERB_TYPE_LEX_AMBIENCE: set_type[19] = 0x7E; set_type[21] = 0x4A; break;
-        case REVERB_TYPE_LEX_STUDIO: set_type[19] = 0x7D; set_type[21] = 0x49; break;
-        case REVERB_TYPE_LEX_ROOM: set_type[19] = 0x7C; set_type[21] = 0x48; break;
-        case REVERB_TYPE_LEX_HALL: set_type[19] = 0x7B; set_type[21] = 0x4F; break;
-        case REVERB_TYPE_EMT240_PLATE: set_type[19] = 0x7F; set_type[21] = 0x4B; break;
+        case REVERB_TYPE_TWIN: set_type[19] = 0x7A; break;
+        case REVERB_TYPE_LEX_AMBIENCE: set_type[19] = 0x7E; break;
+        case REVERB_TYPE_LEX_STUDIO: set_type[19] = 0x7D; break;
+        case REVERB_TYPE_LEX_ROOM: set_type[19] = 0x7C; break;
+        case REVERB_TYPE_LEX_HALL: set_type[19] = 0x7B; break;
+        case REVERB_TYPE_EMT240_PLATE: set_type[19] = 0x7F; break;
         default: break;
     }
+
+    set_type[21] = calculate_checksum(set_type, sizeof(set_type), 21) ^ 0x05;
 
     int i;
     i = usb_bulk_write(handle, 4, set_type, sizeof(set_type), TIMEOUT);
