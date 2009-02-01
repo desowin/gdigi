@@ -604,15 +604,17 @@ GtkWidget *create_vbox(VBoxWidget *widgets, gint amt)
     vbox = gtk_vbox_new(FALSE, 0);
     hbox = gtk_hbox_new(FALSE, 0);
 
+    gtk_box_set_homogeneous(GTK_BOX(hbox), TRUE);
+
     for (x = 0; x<amt; x++) {
         widget = create_on_off_button(widgets[x].label, widgets[x].value, widgets[x].callback);
-        gtk_container_add(GTK_CONTAINER(hbox), widget);
+        gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 2);
 
         table = create_widget_container(widgets[x].widgets, widgets[x].widgets_amt);
-        gtk_container_add(GTK_CONTAINER(hbox), table);
+        gtk_box_pack_start(GTK_BOX(hbox), table, TRUE, TRUE, 2);
     }
 
-    gtk_container_add(GTK_CONTAINER(vbox), hbox);
+    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 2);
     return vbox;
 }
 
@@ -642,19 +644,17 @@ void create_window()
 
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
-    hbox = gtk_hbox_new(FALSE, 0);
     vbox = gtk_vbox_new(FALSE, 0);
-    gtk_container_add(GTK_CONTAINER(hbox), vbox);
-    gtk_container_add(GTK_CONTAINER(window), hbox);
+    gtk_container_add(GTK_CONTAINER(window), vbox);
 
     amt = G_N_ELEMENTS(vboxes);
     for (x = 0; x<amt; x++) {
-        if ((x % 4) == 0) {
-            vbox = gtk_vbox_new(FALSE, 0);
-            gtk_container_add(GTK_CONTAINER(hbox), vbox);
+        if ((x % 2) == 0) {
+            hbox = gtk_hbox_new(TRUE, 0);
+            gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 2);
         }
         widget = create_vbox(vboxes[x].widget, vboxes[x].amt);
-        gtk_container_add(GTK_CONTAINER(vbox), widget);
+        gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 2);
     }
 
     gtk_widget_show_all(window);
