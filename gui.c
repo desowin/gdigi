@@ -51,9 +51,15 @@ static SettingsWidget wah_widgets[] = {
     {"Wah level", set_wah_level, NULL, 0.0, 12.0},
 };
 
-static SettingsWidget comp_widgets[] = {
+static SettingsWidget comp_digi_widgets[] = {
     {"Compressor sustain", set_comp_sustain, NULL, 0.0, 99.0},
-    {"Compressor tone (digi only!)", set_comp_tone, NULL, 0.0, 99.0},
+    {"Compressor tone", set_comp_tone, NULL, 0.0, 99.0},
+    {"Compressor attack", set_comp_attack, NULL, 0.0, 99.0},
+    {"Compressor level", set_comp_level, NULL, 0.0, 99.0},
+};
+
+static SettingsWidget comp_cs_widgets[] = {
+    {"Compressor sustain", set_comp_sustain, NULL, 0.0, 99.0},
     {"Compressor attack", set_comp_attack, NULL, 0.0, 99.0},
     {"Compressor level", set_comp_level, NULL, 0.0, 99.0},
 };
@@ -414,37 +420,137 @@ GtkWidget *create_on_off_button(const gchar *label, gboolean state, void (*callb
     return button;
 }
 
+typedef struct {
+    gint id;
+    gchar *label;
+    void (*callback)(struct usb_dev_handle*, int);
+    SettingsWidget *widgets;
+    gint widgets_amt;
+    GtkWidget *child; /* child widget - set inside create_widget_container */
+} WidgetContainer;
+
+static WidgetContainer wah_container[] = {
+    {-1, NULL, NULL, wah_widgets, G_N_ELEMENTS(wah_widgets), NULL},
+};
+
+static WidgetContainer comp_container[] = {
+    {COMP_TYPE_DIGI, "Digital compressor", set_comp_type, comp_digi_widgets, G_N_ELEMENTS(comp_digi_widgets), NULL},
+    {COMP_TYPE_CS, "CS compressor", set_comp_type, comp_cs_widgets, G_N_ELEMENTS(comp_cs_widgets), NULL},
+};
+
+void combo_box_changed_cb(GtkComboBox *widget, WidgetContainer *widgets)
+{
+    GtkWidget *child;
+    GtkWidget *vbox;
+    gint x;
+    g_object_get(G_OBJECT(widget), "active", &x, NULL);
+
+    vbox = g_object_get_data(G_OBJECT(widget), "vbox");
+
+    if (x != -1) {
+        widgets[x].callback(handle, widgets[x].id);
+        child = g_object_get_data(G_OBJECT(widget), "active_child");
+        if (child != NULL) {
+            gtk_container_remove(GTK_CONTAINER(vbox), child);
+        }
+        gtk_container_add(GTK_CONTAINER(vbox), widgets[x].child);
+        gtk_widget_show_all(vbox);
+        g_object_set_data(G_OBJECT(widget), "active_child", widgets[x].child);
+    }
+}
+
+GtkWidget *create_widget_container(WidgetContainer *widgets, gint amt)
+{
+    GtkWidget *vbox;
+    GtkWidget *widget;
+    GtkWidget *combo_box = NULL;
+    gint x;
+
+    vbox = gtk_vbox_new(FALSE, 0);
+
+    for (x = 0; x<amt; x++) {
+        if (widgets[x].label) {
+            if (combo_box == NULL) {
+                combo_box = gtk_combo_box_new_text();
+                gtk_container_add(GTK_CONTAINER(vbox), combo_box);
+                g_signal_connect(G_OBJECT(combo_box), "changed", G_CALLBACK(combo_box_changed_cb), widgets);
+                g_object_set_data(G_OBJECT(combo_box), "vbox", vbox);
+            }
+            gtk_combo_box_append_text(combo_box, widgets[x].label);
+        }
+        widget = create_table(widgets[x].widgets, widgets[x].widgets_amt);
+        widgets[x].child = widget;
+        g_object_ref(widget);
+
+        if (widgets[x].label == NULL && widgets[x].id == -1)
+            gtk_container_add(GTK_CONTAINER(vbox), widget);
+    }
+
+    return vbox;
+};
+
+typedef struct {
+    char *label;
+    gboolean value;
+    void (*callback)(struct usb_dev_handle*, gboolean);
+    WidgetContainer *widgets;
+    gint widgets_amt;
+} VBoxWidget;
+
+static VBoxWidget wah_vbox[] = {
+    {"Wah", FALSE, set_wah_on_off, wah_container, G_N_ELEMENTS(wah_container)},
+};
+
+static VBoxWidget comp_vbox[] = {
+    {"Compressor", FALSE, set_comp_on_off, comp_container, G_N_ELEMENTS(comp_container)},
+};
+
+GtkWidget *create_vbox(VBoxWidget *widgets, gint amt)
+{
+    GtkWidget *vbox;
+    GtkWidget *widget;
+    GtkWidget *table;
+    int x;
+
+    vbox = gtk_vbox_new(FALSE, 0);
+
+    for (x = 0; x<amt; x++) {
+        widget = create_on_off_button(widgets[x].label, widgets[x].value, widgets[x].callback);
+        gtk_container_add(GTK_CONTAINER(vbox), widget);
+
+        table = create_widget_container(widgets[x].widgets, widgets[x].widgets_amt);
+        gtk_container_add(GTK_CONTAINER(vbox), table);
+    }
+    return vbox;
+}
+
+typedef struct {
+    VBoxWidget *widget;
+    gint amt;
+} VBoxes;
+
+static VBoxes vboxes[] = {
+    {wah_vbox, G_N_ELEMENTS(wah_vbox)},
+    {comp_vbox, G_N_ELEMENTS(comp_vbox)},
+};
+
 void create_window()
 {
     GtkWidget *window;
     GtkWidget *vbox;
-    GtkWidget *wah_vbox;
-    GtkWidget *comp_vbox;
-    GtkWidget *table;
     GtkWidget *widget;
+    gint x, amt;
 
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
     vbox = gtk_vbox_new(FALSE, 0);
     gtk_container_add(GTK_CONTAINER(window), vbox);
 
-    wah_vbox = gtk_vbox_new(FALSE, 0);
-    gtk_container_add(GTK_CONTAINER(vbox), wah_vbox);
-
-    widget = create_on_off_button("Wah", FALSE, set_wah_on_off);
-    gtk_container_add(GTK_CONTAINER(wah_vbox), widget);
-
-    table = create_table(wah_widgets, G_N_ELEMENTS(wah_widgets));
-    gtk_container_add(GTK_CONTAINER(wah_vbox), table);
-
-    comp_vbox = gtk_vbox_new(FALSE, 0);
-    gtk_container_add(GTK_CONTAINER(vbox), comp_vbox);
-
-    widget = create_on_off_button("Compressor", FALSE, set_comp_on_off);
-    gtk_container_add(GTK_CONTAINER(comp_vbox), widget);
-
-    table = create_table(comp_widgets, G_N_ELEMENTS(comp_widgets));
-    gtk_container_add(GTK_CONTAINER(comp_vbox), table);
+    amt = G_N_ELEMENTS(vboxes);
+    for (x = 0; x<amt; x++) {
+        widget = create_vbox(vboxes[x].widget, vboxes[x].amt);
+        gtk_container_add(GTK_CONTAINER(vbox), widget);
+    }
 
     gtk_widget_show_all(window);
 
