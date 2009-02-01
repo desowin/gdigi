@@ -625,13 +625,13 @@ typedef struct {
 
 static VBoxes vboxes[] = {
     {wah_vbox, G_N_ELEMENTS(wah_vbox)},
+    {eq_vbox, G_N_ELEMENTS(eq_vbox)},
     {comp_vbox, G_N_ELEMENTS(comp_vbox)},
     {dist_vbox, G_N_ELEMENTS(dist_vbox)},
     {noisegate_vbox, G_N_ELEMENTS(noisegate_vbox)},
     {chorusfx_vbox, G_N_ELEMENTS(chorusfx_vbox)},
     {delay_vbox, G_N_ELEMENTS(delay_vbox)},
     {reverb_vbox, G_N_ELEMENTS(reverb_vbox)},
-    {eq_vbox, G_N_ELEMENTS(eq_vbox)},
 };
 
 void create_window()
