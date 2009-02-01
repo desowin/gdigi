@@ -2,4 +2,10 @@
 -fix usb handling code
 -make complete gui
 -figure out setting EQ mid Hz and EQ treb Hz
-
+-amp/cabinet models
+-expression pedal options
+-audio setup options
+-tone library
+-effects library
+-effects level
+-handling presets (loading, saving, exporting/importing to/from xml patches)
