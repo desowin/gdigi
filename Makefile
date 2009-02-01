@@ -9,10 +9,14 @@ LIBS = `pkg-config --libs glib-2.0 gtk+-2.0 libusb`
 
 all: gdigi
 
-gdigi: gdigi.o
-	$(CC) $(LIBS) $(OFLAG) gdigi gdigi.o
+gdigi: gdigi.o tests.o gui.o
+	$(CC) $(LIBS) $(OFLAG) gdigi gdigi.o tests.o gui.o
 
 gdigi.o: gdigi.c
+
+tests.o: tests.c
+
+gui.o: gui.c
 
 clean:
 	rm *.o

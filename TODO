@@ -9,3 +9,4 @@
 -effects library
 -effects level
 -handling presets (loading, saving, exporting/importing to/from xml patches)
+-buildsystem
