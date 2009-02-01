@@ -972,6 +972,103 @@ void set_chorusfx_on_off(struct usb_dev_handle *handle, gboolean val)
     printf("wrote: %d\n", i);
 }
 
+/* x = 0 to 139 */
+void set_delay_time(struct usb_dev_handle *handle, int x)
+{
+    int i;
+
+    if (x <= 0x7F) { /* "short" message format */
+        static char set_time[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x00, 0x04, 0x07, 0x60, 0x0F, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+
+        set_time[17] = x;
+        set_time[18] = calculate_checksum(set_time, sizeof(set_time), 18);
+
+        i = usb_bulk_write(handle, 4, set_time, sizeof(set_time), TIMEOUT);
+    } else { /* "long" message format */
+        static char set_time[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x0C, 0x04, 0x07, 0x60, 0x0F, 0x04, 0x01, 0x00 /* value */, 0x00 /* checksum */, 0x05, 0xF7, 0x00, 0x00};
+
+        set_time[18] = x - 0x80;
+        set_time[19] = set_time[18] ^ 0x68;
+
+        i = usb_bulk_write(handle, 4, set_time, sizeof(set_time), TIMEOUT);
+    }
+    printf("wrote: %d\n", i);
+}
+
+enum {
+  DELAY_TYPE_ANALOG = 0,
+  DELAY_TYPE_DIGITAL,
+  DELAY_TYPE_MODULATED,
+  DELAY_TYPE_PONG,
+  DELAY_TYPE_TAPE
+};
+
+void set_delay_type(struct usb_dev_handle *handle, int type)
+{
+    static char set_type[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x08, 0x04, 0x07, 0x40, 0x0F, 0x04, 0x02, 0x04, 0x00 /* type1 */, 0x06, 0x00 /* type2 */, 0xF7, 0x00};
+
+    switch (type) {
+        case DELAY_TYPE_ANALOG: set_type[19] = 0x16; set_type[21] = 0x5D; break;
+        case DELAY_TYPE_DIGITAL: set_type[19] = 0x15; set_type[21] = 0x5E; break;
+        case DELAY_TYPE_MODULATED: set_type[19] = 0x17; set_type[21] = 0x5C; break;
+        case DELAY_TYPE_PONG: set_type[19] = 0x18; set_type[21] = 0x53; break;
+        case DELAY_TYPE_TAPE: set_type[19] = 0x19; set_type[21] = 0x52; break;
+        default: break;
+    }
+
+    int i;
+    i = usb_bulk_write(handle, 4, set_type, sizeof(set_type), TIMEOUT);
+    printf("wrote: %d\n", i);
+}
+
+#define ANALOG_LEVEL 0x44
+#define ANALOG_REPEATS 0x47
+#define DIGITAL_LEVEL 0x44
+#define DIGITAL_REPEATS 0x47
+#define DIGITAL_DUCKER_THRESH 0x61
+#define DIGITAL_DUCKER_LEVEL 0x62
+#define MODULATED_LEVEL 0x44
+#define MODULATED_REPEATS 0x47
+#define MODULATED_DEPTH 0x51
+#define PONG_LEVEL 0x44
+#define PONG_REPEATS 0x47
+#define PONG_DUCKER_THRESH 0x61
+#define PONG_DUCKER_LEVEL 0x62
+#define TAPE_LEVEL 0x44
+#define TAPE_REPEATS 0x47
+#define TAPE_WOW 0x63
+#define TAPE_FLUTTER 0x64
+
+void set_delay_option(struct usb_dev_handle *handle, char option, int x)
+{
+    static char set_option[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x00, 0x04, 0x07, 0x00 /* option */, 0x0F, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+
+    set_option[14] = option;
+    set_option[17] = x;
+    set_option[18] = calculate_checksum(set_option, sizeof(set_option), 18);
+
+    int i;
+    i = usb_bulk_write(handle, 4, set_option, sizeof(set_option), TIMEOUT);
+    printf("wrote: %d\n", i);
+}
+
+void set_delay_on_off(struct usb_dev_handle *handle, gboolean val)
+{
+    static char set_delay[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x00, 0x04, 0x07, 0x41, 0x0F, 0x07, 0x00 /* on/off */, 0x00 /* checksum */, 0xF7};
+
+    if (val == FALSE) { /* turn delay off */
+        set_delay[17] = 0;
+    } else { /* turn delay on */
+        set_delay[17] = 1;
+    }
+
+    set_delay[18] = calculate_checksum(set_delay, sizeof(set_delay), 18);
+
+    int i;
+    i = usb_bulk_write(handle, 4, set_delay, sizeof(set_delay), TIMEOUT);
+    printf("wrote: %d\n", i);
+}
+
 void value_changed_cb(GtkSpinButton *spinbutton, void (*callback)(struct usb_dev_handle*, int))
 {
     int val = gtk_spin_button_get_value_as_int(spinbutton);
@@ -1496,6 +1593,63 @@ void test_all(struct usb_dev_handle *handle)
 
     set_chorusfx_on_off(handle, TRUE);
     set_chorusfx_on_off(handle, FALSE);
+
+    set_delay_type(handle, DELAY_TYPE_ANALOG);
+    for (x=0; x<=139; x++)
+        set_delay_time(handle, x);
+    for (x=0; x<=99; x++)
+        set_delay_option(handle, ANALOG_LEVEL, x);
+    for (x=0; x<=100; x++)
+        set_delay_option(handle, ANALOG_REPEATS, x);
+
+    set_delay_type(handle, DELAY_TYPE_DIGITAL);
+    for (x=0; x<=139; x++)
+        set_delay_time(handle, x);
+    for (x=0; x<=99; x++)
+        set_delay_option(handle, DIGITAL_LEVEL, x);
+    for (x=0; x<=100; x++)
+        set_delay_option(handle, DIGITAL_REPEATS, x);
+    for (x=0; x<=99; x++)
+        set_delay_option(handle, DIGITAL_DUCKER_THRESH, x);
+    for (x=0; x<=99; x++)
+        set_delay_option(handle, DIGITAL_DUCKER_LEVEL, x);
+
+    set_delay_type(handle, DELAY_TYPE_MODULATED);
+    for (x=0; x<=139; x++)
+        set_delay_time(handle, x);
+    for (x=0; x<=99; x++)
+        set_delay_option(handle, MODULATED_LEVEL, x);
+    for (x=0; x<=100; x++)
+        set_delay_option(handle, MODULATED_REPEATS, x);
+    for (x=0; x<=99; x++)
+        set_delay_option(handle, MODULATED_DEPTH, x);
+
+    set_delay_type(handle, DELAY_TYPE_PONG);
+    for (x=0; x<=139; x++)
+        set_delay_time(handle, x);
+    for (x=0; x<=99; x++)
+        set_delay_option(handle, PONG_LEVEL, x);
+    for (x=0; x<=100; x++)
+        set_delay_option(handle, PONG_REPEATS, x);
+    for (x=0; x<=99; x++)
+        set_delay_option(handle, PONG_DUCKER_THRESH, x);
+    for (x=0; x<=99; x++)
+        set_delay_option(handle, PONG_DUCKER_LEVEL, x);
+
+    set_delay_type(handle, DELAY_TYPE_TAPE);
+    for (x=0; x<=139; x++)
+        set_delay_time(handle, x);
+    for (x=0; x<=99; x++)
+        set_delay_option(handle, TAPE_LEVEL, x);
+    for (x=0; x<=100; x++)
+        set_delay_option(handle, TAPE_REPEATS, x);
+    for (x=0; x<=99; x++)
+        set_delay_option(handle, TAPE_WOW, x);
+    for (x=0; x<=99; x++)
+        set_delay_option(handle, TAPE_FLUTTER, x);
+
+    set_delay_on_off(handle, TRUE);
+    set_delay_on_off(handle, FALSE);
 }
 
 int main(int argc, char **argv) {
