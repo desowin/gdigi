@@ -1069,6 +1069,87 @@ void set_delay_on_off(struct usb_dev_handle *handle, gboolean val)
     printf("wrote: %d\n", i);
 }
 
+#define TWIN_REVERB 0x05
+#define LEX_AMBIENCE_PREDELAY 0x02
+#define LEX_AMBIENCE_DECAY 0x07
+#define LEX_AMBIENCE_LIVELINESS 0x0D
+#define LEX_AMBIENCE_LEVEL 0x05
+#define LEX_STUDIO_PREDELAY 0x02
+#define LEX_STUDIO_DECAY 0x07
+#define LEX_STUDIO_LIVELINESS 0x0D
+#define LEX_STUDIO_LEVEL 0x05
+#define LEX_ROOM_PREDELAY 0x02
+#define LEX_ROOM_DECAY 0x07
+#define LEX_ROOM_LIVELINESS 0x0D
+#define LEX_ROOM_LEVEL 0x05
+#define LEX_HALL_PREDELAY 0x02
+#define LEX_HALL_DECAY 0x07
+#define LEX_HALL_LIVELINESS 0x0D
+#define LEX_HALL_LEVEL 0x05
+#define EMT240_PLATE_PREDELAY 0x02
+#define EMT240_PLATE_DECAY 0x07
+#define EMT240_PLATE_LIVELINESS 0x0D
+#define EMT240_PLATE_LEVEL 0x05
+
+/* x = 0 to 15 (predelay), otherwise 0 to 99 */
+void set_reverb_option(struct usb_dev_handle *handle, char option, int x)
+{
+    static char set_option[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x07, 0x00 /* option */, 0x10, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+
+    set_option[14] = option;
+    set_option[17] = x;
+    set_option[18] = calculate_checksum(set_option, sizeof(set_option), 18);
+
+    int i;
+    i = usb_bulk_write(handle, 4, set_option, sizeof(set_option), TIMEOUT);
+    printf("wrote: %d\n", i);
+}
+
+enum {
+  REVERB_TYPE_TWIN = 0,
+  REVERB_TYPE_LEX_AMBIENCE,
+  REVERB_TYPE_LEX_STUDIO,
+  REVERB_TYPE_LEX_ROOM,
+  REVERB_TYPE_LEX_HALL,
+  REVERB_TYPE_EMT240_PLATE
+};
+
+void set_reverb_type(struct usb_dev_handle *handle, int type)
+{
+    static char set_type[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x28, 0x04, 0x07, 0x00, 0x10, 0x04, 0x02, 0x04, 0x00 /* type1 */, 0x06, 0x00 /* type2 */, 0xF7, 0x00};
+
+    switch (type) {
+        case REVERB_TYPE_TWIN: set_type[19] = 0x7A; set_type[21] = 0x4E; break;
+        case REVERB_TYPE_LEX_AMBIENCE: set_type[19] = 0x7E; set_type[21] = 0x4A; break;
+        case REVERB_TYPE_LEX_STUDIO: set_type[19] = 0x7D; set_type[21] = 0x49; break;
+        case REVERB_TYPE_LEX_ROOM: set_type[19] = 0x7C; set_type[21] = 0x48; break;
+        case REVERB_TYPE_LEX_HALL: set_type[19] = 0x7B; set_type[21] = 0x4F; break;
+        case REVERB_TYPE_EMT240_PLATE: set_type[19] = 0x7F; set_type[21] = 0x4B; break;
+        default: break;
+    }
+
+    int i;
+    i = usb_bulk_write(handle, 4, set_type, sizeof(set_type), TIMEOUT);
+    printf("wrote: %d\n", i);
+}
+
+void set_reverb_on_off(struct usb_dev_handle *handle, gboolean val)
+{
+    static char set_reverb[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x07, 0x01, 0x10, 0x07, 0x00 /* on/off */, 0x00 /* checksum */, 0xF7};
+
+    if (val == FALSE) { /* turn reverb off */
+        set_reverb[17] = 0;
+    } else { /* turn reverb on */
+        set_reverb[17] = 1;
+    }
+
+    set_reverb[18] = calculate_checksum(set_reverb, sizeof(set_reverb), 18);
+
+    int i;
+    i = usb_bulk_write(handle, 4, set_reverb, sizeof(set_reverb), TIMEOUT);
+    printf("wrote: %d\n", i);
+}
+
 void value_changed_cb(GtkSpinButton *spinbutton, void (*callback)(struct usb_dev_handle*, int))
 {
     int val = gtk_spin_button_get_value_as_int(spinbutton);
@@ -1650,6 +1731,64 @@ void test_all(struct usb_dev_handle *handle)
 
     set_delay_on_off(handle, TRUE);
     set_delay_on_off(handle, FALSE);
+
+
+    set_reverb_type(handle, REVERB_TYPE_TWIN);
+    for (x=0; x<=99; x++)
+        set_reverb_option(handle, TWIN_REVERB, x);
+
+    set_reverb_type(handle, REVERB_TYPE_LEX_AMBIENCE);
+    for (x=0; x<=15; x++)
+        set_reverb_option(handle, LEX_AMBIENCE_PREDELAY, x);
+    for (x=0; x<=99; x++)
+        set_reverb_option(handle, LEX_AMBIENCE_DECAY, x);
+    for (x=0; x<=99; x++)
+        set_reverb_option(handle, LEX_AMBIENCE_LIVELINESS, x);
+    for (x=0; x<=99; x++)
+        set_reverb_option(handle, LEX_AMBIENCE_LEVEL, x);
+
+    set_reverb_type(handle, REVERB_TYPE_LEX_STUDIO);
+    for (x=0; x<=15; x++)
+        set_reverb_option(handle, LEX_STUDIO_PREDELAY, x);
+    for (x=0; x<=99; x++)
+        set_reverb_option(handle, LEX_STUDIO_DECAY, x);
+    for (x=0; x<=99; x++)
+        set_reverb_option(handle, LEX_STUDIO_LIVELINESS, x);
+    for (x=0; x<=99; x++)
+        set_reverb_option(handle, LEX_STUDIO_LEVEL, x);
+
+    set_reverb_type(handle, REVERB_TYPE_LEX_ROOM);
+    for (x=0; x<=15; x++)
+        set_reverb_option(handle, LEX_ROOM_PREDELAY, x);
+    for (x=0; x<=99; x++)
+        set_reverb_option(handle, LEX_ROOM_DECAY, x);
+    for (x=0; x<=99; x++)
+        set_reverb_option(handle, LEX_ROOM_LIVELINESS, x);
+    for (x=0; x<=99; x++)
+        set_reverb_option(handle, LEX_ROOM_LEVEL, x);
+
+    set_reverb_type(handle, REVERB_TYPE_LEX_HALL);
+    for (x=0; x<=15; x++)
+        set_reverb_option(handle, LEX_HALL_PREDELAY, x);
+    for (x=0; x<=99; x++)
+        set_reverb_option(handle, LEX_HALL_DECAY, x);
+    for (x=0; x<=99; x++)
+        set_reverb_option(handle, LEX_HALL_LIVELINESS, x);
+    for (x=0; x<=99; x++)
+        set_reverb_option(handle, LEX_HALL_LEVEL, x);
+
+    set_reverb_type(handle, REVERB_TYPE_EMT240_PLATE);
+    for (x=0; x<=15; x++)
+        set_reverb_option(handle, EMT240_PLATE_PREDELAY, x);
+    for (x=0; x<=99; x++)
+        set_reverb_option(handle, EMT240_PLATE_DECAY, x);
+    for (x=0; x<=99; x++)
+        set_reverb_option(handle, EMT240_PLATE_LIVELINESS, x);
+    for (x=0; x<=99; x++)
+        set_reverb_option(handle, EMT240_PLATE_LEVEL, x);
+
+    set_reverb_on_off(handle, TRUE);
+    set_reverb_on_off(handle, FALSE);
 }
 
 int main(int argc, char **argv) {
