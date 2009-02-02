@@ -94,6 +94,13 @@ enum {
 #define DIST_MP_VOLUME      0x0F
 
 enum {
+  EQ_TYPE_BRIGHT = 0,
+  EQ_TYPE_MIDBOOST,
+  EQ_TYPE_SCOOP,
+  EQ_TYPE_WARM
+};
+
+enum {
   NOISEGATE_GATE = 0,
   NOISEGATE_SWELL
 };
@@ -356,11 +363,14 @@ void set_dist_type(struct usb_dev_handle *handle, int type);
 void set_dist_option(struct usb_dev_handle *handle, char option, int value);
 void set_dist_on_off(struct usb_dev_handle *handle, gboolean val);
 void set_preset_level(struct usb_dev_handle *handle, int level);
+void set_eq_type(struct usb_dev_handle *handle, int type);
 void set_eq_gain(struct usb_dev_handle *handle, int x);
 void set_eq_level(struct usb_dev_handle *handle, int x);
 void set_eq_bass(struct usb_dev_handle *handle, int x);
 void set_eq_mid(struct usb_dev_handle *handle, int x);
+void set_eq_mid_hz(struct usb_dev_handle *handle, int x);
 void set_eq_treble(struct usb_dev_handle *handle, int x);
+void set_eq_treb_hz(struct usb_dev_handle *handle, int x);
 void set_eq_on_off(struct usb_dev_handle *handle, gboolean val);
 void set_noisegate_type(struct usb_dev_handle *handle, int type);
 void set_gate_option(struct usb_dev_handle *handle, char option, int x);

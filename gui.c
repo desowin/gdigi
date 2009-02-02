@@ -151,6 +151,10 @@ static SettingsWidget eq_widgets[] = {
     {"EQ bass", set_eq_bass, NULL, 0.0, 24.0},
     {"EQ mid", set_eq_mid, NULL, 0.0, 24.0},
     {"EQ treble", set_eq_treble, NULL, 0.0, 24.0},
+    // TODO: make this display propertly (display range 300 to 5000)
+    {"EQ mid Hz", set_eq_mid_hz, NULL, 0.0, 4700.0},
+    // TODO: make this display propertly (display range 500 to 8000)
+    {"EQ treb Hz", set_eq_treb_hz, NULL, 0.0, 7500.0},
 };
 
 static SettingsWidget noisegate_gate_widgets[] = {
@@ -430,7 +434,9 @@ typedef struct {
 } WidgetContainer;
 
 static WidgetContainer wah_container[] = {
-    {-1, NULL, NULL, wah_widgets, G_N_ELEMENTS(wah_widgets), NULL},
+    {WAH_TYPE_CRY, "Cry wah", set_wah_type, wah_widgets, G_N_ELEMENTS(wah_widgets), NULL},
+    {WAH_TYPE_FULLRANGE, "Fullrange wah", set_wah_type, wah_widgets, G_N_ELEMENTS(wah_widgets), NULL},
+    {WAH_TYPE_CLYDE, "Clyde wah", set_wah_type, wah_widgets, G_N_ELEMENTS(wah_widgets), NULL},
 };
 
 static WidgetContainer comp_container[] = {
@@ -499,7 +505,10 @@ static WidgetContainer reverb_container[] = {
 };
 
 static WidgetContainer eq_container[] = {
-    {-1, NULL, NULL, eq_widgets, G_N_ELEMENTS(eq_widgets), NULL},
+    {EQ_TYPE_BRIGHT, "Bright", set_eq_type, eq_widgets, G_N_ELEMENTS(eq_widgets), NULL},
+    {EQ_TYPE_MIDBOOST, "Mid Boost", set_eq_type, eq_widgets, G_N_ELEMENTS(eq_widgets), NULL},
+    {EQ_TYPE_SCOOP, "Scoop", set_eq_type, eq_widgets, G_N_ELEMENTS(eq_widgets), NULL},
+    {EQ_TYPE_WARM, "Warm", set_eq_type, eq_widgets, G_N_ELEMENTS(eq_widgets), NULL},
 };
 
 void combo_box_changed_cb(GtkComboBox *widget, WidgetContainer *widgets)

@@ -228,6 +228,11 @@ void test_eq(struct usb_dev_handle *handle)
 {
     int x;
 
+    set_eq_type(handle, EQ_TYPE_BRIGHT);
+    set_eq_type(handle, EQ_TYPE_MIDBOOST);
+    set_eq_type(handle, EQ_TYPE_SCOOP);
+    set_eq_type(handle, EQ_TYPE_WARM);
+
     for (x=0; x<=99; x++)
         set_eq_gain(handle, x);
     for (x=0; x<=99; x++)
@@ -237,8 +242,12 @@ void test_eq(struct usb_dev_handle *handle)
         set_eq_bass(handle, x);
     for (x=0; x<=0x18; x++)
         set_eq_mid(handle, x);
+    for (x=0; x<=4700; x++)
+        set_eq_mid_hz(handle, x);
     for (x=0; x<=0x18; x++)
         set_eq_treble(handle, x);
+    for (x=0; x<=7500; x++)
+        set_eq_treb_hz(handle, x);
 
     set_eq_on_off(handle, TRUE);
     set_eq_on_off(handle, FALSE);
