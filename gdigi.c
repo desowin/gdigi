@@ -896,131 +896,30 @@ void set_reverb_on_off(gboolean val)
 /* x = 0 to 59 (preset number) */
 void set_preset_name(int x, gchar *name)
 {
-   /* static char set_name[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x29, 0x00, 0x04, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    static char set_name[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x29, 0x00, 0x01, 0x00 /* preset no */, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
-    int write; // number of bytes to write
+    set_name[11] = x;
 
-    set_name[14] = x;
-
-    if (name == NULL || strlen(name) == 0) {
-        set_name[15] = 0x00;
-        set_name[16] = 0x06;
-        set_name[18] = 0xF7;
-        set_name[19] = 0x00;
-
-        set_name[17] = calculate_checksum(set_name, 20, 17) ^ 0x01;
-
-        write = 20;
-    } else {
-        static int v[] = {15, 17, 18, 19, 21, 23, 25, 26, 27, 29};
-
-        int a;
-        for (a=0; a<strlen(name) && a<10; a++) {
-            set_name[v[a]] = name[a];
+    int a;
+    int b;
+    b = 0;
+    for (a=0; (name != NULL && a<strlen(name)) && a<10 ; a++) {
+        if (a == 5) {
+            set_name[12+a] = 0x00;
+            b++;
         }
-
-        switch (strlen(name)) {
-            case 1: set_name[16] = 0x07;
-                    set_name[17] = 0x00;
-                    set_name[19] = 0xF7;
-                    set_name[18] = calculate_checksum(set_name, 20, 18);
-                    write = 20;
-                    break;
-            case 2: set_name[16] = 0x04;
-                    set_name[18] = 0x00;
-                    set_name[20] = 0x05;
-                    set_name[21] = 0xF7;
-                    set_name[22] = 0x00;
-                    set_name[23] = 0x00;
-                    set_name[19] = calculate_checksum(set_name, 24, 19) ^ 0x06;
-                    write = 24;
-                    break;
-            case 3: set_name[16] = 0x04;
-                    set_name[19] = 0x00;
-                    set_name[20] = 0x06;
-                    set_name[22] = 0xF7;
-                    set_name[23] = 0x00;
-                    set_name[21] = calculate_checksum(set_name, 24, 21) ^ 0x05;
-                    write = 24;
-                    break;
-            case 4: set_name[16] = 0x04;
-                    set_name[20] = 0x07;
-                    set_name[21] = 0x00;
-                    set_name[23] = 0xF7;
-                    set_name[22] = calculate_checksum(set_name, 24, 22) ^ 0x04;
-                    write = 24;
-                    break;
-            case 5: set_name[16] = 0x04;
-                    set_name[20] = 0x04;
-                    set_name[22] = 0x00;
-                    set_name[23] = 0x00;
-                    set_name[24] = 0x06;
-                    set_name[26] = 0xF7;
-                    set_name[27] = 0x00;
-                    set_name[25] = calculate_checksum(set_name, 28, 25) ^ 0x01;
-                    write = 28;
-                    break;
-            case 6: set_name[16] = 0x04;
-                    set_name[20] = 0x04;
-                    set_name[22] = 0x00;
-                    set_name[24] = 0x07;
-                    set_name[25] = 0x00;
-                    set_name[27] = 0xF7;
-                    set_name[26] = calculate_checksum(set_name, 28, 26);
-                    write = 28;
-                    break;
-            case 7: set_name[16] = 0x04;
-                    set_name[20] = 0x04;
-                    set_name[22] = 0x00;
-                    set_name[24] = 0x04;
-                    set_name[26] = 0x00;
-                    set_name[28] = 0x05;
-                    set_name[29] = 0xF7;
-                    set_name[30] = 0x00;
-                    set_name[31] = 0x00;
-                    set_name[27] = calculate_checksum(set_name, 32, 27) ^ 0x06;
-                    write = 32;
-                    break;
-            case 8: set_name[16] = 0x04;
-                    set_name[20] = 0x04;
-                    set_name[22] = 0x00;
-                    set_name[24] = 0x04;
-                    set_name[27] = 0x00;
-                    set_name[28] = 0x06;
-                    set_name[30] = 0xF7;
-                    set_name[31] = 0x00;
-                    set_name[29] = calculate_checksum(set_name, 32, 29) ^ 0x05;
-                    write = 32;
-                    break;
-            case 9: set_name[16] = 0x04;
-                    set_name[20] = 0x04;
-                    set_name[22] = 0x00;
-                    set_name[24] = 0x04;
-                    set_name[28] = 0x07;
-                    set_name[29] = 0x00;
-                    set_name[31] = 0xF7;
-                    set_name[30] = calculate_checksum(set_name, 32, 30) ^ 0x04;
-                    write = 32;
-                    break;
-            case 10:set_name[16] = 0x04;
-                    set_name[20] = 0x04;
-                    set_name[22] = 0x00;
-                    set_name[24] = 0x04;
-                    set_name[28] = 0x04;
-                    set_name[30] = 0x00;
-                    set_name[32] = 0x05;
-                    set_name[33] = 0xF7;
-                    set_name[34] = 0x00;
-                    set_name[35] = 0x00;
-                    set_name[31] = calculate_checksum(set_name, 36, 31) ^ 0x02;
-                    write = 36;
-                    break;
-        }
+        set_name[12+a+b] = name[a];
     }
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_name, write, TIMEOUT);
-    printf("wrote: %d\n", i);*/
+    if (a == 5)
+        a = 4;
+    else
+        set_name[12+a+b] = 0x00;
+
+    set_name[12+a+2+b] = 0xF7;
+    set_name[12+a+1+b] = calculate_checksum(set_name, 12+a+3+b, 12+a+1+b) ^ 0x07;
+
+    send_data(set_name, 13+a+3+b);
 }
 
 int main(int argc, char **argv) {
