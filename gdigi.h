@@ -17,8 +17,6 @@
 #include <usb.h>
 #include <glib.h>
 
-extern struct usb_dev_handle *handle;
-
 enum {
   WAH_TYPE_CRY = 0,
   WAH_TYPE_FULLRANGE,
@@ -344,53 +342,53 @@ enum {
 #define EMT240_PLATE_LIVELINESS 0x0D
 #define EMT240_PLATE_LEVEL 0x05
 
-void set_wah_min(struct usb_dev_handle *handle, int level);
-void set_wah_max(struct usb_dev_handle *handle, int level);
-void set_wah_level(struct usb_dev_handle *handle, int level);
-void set_wah_type(struct usb_dev_handle *handle, int type);
-void set_wah_on_off(struct usb_dev_handle *handle, gboolean val);
-void set_comp_sustain(struct usb_dev_handle *handle, int level);
-void set_comp_tone(struct usb_dev_handle *handle, int level);
-void set_comp_attack(struct usb_dev_handle *handle, int level);
-void set_comp_level(struct usb_dev_handle *handle, int level);
-void set_comp_type(struct usb_dev_handle *handle, int type);
-void set_comp_on_off(struct usb_dev_handle *handle, gboolean val);
-void switch_user_preset(struct usb_dev_handle *handle, int x);
-void switch_system_preset(struct usb_dev_handle *handle, int x);
-void set_pickup_type(struct usb_dev_handle *handle, int type);
-void set_pickup_on_off(struct usb_dev_handle *handle, gboolean val);
-void set_dist_type(struct usb_dev_handle *handle, int type);
-void set_dist_option(struct usb_dev_handle *handle, char option, int value);
-void set_dist_on_off(struct usb_dev_handle *handle, gboolean val);
-void set_preset_level(struct usb_dev_handle *handle, int level);
-void set_eq_type(struct usb_dev_handle *handle, int type);
-void set_eq_gain(struct usb_dev_handle *handle, int x);
-void set_eq_level(struct usb_dev_handle *handle, int x);
-void set_eq_bass(struct usb_dev_handle *handle, int x);
-void set_eq_mid(struct usb_dev_handle *handle, int x);
-void set_eq_mid_hz(struct usb_dev_handle *handle, int x);
-void set_eq_treble(struct usb_dev_handle *handle, int x);
-void set_eq_treb_hz(struct usb_dev_handle *handle, int x);
-void set_eq_on_off(struct usb_dev_handle *handle, gboolean val);
-void set_noisegate_type(struct usb_dev_handle *handle, int type);
-void set_gate_option(struct usb_dev_handle *handle, char option, int x);
-void set_noisegate_on_off(struct usb_dev_handle *handle, gboolean val);
-void set_chorusfx_option(struct usb_dev_handle *handle, char option, int x);
-void set_flanger_option(struct usb_dev_handle *handle, char option, int x);
-void set_vibrato_option(struct usb_dev_handle *handle, char option, int x);
-void set_tremolo_option(struct usb_dev_handle *handle, char option, int x);
-void set_envelope_option(struct usb_dev_handle *handle, char option, int x);
-void set_ya_option(struct usb_dev_handle *handle, char option, int x);
-void set_filter_option(struct usb_dev_handle *handle, char option, int x);
-void set_whammy_option(struct usb_dev_handle *handle, char option, int x);
-void set_pitch_option(struct usb_dev_handle *handle, char option, int x);
-void set_ips_option(struct usb_dev_handle *handle, char option, int x);
-void set_chorusfx_type(struct usb_dev_handle *handle, int type);
-void set_chorusfx_on_off(struct usb_dev_handle *handle, gboolean val);
-void set_delay_time(struct usb_dev_handle *handle, int x);
-void set_delay_type(struct usb_dev_handle *handle, int type);
-void set_delay_option(struct usb_dev_handle *handle, char option, int x);
-void set_delay_on_off(struct usb_dev_handle *handle, gboolean val);
-void set_reverb_option(struct usb_dev_handle *handle, char option, int x);
-void set_reverb_type(struct usb_dev_handle *handle, int type);
-void set_reverb_on_off(struct usb_dev_handle *handle, gboolean val);
+void set_wah_min(int level);
+void set_wah_max(int level);
+void set_wah_level(int level);
+void set_wah_type(int type);
+void set_wah_on_off(gboolean val);
+void set_comp_sustain(int level);
+void set_comp_tone(int level);
+void set_comp_attack(int level);
+void set_comp_level(int level);
+void set_comp_type(int type);
+void set_comp_on_off(gboolean val);
+void switch_user_preset(int x);
+void switch_system_preset(int x);
+void set_pickup_type(int type);
+void set_pickup_on_off(gboolean val);
+void set_dist_type(int type);
+void set_dist_option(char option, int value);
+void set_dist_on_off(gboolean val);
+void set_preset_level(int level);
+void set_eq_type(int type);
+void set_eq_gain(int x);
+void set_eq_level(int x);
+void set_eq_bass(int x);
+void set_eq_mid(int x);
+void set_eq_mid_hz(int x);
+void set_eq_treble(int x);
+void set_eq_treb_hz(int x);
+void set_eq_on_off(gboolean val);
+void set_noisegate_type(int type);
+void set_gate_option(char option, int x);
+void set_noisegate_on_off(gboolean val);
+void set_chorusfx_option(char option, int x);
+void set_flanger_option(char option, int x);
+void set_vibrato_option(char option, int x);
+void set_tremolo_option(char option, int x);
+void set_envelope_option(char option, int x);
+void set_ya_option(char option, int x);
+void set_filter_option(char option, int x);
+void set_whammy_option(char option, int x);
+void set_pitch_option(char option, int x);
+void set_ips_option(char option, int x);
+void set_chorusfx_type(int type);
+void set_chorusfx_on_off(gboolean val);
+void set_delay_time(int x);
+void set_delay_type(int type);
+void set_delay_option(char option, int x);
+void set_delay_on_off(gboolean val);
+void set_reverb_option(char option, int x);
+void set_reverb_type(int type);
+void set_reverb_on_off(gboolean val);

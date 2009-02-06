@@ -16,14 +16,14 @@
 
 #include "gdigi.h"
 
-void test_wah(struct usb_dev_handle *handle);
-void test_compressor(struct usb_dev_handle *handle);
-void test_dist(struct usb_dev_handle *handle);
-void test_presets(struct usb_dev_handle *handle);
-void test_pickups(struct usb_dev_handle *handle);
-void test_eq(struct usb_dev_handle *handle);
-void test_noisegate(struct usb_dev_handle *handle);
-void test_chorusfx(struct usb_dev_handle *handle);
-void test_delay(struct usb_dev_handle *handle);
-void test_reverb(struct usb_dev_handle *handle);
-void test_all(struct usb_dev_handle *handle);
+void test_wah();
+void test_compressor();
+void test_dist();
+void test_presets();
+void test_pickups();
+void test_eq();
+void test_noisegate();
+void test_chorusfx();
+void test_delay();
+void test_reverb();
+void test_all();

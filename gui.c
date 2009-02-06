@@ -17,29 +17,29 @@
 #include <gtk/gtk.h>
 #include "gdigi.h"
 
-void value_changed_cb(GtkSpinButton *spinbutton, void (*callback)(struct usb_dev_handle*, int))
+void value_changed_cb(GtkSpinButton *spinbutton, void (*callback)(int))
 {
     int val = gtk_spin_button_get_value_as_int(spinbutton);
-    callback(handle, val);
+    callback(val);
 }
 
-void value_changed_option_cb(GtkSpinButton *spinbutton, void (*callback)(struct usb_dev_handle*, char, int))
+void value_changed_option_cb(GtkSpinButton *spinbutton, void (*callback)(char, int))
 {
     int val = gtk_spin_button_get_value_as_int(spinbutton);
     gint option = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(spinbutton), "option_id"));
-    callback(handle, (char)option, val);
+    callback((char)option, val);
 }
 
-void toggled_cb(GtkToggleButton *button, void (*callback)(struct usb_dev_handle*, gboolean))
+void toggled_cb(GtkToggleButton *button, void (*callback)(gboolean))
 {
     gboolean val = gtk_toggle_button_get_active(button);
-    callback(handle, val);
+    callback(val);
 }
 
 typedef struct {
     char *label;
-    void (*callback)(struct usb_dev_handle*, int);
-    void (*callback_with_option)(struct usb_dev_handle*, char, int);
+    void (*callback)(int);
+    void (*callback_with_option)(char, int);
     gdouble min;
     gdouble max;
     gint option;
@@ -416,7 +416,7 @@ GtkWidget *create_table(SettingsWidget *widgets, gint amt)
     return table;
 }
 
-GtkWidget *create_on_off_button(const gchar *label, gboolean state, void (*callback)(struct usb_dev_handle*, int))
+GtkWidget *create_on_off_button(const gchar *label, gboolean state, void (*callback)(int))
 {
     GtkWidget *button = gtk_toggle_button_new_with_label(label);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), state);
@@ -427,7 +427,7 @@ GtkWidget *create_on_off_button(const gchar *label, gboolean state, void (*callb
 typedef struct {
     gint id;
     gchar *label;
-    void (*callback)(struct usb_dev_handle*, int);
+    void (*callback)(int);
     SettingsWidget *widgets;
     gint widgets_amt;
     GtkWidget *child; /* child widget - set inside create_widget_container */
@@ -521,7 +521,7 @@ void combo_box_changed_cb(GtkComboBox *widget, WidgetContainer *widgets)
     vbox = g_object_get_data(G_OBJECT(widget), "vbox");
 
     if (x != -1) {
-        widgets[x].callback(handle, widgets[x].id);
+        widgets[x].callback(widgets[x].id);
         child = g_object_get_data(G_OBJECT(widget), "active_child");
         if (child != NULL) {
             gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(gtk_widget_get_parent(vbox))), child);
@@ -565,7 +565,7 @@ GtkWidget *create_widget_container(WidgetContainer *widgets, gint amt)
 typedef struct {
     char *label;
     gboolean value;
-    void (*callback)(struct usb_dev_handle*, gboolean);
+    void (*callback)(gboolean);
     WidgetContainer *widgets;
     gint widgets_amt;
 } VBoxWidget;

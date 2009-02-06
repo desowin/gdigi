@@ -16,6 +16,8 @@
 
 #include <stdio.h>
 #include <gtk/gtk.h>
+#include <alsa/asoundlib.h>
+
 #include <string.h>
 #include "gdigi.h"
 #include "gui.h"
@@ -24,8 +26,8 @@
 
 char buf[255];
 
-struct usb_device *dev;
-struct usb_dev_handle *handle;
+static snd_rawmidi_t *output;
+static char *port_name = "default";
 
 /*
 static char magic[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x7F, 0x7F, 0x04, 0x7F, 0x01, 0x00, 0x04, 0x00, 0x00, 0x00, 0x06, 0x6E, 0xF7, 0x00}; // causes COMAND to be displayed on device?
@@ -68,9 +70,23 @@ char calculate_checksum(gchar *array, int length, int check)
     return checksum;
 }
 
-int read_device(struct usb_dev_handle *handle, int bytes)
+void open_device()
 {
-    int i, x;
+    snd_rawmidi_open(NULL, &output, port_name, SND_RAWMIDI_NONBLOCK);
+    snd_rawmidi_nonblock(output, 0);
+}
+
+void send_data(char *data, int lenght)
+{
+    if (output == NULL)
+        open_device();
+
+    snd_rawmidi_write(output, data, lenght);
+}
+
+int read_device(int bytes)
+{
+    /*int i, x;
     i = usb_bulk_read(handle, 132, buf, bytes, TIMEOUT);
     //printf("Called read %d. Device returned %d bytes\n", bytes, i);
     for (x=0; x<i; x++) {
@@ -79,17 +95,17 @@ int read_device(struct usb_dev_handle *handle, int bytes)
 
     printf("\n");
     if (bytes > 0) return i;
-    else return 0;
+    else return 0;*/
 }
 
 void check_preset(struct usb_dev_handle *handle)
 {
-    static char magic3[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x2A, 0x00, 0x04, 0x04, 0x00, 0x62, 0x05, 0xF7, 0x00, 0x00}; // seems to query active preset
+    /*static char magic3[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x2A, 0x00, 0x04, 0x04, 0x00, 0x62, 0x05, 0xF7, 0x00, 0x00}; // seems to query active preset
 
     int i;
     i = usb_bulk_write(handle, 4, magic3, sizeof(magic3), TIMEOUT);
 
-    /* UGLY - have to figure out reply formatting */
+    // UGLY - have to figure out reply formatting
     do {
         i = read_device(handle, 12);
         if (i==12) {
@@ -123,395 +139,345 @@ void check_preset(struct usb_dev_handle *handle)
                 buf[6]==0x53 && buf[7]==0x04 && buf[8]==0x04 && buf[10]==0x09 && buf[11]==0x45)
                 printf("Compressor level: %d\nCompressor attack (X-Edit only for DigiComp): %d\n", buf[3], buf[9]);
         }
-    } while (i > 0);
+    } while (i > 0);*/
 }
 
 /* level = 0 to 99 */
-void set_wah_min(struct usb_dev_handle *handle, int level)
+void set_wah_min(int level)
 {
-    static char set_min[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x00, 0x04, 0x20, 0x03, 0x14, 0x07, 0x00 /* level */, 0x00 /* checksum */, 0xF7};
+    static char set_min[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x00, 0x20, 0x03, 0x14, 0x00 /* level */, 0x00 /* checksum */, 0xF7};
 
-    set_min[17] = level;
-    set_min[18] = calculate_checksum(set_min, sizeof(set_min), 18);
+    set_min[13] = level;
+    set_min[14] = calculate_checksum(set_min, sizeof(set_min), 14) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_min, sizeof(set_min), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_min, sizeof(set_min));
 }
 
 /* level = 0 to 99 */
-void set_wah_max(struct usb_dev_handle *handle, int level)
+void set_wah_max(int level)
 {
-    static char set_max[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x00, 0x04, 0x20, 0x04, 0x14, 0x07, 0x00 /* level */, 0x00 /* checksum */, 0xF7};
+    static char set_max[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x00, 0x20, 0x04, 0x14, 0x00 /* level */, 0x00 /* checksum */, 0xF7};
 
-    set_max[17] = level;
-    set_max[18] = calculate_checksum(set_max, sizeof(set_max), 18);
+    set_max[13] = level;
+    set_max[14] = calculate_checksum(set_max, sizeof(set_max), 14) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_max, sizeof(set_max), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_max, sizeof(set_max));
 }
 
 /* level = 0 to 12 */
-void set_wah_level(struct usb_dev_handle *handle, int level)
+void set_wah_level(int level)
 {
-    static char set_level[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x00, 0x05, 0x03, 0x07, 0x00 /* level */, 0x00 /* checksum */, 0xF7};
+    static char set_level[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x00, 0x05, 0x03, 0x00 /* level */, 0x00 /* checksum */, 0xF7};
 
-    set_level[17] = level;
-    set_level[18] = calculate_checksum(set_level, sizeof(set_level), 18);
+    set_level[13] = level;
+    set_level[14] = calculate_checksum(set_level, sizeof(set_level), 14) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_level, sizeof(set_level), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_level, sizeof(set_level));
 }
 
-void set_wah_type(struct usb_dev_handle *handle, int type)
+void set_wah_type(int type)
 {
-    static char set_type[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x2C, 0x04, 0x00, 0x00, 0x03, 0x04, 0x01, 0x00 /* type */, 0x00 /* confirm */, 0x05, 0xF7, 0x00, 0x00};
+    static char set_type[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x2C, 0x00, 0x00, 0x03, 0x01, 0x00 /* type */, 0x00 /* confirm */, 0xF7};
 
     switch (type) {
-      case WAH_TYPE_CRY: set_type[18] = 4; break;
-      case WAH_TYPE_FULLRANGE: set_type[18] = 5; break;
-      case WAH_TYPE_CLYDE: set_type[18] = 6; break;
+      case WAH_TYPE_CRY: set_type[14] = 4; break;
+      case WAH_TYPE_FULLRANGE: set_type[14] = 5; break;
+      case WAH_TYPE_CLYDE: set_type[14] = 6; break;
       default: break;
     }
 
-    set_type[19] = calculate_checksum(set_type, sizeof(set_type), 19) ^ 0x06;
+    set_type[15] = calculate_checksum(set_type, sizeof(set_type), 15) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_type, sizeof(set_type), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_type, sizeof(set_type));
 }
 
-void set_wah_on_off(struct usb_dev_handle *handle, gboolean val)
+void set_wah_on_off(gboolean val)
 {
-    static char set_wah[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x00, 0x01, 0x03, 0x07, 0x00 /* on/off */, 0x00 /* checksum */, 0xF7};
+    static char set_wah[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x00, 0x01, 0x03, 0x00 /* on/off */, 0x00 /* checksum */, 0xF7};
 
     if (val == FALSE) { /* turn wah off */
-        set_wah[17] = 0;
+        set_wah[13] = 0;
     } else { /* turn wah on */
-        set_wah[17] = 1;
+        set_wah[13] = 1;
     }
 
-    set_wah[18] = calculate_checksum(set_wah, sizeof(set_wah), 18);
+    set_wah[14] = calculate_checksum(set_wah, sizeof(set_wah), 14) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_wah, sizeof(set_wah), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_wah, sizeof(set_wah));
 }
 
 /* level = 0 to 99 */
-void set_comp_sustain(struct usb_dev_handle *handle, int level)
+void set_comp_sustain(int level)
 {
-    static char set_sust[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x00, 0x50, 0x04, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+    static char set_sust[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x00, 0x50, 0x04, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
-    set_sust[17] = level;
-    set_sust[18] = calculate_checksum(set_sust, sizeof(set_sust), 18);
+    set_sust[13] = level;
+    set_sust[14] = calculate_checksum(set_sust, sizeof(set_sust), 14) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_sust, sizeof(set_sust), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_sust, sizeof(set_sust));
 }
 
 /* level = 0 to 99, available only in digi comp */
-void set_comp_tone(struct usb_dev_handle *handle, int level)
+void set_comp_tone(int level)
 {
-    static char set_tone[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x00, 0x51, 0x04, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+    static char set_tone[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x00, 0x51, 0x04, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
-    set_tone[17] = level;
-    set_tone[18] = calculate_checksum(set_tone, sizeof(set_tone), 18);
+    set_tone[13] = level;
+    set_tone[14] = calculate_checksum(set_tone, sizeof(set_tone), 14) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_tone, sizeof(set_tone), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_tone, sizeof(set_tone));
 }
 
 /* level = 0 to 99 */
-void set_comp_attack(struct usb_dev_handle *handle, int level)
+void set_comp_attack(int level)
 {
-    static char set_attack[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x00, 0x53, 0x04, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xf7};
+    static char set_attack[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x00, 0x53, 0x04, 0x00 /* value */, 0x00 /* checksum */, 0xf7};
 
-    set_attack[17] = level;
-    set_attack[18] = calculate_checksum(set_attack, sizeof(set_attack), 18);
+    set_attack[13] = level;
+    set_attack[14] = calculate_checksum(set_attack, sizeof(set_attack), 14) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_attack, sizeof(set_attack), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_attack, sizeof(set_attack));
 }
 
 /* level = 0 to 99 */
-void set_comp_level(struct usb_dev_handle *handle, int level)
+void set_comp_level(int level)
 {
-    static char set_level[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x00, 0x52, 0x04, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+    static char set_level[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x00, 0x52, 0x04, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
-    set_level[17] = level;
-    set_level[18] = calculate_checksum(set_level, sizeof(set_level), 18);
+    set_level[13] = level;
+    set_level[14] = calculate_checksum(set_level, sizeof(set_level), 14) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_level, sizeof(set_level), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_level, sizeof(set_level));
 }
 
-void set_comp_type(struct usb_dev_handle *handle, int type)
+void set_comp_type(int type)
 {
-    static char set_type[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x2C, 0x04, 0x00, 0x4F, 0x04, 0x04, 0x01, 0x00 /* type */, 0x00 /* checksum */, 0x05, 0xF7, 0x00, 0x00};
+    static char set_type[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x2C, 0x00, 0x4F, 0x04, 0x01, 0x00 /* type */, 0x00 /* checksum */, 0xF7};
 
     switch (type) {
-      case COMP_TYPE_DIGI: set_type[18] = 0x43; break;
-      case COMP_TYPE_CS: set_type[18] = 0x44; break;
+      case COMP_TYPE_DIGI: set_type[14] = 0x43; break;
+      case COMP_TYPE_CS: set_type[14] = 0x44; break;
       default: break;
     }
 
-    set_type[19] = calculate_checksum(set_type, sizeof(set_type), 19) ^ 0x06;
+    set_type[15] = calculate_checksum(set_type, sizeof(set_type), 15) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_type, sizeof(set_type), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_type, sizeof(set_type));
 }
 
-void set_comp_on_off(struct usb_dev_handle *handle, gboolean val)
+void set_comp_on_off(gboolean val)
 {
-    static char set_comp[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x00, 0x41, 0x04, 0x07, 0x00 /* on/off */, 0x00 /* checksum */, 0xF7};
+    static char set_comp[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x00, 0x41, 0x04, 0x00 /* on/off */, 0x00 /* checksum */, 0xF7};
 
     if (val == FALSE) { /* turn comp off */
-        set_comp[17] = 0;
+        set_comp[13] = 0;
     } else { /* turn comp on */
-        set_comp[17] = 1;
+        set_comp[13] = 1;
     }
 
-    set_comp[18] = calculate_checksum(set_comp, sizeof(set_comp), 18);
+    set_comp[14] = calculate_checksum(set_comp, sizeof(set_comp), 14) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_comp, sizeof(set_comp), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_comp, sizeof(set_comp));
 }
 
 /* x = 0 to 60 */
-void switch_user_preset(struct usb_dev_handle *handle, int x)
+void switch_user_preset(int x)
 {
-    static char switch_preset[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x39, 0x00, 0x04, 0x01 /* bank = user */, 0x00 /* no */, 0x04, 0x04, 0x00, 0x00, 0x01, 0x06, 0x00 /* confirm */, 0xF7, 0x00, 0x00};
+    static char switch_preset[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x39, 0x00, 0x01 /* bank = user */, 0x00 /* no */, 0x04, 0x00, 0x00, 0x01, 0x00 /* confirm */, 0xF7};
 
-    switch_preset[14] = x;
-    switch_preset[21] = calculate_checksum(switch_preset, sizeof(switch_preset), 21) ^ 0x05;
+    switch_preset[11] = x;
+    switch_preset[16] = calculate_checksum(switch_preset, sizeof(switch_preset), 16) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, switch_preset, sizeof(switch_preset), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(switch_preset, sizeof(switch_preset));
 }
 
 /* x = 0 to 60 */
-void switch_system_preset(struct usb_dev_handle *handle, int x)
+void switch_system_preset(int x)
 {
-    static char switch_preset[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x39, 0x00, 0x04, 0x00 /* bank = system */, 0x00 /* no */, 0x04, 0x04, 0x00, 0x00, 0x01, 0x06, 0x00 /* confirm */, 0xF7, 0x00, 0x00};
+    static char switch_preset[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x39, 0x00, 0x00 /* bank = system */, 0x00 /* no */, 0x04, 0x00, 0x00, 0x01, 0x00 /* confirm */, 0xF7};
 
-    switch_preset[14] = x;
-    switch_preset[21] = calculate_checksum(switch_preset, sizeof(switch_preset), 21) ^ 0x05;
+    switch_preset[11] = x;
+    switch_preset[16] = calculate_checksum(switch_preset, sizeof(switch_preset), 16) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, switch_preset, sizeof(switch_preset), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(switch_preset, sizeof(switch_preset));
 }
 
-void set_pickup_type(struct usb_dev_handle *handle, int type)
+void set_pickup_type(int type)
 {
-    static char pickup[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x00, 0x04, 0x00, 0x40, 0x02, 0x07, 0x00 /* type1 */, 0x00 /* checksum */, 0xF7};
+    static char pickup[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x00, 0x00, 0x40, 0x02, 0x00 /* type1 */, 0x00 /* checksum */, 0xF7};
 
     switch (type) {
-        case PICKUP_TYPE_HB_SC: pickup[17] = 0x42; break;
-        case PICKUP_TYPE_SC_HB: pickup[17] = 0x41; break;
+        case PICKUP_TYPE_HB_SC: pickup[13] = 0x42; break;
+        case PICKUP_TYPE_SC_HB: pickup[13] = 0x41; break;
         default: break;
     }
 
-    pickup[18] = calculate_checksum(pickup, sizeof(pickup), 18);
+    pickup[14] = calculate_checksum(pickup, sizeof(pickup), 14) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, pickup, sizeof(pickup), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(pickup, sizeof(pickup));
 }
 
-void set_pickup_on_off(struct usb_dev_handle *handle, gboolean val)
+void set_pickup_on_off(gboolean val)
 {
-    static char set_pickup[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x00, 0x04, 0x00, 0x41, 0x02, 0x07, 0x00 /* on/off */, 0x00 /* checksum */, 0xF7};
+    static char set_pickup[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x00, 0x00, 0x41, 0x02, 0x00 /* on/off */, 0x00 /* checksum */, 0xF7};
 
     if (val == FALSE) { /* turn pickup off */
-        set_pickup[17] = 0;
+        set_pickup[13] = 0;
     } else { /* turn pickup on */
-        set_pickup[17] = 1;
+        set_pickup[13] = 1;
     }
 
-    set_pickup[18] = calculate_checksum(set_pickup, sizeof(set_pickup), 18);
+    set_pickup[14] = calculate_checksum(set_pickup, sizeof(set_pickup), 14) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_pickup, sizeof(set_pickup), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_pickup, sizeof(set_pickup));
 }
 
-void set_dist_type(struct usb_dev_handle *handle, int type)
+void set_dist_type(int type)
 {
-    static char set_dist[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x28, 0x04, 0x09, 0x00, 0x06, 0x04, 0x02, 0x05, 0x00 /* type1 */, 0x06, 0x00 /* checksum */, 0xF7, 0x00};
+    static char set_dist[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x28, 0x09, 0x00, 0x06, 0x02, 0x05, 0x00 /* type1 */, 0x00 /* checksum */, 0xF7};
 
     switch (type) {
-        case DIST_TYPE_SCREAMER: set_dist[19] = 0x00; break;
-        case DIST_TYPE_808:      set_dist[19] = 0x0C; break;
-        case DIST_TYPE_GUYOD:    set_dist[19] = 0x05; break;
-        case DIST_TYPE_DOD250:   set_dist[19] = 0x03; break;
-        case DIST_TYPE_RODENT:   set_dist[19] = 0x01; break;
-        case DIST_TYPE_MX:       set_dist[19] = 0x0B; break;
-        case DIST_TYPE_DS:       set_dist[19] = 0x02; break;
-        case DIST_TYPE_GRUNGE:   set_dist[19] = 0x07; break;
-        case DIST_TYPE_ZONE:     set_dist[19] = 0x09; break;
-        case DIST_TYPE_DEATH:    set_dist[19] = 0x0E; break;
-        case DIST_TYPE_GONK:     set_dist[19] = 0x0D; break;
-        case DIST_TYPE_FUZZY:    set_dist[19] = 0x08; break;
-        case DIST_TYPE_MP:       set_dist[19] = 0x04; break;
+        case DIST_TYPE_SCREAMER: set_dist[15] = 0x00; break;
+        case DIST_TYPE_808:      set_dist[15] = 0x0C; break;
+        case DIST_TYPE_GUYOD:    set_dist[15] = 0x05; break;
+        case DIST_TYPE_DOD250:   set_dist[15] = 0x03; break;
+        case DIST_TYPE_RODENT:   set_dist[15] = 0x01; break;
+        case DIST_TYPE_MX:       set_dist[15] = 0x0B; break;
+        case DIST_TYPE_DS:       set_dist[15] = 0x02; break;
+        case DIST_TYPE_GRUNGE:   set_dist[15] = 0x07; break;
+        case DIST_TYPE_ZONE:     set_dist[15] = 0x09; break;
+        case DIST_TYPE_DEATH:    set_dist[15] = 0x0E; break;
+        case DIST_TYPE_GONK:     set_dist[15] = 0x0D; break;
+        case DIST_TYPE_FUZZY:    set_dist[15] = 0x08; break;
+        case DIST_TYPE_MP:       set_dist[15] = 0x04; break;
         default: break;
     }
 
-    set_dist[21] = calculate_checksum(set_dist, sizeof(set_dist), 21) ^ 0x05;
+    set_dist[16] = calculate_checksum(set_dist, sizeof(set_dist), 16) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_dist, sizeof(set_dist), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_dist, sizeof(set_dist));
 }
 
-void set_dist_option(struct usb_dev_handle *handle, char option, int value)
+void set_dist_option(char option, int value)
 {
-    static char set_option[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x00 /* option */, 0x06, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+    static char set_option[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x09, 0x00 /* option */, 0x06, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
-    set_option[14] = option;
-    set_option[17] = value;
-    set_option[18] = calculate_checksum(set_option, sizeof(set_option), 18);
+    set_option[11] = option;
+    set_option[13] = value;
+    set_option[14] = calculate_checksum(set_option, sizeof(set_option), 14) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_option, sizeof(set_option), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_option, sizeof(set_option));
 }
 
-void set_dist_on_off(struct usb_dev_handle *handle, gboolean val)
+void set_dist_on_off(gboolean val)
 {
-    static char set_dist[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x01, 0x06, 0x07, 0x00 /* on/off */, 0x00 /* checksum */, 0xF7};
+    static char set_dist[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x09, 0x01, 0x06, 0x00 /* on/off */, 0x00 /* checksum */, 0xF7};
 
     if (val == FALSE) { /* turn dist off */
-        set_dist[17] = 0;
+        set_dist[13] = 0;
     } else { /* turn dist on */
-        set_dist[17] = 1;
+        set_dist[13] = 1;
     }
 
-    set_dist[18] = calculate_checksum(set_dist, sizeof(set_dist), 18);
+    set_dist[14] = calculate_checksum(set_dist, sizeof(set_dist), 14) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_dist, sizeof(set_dist), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_dist, sizeof(set_dist));
 }
 
 /* level = 0 to 99 */
-void set_preset_level(struct usb_dev_handle *handle, int level)
+void set_preset_level(int level)
 {
-    static char set_level[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x00, 0x04, 0x0A, 0x42, 0x12, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+    static char set_level[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x00, 0x0A, 0x42, 0x12, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
-    set_level[17] = level;
-    set_level[18] = calculate_checksum(set_level, sizeof(set_level), 18);
+    set_level[13] = level;
+    set_level[14] = calculate_checksum(set_level, sizeof(set_level), 14) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_level, sizeof(set_level), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_level, sizeof(set_level));
 }
 
-void set_eq_type(struct usb_dev_handle *handle, int type)
+void set_eq_type(int type)
 {
-    static char set_eq[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x2A, 0x04, 0x0C, 0x02, 0x18, 0x04, 0x02, 0x05, 0x00 /* type1 */, 0x06, 0x00 /* checksum */, 0xF7, 0x00};
+    static char set_eq[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x2A, 0x0C, 0x02, 0x18, 0x02, 0x05, 0x00 /* type1 */, 0x00 /* checksum */, 0xF7};
 
     switch (type) {
-        case EQ_TYPE_BRIGHT:   set_eq[19] = 0x42; break;
-        case EQ_TYPE_MIDBOOST: set_eq[19] = 0x40; break;
-        case EQ_TYPE_SCOOP:    set_eq[19] = 0x41; break;
-        case EQ_TYPE_WARM:     set_eq[19] = 0x43; break;
+        case EQ_TYPE_BRIGHT:   set_eq[15] = 0x42; break;
+        case EQ_TYPE_MIDBOOST: set_eq[15] = 0x40; break;
+        case EQ_TYPE_SCOOP:    set_eq[15] = 0x41; break;
+        case EQ_TYPE_WARM:     set_eq[15] = 0x43; break;
         default: break;
     }
 
-    set_eq[21] = calculate_checksum(set_eq, sizeof(set_eq), 21) ^ 0x05;
+    set_eq[16] = calculate_checksum(set_eq, sizeof(set_eq), 16) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_eq, sizeof(set_eq), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_eq, sizeof(set_eq));
 }
 
 /* x = 0 to 99 */
-void set_eq_gain(struct usb_dev_handle *handle, int x)
+void set_eq_gain(int x)
 {
-    static char set_gain[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x41, 0x08, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+    static char set_gain[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x09, 0x41, 0x08, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
-    set_gain[17] = x;
-    set_gain[18] = calculate_checksum(set_gain, sizeof(set_gain), 18);
+    set_gain[13] = x;
+    set_gain[14] = calculate_checksum(set_gain, sizeof(set_gain), 14) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_gain, sizeof(set_gain), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_gain, sizeof(set_gain));
 }
 
 /* x = 0 to 99 */
-void set_eq_level(struct usb_dev_handle *handle, int x)
+void set_eq_level(int x)
 {
-    static char set_level[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x09, 0x42, 0x08, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+    static char set_level[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x09, 0x42, 0x08, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
-    set_level[17] = x;
-    set_level[18] = calculate_checksum(set_level, sizeof(set_level), 18);
+    set_level[13] = x;
+    set_level[14] = calculate_checksum(set_level, sizeof(set_level), 14) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_level, sizeof(set_level), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_level, sizeof(set_level));
 }
 
 /* x = 0x00 (-12dB) to 0x18 (12dB) */
-void set_eq_bass(struct usb_dev_handle *handle, int x)
+void set_eq_bass(int x)
 {
-    static char set_bass[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x0C, 0x03, 0x18, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+    static char set_bass[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x0C, 0x03, 0x18, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
-    set_bass[17] = x;
-    set_bass[18] = calculate_checksum(set_bass, sizeof(set_bass), 18);
+    set_bass[13] = x;
+    set_bass[14] = calculate_checksum(set_bass, sizeof(set_bass), 14) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_bass, sizeof(set_bass), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_bass, sizeof(set_bass));
 }
 
 /* x = 0x00 (-12dB) to 0x18 (12dB) */
-void set_eq_mid(struct usb_dev_handle *handle, int x)
+void set_eq_mid(int x)
 {
-    static char set_mid[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x0C, 0x04, 0x18, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+    static char set_mid[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x0C, 0x04, 0x18, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
-    set_mid[17] = x;
-    set_mid[18] = calculate_checksum(set_mid, sizeof(set_mid), 18);
+    set_mid[13] = x;
+    set_mid[14] = calculate_checksum(set_mid, sizeof(set_mid), 14) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_mid, sizeof(set_mid), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_mid, sizeof(set_mid));
 }
 
 /*
    x = 0 to 4700 (which transforms into 300-5000 Hz)
    device itself will accept higher value, but X-Edit allows only 300-5000Hz
 */
-void set_eq_mid_hz(struct usb_dev_handle *handle, int x)
+void set_eq_mid_hz(int x)
 {
-    int i;
-
     if (x <= 0x7F) {
-        static char set_hz[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x0C, 0x06, 0x18, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+        static char set_hz[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x0C, 0x06, 0x18, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
-        set_hz[17] = x;
-        set_hz[18] = calculate_checksum(set_hz, sizeof(set_hz), 18);
+        set_hz[13] = x;
+        set_hz[14] = calculate_checksum(set_hz, sizeof(set_hz), 14) ^ 0x07;
 
-        i = usb_bulk_write(handle, 4, set_hz, sizeof(set_hz), TIMEOUT);
+        send_data(set_hz, sizeof(set_hz));
     } else {
         x -= 0x80;
         if (x <= 0x7F) {
-            static char set_hz[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x2C, 0x04, 0x0C, 0x06, 0x18, 0x04, 0x01, 0x00 /* value */, 0x00 /* checksum */, 0x05, 0xF7, 0x00, 0x00};
+            static char set_hz[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x2C, 0x0C, 0x06, 0x18, 0x01, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
-            set_hz[18] = x;
-            set_hz[19] = x^0x32;
+            set_hz[14] = x;
+            set_hz[15] = calculate_checksum(set_hz, sizeof(set_hz), 15) ^ 0x07;
 
-            i = usb_bulk_write(handle, 4, set_hz, sizeof(set_hz), TIMEOUT);
+            send_data(set_hz, sizeof(set_hz));
         } else {
             x -= 0x80;
             int a, b, c;
@@ -529,56 +495,51 @@ void set_eq_mid_hz(struct usb_dev_handle *handle, int x)
                x -= 0x80;
             }
 
-            static char set_hz[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x00 /* a */, 0x04, 0x0C, 0x06, 0x18, 0x04, 0x02, 0x00 /* b */, 0x00 /* value */, 0x06, 0x00 /* checksum */, 0xF7, 0x00};
+            static char set_hz[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x00 /* a */, 0x0C, 0x06, 0x18, 0x02, 0x00 /* b */, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
-            set_hz[11] = a;
-            set_hz[18] = b;
-            set_hz[19] = x;
-            set_hz[21] = a^b^x^0x1B^set_hz[14];
+            set_hz[9] = a;
+            set_hz[14] = b;
+            set_hz[15] = x;
+            set_hz[16] = calculate_checksum(set_hz, sizeof(set_hz), 16) ^ 0x07;
 
-            i = usb_bulk_write(handle, 4, set_hz, sizeof(set_hz), TIMEOUT);
+            send_data(set_hz, sizeof(set_hz));
         }
     }
-    printf("wrote: %d\n", i);
 }
 
 /* x = 0x00 (-12dB) to 0x18 (12dB) */
-void set_eq_treble(struct usb_dev_handle *handle, int x)
+void set_eq_treble(int x)
 {
-    static char set_treble[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x0C, 0x05, 0x18, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+    static char set_treble[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x0C, 0x05, 0x18, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
-    set_treble[17] = x;
-    set_treble[18] = calculate_checksum(set_treble, sizeof(set_treble), 18);
+    set_treble[13] = x;
+    set_treble[14] = calculate_checksum(set_treble, sizeof(set_treble), 14) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_treble, sizeof(set_treble), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_treble, sizeof(set_treble));
 }
 
 /*
    x = 0 to 7500 (which transforms into 500-8000 Hz)
    device itself will accept higher value, but X-Edit allows only 500-8000Hz
 */
-void set_eq_treb_hz(struct usb_dev_handle *handle, int x)
+void set_eq_treb_hz(int x)
 {
-    int i;
-
     if (x <= 0x7F) {
-        static char set_hz[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x0C, 0x0B, 0x18, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+        static char set_hz[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x0C, 0x0B, 0x18, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
-        set_hz[17] = x;
-        set_hz[18] = calculate_checksum(set_hz, sizeof(set_hz), 18);
+        set_hz[13] = x;
+        set_hz[14] = calculate_checksum(set_hz, sizeof(set_hz), 14) ^ 0x07;
 
-        i = usb_bulk_write(handle, 4, set_hz, sizeof(set_hz), TIMEOUT);
+        send_data(set_hz, sizeof(set_hz));
     } else {
         x -= 0x80;
         if (x <= 0x7F) {
-            static char set_hz[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x2C, 0x04, 0x0C, 0x0B, 0x18, 0x04, 0x01, 0x00 /* value */, 0x00 /* checksum */, 0x05, 0xF7, 0x00, 0x00};
+            static char set_hz[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x2C, 0x0C, 0x0B, 0x18, 0x01, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
-            set_hz[18] = x;
-            set_hz[19] = x^0x3F;
+            set_hz[14] = x;
+            set_hz[15] = calculate_checksum(set_hz, sizeof(set_hz), 15) ^ 0x07;
 
-            i = usb_bulk_write(handle, 4, set_hz, sizeof(set_hz), TIMEOUT);
+            send_data(set_hz, sizeof(set_hz));
         } else {
             x -= 0x80;
             int a, b, c;
@@ -596,396 +557,348 @@ void set_eq_treb_hz(struct usb_dev_handle *handle, int x)
                x -= 0x80;
             }
 
-            static char set_hz[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x00 /* a */, 0x04, 0x0C, 0x0B, 0x18, 0x04, 0x02, 0x00 /* b */, 0x00 /* value */, 0x06, 0x00 /* checksum */, 0xF7, 0x00};
+            static char set_hz[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x00 /* a */, 0x0C, 0x0B, 0x18, 0x02, 0x00 /* b */, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
-            set_hz[11] = a;
-            set_hz[18] = b;
-            set_hz[19] = x;
-            set_hz[21] = a^b^x^0x1B^set_hz[14];
+            set_hz[9] = a;
+            set_hz[14] = b;
+            set_hz[15] = x;
+            set_hz[16] = calculate_checksum(set_hz, sizeof(set_hz), 16) ^ 0x07;
 
-            i = usb_bulk_write(handle, 4, set_hz, sizeof(set_hz), TIMEOUT);
+            send_data(set_hz, sizeof(set_hz));
         }
     }
-    printf("wrote: %d\n", i);
 }
 
-void set_eq_on_off(struct usb_dev_handle *handle, gboolean val)
+void set_eq_on_off(gboolean val)
 {
-    static char set_eq[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x0C, 0x0C, 0x18, 0x07, 0x00 /* on/off */, 0x00 /* checksum */, 0xF7};
+    static char set_eq[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x0C, 0x0C, 0x18, 0x00 /* on/off */, 0x00 /* checksum */, 0xF7};
 
     if (val == FALSE) { /* turn eq off */
-        set_eq[17] = 0;
+        set_eq[13] = 0;
     } else { /* turn eq on */
-        set_eq[17] = 1;
+        set_eq[13] = 1;
     }
 
-    set_eq[18] = calculate_checksum(set_eq, sizeof(set_eq), 18);
+    set_eq[14] = calculate_checksum(set_eq, sizeof(set_eq), 14) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_eq, sizeof(set_eq), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_eq, sizeof(set_eq));
 }
 
-void set_noisegate_type(struct usb_dev_handle *handle, int type)
+void set_noisegate_type(int type)
 {
-    static char set_type[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x28, 0x04, 0x02, 0x40, 0x0C, 0x04, 0x02, 0x03, 0x00 /* type1 */, 0x06, 0x00 /* checksum */, 0xF7, 0x00};
+    static char set_type[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x28, 0x02, 0x40, 0x0C, 0x02, 0x03, 0x00 /* type1 */, 0x00 /* checksum */, 0xF7};
 
     switch (type) {
-        case NOISEGATE_GATE: set_type[19] = 0; break;
-        case NOISEGATE_SWELL: set_type[19] = 1; break;
+        case NOISEGATE_GATE: set_type[15] = 0; break;
+        case NOISEGATE_SWELL: set_type[15] = 1; break;
         default: break;
     }
 
-    set_type[21] = calculate_checksum(set_type, sizeof(set_type), 21) ^ 0x05;
+    set_type[16] = calculate_checksum(set_type, sizeof(set_type), 16) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_type, sizeof(set_type), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_type, sizeof(set_type));
 }
 
 /* x = 0 to 99 */
-void set_gate_option(struct usb_dev_handle *handle, char option, int x)
+void set_gate_option(char option, int x)
 {
-    static char set_option[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x02, 0x00 /* option */, 0x0C, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+    static char set_option[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x02, 0x00 /* option */, 0x0C, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
-    set_option[14] = option;
-    set_option[17] = x;
-    set_option[18] = calculate_checksum(set_option, sizeof(set_option), 18);
+    set_option[11] = option;
+    set_option[13] = x;
+    set_option[14] = calculate_checksum(set_option, sizeof(set_option), 14) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_option, sizeof(set_option), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_option, sizeof(set_option));
 }
 
-void set_noisegate_on_off(struct usb_dev_handle *handle, gboolean val)
+void set_noisegate_on_off(gboolean val)
 {
-    static char set_gate[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x02, 0x41, 0x0C, 0x07, 0x00 /* on/off */, 0x00 /* checksum */, 0xF7};
+    static char set_gate[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x02, 0x41, 0x0C, 0x00 /* on/off */, 0x00 /* checksum */, 0xF7};
 
     if (val == FALSE) { /* turn noisegate off */
-        set_gate[17] = 0;
+        set_gate[13] = 0;
     } else { /* turn noisegate on */
-        set_gate[17] = 1;
+        set_gate[13] = 1;
     }
 
-    set_gate[18] = calculate_checksum(set_gate, sizeof(set_gate), 18);
+    set_gate[14] = calculate_checksum(set_gate, sizeof(set_gate), 14) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_gate, sizeof(set_gate), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_gate, sizeof(set_gate));
 }
 
-void set_chorusfx_option(struct usb_dev_handle *handle, char option, int x)
+void set_chorusfx_option(char option, int x)
 {
-    static char set_option[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x00, 0x04, 0x03, 0x00 /* option */, 0x0E, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+    static char set_option[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x00, 0x03, 0x00 /* option */, 0x0E, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
-    set_option[14] = option;
-    set_option[17] = x;
-    set_option[18] = calculate_checksum(set_option, sizeof(set_option), 18);
+    set_option[11] = option;
+    set_option[13] = x;
+    set_option[14] = calculate_checksum(set_option, sizeof(set_option), 14) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_option, sizeof(set_option), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_option, sizeof(set_option));
 }
 
-void set_flanger_option(struct usb_dev_handle *handle, char option, int x)
+void set_flanger_option(char option, int x)
 {
-    static char set_option[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x03, 0x00 /* option */, 0x0E, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+    static char set_option[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x03, 0x00 /* option */, 0x0E, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
-    set_option[14] = option;
-    set_option[17] = x;
-    set_option[18] = calculate_checksum(set_option, sizeof(set_option), 18);
+    set_option[11] = option;
+    set_option[13] = x;
+    set_option[14] = calculate_checksum(set_option, sizeof(set_option), 14) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_option, sizeof(set_option), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_option, sizeof(set_option));
 }
 
-void set_vibrato_option(struct usb_dev_handle *handle, char option, int x)
+void set_vibrato_option(char option, int x)
 {
-    static char set_option[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x00, 0x04, 0x05, 0x00 /* option */, 0x0E, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+    static char set_option[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x00, 0x05, 0x00 /* option */, 0x0E, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
-    set_option[14] = option;
-    set_option[17] = x;
-    set_option[18] = calculate_checksum(set_option, sizeof(set_option), 18);
+    set_option[11] = option;
+    set_option[13] = x;
+    set_option[14] = calculate_checksum(set_option, sizeof(set_option), 14) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_option, sizeof(set_option), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_option, sizeof(set_option));
 }
 
-void set_tremolo_option(struct usb_dev_handle *handle, char option, int x)
+void set_tremolo_option(char option, int x)
 {
-    static char set_option[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x04, 0x00 /* option */, 0x0E, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+    static char set_option[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x04, 0x00 /* option */, 0x0E, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
-    set_option[14] = option;
-    set_option[17] = x;
-    set_option[18] = calculate_checksum(set_option, sizeof(set_option), 18);
+    set_option[11] = option;
+    set_option[13] = x;
+    set_option[14] = calculate_checksum(set_option, sizeof(set_option), 14) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_option, sizeof(set_option), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_option, sizeof(set_option));
 }
 
-void set_envelope_option(struct usb_dev_handle *handle, char option, int x)
+void set_envelope_option(char option, int x)
 {
-    static char set_option[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x00, 0x04, 0x06, 0x00 /* option */, 0x0E, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+    static char set_option[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x00, 0x06, 0x00 /* option */, 0x0E, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
-    set_option[14] = option;
-    set_option[17] = x;
-    set_option[18] = calculate_checksum(set_option, sizeof(set_option), 18);
+    set_option[11] = option;
+    set_option[13] = x;
+    set_option[14] = calculate_checksum(set_option, sizeof(set_option), 14) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_option, sizeof(set_option), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_option, sizeof(set_option));
 }
 
-void set_ya_option(struct usb_dev_handle *handle, char option, int x)
+void set_ya_option(char option, int x)
 {
-    static char set_option[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x05, 0x00 /* option */, 0x0E, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+    static char set_option[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x05, 0x00 /* option */, 0x0E, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
-    set_option[14] = option;
-    set_option[17] = x;
-    set_option[18] = calculate_checksum(set_option, sizeof(set_option), 18);
+    set_option[11] = option;
+    set_option[13] = x;
+    set_option[14] = calculate_checksum(set_option, sizeof(set_option), 14) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_option, sizeof(set_option), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_option, sizeof(set_option));
 }
 
-void set_filter_option(struct usb_dev_handle *handle, char option, int x)
+void set_filter_option(char option, int x)
 {
-    static char set_option[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x0B, 0x00 /* option */, 0x0E, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+    static char set_option[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x0B, 0x00 /* option */, 0x0E, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
-    set_option[14] = option;
-    set_option[17] = x;
-    set_option[18] = calculate_checksum(set_option, sizeof(set_option), 18);
+    set_option[11] = option;
+    set_option[13] = x;
+    set_option[14] = calculate_checksum(set_option, sizeof(set_option), 14) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_option, sizeof(set_option), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_option, sizeof(set_option));
 }
 
-void set_whammy_option(struct usb_dev_handle *handle, char option, int x)
+void set_whammy_option(char option, int x)
 {
-    static char set_option[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x00, 0x04, 0x07, 0x00 /* option */, 0x0E, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+    static char set_option[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x00, 0x07, 0x00 /* option */, 0x0E, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
-    set_option[14] = option;
-    set_option[17] = x;
-    set_option[18] = calculate_checksum(set_option, sizeof(set_option), 18);
+    set_option[11] = option;
+    set_option[13] = x;
+    set_option[14] = calculate_checksum(set_option, sizeof(set_option), 14) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_option, sizeof(set_option), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_option, sizeof(set_option));
 }
 
-void set_pitch_option(struct usb_dev_handle *handle, char option, int x)
+void set_pitch_option(char option, int x)
 {
-    static char set_option[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x06, 0x00 /* option */, 0x0E, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+    static char set_option[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x06, 0x00 /* option */, 0x0E, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
-    set_option[14] = option;
-    set_option[17] = x;
-    set_option[18] = calculate_checksum(set_option, sizeof(set_option), 18);
+    set_option[11] = option;
+    set_option[13] = x;
+    set_option[14] = calculate_checksum(set_option, sizeof(set_option), 14) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_option, sizeof(set_option), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_option, sizeof(set_option));
 }
 
-void set_ips_option(struct usb_dev_handle *handle, char option, int x)
+void set_ips_option(char option, int x)
 {
-    static char set_option[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x0A, 0x00 /* option */, 0x0E, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+    static char set_option[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x0A, 0x00 /* option */, 0x0E, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
-    set_option[14] = option;
-    set_option[17] = x;
-    set_option[18] = calculate_checksum(set_option, sizeof(set_option), 18);
+    set_option[11] = option;
+    set_option[13] = x;
+    set_option[14] = calculate_checksum(set_option, sizeof(set_option), 14) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_option, sizeof(set_option), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_option, sizeof(set_option));
 }
 
-void set_chorusfx_type(struct usb_dev_handle *handle, int type)
+void set_chorusfx_type(int type)
 {
-    static char set_type[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x00 /* type */, 0x04, 0x03, 0x00, 0x0E, 0x04, 0x02, 0x00 /* type */, 0x00 /* type1 */, 0x06, 0x00 /* checksum */, 0xF7, 0x00};
+    static char set_type[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x00 /* type */, 0x03, 0x00, 0x0E, 0x02, 0x00 /* type */, 0x00 /* type1 */, 0x00 /* checksum */, 0xF7};
 
     switch (type) {
-        case CHORUS_TYPE_CE: set_type[11] = 0x08; set_type[19] = 0x7B; set_type[18] = 0x03; break;
-        case CHORUS_TYPE_DUAL: set_type[11] = 0x08; set_type[19] = 0x79; set_type[18] = 0x03; break;
-        case CHORUS_TYPE_MULTI: set_type[11] = 0x08; set_type[19] = 0x7A; set_type[18] = 0x03; break;
-        case CHORUS_TYPE_FLANGER: set_type[11] = 0x08; set_type[19] = 0x7D; set_type[18] = 0x03; break;
-        case CHORUS_TYPE_MXR_FLANGER: set_type[11] = 0x08; set_type[19] = 0x7F; set_type[18] = 0x03; break;
-        case CHORUS_TYPE_PHASER: set_type[11] = 0x0A; set_type[19] = 0x01; set_type[18] = 0x03; break;
-        case CHORUS_TYPE_VIBRATO: set_type[11] = 0x08; set_type[19] = 0x60; set_type[18] = 0x03; break;
-        case CHORUS_TYPE_ROTARY: set_type[11] = 0x08; set_type[19] = 0x61; set_type[18] = 0x03; break;
-        case CHORUS_TYPE_VIBROPAN: set_type[11] = 0x0A; set_type[19] = 0x0F; set_type[18] = 0x03; break;
-        case CHORUS_TYPE_TREMOLO: set_type[11] = 0x08; set_type[19] = 0x5E; set_type[18] = 0x03; break;
-        case CHORUS_TYPE_PANNER: set_type[11] = 0x08; set_type[19] = 0x5F; set_type[18] = 0x03; break;
-        case CHORUS_TYPE_ENVELOPE: set_type[11] = 0x0A; set_type[19] = 0x0A; set_type[18] = 0x03; break;
-        case CHORUS_TYPE_AUTOYA: set_type[11] = 0x0A; set_type[19] = 0x0B; set_type[18] = 0x03; break;
-        case CHORUS_TYPE_YAYA: set_type[11] = 0x0A; set_type[19] = 0x0C; set_type[18] = 0x03; break;
-        case CHORUS_TYPE_STEP_FILTER: set_type[11] = 0x0A; set_type[19] = 0x0D; set_type[18] = 0x03; break;
-        case CHORUS_TYPE_WHAMMY: set_type[11] = 0x08; set_type[19] = 0x40; set_type[18] = 0x05; break;
-        case CHORUS_TYPE_PITCH_SHIFT: set_type[11] = 0x08; set_type[19] = 0x43; set_type[18] = 0x05; break;
-        case CHORUS_TYPE_DETUNE: set_type[11] = 0x08; set_type[19] = 0x42; set_type[18] = 0x05; break;
-        case CHORUS_TYPE_IPS: set_type[11] = 0x08; set_type[19] = 0x41; set_type[18] = 0x05; break;
+        case CHORUS_TYPE_CE: set_type[9] = 0x08; set_type[15] = 0x7B; set_type[14] = 0x03; break;
+        case CHORUS_TYPE_DUAL: set_type[9] = 0x08; set_type[15] = 0x79; set_type[14] = 0x03; break;
+        case CHORUS_TYPE_MULTI: set_type[9] = 0x08; set_type[15] = 0x7A; set_type[14] = 0x03; break;
+        case CHORUS_TYPE_FLANGER: set_type[9] = 0x08; set_type[15] = 0x7D; set_type[14] = 0x03; break;
+        case CHORUS_TYPE_MXR_FLANGER: set_type[9] = 0x08; set_type[15] = 0x7F; set_type[14] = 0x03; break;
+        case CHORUS_TYPE_PHASER: set_type[9] = 0x0A; set_type[15] = 0x01; set_type[14] = 0x03; break;
+        case CHORUS_TYPE_VIBRATO: set_type[9] = 0x08; set_type[15] = 0x60; set_type[14] = 0x03; break;
+        case CHORUS_TYPE_ROTARY: set_type[9] = 0x08; set_type[15] = 0x61; set_type[14] = 0x03; break;
+        case CHORUS_TYPE_VIBROPAN: set_type[9] = 0x0A; set_type[15] = 0x0F; set_type[14] = 0x03; break;
+        case CHORUS_TYPE_TREMOLO: set_type[9] = 0x08; set_type[15] = 0x5E; set_type[14] = 0x03; break;
+        case CHORUS_TYPE_PANNER: set_type[9] = 0x08; set_type[15] = 0x5F; set_type[14] = 0x03; break;
+        case CHORUS_TYPE_ENVELOPE: set_type[9] = 0x0A; set_type[15] = 0x0A; set_type[14] = 0x03; break;
+        case CHORUS_TYPE_AUTOYA: set_type[9] = 0x0A; set_type[15] = 0x0B; set_type[14] = 0x03; break;
+        case CHORUS_TYPE_YAYA: set_type[9] = 0x0A; set_type[15] = 0x0C; set_type[14] = 0x03; break;
+        case CHORUS_TYPE_STEP_FILTER: set_type[9] = 0x0A; set_type[15] = 0x0D; set_type[14] = 0x03; break;
+        case CHORUS_TYPE_WHAMMY: set_type[9] = 0x08; set_type[15] = 0x40; set_type[14] = 0x05; break;
+        case CHORUS_TYPE_PITCH_SHIFT: set_type[9] = 0x08; set_type[15] = 0x43; set_type[14] = 0x05; break;
+        case CHORUS_TYPE_DETUNE: set_type[9] = 0x08; set_type[15] = 0x42; set_type[14] = 0x05; break;
+        case CHORUS_TYPE_IPS: set_type[9] = 0x08; set_type[15] = 0x41; set_type[14] = 0x05; break;
         default: break;
     }
 
-    set_type[21] = calculate_checksum(set_type, sizeof(set_type), 21) ^ 0x05;
+    set_type[16] = calculate_checksum(set_type, sizeof(set_type), 16) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_type, sizeof(set_type), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_type, sizeof(set_type));
 }
 
-void set_chorusfx_on_off(struct usb_dev_handle *handle, gboolean val)
+void set_chorusfx_on_off(gboolean val)
 {
-    static char set_chorus[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x00, 0x04, 0x03, 0x01, 0x0E, 0x07, 0x00 /* on/off */, 0x00 /* checksum */, 0xF7};
+    static char set_chorus[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x00, 0x03, 0x01, 0x0E, 0x00 /* on/off */, 0x00 /* checksum */, 0xF7};
 
     if (val == FALSE) { /* turn chorusfx off */
-        set_chorus[17] = 0;
+        set_chorus[13] = 0;
     } else { /* turn chorusfx on */
-        set_chorus[17] = 1;
+        set_chorus[13] = 1;
     }
 
-    set_chorus[18] = calculate_checksum(set_chorus, sizeof(set_chorus), 18);
+    set_chorus[14] = calculate_checksum(set_chorus, sizeof(set_chorus), 14) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_chorus, sizeof(set_chorus), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_chorus, sizeof(set_chorus));
 }
 
 /* x = 0 to 139 */
-void set_delay_time(struct usb_dev_handle *handle, int x)
+void set_delay_time(int x)
 {
-    int i;
+    if (x <= 0x7F) {
+        static char set_time[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x00, 0x07, 0x60, 0x0F, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
-    if (x <= 0x7F) { /* "short" message format */
-        static char set_time[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x00, 0x04, 0x07, 0x60, 0x0F, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+        set_time[13] = x;
+        set_time[14] = calculate_checksum(set_time, sizeof(set_time), 14) ^ 0x07;
 
-        set_time[17] = x;
-        set_time[18] = calculate_checksum(set_time, sizeof(set_time), 18);
+        send_data(set_time, sizeof(set_time));
+    } else {
+        static char set_time[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x0C, 0x07, 0x60, 0x0F, 0x01, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
-        i = usb_bulk_write(handle, 4, set_time, sizeof(set_time), TIMEOUT);
-    } else { /* "long" message format */
-        static char set_time[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x0C, 0x04, 0x07, 0x60, 0x0F, 0x04, 0x01, 0x00 /* value */, 0x00 /* checksum */, 0x05, 0xF7, 0x00, 0x00};
+        set_time[14] = x - 0x80;
+        set_time[15] = calculate_checksum(set_time, sizeof(set_time), 15) ^ 0x07;
 
-        set_time[18] = x - 0x80;
-        set_time[19] = calculate_checksum(set_time, sizeof(set_time), 19) ^ 0x06;
-
-        i = usb_bulk_write(handle, 4, set_time, sizeof(set_time), TIMEOUT);
+        send_data(set_time, sizeof(set_time));
     }
-    printf("wrote: %d\n", i);
 }
 
-void set_delay_type(struct usb_dev_handle *handle, int type)
+void set_delay_type(int type)
 {
-    static char set_type[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x08, 0x04, 0x07, 0x40, 0x0F, 0x04, 0x02, 0x04, 0x00 /* type1 */, 0x06, 0x00 /* checksum */, 0xF7, 0x00};
+    static char set_type[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x08, 0x07, 0x40, 0x0F, 0x02, 0x04, 0x00 /* type1 */, 0x00 /* checksum */, 0xF7};
 
     switch (type) {
-        case DELAY_TYPE_ANALOG: set_type[19] = 0x16; break;
-        case DELAY_TYPE_DIGITAL: set_type[19] = 0x15; break;
-        case DELAY_TYPE_MODULATED: set_type[19] = 0x17; break;
-        case DELAY_TYPE_PONG: set_type[19] = 0x18; break;
-        case DELAY_TYPE_TAPE: set_type[19] = 0x19; break;
+        case DELAY_TYPE_ANALOG: set_type[15] = 0x16; break;
+        case DELAY_TYPE_DIGITAL: set_type[15] = 0x15; break;
+        case DELAY_TYPE_MODULATED: set_type[15] = 0x17; break;
+        case DELAY_TYPE_PONG: set_type[15] = 0x18; break;
+        case DELAY_TYPE_TAPE: set_type[15] = 0x19; break;
         default: break;
     }
 
-    set_type[21] = calculate_checksum(set_type, sizeof(set_type), 21) ^ 0x05;
+    set_type[16] = calculate_checksum(set_type, sizeof(set_type), 16) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_type, sizeof(set_type), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_type, sizeof(set_type));
 }
 
-void set_delay_option(struct usb_dev_handle *handle, char option, int x)
+void set_delay_option(char option, int x)
 {
-    static char set_option[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x00, 0x04, 0x07, 0x00 /* option */, 0x0F, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+    static char set_option[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x00, 0x07, 0x00 /* option */, 0x0F, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
-    set_option[14] = option;
-    set_option[17] = x;
-    set_option[18] = calculate_checksum(set_option, sizeof(set_option), 18);
+    set_option[11] = option;
+    set_option[13] = x;
+    set_option[14] = calculate_checksum(set_option, sizeof(set_option), 14) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_option, sizeof(set_option), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_option, sizeof(set_option));
 }
 
-void set_delay_on_off(struct usb_dev_handle *handle, gboolean val)
+void set_delay_on_off(gboolean val)
 {
-    static char set_delay[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x00, 0x04, 0x07, 0x41, 0x0F, 0x07, 0x00 /* on/off */, 0x00 /* checksum */, 0xF7};
+    static char set_delay[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x00, 0x07, 0x41, 0x0F, 0x00 /* on/off */, 0x00 /* checksum */, 0xF7};
 
     if (val == FALSE) { /* turn delay off */
-        set_delay[17] = 0;
+        set_delay[13] = 0;
     } else { /* turn delay on */
-        set_delay[17] = 1;
+        set_delay[13] = 1;
     }
 
-    set_delay[18] = calculate_checksum(set_delay, sizeof(set_delay), 18);
+    set_delay[14] = calculate_checksum(set_delay, sizeof(set_delay), 14) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_delay, sizeof(set_delay), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_delay, sizeof(set_delay));
 }
 
 /* x = 0 to 15 (predelay), otherwise 0 to 99 */
-void set_reverb_option(struct usb_dev_handle *handle, char option, int x)
+void set_reverb_option(char option, int x)
 {
-    static char set_option[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x07, 0x00 /* option */, 0x10, 0x07, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+    static char set_option[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x07, 0x00 /* option */, 0x10, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
-    set_option[14] = option;
-    set_option[17] = x;
-    set_option[18] = calculate_checksum(set_option, sizeof(set_option), 18);
+    set_option[11] = option;
+    set_option[13] = x;
+    set_option[14] = calculate_checksum(set_option, sizeof(set_option), 14) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_option, sizeof(set_option), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_option, sizeof(set_option));
 }
 
-void set_reverb_type(struct usb_dev_handle *handle, int type)
+void set_reverb_type(int type)
 {
-    static char set_type[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x28, 0x04, 0x07, 0x00, 0x10, 0x04, 0x02, 0x04, 0x00 /* type1 */, 0x06, 0x00 /* checksum */, 0xF7, 0x00};
+    static char set_type[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x28, 0x07, 0x00, 0x10, 0x02, 0x04, 0x00 /* type1 */, 0x00 /* checksum */, 0xF7};
 
     switch (type) {
-        case REVERB_TYPE_TWIN: set_type[19] = 0x7A; break;
-        case REVERB_TYPE_LEX_AMBIENCE: set_type[19] = 0x7E; break;
-        case REVERB_TYPE_LEX_STUDIO: set_type[19] = 0x7D; break;
-        case REVERB_TYPE_LEX_ROOM: set_type[19] = 0x7C; break;
-        case REVERB_TYPE_LEX_HALL: set_type[19] = 0x7B; break;
-        case REVERB_TYPE_EMT240_PLATE: set_type[19] = 0x7F; break;
+        case REVERB_TYPE_TWIN: set_type[15] = 0x7A; break;
+        case REVERB_TYPE_LEX_AMBIENCE: set_type[15] = 0x7E; break;
+        case REVERB_TYPE_LEX_STUDIO: set_type[15] = 0x7D; break;
+        case REVERB_TYPE_LEX_ROOM: set_type[15] = 0x7C; break;
+        case REVERB_TYPE_LEX_HALL: set_type[15] = 0x7B; break;
+        case REVERB_TYPE_EMT240_PLATE: set_type[15] = 0x7F; break;
         default: break;
     }
 
-    set_type[21] = calculate_checksum(set_type, sizeof(set_type), 21) ^ 0x05;
+    set_type[16] = calculate_checksum(set_type, sizeof(set_type), 16) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_type, sizeof(set_type), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_type, sizeof(set_type));
 }
 
-void set_reverb_on_off(struct usb_dev_handle *handle, gboolean val)
+void set_reverb_on_off(gboolean val)
 {
-    static char set_reverb[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x41, 0x20, 0x04, 0x07, 0x01, 0x10, 0x07, 0x00 /* on/off */, 0x00 /* checksum */, 0xF7};
+    static char set_reverb[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x07, 0x01, 0x10, 0x00 /* on/off */, 0x00 /* checksum */, 0xF7};
 
     if (val == FALSE) { /* turn reverb off */
-        set_reverb[17] = 0;
+        set_reverb[13] = 0;
     } else { /* turn reverb on */
-        set_reverb[17] = 1;
+        set_reverb[13] = 1;
     }
 
-    set_reverb[18] = calculate_checksum(set_reverb, sizeof(set_reverb), 18);
+    set_reverb[14] = calculate_checksum(set_reverb, sizeof(set_reverb), 14) ^ 0x07;
 
-    int i;
-    i = usb_bulk_write(handle, 4, set_reverb, sizeof(set_reverb), TIMEOUT);
-    printf("wrote: %d\n", i);
+    send_data(set_reverb, sizeof(set_reverb));
 }
 
 /* x = 0 to 59 (preset number) */
-void set_preset_name(struct usb_dev_handle *handle, int x, gchar *name)
+void set_preset_name(int x, gchar *name)
 {
-    static char set_name[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x29, 0x00, 0x04, 0x01, 0x00 /* preset no */, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+   /* static char set_name[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x00, 0x5E, 0x04, 0x02, 0x29, 0x00, 0x04, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
-    int write; /* number of bytes to write */
+    int write; // number of bytes to write
 
     set_name[14] = x;
 
@@ -1107,54 +1020,17 @@ void set_preset_name(struct usb_dev_handle *handle, int x, gchar *name)
 
     int i;
     i = usb_bulk_write(handle, 4, set_name, write, TIMEOUT);
-    printf("wrote: %d\n", i);
+    printf("wrote: %d\n", i);*/
 }
 
 int main(int argc, char **argv) {
     gtk_init(&argc, &argv);
 
-    struct usb_bus *busses;
+    create_window();
+    gtk_main();
 
-    usb_init();
-    usb_find_busses();
-    usb_find_devices();
-
-    busses = usb_get_busses();
-
-    struct usb_bus *bus;
-
-    for (bus = busses; bus; bus = bus->next) {
-        int result;
-        gboolean found = FALSE;
-
-        for (dev = bus->devices; dev && !found; dev = dev->next) {
-            if (dev->descriptor.idVendor == 0x1210) {
-                found = TRUE;
-                handle = usb_open(dev);
-
-                result = usb_get_string_simple(handle, dev->descriptor.iProduct, buf, sizeof(buf));
-                printf("%d %s\n", result, buf);
-
-                result = usb_claim_interface(handle, 0);
-                if (result == 0) printf ("claim resulted with %d\n", result);
-
-                /*int i = usb_bulk_write(handle, 4, presets_system, sizeof(presets_system), TIMEOUT);
-                printf("wrote: %d\n", i);*/
-                /* now have to read from device,
-                   first packet appears to be smaller,
-                   then are 12 bytes long packets,
-                   last one is smaller */
-            }
-        }
-    }
-
-    if (handle != NULL) {
-        create_window();
-        gtk_main();
-
-        if (usb_close(handle))
-            printf("Error closing usb handle!");
-    }
+    if (output != NULL)
+        snd_rawmidi_close(output);
 
     return 0;
 }

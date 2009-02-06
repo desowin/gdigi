@@ -1,5 +1,4 @@
-Requirments: libusb, gtk+, glib
+Requirments: alsa, gtk+, glib
 
 Getting started guide:
--disable snd_usb_audio (when it's loaded gdigi can't claim interface)
 -make && ./gdigi
