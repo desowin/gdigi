@@ -1,4 +1,12 @@
 Requirments: alsa, gtk+, glib
 
 Getting started guide:
--make && ./gdigi
+-to compile: make
+-to run: ./gdigi
+
+Commandline options:
+--device (-d)
+
+Example:
+gdigi -d hw:1,0,0
+gdigi --device=hw:1,0,0

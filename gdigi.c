@@ -16,8 +16,8 @@
 
 #include <stdio.h>
 #include <gtk/gtk.h>
+#include <getopt.h>
 #include <alsa/asoundlib.h>
-
 #include <string.h>
 #include "gdigi.h"
 #include "gui.h"
@@ -27,7 +27,7 @@
 char buf[255];
 
 static snd_rawmidi_t *output;
-static char *port_name = "default";
+static char *device = "hw:1,0,0";
 
 /*
 static char magic[] = {0x04, 0xF0, 0x00, 0x00, 0x04, 0x10, 0x7F, 0x7F, 0x04, 0x7F, 0x01, 0x00, 0x04, 0x00, 0x00, 0x00, 0x06, 0x6E, 0xF7, 0x00}; // causes COMAND to be displayed on device?
@@ -70,10 +70,22 @@ char calculate_checksum(gchar *array, int length, int check)
     return checksum;
 }
 
-void open_device()
+gboolean open_device()
 {
-    snd_rawmidi_open(NULL, &output, port_name, SND_RAWMIDI_NONBLOCK);
-    snd_rawmidi_nonblock(output, 0);
+    int err;
+
+    err = snd_rawmidi_open(NULL, &output, device, SND_RAWMIDI_NONBLOCK);
+    if (err) {
+        fprintf(stderr, "snd_rawmidi_open %s failed: %d\n", device, err);
+        return TRUE;
+    }
+
+    err = snd_rawmidi_nonblock(output, 0);
+    if (err) {
+        fprintf(stderr, "snd_rawmidi_nonblock failed: %d\n", err);
+        return TRUE;
+    }
+    return FALSE;
 }
 
 void send_data(char *data, int lenght)
@@ -82,20 +94,6 @@ void send_data(char *data, int lenght)
         open_device();
 
     snd_rawmidi_write(output, data, lenght);
-}
-
-int read_device(int bytes)
-{
-    /*int i, x;
-    i = usb_bulk_read(handle, 132, buf, bytes, TIMEOUT);
-    //printf("Called read %d. Device returned %d bytes\n", bytes, i);
-    for (x=0; x<i; x++) {
-       printf("0x%02x(%c) ", (u_char) buf[x], buf[x] ? (u_char) buf[x] : 32);
-    }
-
-    printf("\n");
-    if (bytes > 0) return i;
-    else return 0;*/
 }
 
 void check_preset(struct usb_dev_handle *handle)
@@ -922,11 +920,41 @@ void set_preset_name(int x, gchar *name)
     send_data(set_name, 13+a+3+b);
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char *argv[]) {
     gtk_init(&argc, &argv);
 
-    create_window();
-    gtk_main();
+    int c;
+    while (1) {
+        static struct option long_options[] = {
+            {"device", required_argument, 0, 'd'},
+            {0, 0, 0, 0}
+        };
+        int option_index = 0;
+        c = getopt_long(argc, argv, "d:", long_options, &option_index);
+        if (c == -1)
+            break;
+
+        switch(c) {
+            case 'd':
+                device = optarg;
+                break;
+            default:
+                abort();
+        }
+    }
+
+    if (open_device() == TRUE) {
+        GtkWidget *msg = gtk_message_dialog_new(NULL, GTK_DIALOG_MODAL,
+                                                GTK_MESSAGE_ERROR,
+                                                GTK_BUTTONS_OK,
+                                                "Failed to open MIDI device");
+
+        gtk_dialog_run(GTK_DIALOG(msg));
+        gtk_widget_destroy(msg);
+    } else {
+        create_window();
+        gtk_main();
+    }
 
     if (output != NULL)
         snd_rawmidi_close(output);
