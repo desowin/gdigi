@@ -356,7 +356,7 @@ void set_dist_type(int type)
     send_data(set_dist, sizeof(set_dist));
 }
 
-void set_dist_option(char option, int value)
+void set_dist_option(guint32 option, int value)
 {
     static char set_option[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x09, 0x00 /* option */, 0x06, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
@@ -598,7 +598,7 @@ void set_noisegate_type(int type)
 }
 
 /* x = 0 to 99 */
-void set_gate_option(char option, int x)
+void set_gate_option(guint32 option, int x)
 {
     static char set_option[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x02, 0x00 /* option */, 0x0C, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
@@ -624,112 +624,16 @@ void set_noisegate_on_off(gboolean val)
     send_data(set_gate, sizeof(set_gate));
 }
 
-void set_chorusfx_option(char option, int x)
+void set_chorusfx_option(guint32 option, int x)
 {
-    static char set_option[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x00, 0x03, 0x00 /* option */, 0x0E, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
+    static char set_option[] = {0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x00 /* option1 */, 0x00 /* option2 */, 0x00 /* option3 */, 0x0E, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
-    set_option[11] = option;
-    set_option[13] = x;
-    set_option[14] = calculate_checksum(set_option, sizeof(set_option), 14) ^ 0x07;
+    set_option[8]  = ((option & 0xFF0000) >> 16);
+    set_option[9]  = ((option & 0x00FF00) >> 8);
+    set_option[10] = ((option & 0x0000FF));
 
-    send_data(set_option, sizeof(set_option));
-}
-
-void set_flanger_option(char option, int x)
-{
-    static char set_option[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x03, 0x00 /* option */, 0x0E, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_option[11] = option;
-    set_option[13] = x;
-    set_option[14] = calculate_checksum(set_option, sizeof(set_option), 14) ^ 0x07;
-
-    send_data(set_option, sizeof(set_option));
-}
-
-void set_vibrato_option(char option, int x)
-{
-    static char set_option[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x00, 0x05, 0x00 /* option */, 0x0E, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_option[11] = option;
-    set_option[13] = x;
-    set_option[14] = calculate_checksum(set_option, sizeof(set_option), 14) ^ 0x07;
-
-    send_data(set_option, sizeof(set_option));
-}
-
-void set_tremolo_option(char option, int x)
-{
-    static char set_option[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x04, 0x00 /* option */, 0x0E, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_option[11] = option;
-    set_option[13] = x;
-    set_option[14] = calculate_checksum(set_option, sizeof(set_option), 14) ^ 0x07;
-
-    send_data(set_option, sizeof(set_option));
-}
-
-void set_envelope_option(char option, int x)
-{
-    static char set_option[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x00, 0x06, 0x00 /* option */, 0x0E, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_option[11] = option;
-    set_option[13] = x;
-    set_option[14] = calculate_checksum(set_option, sizeof(set_option), 14) ^ 0x07;
-
-    send_data(set_option, sizeof(set_option));
-}
-
-void set_ya_option(char option, int x)
-{
-    static char set_option[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x05, 0x00 /* option */, 0x0E, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_option[11] = option;
-    set_option[13] = x;
-    set_option[14] = calculate_checksum(set_option, sizeof(set_option), 14) ^ 0x07;
-
-    send_data(set_option, sizeof(set_option));
-}
-
-void set_filter_option(char option, int x)
-{
-    static char set_option[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x0B, 0x00 /* option */, 0x0E, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_option[11] = option;
-    set_option[13] = x;
-    set_option[14] = calculate_checksum(set_option, sizeof(set_option), 14) ^ 0x07;
-
-    send_data(set_option, sizeof(set_option));
-}
-
-void set_whammy_option(char option, int x)
-{
-    static char set_option[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x00, 0x07, 0x00 /* option */, 0x0E, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_option[11] = option;
-    set_option[13] = x;
-    set_option[14] = calculate_checksum(set_option, sizeof(set_option), 14) ^ 0x07;
-
-    send_data(set_option, sizeof(set_option));
-}
-
-void set_pitch_option(char option, int x)
-{
-    static char set_option[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x06, 0x00 /* option */, 0x0E, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_option[11] = option;
-    set_option[13] = x;
-    set_option[14] = calculate_checksum(set_option, sizeof(set_option), 14) ^ 0x07;
-
-    send_data(set_option, sizeof(set_option));
-}
-
-void set_ips_option(char option, int x)
-{
-    static char set_option[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x0A, 0x00 /* option */, 0x0E, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_option[11] = option;
-    set_option[13] = x;
-    set_option[14] = calculate_checksum(set_option, sizeof(set_option), 14) ^ 0x07;
+    set_option[12] = x;
+    set_option[13] = calculate_checksum(set_option, sizeof(set_option), 13) ^ 0x07;
 
     send_data(set_option, sizeof(set_option));
 }
@@ -819,7 +723,7 @@ void set_delay_type(int type)
     send_data(set_type, sizeof(set_type));
 }
 
-void set_delay_option(char option, int x)
+void set_delay_option(guint32 option, int x)
 {
     static char set_option[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x00, 0x07, 0x00 /* option */, 0x0F, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 
@@ -846,7 +750,7 @@ void set_delay_on_off(gboolean val)
 }
 
 /* x = 0 to 15 (predelay), otherwise 0 to 99 */
-void set_reverb_option(char option, int x)
+void set_reverb_option(guint32 option, int x)
 {
     static char set_option[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x07, 0x00 /* option */, 0x10, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
 

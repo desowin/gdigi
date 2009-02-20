@@ -134,85 +134,85 @@ enum {
   CHORUS_TYPE_IPS
 };
 
-#define CE_CHORUS_SPEED 0x45
-#define CE_CHORUS_DEPTH 0x46
+#define CE_CHORUS_SPEED 0x000345
+#define CE_CHORUS_DEPTH 0x000346
 
-#define DUAL_CHORUS_SPEED 0x45
-#define DUAL_CHORUS_DEPTH 0x46
-#define DUAL_CHORUS_LEVEL 0x44
-#define DUAL_CHORUS_WAVE 0x48
+#define DUAL_CHORUS_SPEED 0x000345
+#define DUAL_CHORUS_DEPTH 0x000346
+#define DUAL_CHORUS_LEVEL 0x000344
+#define DUAL_CHORUS_WAVE 0x000348
 
-#define MULTI_CHORUS_SPEED 0x45
-#define MULTI_CHORUS_DEPTH 0x46
-#define MULTI_CHORUS_WAVE  0x48
-#define MULTI_CHORUS_LEVEL 0x44
+#define MULTI_CHORUS_SPEED 0x000345
+#define MULTI_CHORUS_DEPTH 0x000346
+#define MULTI_CHORUS_WAVE  0x000348
+#define MULTI_CHORUS_LEVEL 0x000344
 
-#define FLANGER_SPEED 0x06
-#define FLANGER_DEPTH 0x07
-#define FLANGER_REGEN 0x08
-#define FLANGER_LEVEL 0x05
-#define FLANGER_WAVE 0x09
+#define FLANGER_SPEED 0x200306
+#define FLANGER_DEPTH 0x200307
+#define FLANGER_REGEN 0x200308
+#define FLANGER_LEVEL 0x200305
+#define FLANGER_WAVE 0x200309
 
-#define MXR_FLANGER_SPEED 0x06
-#define MXR_FLANGER_WIDTH 0x12
-#define MXR_FLANGER_REGEN 0x08
-#define MXR_FLANGER_MANUAL 0x15
+#define MXR_FLANGER_SPEED 0x200306
+#define MXR_FLANGER_WIDTH 0x200312
+#define MXR_FLANGER_REGEN 0x200308
+#define MXR_FLANGER_MANUAL 0x200315
 
-#define PHASER_SPEED 0x42
-#define PHASER_DEPTH 0x43
-#define PHASER_REGEN 0x46
-#define PHASER_LEVEL 0x45
-#define PHASER_WAVE 0x47
+#define PHASER_SPEED 0x200342
+#define PHASER_DEPTH 0x200343
+#define PHASER_REGEN 0x200346
+#define PHASER_LEVEL 0x200345
+#define PHASER_WAVE 0x200347
 
-#define VIBRATO_SPEED 0x04
-#define VIBRATO_DEPTH 0x05
+#define VIBRATO_SPEED 0x000504
+#define VIBRATO_DEPTH 0x000505
 
-#define ROTARY_SPEED 0x42
-#define ROTARY_INTENSITY 0x44
-#define ROTARY_DOPPLER 0x46
-#define ROTARY_CROSSOVER 0x47
+#define ROTARY_SPEED 0x000542
+#define ROTARY_INTENSITY 0x000544
+#define ROTARY_DOPPLER 0x000546
+#define ROTARY_CROSSOVER 0x000547
 
-#define VIBROPAN_SPEED 0x22
-#define VIBROPAN_DEPTH 0x23
-#define VIBROPAN_VIBRA 0x24
-#define VIBROPAN_WAVE 0x25
+#define VIBROPAN_SPEED 0x000522
+#define VIBROPAN_DEPTH 0x000523
+#define VIBROPAN_VIBRA 0x000524
+#define VIBROPAN_WAVE 0x000525
 
-#define TREMOLO_SPEED 0x04
-#define TREMOLO_DEPTH 0x03
-#define TREMOLO_WAVE 0x05
+#define TREMOLO_SPEED 0x200404
+#define TREMOLO_DEPTH 0x200403
+#define TREMOLO_WAVE 0x200405
 
-#define PANNER_SPEED 0x44
-#define PANNER_DEPTH 0x43
-#define PANNER_WAVE 0x45
+#define PANNER_SPEED 0x200444
+#define PANNER_DEPTH 0x200443
+#define PANNER_WAVE 0x200445
 
-#define ENVELOPE_SENSITIVITY 0x46
-#define ENVELOPE_RANGE 0x45
+#define ENVELOPE_SENSITIVITY 0x000646
+#define ENVELOPE_RANGE 0x000645
 
-#define AUTOYA_SPEED 0x46
-#define AUTOYA_INTENSITY 0x4A
-#define AUTOYA_RANGE 0x4B
+#define AUTOYA_SPEED 0x200546
+#define AUTOYA_INTENSITY 0x20054A
+#define AUTOYA_RANGE 0x20054B
 
-#define YAYA_PEDAL 0x02
-#define YAYA_INTENSITY 0x09
-#define YAYA_RANGE 0x0A
+#define YAYA_PEDAL 0x200502
+#define YAYA_INTENSITY 0x200509
+#define YAYA_RANGE 0x20050A
 
-#define STEP_FILTER_SPEED 0x42
-#define STEP_FILTER_INTENSITY 0x43
+#define STEP_FILTER_SPEED 0x200B42
+#define STEP_FILTER_INTENSITY 0x200B43
 
-#define WHAMMY_AMOUNT 0x05
-#define WHAMMY_PEDAL 0x03
-#define WHAMMY_MIX 0x04
+#define WHAMMY_AMOUNT 0x000705
+#define WHAMMY_PEDAL 0x000703
+#define WHAMMY_MIX 0x000704
 
-#define PITCH_AMOUNT 0x42
-#define PITCH_MIX 0x51
+#define PITCH_AMOUNT 0x200642
+#define PITCH_MIX 0x200651
 
-#define DETUNE_AMOUNT 0x04
-#define DETUNE_LEVEL 0x03
+#define DETUNE_AMOUNT 0x200604
+#define DETUNE_LEVEL 0x200603
 
-#define IPS_SHIFT_AMOUNT 0x42
-#define IPS_KEY 0x44
-#define IPS_SCALE 0x43
-#define IPS_LEVEL 0x45
+#define IPS_SHIFT_AMOUNT 0x200A42
+#define IPS_KEY 0x200A44
+#define IPS_SCALE 0x200A43
+#define IPS_LEVEL 0x200A45
 
 /* DUAL_CHORUS_WAVE, MULTI_CHORUS_WAVE, FLANGER_WAVE, PHASER_WAVE,
    VIBROPAN_WAVE, TREMOLO_WAVE, PANNER_WAVE valid values */
@@ -358,7 +358,7 @@ void switch_system_preset(int x);
 void set_pickup_type(int type);
 void set_pickup_on_off(gboolean val);
 void set_dist_type(int type);
-void set_dist_option(char option, int value);
+void set_dist_option(guint32 option, int value);
 void set_dist_on_off(gboolean val);
 void set_preset_level(int level);
 void set_eq_type(int type);
@@ -371,24 +371,15 @@ void set_eq_treble(int x);
 void set_eq_treb_hz(int x);
 void set_eq_on_off(gboolean val);
 void set_noisegate_type(int type);
-void set_gate_option(char option, int x);
+void set_gate_option(guint32 option, int x);
 void set_noisegate_on_off(gboolean val);
-void set_chorusfx_option(char option, int x);
-void set_flanger_option(char option, int x);
-void set_vibrato_option(char option, int x);
-void set_tremolo_option(char option, int x);
-void set_envelope_option(char option, int x);
-void set_ya_option(char option, int x);
-void set_filter_option(char option, int x);
-void set_whammy_option(char option, int x);
-void set_pitch_option(char option, int x);
-void set_ips_option(char option, int x);
+void set_chorusfx_option(guint32 option, int x);
 void set_chorusfx_type(int type);
 void set_chorusfx_on_off(gboolean val);
 void set_delay_time(int x);
 void set_delay_type(int type);
-void set_delay_option(char option, int x);
+void set_delay_option(guint32 option, int x);
 void set_delay_on_off(gboolean val);
-void set_reverb_option(char option, int x);
+void set_reverb_option(guint32 option, int x);
 void set_reverb_type(int type);
 void set_reverb_on_off(gboolean val);

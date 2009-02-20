@@ -23,11 +23,11 @@ void value_changed_cb(GtkSpinButton *spinbutton, void (*callback)(int))
     callback(val);
 }
 
-void value_changed_option_cb(GtkSpinButton *spinbutton, void (*callback)(char, int))
+void value_changed_option_cb(GtkSpinButton *spinbutton, void (*callback)(guint32, int))
 {
     int val = gtk_spin_button_get_value_as_int(spinbutton);
-    gint option = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(spinbutton), "option_id"));
-    callback((char)option, val);
+    guint32 option = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(spinbutton), "option_id"));
+    callback(option, val);
 }
 
 void toggled_cb(GtkToggleButton *button, void (*callback)(gboolean))
@@ -39,10 +39,10 @@ void toggled_cb(GtkToggleButton *button, void (*callback)(gboolean))
 typedef struct {
     char *label;
     void (*callback)(int);
-    void (*callback_with_option)(char, int);
+    void (*callback_with_option)(guint32, int);
     gdouble min;
     gdouble max;
-    gint option;
+    guint32 option;
 } SettingsWidget;
 
 static SettingsWidget wah_widgets[] = {
@@ -191,84 +191,84 @@ static SettingsWidget chorusfx_multi_widgets[] = {
 };
 
 static SettingsWidget chorusfx_flanger_widgets[] = {
-    {"Flanger speed", NULL, set_flanger_option, 0.0, 99.0, FLANGER_SPEED},
-    {"Flanger depth", NULL, set_flanger_option, 0.0, 99.0, FLANGER_DEPTH},
-    {"Flanger regen", NULL, set_flanger_option, 0.0, 99.0, FLANGER_REGEN},
-    {"Flanger level", NULL, set_flanger_option, 0.0, 99.0, FLANGER_LEVEL},
+    {"Flanger speed", NULL, set_chorusfx_option, 0.0, 99.0, FLANGER_SPEED},
+    {"Flanger depth", NULL, set_chorusfx_option, 0.0, 99.0, FLANGER_DEPTH},
+    {"Flanger regen", NULL, set_chorusfx_option, 0.0, 99.0, FLANGER_REGEN},
+    {"Flanger level", NULL, set_chorusfx_option, 0.0, 99.0, FLANGER_LEVEL},
     // TODO: FLANGER_WAVE with valid options WAVE_TRI, WAVE_SINE, WAVE_SQUARE
 };
 
 static SettingsWidget chorusfx_mxr_flanger_widgets[] = {
-    {"MXR flanger speed", NULL, set_flanger_option, 0.0, 99.0, MXR_FLANGER_SPEED},
-    {"MXR flanger width", NULL, set_flanger_option, 0.0, 99.0, MXR_FLANGER_WIDTH},
-    {"MXR flanger regen", NULL, set_flanger_option, 0.0, 99.0, MXR_FLANGER_REGEN},
-    {"MXR flanger manual", NULL, set_flanger_option, 0.0, 99.0, MXR_FLANGER_MANUAL},
+    {"MXR flanger speed", NULL, set_chorusfx_option, 0.0, 99.0, MXR_FLANGER_SPEED},
+    {"MXR flanger width", NULL, set_chorusfx_option, 0.0, 99.0, MXR_FLANGER_WIDTH},
+    {"MXR flanger regen", NULL, set_chorusfx_option, 0.0, 99.0, MXR_FLANGER_REGEN},
+    {"MXR flanger manual", NULL, set_chorusfx_option, 0.0, 99.0, MXR_FLANGER_MANUAL},
 };
 
 static SettingsWidget chorusfx_phaser_widgets[] = {
-    {"Phaser speed", NULL, set_flanger_option, 0.0, 99.0, PHASER_SPEED},
-    {"Phaser depth", NULL, set_flanger_option, 0.0, 99.0, PHASER_DEPTH},
-    {"Phaser regen", NULL, set_flanger_option, 0.0, 99.0, PHASER_REGEN},
-    {"Phaser level", NULL, set_flanger_option, 0.0, 99.0, PHASER_LEVEL},
+    {"Phaser speed", NULL, set_chorusfx_option, 0.0, 99.0, PHASER_SPEED},
+    {"Phaser depth", NULL, set_chorusfx_option, 0.0, 99.0, PHASER_DEPTH},
+    {"Phaser regen", NULL, set_chorusfx_option, 0.0, 99.0, PHASER_REGEN},
+    {"Phaser level", NULL, set_chorusfx_option, 0.0, 99.0, PHASER_LEVEL},
     // TODO: PHASER_WAVE with valid options WAVE_TRI, WAVE_SINE, WAVE_SQUARE
 };
 
 static SettingsWidget chorusfx_vibrato_widgets[] = {
-    {"Vibrato speed", NULL, set_vibrato_option, 0.0, 99.0, VIBRATO_SPEED},
-    {"Vibrato depth", NULL, set_vibrato_option, 0.0, 99.0, VIBRATO_DEPTH},
+    {"Vibrato speed", NULL, set_chorusfx_option, 0.0, 99.0, VIBRATO_SPEED},
+    {"Vibrato depth", NULL, set_chorusfx_option, 0.0, 99.0, VIBRATO_DEPTH},
 };
 
 static SettingsWidget chorusfx_rotary_widgets[] = {
-    {"Rotary speed", NULL, set_vibrato_option, 0.0, 99.0, ROTARY_SPEED},
-    {"Rotary intensity", NULL, set_vibrato_option, 0.0, 99.0, ROTARY_INTENSITY},
-    {"Rotary doppler", NULL, set_vibrato_option, 0.0, 99.0, ROTARY_DOPPLER},
-    {"Rotary crossover", NULL, set_vibrato_option, 0.0, 99.0, ROTARY_CROSSOVER},
+    {"Rotary speed", NULL, set_chorusfx_option, 0.0, 99.0, ROTARY_SPEED},
+    {"Rotary intensity", NULL, set_chorusfx_option, 0.0, 99.0, ROTARY_INTENSITY},
+    {"Rotary doppler", NULL, set_chorusfx_option, 0.0, 99.0, ROTARY_DOPPLER},
+    {"Rotary crossover", NULL, set_chorusfx_option, 0.0, 99.0, ROTARY_CROSSOVER},
 };
 
 static SettingsWidget chorusfx_vibropan_widgets[] = {
-    {"Vibropan speed", NULL, set_vibrato_option, 0.0, 99.0, VIBROPAN_SPEED},
-    {"Vibropan depth", NULL, set_vibrato_option, 0.0, 99.0, VIBROPAN_DEPTH},
-    {"Vibropan vibra", NULL, set_vibrato_option, 0.0, 99.0, VIBROPAN_VIBRA},
+    {"Vibropan speed", NULL, set_chorusfx_option, 0.0, 99.0, VIBROPAN_SPEED},
+    {"Vibropan depth", NULL, set_chorusfx_option, 0.0, 99.0, VIBROPAN_DEPTH},
+    {"Vibropan vibra", NULL, set_chorusfx_option, 0.0, 99.0, VIBROPAN_VIBRA},
     // TODO: VIBROPAN_WAVE with valid options WAVE_TRI, WAVE_SINE, WAVE_SQUARE
 };
 
 static SettingsWidget chorusfx_tremolo_widgets[] = {
-    {"Tremolo speed", NULL, set_tremolo_option, 0.0, 99.0, TREMOLO_SPEED},
-    {"Tremolo depth", NULL, set_tremolo_option, 0.0, 99.0, TREMOLO_DEPTH},
+    {"Tremolo speed", NULL, set_chorusfx_option, 0.0, 99.0, TREMOLO_SPEED},
+    {"Tremolo depth", NULL, set_chorusfx_option, 0.0, 99.0, TREMOLO_DEPTH},
     // TODO: TREMOLO_WAVE with valid options WAVE_TRI, WAVE_SINE, WAVE_SQUARE
 };
 
 static SettingsWidget chorusfx_panner_widgets[] = {
-    {"Panner speed", NULL, set_tremolo_option, 0.0, 99.0, PANNER_SPEED},
-    {"Panner depth", NULL, set_tremolo_option, 0.0, 99.0, PANNER_DEPTH},
+    {"Panner speed", NULL, set_chorusfx_option, 0.0, 99.0, PANNER_SPEED},
+    {"Panner depth", NULL, set_chorusfx_option, 0.0, 99.0, PANNER_DEPTH},
     // TODO: PANNER_WAVE with valid options WAVE_TRI, WAVE_SINE, WAVE_SQUARE
 };
 
 static SettingsWidget chorusfx_envelope_widgets[] = {
-    {"Envelope sensitivity", NULL, set_envelope_option, 0.0, 99.0, ENVELOPE_SENSITIVITY},
-    {"Envelope range", NULL, set_envelope_option, 0.0, 99.0, ENVELOPE_RANGE},
+    {"Envelope sensitivity", NULL, set_chorusfx_option, 0.0, 99.0, ENVELOPE_SENSITIVITY},
+    {"Envelope range", NULL, set_chorusfx_option, 0.0, 99.0, ENVELOPE_RANGE},
 };
 
 static SettingsWidget chorusfx_autoya_widgets[] = {
-    {"AutoYa speed", NULL, set_ya_option, 0.0, 99.0, AUTOYA_SPEED},
-    {"AutoYa intensity", NULL, set_ya_option, 0.0, 99.0, AUTOYA_INTENSITY},
-    {"AutoYa range", NULL, set_ya_option, 0.0, 49.0, AUTOYA_RANGE},
+    {"AutoYa speed", NULL, set_chorusfx_option, 0.0, 99.0, AUTOYA_SPEED},
+    {"AutoYa intensity", NULL, set_chorusfx_option, 0.0, 99.0, AUTOYA_INTENSITY},
+    {"AutoYa range", NULL, set_chorusfx_option, 0.0, 49.0, AUTOYA_RANGE},
 };
 
 static SettingsWidget chorusfx_yaya_widgets[] = {
-    {"YaYa pedal", NULL, set_ya_option, 0.0, 99.0, YAYA_PEDAL},
-    {"YaYa intensity", NULL, set_ya_option, 0.0, 99.0, YAYA_INTENSITY},
-    {"YaYa range", NULL, set_ya_option, 0.0, 49.0, YAYA_RANGE},
+    {"YaYa pedal", NULL, set_chorusfx_option, 0.0, 99.0, YAYA_PEDAL},
+    {"YaYa intensity", NULL, set_chorusfx_option, 0.0, 99.0, YAYA_INTENSITY},
+    {"YaYa range", NULL, set_chorusfx_option, 0.0, 49.0, YAYA_RANGE},
 };
 
 static SettingsWidget chorusfx_step_filter_widgets[] = {
-    {"Step filter speed", NULL, set_filter_option, 0.0, 99.0, STEP_FILTER_SPEED},
-    {"Step filter intensity", NULL, set_filter_option, 0.0, 99.0, STEP_FILTER_INTENSITY},
+    {"Step filter speed", NULL, set_chorusfx_option, 0.0, 99.0, STEP_FILTER_SPEED},
+    {"Step filter intensity", NULL, set_chorusfx_option, 0.0, 99.0, STEP_FILTER_INTENSITY},
 };
 
 static SettingsWidget chorusfx_whammy_widgets[] = {
-    {"Whammy pedal", NULL, set_whammy_option, 0.0, 99.0, WHAMMY_PEDAL},
-    {"Whammy mix", NULL, set_whammy_option, 0.0, 99.0, WHAMMY_MIX},
+    {"Whammy pedal", NULL, set_chorusfx_option, 0.0, 99.0, WHAMMY_PEDAL},
+    {"Whammy mix", NULL, set_chorusfx_option, 0.0, 99.0, WHAMMY_MIX},
     //TODO: WHAMMY_AMOUNT with valid options:
     //      WHAMMY_OCT_UP, WHAMMY_2OCT_UP, WHAMMY_2ND_DN, WHAMMY_RV_2ND,
     //      WHAMMY_4TH_DN, WHAMMY_OCT_DN, WHAMMY_2OCT_DN, WHAMMY_DIV_BMB,
@@ -278,13 +278,13 @@ static SettingsWidget chorusfx_whammy_widgets[] = {
 
 static SettingsWidget chorusfx_pitch_shift_widgets[] = {
     // TODO: make this display propertly (display range -24 to 24)
-    {"Pitch amount", NULL, set_pitch_option, 0.0, 48.0, PITCH_AMOUNT},
-    {"Pitch mix", NULL, set_pitch_option, 0.0, 99.0, PITCH_MIX},
+    {"Pitch amount", NULL, set_chorusfx_option, 0.0, 48.0, PITCH_AMOUNT},
+    {"Pitch mix", NULL, set_chorusfx_option, 0.0, 99.0, PITCH_MIX},
 };
 
 static SettingsWidget chorusfx_detune_widgets[] = {
-    {"Detune amount", NULL, set_pitch_option, 0.0, 48.0, DETUNE_AMOUNT},
-    {"Detune level", NULL, set_pitch_option, 0.0, 99.0, DETUNE_LEVEL},
+    {"Detune amount", NULL, set_chorusfx_option, 0.0, 48.0, DETUNE_AMOUNT},
+    {"Detune level", NULL, set_chorusfx_option, 0.0, 99.0, DETUNE_LEVEL},
 };
 
 static SettingsWidget chorusfx_ips_widgets[] = {
@@ -300,7 +300,7 @@ static SettingsWidget chorusfx_ips_widgets[] = {
     // TODO: IPS_SCALE with valid options:
     //       IPS_MAJOR, IPS_MINOR, IPS_DORIA, IPS_MIXLYD, IPS_LYDIAN, IPS_HMINO
 
-    {"IPS level", NULL, set_ips_option, 0.0, 99.0, IPS_LEVEL},
+    {"IPS level", NULL, set_chorusfx_option, 0.0, 99.0, IPS_LEVEL},
 };
 
 static SettingsWidget delay_analog_widgets[] = {

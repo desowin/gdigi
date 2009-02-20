@@ -315,182 +315,182 @@ void test_chorusfx()
 
     set_chorusfx_type(CHORUS_TYPE_FLANGER);
     for (x=0; x<=99; x++)
-        set_flanger_option(FLANGER_SPEED, x);
+        set_chorusfx_option(FLANGER_SPEED, x);
     for (x=0; x<=99; x++)
-        set_flanger_option(FLANGER_DEPTH, x);
+        set_chorusfx_option(FLANGER_DEPTH, x);
     for (x=0; x<=99; x++)
-        set_flanger_option(FLANGER_REGEN, x);
+        set_chorusfx_option(FLANGER_REGEN, x);
     for (x=0; x<=99; x++)
-        set_flanger_option(FLANGER_LEVEL, x);
-    set_flanger_option(FLANGER_WAVE, WAVE_TRI);
-    set_flanger_option(FLANGER_WAVE, WAVE_SINE);
-    set_flanger_option(FLANGER_WAVE, WAVE_SQUARE);
+        set_chorusfx_option(FLANGER_LEVEL, x);
+    set_chorusfx_option(FLANGER_WAVE, WAVE_TRI);
+    set_chorusfx_option(FLANGER_WAVE, WAVE_SINE);
+    set_chorusfx_option(FLANGER_WAVE, WAVE_SQUARE);
 
     set_chorusfx_type(CHORUS_TYPE_MXR_FLANGER);
     for (x=0; x<=99; x++)
-        set_flanger_option(MXR_FLANGER_SPEED, x);
+        set_chorusfx_option(MXR_FLANGER_SPEED, x);
     for (x=0; x<=99; x++)
-        set_flanger_option(MXR_FLANGER_WIDTH, x);
+        set_chorusfx_option(MXR_FLANGER_WIDTH, x);
     for (x=0; x<=99; x++)
-        set_flanger_option(MXR_FLANGER_REGEN, x);
+        set_chorusfx_option(MXR_FLANGER_REGEN, x);
     for (x=0; x<=99; x++)
-        set_flanger_option(MXR_FLANGER_MANUAL, x);
+        set_chorusfx_option(MXR_FLANGER_MANUAL, x);
 
     set_chorusfx_type(CHORUS_TYPE_PHASER);
     for (x=0; x<=99; x++)
-        set_flanger_option(PHASER_SPEED, x);
+        set_chorusfx_option(PHASER_SPEED, x);
     for (x=0; x<=99; x++)
-        set_flanger_option(PHASER_DEPTH, x);
+        set_chorusfx_option(PHASER_DEPTH, x);
     for (x=0; x<=99; x++)
-        set_flanger_option(PHASER_REGEN, x);
+        set_chorusfx_option(PHASER_REGEN, x);
     for (x=0; x<=99; x++)
-        set_flanger_option(PHASER_LEVEL, x);
-    set_flanger_option(PHASER_WAVE, WAVE_TRI);
-    set_flanger_option(PHASER_WAVE, WAVE_SINE);
-    set_flanger_option(PHASER_WAVE, WAVE_SQUARE);
+        set_chorusfx_option(PHASER_LEVEL, x);
+    set_chorusfx_option(PHASER_WAVE, WAVE_TRI);
+    set_chorusfx_option(PHASER_WAVE, WAVE_SINE);
+    set_chorusfx_option(PHASER_WAVE, WAVE_SQUARE);
 
     set_chorusfx_type(CHORUS_TYPE_VIBRATO);
     for (x=0; x<=99; x++)
-        set_vibrato_option(VIBRATO_SPEED, x);
+        set_chorusfx_option(VIBRATO_SPEED, x);
     for (x=0; x<=99; x++)
-        set_vibrato_option(VIBRATO_DEPTH, x);
+        set_chorusfx_option(VIBRATO_DEPTH, x);
 
     set_chorusfx_type(CHORUS_TYPE_ROTARY);
     for (x=0; x<=99; x++)
-        set_vibrato_option(ROTARY_SPEED, x);
+        set_chorusfx_option(ROTARY_SPEED, x);
     for (x=0; x<=99; x++)
-        set_vibrato_option(ROTARY_INTENSITY, x);
+        set_chorusfx_option(ROTARY_INTENSITY, x);
     for (x=0; x<=99; x++)
-        set_vibrato_option(ROTARY_DOPPLER, x);
+        set_chorusfx_option(ROTARY_DOPPLER, x);
     for (x=0; x<=99; x++)
-        set_vibrato_option(ROTARY_CROSSOVER, x);
+        set_chorusfx_option(ROTARY_CROSSOVER, x);
 
     set_chorusfx_type(CHORUS_TYPE_VIBROPAN);
     for (x=0; x<=99; x++)
-        set_vibrato_option(VIBROPAN_SPEED, x);
+        set_chorusfx_option(VIBROPAN_SPEED, x);
     for (x=0; x<=99; x++)
-        set_vibrato_option(VIBROPAN_DEPTH, x);
+        set_chorusfx_option(VIBROPAN_DEPTH, x);
     for (x=0; x<=99; x++)
-        set_vibrato_option(VIBROPAN_VIBRA, x);
-    set_vibrato_option(VIBROPAN_WAVE, WAVE_TRI);
-    set_vibrato_option(VIBROPAN_WAVE, WAVE_SINE);
-    set_vibrato_option(VIBROPAN_WAVE, WAVE_SQUARE);
+        set_chorusfx_option(VIBROPAN_VIBRA, x);
+    set_chorusfx_option(VIBROPAN_WAVE, WAVE_TRI);
+    set_chorusfx_option(VIBROPAN_WAVE, WAVE_SINE);
+    set_chorusfx_option(VIBROPAN_WAVE, WAVE_SQUARE);
 
     set_chorusfx_type(CHORUS_TYPE_TREMOLO);
     for (x=0; x<=99; x++)
-        set_tremolo_option(TREMOLO_SPEED, x);
+        set_chorusfx_option(TREMOLO_SPEED, x);
     for (x=0; x<=99; x++)
-        set_tremolo_option(TREMOLO_DEPTH, x);
-    set_tremolo_option(TREMOLO_WAVE, WAVE_TRI);
-    set_tremolo_option(TREMOLO_WAVE, WAVE_SINE);
-    set_tremolo_option(TREMOLO_WAVE, WAVE_SQUARE);
+        set_chorusfx_option(TREMOLO_DEPTH, x);
+    set_chorusfx_option(TREMOLO_WAVE, WAVE_TRI);
+    set_chorusfx_option(TREMOLO_WAVE, WAVE_SINE);
+    set_chorusfx_option(TREMOLO_WAVE, WAVE_SQUARE);
 
     set_chorusfx_type(CHORUS_TYPE_PANNER);
     for (x=0; x<=99; x++)
-        set_tremolo_option(PANNER_SPEED, x);
+        set_chorusfx_option(PANNER_SPEED, x);
     for (x=0; x<=99; x++)
-        set_tremolo_option(PANNER_DEPTH, x);
-    set_tremolo_option(PANNER_WAVE, WAVE_TRI);
-    set_tremolo_option(PANNER_WAVE, WAVE_SINE);
-    set_tremolo_option(PANNER_WAVE, WAVE_SQUARE);
+        set_chorusfx_option(PANNER_DEPTH, x);
+    set_chorusfx_option(PANNER_WAVE, WAVE_TRI);
+    set_chorusfx_option(PANNER_WAVE, WAVE_SINE);
+    set_chorusfx_option(PANNER_WAVE, WAVE_SQUARE);
 
     set_chorusfx_type(CHORUS_TYPE_ENVELOPE);
     for (x=0; x<=99; x++)
-        set_envelope_option(ENVELOPE_SENSITIVITY, x);
+        set_chorusfx_option(ENVELOPE_SENSITIVITY, x);
     for (x=0; x<=99; x++)
-        set_envelope_option(ENVELOPE_RANGE, x);
+        set_chorusfx_option(ENVELOPE_RANGE, x);
 
     set_chorusfx_type(CHORUS_TYPE_AUTOYA);
     for (x=0; x<=99; x++)
-        set_ya_option(AUTOYA_SPEED, x);
+        set_chorusfx_option(AUTOYA_SPEED, x);
     for (x=0; x<=99; x++)
-        set_ya_option(AUTOYA_INTENSITY, x);
+        set_chorusfx_option(AUTOYA_INTENSITY, x);
     for (x=0; x<=0x31; x++)
-        set_ya_option(AUTOYA_RANGE, x);
+        set_chorusfx_option(AUTOYA_RANGE, x);
 
     set_chorusfx_type(CHORUS_TYPE_YAYA);
     for (x=0; x<=99; x++)
-        set_ya_option(YAYA_PEDAL, x);
+        set_chorusfx_option(YAYA_PEDAL, x);
     for (x=0; x<=99; x++)
-        set_ya_option(YAYA_INTENSITY, x);
+        set_chorusfx_option(YAYA_INTENSITY, x);
     for (x=0; x<=0x31; x++)
-        set_ya_option(YAYA_RANGE, x);
+        set_chorusfx_option(YAYA_RANGE, x);
 
     set_chorusfx_type(CHORUS_TYPE_STEP_FILTER);
     for (x=0; x<=99; x++)
-        set_filter_option(STEP_FILTER_SPEED, x);
+        set_chorusfx_option(STEP_FILTER_SPEED, x);
     for (x=0; x<=99; x++)
-        set_filter_option(STEP_FILTER_INTENSITY, x);
+        set_chorusfx_option(STEP_FILTER_INTENSITY, x);
 
     set_chorusfx_type(CHORUS_TYPE_WHAMMY);
-    set_whammy_option(WHAMMY_AMOUNT, WHAMMY_OCT_UP);
-    set_whammy_option(WHAMMY_AMOUNT, WHAMMY_2OCT_UP);
-    set_whammy_option(WHAMMY_AMOUNT, WHAMMY_2ND_DN);
-    set_whammy_option(WHAMMY_AMOUNT, WHAMMY_RV_2ND);
-    set_whammy_option(WHAMMY_AMOUNT, WHAMMY_4TH_DN);
-    set_whammy_option(WHAMMY_AMOUNT, WHAMMY_OCT_DN);
-    set_whammy_option(WHAMMY_AMOUNT, WHAMMY_2OCT_DN);
-    set_whammy_option(WHAMMY_AMOUNT, WHAMMY_DIV_BMB);
-    set_whammy_option(WHAMMY_AMOUNT, WHAMMY_M3_MA);
-    set_whammy_option(WHAMMY_AMOUNT, WHAMMY_2ND_MA3);
-    set_whammy_option(WHAMMY_AMOUNT, WHAMMY_3RD_4TH);
-    set_whammy_option(WHAMMY_AMOUNT, WHAMMY_4TH_5TH);
-    set_whammy_option(WHAMMY_AMOUNT, WHAMMY_5TH_OCT);
-    set_whammy_option(WHAMMY_AMOUNT, WHAMMY_HOCT_UP);
-    set_whammy_option(WHAMMY_AMOUNT, WHAMMY_HOCT_DN);
-    set_whammy_option(WHAMMY_AMOUNT, WHAMMY_OCT_UD);
+    set_chorusfx_option(WHAMMY_AMOUNT, WHAMMY_OCT_UP);
+    set_chorusfx_option(WHAMMY_AMOUNT, WHAMMY_2OCT_UP);
+    set_chorusfx_option(WHAMMY_AMOUNT, WHAMMY_2ND_DN);
+    set_chorusfx_option(WHAMMY_AMOUNT, WHAMMY_RV_2ND);
+    set_chorusfx_option(WHAMMY_AMOUNT, WHAMMY_4TH_DN);
+    set_chorusfx_option(WHAMMY_AMOUNT, WHAMMY_OCT_DN);
+    set_chorusfx_option(WHAMMY_AMOUNT, WHAMMY_2OCT_DN);
+    set_chorusfx_option(WHAMMY_AMOUNT, WHAMMY_DIV_BMB);
+    set_chorusfx_option(WHAMMY_AMOUNT, WHAMMY_M3_MA);
+    set_chorusfx_option(WHAMMY_AMOUNT, WHAMMY_2ND_MA3);
+    set_chorusfx_option(WHAMMY_AMOUNT, WHAMMY_3RD_4TH);
+    set_chorusfx_option(WHAMMY_AMOUNT, WHAMMY_4TH_5TH);
+    set_chorusfx_option(WHAMMY_AMOUNT, WHAMMY_5TH_OCT);
+    set_chorusfx_option(WHAMMY_AMOUNT, WHAMMY_HOCT_UP);
+    set_chorusfx_option(WHAMMY_AMOUNT, WHAMMY_HOCT_DN);
+    set_chorusfx_option(WHAMMY_AMOUNT, WHAMMY_OCT_UD);
     for (x=0; x<=99; x++)
-        set_whammy_option(WHAMMY_PEDAL, x);
+        set_chorusfx_option(WHAMMY_PEDAL, x);
     for (x=0; x<=99; x++)
-        set_whammy_option(WHAMMY_MIX, x);
+        set_chorusfx_option(WHAMMY_MIX, x);
 
     set_chorusfx_type(CHORUS_TYPE_PITCH_SHIFT);
     for (x=0; x<=0x30; x++)
-        set_pitch_option(PITCH_AMOUNT, x);
+        set_chorusfx_option(PITCH_AMOUNT, x);
     for (x=0; x<=99; x++)
-        set_pitch_option(PITCH_MIX, x);
+        set_chorusfx_option(PITCH_MIX, x);
 
     set_chorusfx_type(CHORUS_TYPE_DETUNE);
     for (x=0; x<=0x30; x++)
-        set_pitch_option(DETUNE_AMOUNT, x);
+        set_chorusfx_option(DETUNE_AMOUNT, x);
     for (x=0; x<=99; x++)
-        set_pitch_option(DETUNE_LEVEL, x);
+        set_chorusfx_option(DETUNE_LEVEL, x);
 
     set_chorusfx_type(CHORUS_TYPE_IPS);
-    set_ips_option(IPS_SHIFT_AMOUNT, IPS_OCT_D);
-    set_ips_option(IPS_SHIFT_AMOUNT, IPS_7TH_DN);
-    set_ips_option(IPS_SHIFT_AMOUNT, IPS_6TH_DN);
-    set_ips_option(IPS_SHIFT_AMOUNT, IPS_5TH_DN);
-    set_ips_option(IPS_SHIFT_AMOUNT, IPS_4TH_DN);
-    set_ips_option(IPS_SHIFT_AMOUNT, IPS_3RD_DN);
-    set_ips_option(IPS_SHIFT_AMOUNT, IPS_2ND_DN);
-    set_ips_option(IPS_SHIFT_AMOUNT, IPS_2ND_UP);
-    set_ips_option(IPS_SHIFT_AMOUNT, IPS_3RD_UP);
-    set_ips_option(IPS_SHIFT_AMOUNT, IPS_4TH_UP);
-    set_ips_option(IPS_SHIFT_AMOUNT, IPS_5TH_UP);
-    set_ips_option(IPS_SHIFT_AMOUNT, IPS_6TH_UP);
-    set_ips_option(IPS_SHIFT_AMOUNT, IPS_7TH_UP);
-    set_ips_option(IPS_SHIFT_AMOUNT, IPS_OCT_U);
-    set_ips_option(IPS_KEY, IPS_E);
-    set_ips_option(IPS_KEY, IPS_F);
-    set_ips_option(IPS_KEY, IPS_GB);
-    set_ips_option(IPS_KEY, IPS_G);
-    set_ips_option(IPS_KEY, IPS_AB);
-    set_ips_option(IPS_KEY, IPS_A);
-    set_ips_option(IPS_KEY, IPS_BB);
-    set_ips_option(IPS_KEY, IPS_B);
-    set_ips_option(IPS_KEY, IPS_C);
-    set_ips_option(IPS_KEY, IPS_DD);
-    set_ips_option(IPS_KEY, IPS_D);
-    set_ips_option(IPS_KEY, IPS_EB);
-    set_ips_option(IPS_SCALE, IPS_MAJOR);
-    set_ips_option(IPS_SCALE, IPS_MINOR);
-    set_ips_option(IPS_SCALE, IPS_DORIA);
-    set_ips_option(IPS_SCALE, IPS_MIXLYD);
-    set_ips_option(IPS_SCALE, IPS_LYDIAN);
-    set_ips_option(IPS_SCALE, IPS_HMINO);
+    set_chorusfx_option(IPS_SHIFT_AMOUNT, IPS_OCT_D);
+    set_chorusfx_option(IPS_SHIFT_AMOUNT, IPS_7TH_DN);
+    set_chorusfx_option(IPS_SHIFT_AMOUNT, IPS_6TH_DN);
+    set_chorusfx_option(IPS_SHIFT_AMOUNT, IPS_5TH_DN);
+    set_chorusfx_option(IPS_SHIFT_AMOUNT, IPS_4TH_DN);
+    set_chorusfx_option(IPS_SHIFT_AMOUNT, IPS_3RD_DN);
+    set_chorusfx_option(IPS_SHIFT_AMOUNT, IPS_2ND_DN);
+    set_chorusfx_option(IPS_SHIFT_AMOUNT, IPS_2ND_UP);
+    set_chorusfx_option(IPS_SHIFT_AMOUNT, IPS_3RD_UP);
+    set_chorusfx_option(IPS_SHIFT_AMOUNT, IPS_4TH_UP);
+    set_chorusfx_option(IPS_SHIFT_AMOUNT, IPS_5TH_UP);
+    set_chorusfx_option(IPS_SHIFT_AMOUNT, IPS_6TH_UP);
+    set_chorusfx_option(IPS_SHIFT_AMOUNT, IPS_7TH_UP);
+    set_chorusfx_option(IPS_SHIFT_AMOUNT, IPS_OCT_U);
+    set_chorusfx_option(IPS_KEY, IPS_E);
+    set_chorusfx_option(IPS_KEY, IPS_F);
+    set_chorusfx_option(IPS_KEY, IPS_GB);
+    set_chorusfx_option(IPS_KEY, IPS_G);
+    set_chorusfx_option(IPS_KEY, IPS_AB);
+    set_chorusfx_option(IPS_KEY, IPS_A);
+    set_chorusfx_option(IPS_KEY, IPS_BB);
+    set_chorusfx_option(IPS_KEY, IPS_B);
+    set_chorusfx_option(IPS_KEY, IPS_C);
+    set_chorusfx_option(IPS_KEY, IPS_DD);
+    set_chorusfx_option(IPS_KEY, IPS_D);
+    set_chorusfx_option(IPS_KEY, IPS_EB);
+    set_chorusfx_option(IPS_SCALE, IPS_MAJOR);
+    set_chorusfx_option(IPS_SCALE, IPS_MINOR);
+    set_chorusfx_option(IPS_SCALE, IPS_DORIA);
+    set_chorusfx_option(IPS_SCALE, IPS_MIXLYD);
+    set_chorusfx_option(IPS_SCALE, IPS_LYDIAN);
+    set_chorusfx_option(IPS_SCALE, IPS_HMINO);
     for (x=0; x<=99; x++)
-        set_ips_option(IPS_LEVEL, x);
+        set_chorusfx_option(IPS_LEVEL, x);
 
     set_chorusfx_on_off(TRUE);
     set_chorusfx_on_off(FALSE);
