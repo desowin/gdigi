@@ -363,81 +363,81 @@ static SettingsWidget reverb_emt240_plate_widgets[] = {
 };
 
 static WidgetContainer wah_container[] = {
-    {WAH_TYPE_CRY, "Cry wah", set_wah_type, wah_widgets, G_N_ELEMENTS(wah_widgets), NULL},
-    {WAH_TYPE_FULLRANGE, "Fullrange wah", set_wah_type, wah_widgets, G_N_ELEMENTS(wah_widgets), NULL},
-    {WAH_TYPE_CLYDE, "Clyde wah", set_wah_type, wah_widgets, G_N_ELEMENTS(wah_widgets), NULL},
+    {WAH_TYPE_CRY, "Cry wah", set_wah_type, wah_widgets, G_N_ELEMENTS(wah_widgets)},
+    {WAH_TYPE_FULLRANGE, "Fullrange wah", set_wah_type, wah_widgets, G_N_ELEMENTS(wah_widgets)},
+    {WAH_TYPE_CLYDE, "Clyde wah", set_wah_type, wah_widgets, G_N_ELEMENTS(wah_widgets)},
 };
 
 static WidgetContainer comp_container[] = {
-    {COMP_TYPE_DIGI, "Digital compressor", set_comp_type, comp_digi_widgets, G_N_ELEMENTS(comp_digi_widgets), NULL},
-    {COMP_TYPE_CS, "CS compressor", set_comp_type, comp_cs_widgets, G_N_ELEMENTS(comp_cs_widgets), NULL},
+    {COMP_TYPE_DIGI, "Digital compressor", set_comp_type, comp_digi_widgets, G_N_ELEMENTS(comp_digi_widgets)},
+    {COMP_TYPE_CS, "CS compressor", set_comp_type, comp_cs_widgets, G_N_ELEMENTS(comp_cs_widgets)},
 };
 
 static WidgetContainer dist_container[] = {
-    {DIST_TYPE_SCREAMER, "Screamer", set_dist_type, dist_screamer_widgets, G_N_ELEMENTS(dist_screamer_widgets), NULL},
-    {DIST_TYPE_808, "808", set_dist_type, dist_808_widgets, G_N_ELEMENTS(dist_808_widgets), NULL},
-    {DIST_TYPE_GUYOD, "GuyOD", set_dist_type, dist_guyod_widgets, G_N_ELEMENTS(dist_guyod_widgets), NULL},
-    {DIST_TYPE_DOD250, "DOD250", set_dist_type, dist_dod250_widgets, G_N_ELEMENTS(dist_dod250_widgets), NULL},
-    {DIST_TYPE_RODENT, "Rodent", set_dist_type, dist_rodent_widgets, G_N_ELEMENTS(dist_rodent_widgets), NULL},
-    {DIST_TYPE_MX, "MX", set_dist_type, dist_mx_widgets, G_N_ELEMENTS(dist_mx_widgets), NULL},
-    {DIST_TYPE_DS, "DS", set_dist_type, dist_ds_widgets, G_N_ELEMENTS(dist_ds_widgets), NULL},
-    {DIST_TYPE_GRUNGE, "Grunge", set_dist_type, dist_grunge_widgets, G_N_ELEMENTS(dist_grunge_widgets), NULL},
-    {DIST_TYPE_ZONE, "Zone", set_dist_type, dist_zone_widgets, G_N_ELEMENTS(dist_zone_widgets), NULL},
-    {DIST_TYPE_DEATH, "Death", set_dist_type, dist_death_widgets, G_N_ELEMENTS(dist_death_widgets), NULL},
-    {DIST_TYPE_GONK, "Gonk", set_dist_type, dist_gonk_widgets, G_N_ELEMENTS(dist_gonk_widgets), NULL},
-    {DIST_TYPE_FUZZY, "Fuzzy", set_dist_type, dist_fuzzy_widgets, G_N_ELEMENTS(dist_fuzzy_widgets), NULL},
-    {DIST_TYPE_MP, "MP", set_dist_type, dist_mp_widgets, G_N_ELEMENTS(dist_mp_widgets), NULL},
+    {DIST_TYPE_SCREAMER, "Screamer", set_dist_type, dist_screamer_widgets, G_N_ELEMENTS(dist_screamer_widgets)},
+    {DIST_TYPE_808, "808", set_dist_type, dist_808_widgets, G_N_ELEMENTS(dist_808_widgets)},
+    {DIST_TYPE_GUYOD, "GuyOD", set_dist_type, dist_guyod_widgets, G_N_ELEMENTS(dist_guyod_widgets)},
+    {DIST_TYPE_DOD250, "DOD250", set_dist_type, dist_dod250_widgets, G_N_ELEMENTS(dist_dod250_widgets)},
+    {DIST_TYPE_RODENT, "Rodent", set_dist_type, dist_rodent_widgets, G_N_ELEMENTS(dist_rodent_widgets)},
+    {DIST_TYPE_MX, "MX", set_dist_type, dist_mx_widgets, G_N_ELEMENTS(dist_mx_widgets)},
+    {DIST_TYPE_DS, "DS", set_dist_type, dist_ds_widgets, G_N_ELEMENTS(dist_ds_widgets)},
+    {DIST_TYPE_GRUNGE, "Grunge", set_dist_type, dist_grunge_widgets, G_N_ELEMENTS(dist_grunge_widgets)},
+    {DIST_TYPE_ZONE, "Zone", set_dist_type, dist_zone_widgets, G_N_ELEMENTS(dist_zone_widgets)},
+    {DIST_TYPE_DEATH, "Death", set_dist_type, dist_death_widgets, G_N_ELEMENTS(dist_death_widgets)},
+    {DIST_TYPE_GONK, "Gonk", set_dist_type, dist_gonk_widgets, G_N_ELEMENTS(dist_gonk_widgets)},
+    {DIST_TYPE_FUZZY, "Fuzzy", set_dist_type, dist_fuzzy_widgets, G_N_ELEMENTS(dist_fuzzy_widgets)},
+    {DIST_TYPE_MP, "MP", set_dist_type, dist_mp_widgets, G_N_ELEMENTS(dist_mp_widgets)},
 };
 
 static WidgetContainer noisegate_container[] = {
-    {NOISEGATE_GATE, "Gate", set_noisegate_type, noisegate_gate_widgets, G_N_ELEMENTS(noisegate_gate_widgets), NULL},
-    {NOISEGATE_SWELL, "Swell", set_noisegate_type, noisegate_swell_widgets, G_N_ELEMENTS(noisegate_swell_widgets), NULL},
+    {NOISEGATE_GATE, "Gate", set_noisegate_type, noisegate_gate_widgets, G_N_ELEMENTS(noisegate_gate_widgets)},
+    {NOISEGATE_SWELL, "Swell", set_noisegate_type, noisegate_swell_widgets, G_N_ELEMENTS(noisegate_swell_widgets)},
 };
 
 static WidgetContainer chorusfx_container[] = {
-    {CHORUS_TYPE_CE, "CE Chorus", set_chorusfx_type, chorusfx_ce_widgets, G_N_ELEMENTS(chorusfx_ce_widgets), NULL},
-    {CHORUS_TYPE_DUAL, "Dual Chorus", set_chorusfx_type, chorusfx_dual_widgets, G_N_ELEMENTS(chorusfx_dual_widgets), NULL},
-    {CHORUS_TYPE_MULTI, "Multi Chorus", set_chorusfx_type, chorusfx_multi_widgets, G_N_ELEMENTS(chorusfx_multi_widgets), NULL},
-    {CHORUS_TYPE_FLANGER, "Flanger", set_chorusfx_type, chorusfx_flanger_widgets, G_N_ELEMENTS(chorusfx_flanger_widgets), NULL},
-    {CHORUS_TYPE_MXR_FLANGER, "MXR FLANGER", set_chorusfx_type, chorusfx_mxr_flanger_widgets, G_N_ELEMENTS(chorusfx_mxr_flanger_widgets), NULL},
-    {CHORUS_TYPE_PHASER, "Phaser", set_chorusfx_type, chorusfx_phaser_widgets, G_N_ELEMENTS(chorusfx_phaser_widgets), NULL},
-    {CHORUS_TYPE_VIBRATO, "Vibrato", set_chorusfx_type, chorusfx_vibrato_widgets, G_N_ELEMENTS(chorusfx_vibrato_widgets), NULL},
-    {CHORUS_TYPE_ROTARY, "Rotary", set_chorusfx_type, chorusfx_rotary_widgets, G_N_ELEMENTS(chorusfx_rotary_widgets), NULL},
-    {CHORUS_TYPE_VIBROPAN, "Vibropan", set_chorusfx_type, chorusfx_vibropan_widgets, G_N_ELEMENTS(chorusfx_vibropan_widgets), NULL},
-    {CHORUS_TYPE_TREMOLO, "Tremolo", set_chorusfx_type, chorusfx_tremolo_widgets, G_N_ELEMENTS(chorusfx_tremolo_widgets), NULL},
-    {CHORUS_TYPE_PANNER, "Panner", set_chorusfx_type, chorusfx_panner_widgets, G_N_ELEMENTS(chorusfx_panner_widgets), NULL},
-    {CHORUS_TYPE_ENVELOPE, "Envelope", set_chorusfx_type, chorusfx_envelope_widgets, G_N_ELEMENTS(chorusfx_envelope_widgets), NULL},
-    {CHORUS_TYPE_AUTOYA, "AutoYa", set_chorusfx_type, chorusfx_autoya_widgets, G_N_ELEMENTS(chorusfx_autoya_widgets), NULL},
-    {CHORUS_TYPE_YAYA, "YaYa", set_chorusfx_type, chorusfx_yaya_widgets, G_N_ELEMENTS(chorusfx_yaya_widgets), NULL},
-    {CHORUS_TYPE_STEP_FILTER, "Step Filter", set_chorusfx_type, chorusfx_step_filter_widgets, G_N_ELEMENTS(chorusfx_step_filter_widgets), NULL},
-    {CHORUS_TYPE_WHAMMY, "Whammy", set_chorusfx_type, chorusfx_whammy_widgets, G_N_ELEMENTS(chorusfx_whammy_widgets), NULL},
-    {CHORUS_TYPE_PITCH_SHIFT, "Pitch Shift", set_chorusfx_type, chorusfx_pitch_shift_widgets, G_N_ELEMENTS(chorusfx_pitch_shift_widgets), NULL},
-    {CHORUS_TYPE_DETUNE, "Detune", set_chorusfx_type, chorusfx_detune_widgets, G_N_ELEMENTS(chorusfx_detune_widgets), NULL},
-    {CHORUS_TYPE_IPS, "IPS", set_chorusfx_type, chorusfx_ips_widgets, G_N_ELEMENTS(chorusfx_ips_widgets), NULL},
+    {CHORUS_TYPE_CE, "CE Chorus", set_chorusfx_type, chorusfx_ce_widgets, G_N_ELEMENTS(chorusfx_ce_widgets)},
+    {CHORUS_TYPE_DUAL, "Dual Chorus", set_chorusfx_type, chorusfx_dual_widgets, G_N_ELEMENTS(chorusfx_dual_widgets)},
+    {CHORUS_TYPE_MULTI, "Multi Chorus", set_chorusfx_type, chorusfx_multi_widgets, G_N_ELEMENTS(chorusfx_multi_widgets)},
+    {CHORUS_TYPE_FLANGER, "Flanger", set_chorusfx_type, chorusfx_flanger_widgets, G_N_ELEMENTS(chorusfx_flanger_widgets)},
+    {CHORUS_TYPE_MXR_FLANGER, "MXR FLANGER", set_chorusfx_type, chorusfx_mxr_flanger_widgets, G_N_ELEMENTS(chorusfx_mxr_flanger_widgets)},
+    {CHORUS_TYPE_PHASER, "Phaser", set_chorusfx_type, chorusfx_phaser_widgets, G_N_ELEMENTS(chorusfx_phaser_widgets)},
+    {CHORUS_TYPE_VIBRATO, "Vibrato", set_chorusfx_type, chorusfx_vibrato_widgets, G_N_ELEMENTS(chorusfx_vibrato_widgets)},
+    {CHORUS_TYPE_ROTARY, "Rotary", set_chorusfx_type, chorusfx_rotary_widgets, G_N_ELEMENTS(chorusfx_rotary_widgets)},
+    {CHORUS_TYPE_VIBROPAN, "Vibropan", set_chorusfx_type, chorusfx_vibropan_widgets, G_N_ELEMENTS(chorusfx_vibropan_widgets)},
+    {CHORUS_TYPE_TREMOLO, "Tremolo", set_chorusfx_type, chorusfx_tremolo_widgets, G_N_ELEMENTS(chorusfx_tremolo_widgets)},
+    {CHORUS_TYPE_PANNER, "Panner", set_chorusfx_type, chorusfx_panner_widgets, G_N_ELEMENTS(chorusfx_panner_widgets)},
+    {CHORUS_TYPE_ENVELOPE, "Envelope", set_chorusfx_type, chorusfx_envelope_widgets, G_N_ELEMENTS(chorusfx_envelope_widgets)},
+    {CHORUS_TYPE_AUTOYA, "AutoYa", set_chorusfx_type, chorusfx_autoya_widgets, G_N_ELEMENTS(chorusfx_autoya_widgets)},
+    {CHORUS_TYPE_YAYA, "YaYa", set_chorusfx_type, chorusfx_yaya_widgets, G_N_ELEMENTS(chorusfx_yaya_widgets)},
+    {CHORUS_TYPE_STEP_FILTER, "Step Filter", set_chorusfx_type, chorusfx_step_filter_widgets, G_N_ELEMENTS(chorusfx_step_filter_widgets)},
+    {CHORUS_TYPE_WHAMMY, "Whammy", set_chorusfx_type, chorusfx_whammy_widgets, G_N_ELEMENTS(chorusfx_whammy_widgets)},
+    {CHORUS_TYPE_PITCH_SHIFT, "Pitch Shift", set_chorusfx_type, chorusfx_pitch_shift_widgets, G_N_ELEMENTS(chorusfx_pitch_shift_widgets)},
+    {CHORUS_TYPE_DETUNE, "Detune", set_chorusfx_type, chorusfx_detune_widgets, G_N_ELEMENTS(chorusfx_detune_widgets)},
+    {CHORUS_TYPE_IPS, "IPS", set_chorusfx_type, chorusfx_ips_widgets, G_N_ELEMENTS(chorusfx_ips_widgets)},
 };
 
 static WidgetContainer delay_container[] = {
-    {DELAY_TYPE_ANALOG, "Analog", set_delay_type, delay_analog_widgets, G_N_ELEMENTS(delay_analog_widgets), NULL},
-    {DELAY_TYPE_DIGITAL, "Digital", set_delay_type, delay_digital_widgets, G_N_ELEMENTS(delay_digital_widgets), NULL},
-    {DELAY_TYPE_MODULATED, "Modulated", set_delay_type, delay_modulated_widgets, G_N_ELEMENTS(delay_modulated_widgets), NULL},
-    {DELAY_TYPE_PONG, "Pong", set_delay_type, delay_pong_widgets, G_N_ELEMENTS(delay_pong_widgets), NULL},
-    {DELAY_TYPE_TAPE, "Tape", set_delay_type, delay_tape_widgets, G_N_ELEMENTS(delay_tape_widgets), NULL},
+    {DELAY_TYPE_ANALOG, "Analog", set_delay_type, delay_analog_widgets, G_N_ELEMENTS(delay_analog_widgets)},
+    {DELAY_TYPE_DIGITAL, "Digital", set_delay_type, delay_digital_widgets, G_N_ELEMENTS(delay_digital_widgets)},
+    {DELAY_TYPE_MODULATED, "Modulated", set_delay_type, delay_modulated_widgets, G_N_ELEMENTS(delay_modulated_widgets)},
+    {DELAY_TYPE_PONG, "Pong", set_delay_type, delay_pong_widgets, G_N_ELEMENTS(delay_pong_widgets)},
+    {DELAY_TYPE_TAPE, "Tape", set_delay_type, delay_tape_widgets, G_N_ELEMENTS(delay_tape_widgets)},
 };
 
 static WidgetContainer reverb_container[] = {
-    {REVERB_TYPE_TWIN, "Twin", set_reverb_type, reverb_twin_widgets, G_N_ELEMENTS(reverb_twin_widgets), NULL},
-    {REVERB_TYPE_LEX_AMBIENCE, "Lexicon ambience", set_reverb_type, reverb_lex_ambience_widgets, G_N_ELEMENTS(reverb_lex_ambience_widgets), NULL},
-    {REVERB_TYPE_LEX_STUDIO, "Lexicon studio", set_reverb_type, reverb_lex_studio_widgets, G_N_ELEMENTS(reverb_lex_studio_widgets), NULL},
-    {REVERB_TYPE_LEX_ROOM, "Lexicon room", set_reverb_type, reverb_lex_room_widgets, G_N_ELEMENTS(reverb_lex_room_widgets), NULL},
-    {REVERB_TYPE_LEX_HALL, "Lexicon hall", set_reverb_type, reverb_lex_hall_widgets, G_N_ELEMENTS(reverb_lex_hall_widgets), NULL},
-    {REVERB_TYPE_EMT240_PLATE, "EMT240 Plate", set_reverb_type, reverb_emt240_plate_widgets, G_N_ELEMENTS(reverb_emt240_plate_widgets), NULL},
+    {REVERB_TYPE_TWIN, "Twin", set_reverb_type, reverb_twin_widgets, G_N_ELEMENTS(reverb_twin_widgets)},
+    {REVERB_TYPE_LEX_AMBIENCE, "Lexicon ambience", set_reverb_type, reverb_lex_ambience_widgets, G_N_ELEMENTS(reverb_lex_ambience_widgets)},
+    {REVERB_TYPE_LEX_STUDIO, "Lexicon studio", set_reverb_type, reverb_lex_studio_widgets, G_N_ELEMENTS(reverb_lex_studio_widgets)},
+    {REVERB_TYPE_LEX_ROOM, "Lexicon room", set_reverb_type, reverb_lex_room_widgets, G_N_ELEMENTS(reverb_lex_room_widgets)},
+    {REVERB_TYPE_LEX_HALL, "Lexicon hall", set_reverb_type, reverb_lex_hall_widgets, G_N_ELEMENTS(reverb_lex_hall_widgets)},
+    {REVERB_TYPE_EMT240_PLATE, "EMT240 Plate", set_reverb_type, reverb_emt240_plate_widgets, G_N_ELEMENTS(reverb_emt240_plate_widgets)},
 };
 
 static WidgetContainer eq_container[] = {
-    {EQ_TYPE_BRIGHT, "Bright", set_eq_type, eq_widgets, G_N_ELEMENTS(eq_widgets), NULL},
-    {EQ_TYPE_MIDBOOST, "Mid Boost", set_eq_type, eq_widgets, G_N_ELEMENTS(eq_widgets), NULL},
-    {EQ_TYPE_SCOOP, "Scoop", set_eq_type, eq_widgets, G_N_ELEMENTS(eq_widgets), NULL},
-    {EQ_TYPE_WARM, "Warm", set_eq_type, eq_widgets, G_N_ELEMENTS(eq_widgets), NULL},
+    {EQ_TYPE_BRIGHT, "Bright", set_eq_type, eq_widgets, G_N_ELEMENTS(eq_widgets)},
+    {EQ_TYPE_MIDBOOST, "Mid Boost", set_eq_type, eq_widgets, G_N_ELEMENTS(eq_widgets)},
+    {EQ_TYPE_SCOOP, "Scoop", set_eq_type, eq_widgets, G_N_ELEMENTS(eq_widgets)},
+    {EQ_TYPE_WARM, "Warm", set_eq_type, eq_widgets, G_N_ELEMENTS(eq_widgets)},
 };
 
 static VBoxWidget wah_vbox[] = {
@@ -537,24 +537,48 @@ GtkWidget *create_on_off_button(const gchar *label, gboolean state, void (*callb
     return button;
 }
 
-void combo_box_changed_cb(GtkComboBox *widget, WidgetContainer *widgets)
+typedef struct {
+    gint id;               /* effect group ID */
+    void (*callback)(int); /* callback to call when switching to this effect group */
+    GtkWidget *child;      /* child widget */
+} EffectSettingsGroup;
+
+void effect_settings_group_free(EffectSettingsGroup *group)
+{
+    /* destroy widget without parent */
+    if (gtk_widget_get_parent(group->child) == NULL)
+        gtk_widget_destroy(group->child);
+
+    g_object_unref(group->child);
+    g_free(group);
+}
+
+void combo_box_changed_cb(GtkComboBox *widget, gpointer data)
 {
     GtkWidget *child;
     GtkWidget *vbox;
+    EffectSettingsGroup *settings = NULL;
+    gchar *name = NULL;
     gint x;
     g_object_get(G_OBJECT(widget), "active", &x, NULL);
 
     vbox = g_object_get_data(G_OBJECT(widget), "vbox");
 
     if (x != -1) {
-        widgets[x].callback(widgets[x].id);
+        name = g_strdup_printf("SettingsGroup%d", x);
+        settings = g_object_get_data(G_OBJECT(widget), name);
+        g_free(name);
+
+        if (settings->callback != NULL)
+            settings->callback(settings->id);
+
         child = g_object_get_data(G_OBJECT(widget), "active_child");
         if (child != NULL) {
             gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(gtk_widget_get_parent(vbox))), child);
         }
-        gtk_container_add(GTK_CONTAINER(gtk_widget_get_parent(gtk_widget_get_parent(vbox))), widgets[x].child);
+        gtk_container_add(GTK_CONTAINER(gtk_widget_get_parent(gtk_widget_get_parent(vbox))), settings->child);
         gtk_widget_show_all(gtk_widget_get_parent(gtk_widget_get_parent(vbox)));
-        g_object_set_data(G_OBJECT(widget), "active_child", widgets[x].child);
+        g_object_set_data(G_OBJECT(widget), "active_child", settings->child);
     }
 }
 
@@ -563,7 +587,10 @@ GtkWidget *create_widget_container(WidgetContainer *widgets, gint amt)
     GtkWidget *vbox;
     GtkWidget *widget;
     GtkWidget *combo_box = NULL;
+    EffectSettingsGroup *settings = NULL;
+    gchar *name = NULL;
     gint x;
+    gint cmbox_no = -1;
 
     vbox = gtk_vbox_new(FALSE, 0);
 
@@ -576,13 +603,23 @@ GtkWidget *create_widget_container(WidgetContainer *widgets, gint amt)
                 g_object_set_data(G_OBJECT(combo_box), "vbox", vbox);
             }
             gtk_combo_box_append_text(GTK_COMBO_BOX(combo_box), widgets[x].label);
-        }
-        widget = create_table(widgets[x].widgets, widgets[x].widgets_amt);
-        widgets[x].child = widget;
-        g_object_ref(widget);
+            cmbox_no++;
 
-        if (widgets[x].label == NULL && widgets[x].id == -1)
+            widget = create_table(widgets[x].widgets, widgets[x].widgets_amt);
+            g_object_ref_sink(widget);
+
+            settings = g_malloc(sizeof(EffectSettingsGroup));
+            settings->id = widgets[x].id;
+            settings->callback = widgets[x].callback;
+            settings->child = widget;
+
+            name = g_strdup_printf("SettingsGroup%d", cmbox_no);
+            g_object_set_data_full(G_OBJECT(combo_box), name, settings, ((GDestroyNotify)effect_settings_group_free));
+            g_free(name);
+        } else if (widgets[x].id == -1) {
+            widget = create_table(widgets[x].widgets, widgets[x].widgets_amt);
             gtk_container_add(GTK_CONTAINER(vbox), widget);
+        }
     }
 
     return vbox;

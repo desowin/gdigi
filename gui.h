@@ -29,7 +29,6 @@ typedef struct {
     void (*callback)(int);
     SettingsWidget *widgets;
     gint widgets_amt;
-    GtkWidget *child; /* child widget - set inside create_widget_container */
 } WidgetContainer;
 
 typedef struct {
