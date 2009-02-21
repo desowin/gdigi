@@ -16,34 +16,7 @@
 
 #include <gtk/gtk.h>
 #include "gdigi.h"
-
-void value_changed_cb(GtkSpinButton *spinbutton, void (*callback)(int))
-{
-    int val = gtk_spin_button_get_value_as_int(spinbutton);
-    callback(val);
-}
-
-void value_changed_option_cb(GtkSpinButton *spinbutton, void (*callback)(guint32, int))
-{
-    int val = gtk_spin_button_get_value_as_int(spinbutton);
-    guint32 option = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(spinbutton), "option_id"));
-    callback(option, val);
-}
-
-void toggled_cb(GtkToggleButton *button, void (*callback)(gboolean))
-{
-    gboolean val = gtk_toggle_button_get_active(button);
-    callback(val);
-}
-
-typedef struct {
-    char *label;
-    void (*callback)(int);
-    void (*callback_with_option)(guint32, int);
-    gdouble min;
-    gdouble max;
-    guint32 option;
-} SettingsWidget;
+#include "gui.h"
 
 static SettingsWidget wah_widgets[] = {
     {"Wah min", set_wah_min, NULL, 0.0, 99.0},
@@ -389,50 +362,6 @@ static SettingsWidget reverb_emt240_plate_widgets[] = {
     {"Level", NULL, set_reverb_option, 0.0, 99.0, EMT240_PLATE_LEVEL},
 };
 
-GtkWidget *create_table(SettingsWidget *widgets, gint amt)
-{
-    GtkWidget *table, *label, *widget;
-    GtkObject *adj;
-    int x;
-
-    table = gtk_table_new(2, amt, FALSE);
-
-    for (x = 0; x<amt; x++) {
-        label = gtk_label_new(widgets[x].label);
-        adj = gtk_adjustment_new(0.0, widgets[x].min, widgets[x].max, 1.0, 1.0, 1.0);
-        widget = gtk_spin_button_new(GTK_ADJUSTMENT(adj), 1.0, 0);
-        if (widgets[x].callback)
-            g_signal_connect(G_OBJECT(widget), "value-changed", G_CALLBACK(value_changed_cb), widgets[x].callback);
-
-        if (widgets[x].callback_with_option) {
-            g_object_set_data(G_OBJECT(widget), "option_id", GINT_TO_POINTER(widgets[x].option));
-            g_signal_connect(G_OBJECT(widget), "value-changed", G_CALLBACK(value_changed_option_cb), widgets[x].callback_with_option);
-        }
-
-        gtk_table_attach(GTK_TABLE(table), label, 0, 1, x, x+1, GTK_SHRINK, GTK_SHRINK, 2, 2);
-        gtk_table_attach(GTK_TABLE(table), widget, 1, 2, x, x+1, GTK_SHRINK, GTK_SHRINK, 2, 2);
-    }
-
-    return table;
-}
-
-GtkWidget *create_on_off_button(const gchar *label, gboolean state, void (*callback)(int))
-{
-    GtkWidget *button = gtk_toggle_button_new_with_label(label);
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), state);
-    g_signal_connect(G_OBJECT(button), "toggled", G_CALLBACK(toggled_cb), callback);
-    return button;
-}
-
-typedef struct {
-    gint id;
-    gchar *label;
-    void (*callback)(int);
-    SettingsWidget *widgets;
-    gint widgets_amt;
-    GtkWidget *child; /* child widget - set inside create_widget_container */
-} WidgetContainer;
-
 static WidgetContainer wah_container[] = {
     {WAH_TYPE_CRY, "Cry wah", set_wah_type, wah_widgets, G_N_ELEMENTS(wah_widgets), NULL},
     {WAH_TYPE_FULLRANGE, "Fullrange wah", set_wah_type, wah_widgets, G_N_ELEMENTS(wah_widgets), NULL},
@@ -511,6 +440,103 @@ static WidgetContainer eq_container[] = {
     {EQ_TYPE_WARM, "Warm", set_eq_type, eq_widgets, G_N_ELEMENTS(eq_widgets), NULL},
 };
 
+static VBoxWidget wah_vbox[] = {
+    {"Wah", FALSE, set_wah_on_off, wah_container, G_N_ELEMENTS(wah_container)},
+};
+
+static VBoxWidget comp_vbox[] = {
+    {"Compressor", FALSE, set_comp_on_off, comp_container, G_N_ELEMENTS(comp_container)},
+};
+
+static VBoxWidget dist_vbox[] = {
+    {"Distortion", FALSE, set_dist_on_off, dist_container, G_N_ELEMENTS(dist_container)},
+};
+
+static VBoxWidget noisegate_vbox[] = {
+    {"Noisegate", FALSE, set_noisegate_on_off, noisegate_container, G_N_ELEMENTS(noisegate_container)},
+};
+
+static VBoxWidget chorusfx_vbox[] = {
+    {"Chorus/FX", FALSE, set_chorusfx_on_off, chorusfx_container, G_N_ELEMENTS(chorusfx_container)},
+};
+
+static VBoxWidget delay_vbox[] = {
+    {"Delay", FALSE, set_delay_on_off, delay_container, G_N_ELEMENTS(delay_container)},
+};
+
+static VBoxWidget reverb_vbox[] = {
+    {"Reverb", FALSE, set_reverb_on_off, reverb_container, G_N_ELEMENTS(reverb_container)},
+};
+
+static VBoxWidget eq_vbox[] = {
+    {"EQ", FALSE, set_eq_on_off, eq_container, G_N_ELEMENTS(eq_container)},
+};
+
+static VBoxes vboxes[] = {
+    {wah_vbox, G_N_ELEMENTS(wah_vbox)},
+    {eq_vbox, G_N_ELEMENTS(eq_vbox)},
+    {comp_vbox, G_N_ELEMENTS(comp_vbox)},
+    {dist_vbox, G_N_ELEMENTS(dist_vbox)},
+    {noisegate_vbox, G_N_ELEMENTS(noisegate_vbox)},
+    {chorusfx_vbox, G_N_ELEMENTS(chorusfx_vbox)},
+    {delay_vbox, G_N_ELEMENTS(delay_vbox)},
+    {reverb_vbox, G_N_ELEMENTS(reverb_vbox)},
+};
+
+void value_changed_cb(GtkSpinButton *spinbutton, void (*callback)(int))
+{
+    int val = gtk_spin_button_get_value_as_int(spinbutton);
+    callback(val);
+}
+
+void value_changed_option_cb(GtkSpinButton *spinbutton, void (*callback)(guint32, int))
+{
+    int val = gtk_spin_button_get_value_as_int(spinbutton);
+    guint32 option = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(spinbutton), "option_id"));
+    callback(option, val);
+}
+
+void toggled_cb(GtkToggleButton *button, void (*callback)(gboolean))
+{
+    gboolean val = gtk_toggle_button_get_active(button);
+    callback(val);
+}
+
+GtkWidget *create_table(SettingsWidget *widgets, gint amt)
+{
+    GtkWidget *table, *label, *widget;
+    GtkObject *adj;
+    int x;
+
+    table = gtk_table_new(2, amt, FALSE);
+
+    for (x = 0; x<amt; x++) {
+        label = gtk_label_new(widgets[x].label);
+        adj = gtk_adjustment_new(0.0, widgets[x].min, widgets[x].max, 1.0, 1.0, 1.0);
+        widget = gtk_spin_button_new(GTK_ADJUSTMENT(adj), 1.0, 0);
+        if (widgets[x].callback)
+            g_signal_connect(G_OBJECT(widget), "value-changed", G_CALLBACK(value_changed_cb), widgets[x].callback);
+
+        if (widgets[x].callback_with_option) {
+            g_object_set_data(G_OBJECT(widget), "option_id", GINT_TO_POINTER(widgets[x].option));
+            g_signal_connect(G_OBJECT(widget), "value-changed", G_CALLBACK(value_changed_option_cb), widgets[x].callback_with_option);
+        }
+
+        gtk_table_attach(GTK_TABLE(table), label, 0, 1, x, x+1, GTK_SHRINK, GTK_SHRINK, 2, 2);
+        gtk_table_attach(GTK_TABLE(table), widget, 1, 2, x, x+1, GTK_SHRINK, GTK_SHRINK, 2, 2);
+    }
+
+    return table;
+}
+
+GtkWidget *create_on_off_button(const gchar *label, gboolean state, void (*callback)(int))
+{
+    GtkWidget *button = gtk_toggle_button_new_with_label(label);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), state);
+    g_signal_connect(G_OBJECT(button), "toggled", G_CALLBACK(toggled_cb), callback);
+    return button;
+}
+
 void combo_box_changed_cb(GtkComboBox *widget, WidgetContainer *widgets)
 {
     GtkWidget *child;
@@ -562,46 +588,6 @@ GtkWidget *create_widget_container(WidgetContainer *widgets, gint amt)
     return vbox;
 };
 
-typedef struct {
-    char *label;
-    gboolean value;
-    void (*callback)(gboolean);
-    WidgetContainer *widgets;
-    gint widgets_amt;
-} VBoxWidget;
-
-static VBoxWidget wah_vbox[] = {
-    {"Wah", FALSE, set_wah_on_off, wah_container, G_N_ELEMENTS(wah_container)},
-};
-
-static VBoxWidget comp_vbox[] = {
-    {"Compressor", FALSE, set_comp_on_off, comp_container, G_N_ELEMENTS(comp_container)},
-};
-
-static VBoxWidget dist_vbox[] = {
-    {"Distortion", FALSE, set_dist_on_off, dist_container, G_N_ELEMENTS(dist_container)},
-};
-
-static VBoxWidget noisegate_vbox[] = {
-    {"Noisegate", FALSE, set_noisegate_on_off, noisegate_container, G_N_ELEMENTS(noisegate_container)},
-};
-
-static VBoxWidget chorusfx_vbox[] = {
-    {"Chorus/FX", FALSE, set_chorusfx_on_off, chorusfx_container, G_N_ELEMENTS(chorusfx_container)},
-};
-
-static VBoxWidget delay_vbox[] = {
-    {"Delay", FALSE, set_delay_on_off, delay_container, G_N_ELEMENTS(delay_container)},
-};
-
-static VBoxWidget reverb_vbox[] = {
-    {"Reverb", FALSE, set_reverb_on_off, reverb_container, G_N_ELEMENTS(reverb_container)},
-};
-
-static VBoxWidget eq_vbox[] = {
-    {"EQ", FALSE, set_eq_on_off, eq_container, G_N_ELEMENTS(eq_container)},
-};
-
 GtkWidget *create_vbox(VBoxWidget *widgets, gint amt)
 {
     GtkWidget *vbox;
@@ -626,22 +612,6 @@ GtkWidget *create_vbox(VBoxWidget *widgets, gint amt)
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 2);
     return vbox;
 }
-
-typedef struct {
-    VBoxWidget *widget;
-    gint amt;
-} VBoxes;
-
-static VBoxes vboxes[] = {
-    {wah_vbox, G_N_ELEMENTS(wah_vbox)},
-    {eq_vbox, G_N_ELEMENTS(eq_vbox)},
-    {comp_vbox, G_N_ELEMENTS(comp_vbox)},
-    {dist_vbox, G_N_ELEMENTS(dist_vbox)},
-    {noisegate_vbox, G_N_ELEMENTS(noisegate_vbox)},
-    {chorusfx_vbox, G_N_ELEMENTS(chorusfx_vbox)},
-    {delay_vbox, G_N_ELEMENTS(delay_vbox)},
-    {reverb_vbox, G_N_ELEMENTS(reverb_vbox)},
-};
 
 void create_window()
 {
