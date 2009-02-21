@@ -14,4 +14,34 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses>.
  */
 
-void create_window();
+#include <glib/gtypes.h>
+
+typedef struct {
+    char *label;
+    void (*callback)(int);
+    void (*callback_with_option)(guint32, int);
+    gdouble min;
+    gdouble max;
+    guint32 option;
+} SettingsWidget;
+
+typedef struct {
+    gint id;
+    gchar *label;
+    void (*callback)(int);
+    SettingsWidget *widgets;
+    gint widgets_amt;
+} WidgetContainer;
+
+typedef struct {
+    char *label;
+    gboolean value;
+    void (*callback)(gboolean);
+    WidgetContainer *widgets;
+    gint widgets_amt;
+} VBoxWidget;
+
+typedef struct {
+    VBoxWidget *widget;
+    gint amt;
+} VBoxes;
