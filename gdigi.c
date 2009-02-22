@@ -296,24 +296,15 @@ void set_pickup_on_off(gboolean val)
 
 void set_dist_type(int type)
 {
-    static char set_dist[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x28, 0x09, 0x00, 0x06, 0x02, 0x05, 0x00 /* type1 */, 0x00 /* checksum */, 0xF7};
+    static char set_dist[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41,
+                              0x28, 0x09, 0x00, /* ??? */
+                              0x06, /* seems to be position */
+                              0x02, /* ??? */
+                              0x00, 0x00, /* type */
+                              0x00 /* checksum */, 0xF7};
 
-    switch (type) {
-        case DIST_TYPE_SCREAMER: set_dist[15] = 0x00; break;
-        case DIST_TYPE_808:      set_dist[15] = 0x0C; break;
-        case DIST_TYPE_GUYOD:    set_dist[15] = 0x05; break;
-        case DIST_TYPE_DOD250:   set_dist[15] = 0x03; break;
-        case DIST_TYPE_RODENT:   set_dist[15] = 0x01; break;
-        case DIST_TYPE_MX:       set_dist[15] = 0x0B; break;
-        case DIST_TYPE_DS:       set_dist[15] = 0x02; break;
-        case DIST_TYPE_GRUNGE:   set_dist[15] = 0x07; break;
-        case DIST_TYPE_ZONE:     set_dist[15] = 0x09; break;
-        case DIST_TYPE_DEATH:    set_dist[15] = 0x0E; break;
-        case DIST_TYPE_GONK:     set_dist[15] = 0x0D; break;
-        case DIST_TYPE_FUZZY:    set_dist[15] = 0x08; break;
-        case DIST_TYPE_MP:       set_dist[15] = 0x04; break;
-        default: break;
-    }
+    set_dist[14] = ((type & 0xFF00) >> 8);
+    set_dist[15] = ((type & 0x00FF));
 
     set_dist[16] = calculate_checksum(set_dist, sizeof(set_dist), 16) ^ 0x07;
 
@@ -492,13 +483,15 @@ void set_eq_on_off(gboolean val)
 
 void set_noisegate_type(int type)
 {
-    static char set_type[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x28, 0x02, 0x40, 0x0C, 0x02, 0x03, 0x00 /* type1 */, 0x00 /* checksum */, 0xF7};
+    static char set_type[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41,
+                              0x28, 0x02, 0x40, /* ??? */
+                              0x0C, /* seems to be position */
+                              0x02, /* ??? */
+                              0x00, 0x00, /* type */
+                              0x00 /* checksum */, 0xF7};
 
-    switch (type) {
-        case NOISEGATE_GATE: set_type[15] = 0; break;
-        case NOISEGATE_SWELL: set_type[15] = 1; break;
-        default: break;
-    }
+    set_type[14] = ((type & 0xFF00) >> 8);
+    set_type[15] = ((type & 0x00FF));
 
     set_type[16] = calculate_checksum(set_type, sizeof(set_type), 16) ^ 0x07;
 
@@ -523,30 +516,20 @@ void set_chorusfx_option(guint32 option, int x)
 
 void set_chorusfx_type(int type)
 {
-    static char set_type[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x00 /* type */, 0x03, 0x00, 0x0E, 0x02, 0x00 /* type */, 0x00 /* type1 */, 0x00 /* checksum */, 0xF7};
+    static char set_type[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41,
+                              0x00 /* ? */, 0x03, 0x00, /* ??? */
+                              0x0E, /* seems to be position */
+                              0x02, /* ??? */
+                              0x00, 0x00, /* type */
+                              0x00 /* checksum */, 0xF7};
 
-    switch (type) {
-        case CHORUS_TYPE_CE: set_type[9] = 0x08; set_type[15] = 0x7B; set_type[14] = 0x03; break;
-        case CHORUS_TYPE_DUAL: set_type[9] = 0x08; set_type[15] = 0x79; set_type[14] = 0x03; break;
-        case CHORUS_TYPE_MULTI: set_type[9] = 0x08; set_type[15] = 0x7A; set_type[14] = 0x03; break;
-        case CHORUS_TYPE_FLANGER: set_type[9] = 0x08; set_type[15] = 0x7D; set_type[14] = 0x03; break;
-        case CHORUS_TYPE_MXR_FLANGER: set_type[9] = 0x08; set_type[15] = 0x7F; set_type[14] = 0x03; break;
-        case CHORUS_TYPE_PHASER: set_type[9] = 0x0A; set_type[15] = 0x01; set_type[14] = 0x03; break;
-        case CHORUS_TYPE_VIBRATO: set_type[9] = 0x08; set_type[15] = 0x60; set_type[14] = 0x03; break;
-        case CHORUS_TYPE_ROTARY: set_type[9] = 0x08; set_type[15] = 0x61; set_type[14] = 0x03; break;
-        case CHORUS_TYPE_VIBROPAN: set_type[9] = 0x0A; set_type[15] = 0x0F; set_type[14] = 0x03; break;
-        case CHORUS_TYPE_TREMOLO: set_type[9] = 0x08; set_type[15] = 0x5E; set_type[14] = 0x03; break;
-        case CHORUS_TYPE_PANNER: set_type[9] = 0x08; set_type[15] = 0x5F; set_type[14] = 0x03; break;
-        case CHORUS_TYPE_ENVELOPE: set_type[9] = 0x0A; set_type[15] = 0x0A; set_type[14] = 0x03; break;
-        case CHORUS_TYPE_AUTOYA: set_type[9] = 0x0A; set_type[15] = 0x0B; set_type[14] = 0x03; break;
-        case CHORUS_TYPE_YAYA: set_type[9] = 0x0A; set_type[15] = 0x0C; set_type[14] = 0x03; break;
-        case CHORUS_TYPE_STEP_FILTER: set_type[9] = 0x0A; set_type[15] = 0x0D; set_type[14] = 0x03; break;
-        case CHORUS_TYPE_WHAMMY: set_type[9] = 0x08; set_type[15] = 0x40; set_type[14] = 0x05; break;
-        case CHORUS_TYPE_PITCH_SHIFT: set_type[9] = 0x08; set_type[15] = 0x43; set_type[14] = 0x05; break;
-        case CHORUS_TYPE_DETUNE: set_type[9] = 0x08; set_type[15] = 0x42; set_type[14] = 0x05; break;
-        case CHORUS_TYPE_IPS: set_type[9] = 0x08; set_type[15] = 0x41; set_type[14] = 0x05; break;
-        default: break;
-    }
+    if (((type & 0x80) >> 7) == 1)
+        set_type[9] = 0x0A;
+    else
+        set_type[9] = 0x08;
+
+    set_type[14] = ((type & 0xFF00) >> 8);
+    set_type[15] = ((type & 0x007F));
 
     set_type[16] = calculate_checksum(set_type, sizeof(set_type), 16) ^ 0x07;
 
@@ -580,16 +563,15 @@ void set_delay_time(int x)
 
 void set_delay_type(int type)
 {
-    static char set_type[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x08, 0x07, 0x40, 0x0F, 0x02, 0x04, 0x00 /* type1 */, 0x00 /* checksum */, 0xF7};
+    static char set_type[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41,
+                              0x08, 0x07, 0x40, /* ??? */
+                              0x0F, /* seems to be position */
+                              0x02, /* ??? */
+                              0x00, 0x00 /* type */,
+                              0x00 /* checksum */, 0xF7};
 
-    switch (type) {
-        case DELAY_TYPE_ANALOG: set_type[15] = 0x16; break;
-        case DELAY_TYPE_DIGITAL: set_type[15] = 0x15; break;
-        case DELAY_TYPE_MODULATED: set_type[15] = 0x17; break;
-        case DELAY_TYPE_PONG: set_type[15] = 0x18; break;
-        case DELAY_TYPE_TAPE: set_type[15] = 0x19; break;
-        default: break;
-    }
+    set_type[14] = ((type & 0xFF00) >> 8);
+    set_type[15] = ((type & 0x00FF));
 
     set_type[16] = calculate_checksum(set_type, sizeof(set_type), 16) ^ 0x07;
 
@@ -614,17 +596,15 @@ void set_reverb_option(guint32 option, int x)
 
 void set_reverb_type(int type)
 {
-    static char set_type[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x28, 0x07, 0x00, 0x10, 0x02, 0x04, 0x00 /* type1 */, 0x00 /* checksum */, 0xF7};
+    static char set_type[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41,
+                              0x28, 0x07, 0x00, /* ??? */
+                              0x10, /* seems to be position */
+                              0x02, /* ??? */
+                              0x00, 0x00, /* type1 */
+                              0x00 /* checksum */, 0xF7};
 
-    switch (type) {
-        case REVERB_TYPE_TWIN: set_type[15] = 0x7A; break;
-        case REVERB_TYPE_LEX_AMBIENCE: set_type[15] = 0x7E; break;
-        case REVERB_TYPE_LEX_STUDIO: set_type[15] = 0x7D; break;
-        case REVERB_TYPE_LEX_ROOM: set_type[15] = 0x7C; break;
-        case REVERB_TYPE_LEX_HALL: set_type[15] = 0x7B; break;
-        case REVERB_TYPE_EMT240_PLATE: set_type[15] = 0x7F; break;
-        default: break;
-    }
+    set_type[14] = ((type & 0xFF00) >> 8);
+    set_type[15] = ((type & 0x00FF));
 
     set_type[16] = calculate_checksum(set_type, sizeof(set_type), 16) ^ 0x07;
 
