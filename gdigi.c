@@ -140,6 +140,35 @@ void check_preset(struct usb_dev_handle *handle)
     } while (i > 0);*/
 }
 
+/*
+   id - ID as found preset file
+   position - Position as found in preset file
+   value - Value as found in preset file
+*/
+void set_option(guint id, guint position, guint value)
+{
+    static char option[] = {0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41,
+                            0x00, 0x00, 0x00, /* ID */
+                            0x00, /* position */
+                            0x00, /* value */
+                            0x00, /* checksum */
+                            0xF7};
+
+    if (((id & 0x80) >> 7) == 1) /* 8th bit equals 1 */
+        option[8] = 0x20;
+    else                         /* otherwise */
+        option[8] = 0x00;
+
+    option[9]  = ((id & 0xFF00) >> 8);
+    option[10] = ((id & 0x007F));      /* 8th bit has to be zero */
+
+    option[11] = position;
+    option[12] = value;
+    option[13] = calculate_checksum(option, sizeof(option), 13) ^ 0x07;
+
+    send_data(option, sizeof(option));
+}
+
 /* level = 0 to 99 */
 void set_wah_min(int level)
 {
@@ -626,16 +655,7 @@ void set_noisegate_on_off(gboolean val)
 
 void set_chorusfx_option(guint32 option, int x)
 {
-    static char set_option[] = {0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x00 /* option1 */, 0x00 /* option2 */, 0x00 /* option3 */, 0x0E, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_option[8]  = ((option & 0xFF0000) >> 16);
-    set_option[9]  = ((option & 0x00FF00) >> 8);
-    set_option[10] = ((option & 0x0000FF));
-
-    set_option[12] = x;
-    set_option[13] = calculate_checksum(set_option, sizeof(set_option), 13) ^ 0x07;
-
-    send_data(set_option, sizeof(set_option));
+    set_option(option, CHORUSFX_POSITION, x);
 }
 
 void set_chorusfx_type(int type)
