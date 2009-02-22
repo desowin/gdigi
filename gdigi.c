@@ -692,17 +692,7 @@ void set_chorusfx_type(int type)
 
 void set_chorusfx_on_off(gboolean val)
 {
-    static char set_chorus[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x00, 0x03, 0x01, 0x0E, 0x00 /* on/off */, 0x00 /* checksum */, 0xF7};
-
-    if (val == FALSE) { /* turn chorusfx off */
-        set_chorus[13] = 0;
-    } else { /* turn chorusfx on */
-        set_chorus[13] = 1;
-    }
-
-    set_chorus[14] = calculate_checksum(set_chorus, sizeof(set_chorus), 14) ^ 0x07;
-
-    send_data(set_chorus, sizeof(set_chorus));
+    set_option(CHORUSFX_ON_OFF, CHORUSFX_POSITION, (val == TRUE) ? 1 : 0);
 }
 
 /* x = 0 to 139 */
@@ -745,28 +735,12 @@ void set_delay_type(int type)
 
 void set_delay_option(guint32 option, int x)
 {
-    static char set_option[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x00, 0x07, 0x00 /* option */, 0x0F, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_option[11] = option;
-    set_option[13] = x;
-    set_option[14] = calculate_checksum(set_option, sizeof(set_option), 14) ^ 0x07;
-
-    send_data(set_option, sizeof(set_option));
+    set_option(option, DELAY_POSITION, x);
 }
 
 void set_delay_on_off(gboolean val)
 {
-    static char set_delay[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x00, 0x07, 0x41, 0x0F, 0x00 /* on/off */, 0x00 /* checksum */, 0xF7};
-
-    if (val == FALSE) { /* turn delay off */
-        set_delay[13] = 0;
-    } else { /* turn delay on */
-        set_delay[13] = 1;
-    }
-
-    set_delay[14] = calculate_checksum(set_delay, sizeof(set_delay), 14) ^ 0x07;
-
-    send_data(set_delay, sizeof(set_delay));
+    set_option(DELAY_ON_OFF, DELAY_POSITION, (val == TRUE) ? 1 : 0);
 }
 
 /* x = 0 to 15 (predelay), otherwise 0 to 99 */
