@@ -356,45 +356,25 @@ void set_eq_type(int type)
 /* x = 0 to 99 */
 void set_eq_gain(int x)
 {
-    static char set_gain[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x09, 0x41, 0x08, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_gain[13] = x;
-    set_gain[14] = calculate_checksum(set_gain, sizeof(set_gain), 14) ^ 0x07;
-
-    send_data(set_gain, sizeof(set_gain));
+    set_option(AMP_GAIN, AMP_POSITION, x);
 }
 
 /* x = 0 to 99 */
 void set_eq_level(int x)
 {
-    static char set_level[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x09, 0x42, 0x08, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_level[13] = x;
-    set_level[14] = calculate_checksum(set_level, sizeof(set_level), 14) ^ 0x07;
-
-    send_data(set_level, sizeof(set_level));
+    set_option(AMP_LEVEL, AMP_POSITION, x);
 }
 
 /* x = 0x00 (-12dB) to 0x18 (12dB) */
 void set_eq_bass(int x)
 {
-    static char set_bass[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x0C, 0x03, 0x18, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_bass[13] = x;
-    set_bass[14] = calculate_checksum(set_bass, sizeof(set_bass), 14) ^ 0x07;
-
-    send_data(set_bass, sizeof(set_bass));
+    set_option(EQ_BASS, EQ_POSITION, x);
 }
 
 /* x = 0x00 (-12dB) to 0x18 (12dB) */
 void set_eq_mid(int x)
 {
-    static char set_mid[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x0C, 0x04, 0x18, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_mid[13] = x;
-    set_mid[14] = calculate_checksum(set_mid, sizeof(set_mid), 14) ^ 0x07;
-
-    send_data(set_mid, sizeof(set_mid));
+    set_option(EQ_MID, EQ_POSITION, x);
 }
 
 /*
@@ -451,12 +431,7 @@ void set_eq_mid_hz(int x)
 /* x = 0x00 (-12dB) to 0x18 (12dB) */
 void set_eq_treble(int x)
 {
-    static char set_treble[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x0C, 0x05, 0x18, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_treble[13] = x;
-    set_treble[14] = calculate_checksum(set_treble, sizeof(set_treble), 14) ^ 0x07;
-
-    send_data(set_treble, sizeof(set_treble));
+    set_option(EQ_TREBLE, EQ_POSITION, x);
 }
 
 /*
@@ -512,17 +487,7 @@ void set_eq_treb_hz(int x)
 
 void set_eq_on_off(gboolean val)
 {
-    static char set_eq[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x0C, 0x0C, 0x18, 0x00 /* on/off */, 0x00 /* checksum */, 0xF7};
-
-    if (val == FALSE) { /* turn eq off */
-        set_eq[13] = 0;
-    } else { /* turn eq on */
-        set_eq[13] = 1;
-    }
-
-    set_eq[14] = calculate_checksum(set_eq, sizeof(set_eq), 14) ^ 0x07;
-
-    send_data(set_eq, sizeof(set_eq));
+    set_option(EQ_ON_OFF, EQ_POSITION, (val == TRUE) ? 1 : 0);
 }
 
 void set_noisegate_type(int type)

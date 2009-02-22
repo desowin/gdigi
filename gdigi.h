@@ -125,6 +125,17 @@ enum {
   EQ_TYPE_WARM
 };
 
+#define AMP_POSITION 8
+
+#define AMP_GAIN 2497
+#define AMP_LEVEL 2498
+
+#define EQ_ON_OFF 3212
+#define EQ_POSITION 24
+
+#define EQ_BASS 3203
+#define EQ_MID 3204
+#define EQ_TREBLE 3205
 enum {
   NOISEGATE_GATE = 0,
   NOISEGATE_SWELL
