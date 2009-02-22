@@ -28,6 +28,14 @@ enum {
   COMP_TYPE_CS
 };
 
+#define COMP_ON_OFF 193
+#define COMP_POSITION 4
+
+#define COMP_SUSTAIN 208
+#define COMP_TONE 209
+#define COMP_ATTACK 211
+#define COMP_LEVEL 210
+
 enum {
   PICKUP_TYPE_HB_SC = 0,
   PICKUP_TYPE_SC_HB

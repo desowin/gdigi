@@ -236,45 +236,25 @@ void set_wah_on_off(gboolean val)
 /* level = 0 to 99 */
 void set_comp_sustain(int level)
 {
-    static char set_sust[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x00, 0x50, 0x04, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_sust[13] = level;
-    set_sust[14] = calculate_checksum(set_sust, sizeof(set_sust), 14) ^ 0x07;
-
-    send_data(set_sust, sizeof(set_sust));
+    set_option(COMP_SUSTAIN, COMP_POSITION, level);
 }
 
 /* level = 0 to 99, available only in digi comp */
 void set_comp_tone(int level)
 {
-    static char set_tone[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x00, 0x51, 0x04, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_tone[13] = level;
-    set_tone[14] = calculate_checksum(set_tone, sizeof(set_tone), 14) ^ 0x07;
-
-    send_data(set_tone, sizeof(set_tone));
+    set_option(COMP_TONE, COMP_POSITION, level);
 }
 
 /* level = 0 to 99 */
 void set_comp_attack(int level)
 {
-    static char set_attack[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x00, 0x53, 0x04, 0x00 /* value */, 0x00 /* checksum */, 0xf7};
-
-    set_attack[13] = level;
-    set_attack[14] = calculate_checksum(set_attack, sizeof(set_attack), 14) ^ 0x07;
-
-    send_data(set_attack, sizeof(set_attack));
+    set_option(COMP_ATTACK, COMP_POSITION, level);
 }
 
 /* level = 0 to 99 */
 void set_comp_level(int level)
 {
-    static char set_level[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x00, 0x52, 0x04, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_level[13] = level;
-    set_level[14] = calculate_checksum(set_level, sizeof(set_level), 14) ^ 0x07;
-
-    send_data(set_level, sizeof(set_level));
+    set_option(COMP_LEVEL, COMP_POSITION, level);
 }
 
 void set_comp_type(int type)
@@ -294,17 +274,7 @@ void set_comp_type(int type)
 
 void set_comp_on_off(gboolean val)
 {
-    static char set_comp[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x00, 0x41, 0x04, 0x00 /* on/off */, 0x00 /* checksum */, 0xF7};
-
-    if (val == FALSE) { /* turn comp off */
-        set_comp[13] = 0;
-    } else { /* turn comp on */
-        set_comp[13] = 1;
-    }
-
-    set_comp[14] = calculate_checksum(set_comp, sizeof(set_comp), 14) ^ 0x07;
-
-    send_data(set_comp, sizeof(set_comp));
+    set_option(COMP_ON_OFF, COMP_POSITION, (val == TRUE) ? 1 : 0);
 }
 
 /* x = 0 to 60 */
