@@ -49,47 +49,50 @@ enum {
   DIST_TYPE_MP
 };
 
-#define DIST_SCREAMER_DRIVE 0x02
-#define DIST_SCREAMER_TONE  0x03
-#define DIST_SCREAMER_LVL   0x04
-#define DIST_808_OVERDRIVE  0x29
-#define DIST_808_TONE       0x2A
-#define DIST_808_LVL        0x2B
-#define DIST_GUYOD_DRIVE    0x10
-#define DIST_GUYOD_LVL      0x11
-#define DIST_DOD250_GAIN    0x0B
-#define DIST_DOD250_LVL     0x0C
-#define DIST_RODENT_DIST    0x05
-#define DIST_RODENT_FILTER  0x06
-#define DIST_RODENT_LVL     0x07
-#define DIST_MX_DIST        0x24
-#define DIST_MX_OUTPUT      0x25
-#define DIST_DS_GAIN        0x08
-#define DIST_DS_TONE        0x09
-#define DIST_DS_LVL         0x0A
-#define DIST_GRUNGE_GRUNGE  0x16
-#define DIST_GRUNGE_FACE    0x18
-#define DIST_GRUNGE_LOUD    0x19
-#define DIST_GRUNGE_BUTT    0x17
-#define DIST_ZONE_GAIN      0x1C
-#define DIST_ZONE_LOW       0x1F
-#define DIST_ZONE_MID_LVL   0x1E
-#define DIST_ZONE_MID_FREQ  0x1D
-#define DIST_ZONE_HIGH      0x20
-#define DIST_ZONE_LEVEL     0x21
-#define DIST_DEATH_LOW      0x2D
-#define DIST_DEATH_MID      0x2C
-#define DIST_DEATH_HIGH     0x2F
-#define DIST_DEATH_LVL      0x2E
-#define DIST_GONK_GONK      0x30
-#define DIST_GONK_SMEAR     0x27
-#define DIST_GONK_SUCK      0x26
-#define DIST_GONK_HEAVE     0x28
-#define DIST_FUZZY_FUZZ     0x1A
-#define DIST_FUZZY_VOLUME   0x1B
-#define DIST_MP_SUSTAIN     0x0D
-#define DIST_MP_TONE        0x0E
-#define DIST_MP_VOLUME      0x0F
+#define DIST_ON_OFF 2433
+#define DIST_POSITION 6
+
+#define DIST_SCREAMER_DRIVE 2434
+#define DIST_SCREAMER_TONE  2435
+#define DIST_SCREAMER_LVL   2436
+#define DIST_808_OVERDRIVE  2473
+#define DIST_808_TONE       2474
+#define DIST_808_LVL        2475
+#define DIST_GUYOD_DRIVE    2448
+#define DIST_GUYOD_LVL      2449
+#define DIST_DOD250_GAIN    2443
+#define DIST_DOD250_LVL     2444
+#define DIST_RODENT_DIST    2437
+#define DIST_RODENT_FILTER  2438
+#define DIST_RODENT_LVL     2439
+#define DIST_MX_DIST        2468
+#define DIST_MX_OUTPUT      2469
+#define DIST_DS_GAIN        2440
+#define DIST_DS_TONE        2441
+#define DIST_DS_LVL         2442
+#define DIST_GRUNGE_GRUNGE  2454
+#define DIST_GRUNGE_FACE    2456
+#define DIST_GRUNGE_LOUD    2457
+#define DIST_GRUNGE_BUTT    2455
+#define DIST_ZONE_GAIN      2460
+#define DIST_ZONE_LOW       2463
+#define DIST_ZONE_MID_LVL   2462
+#define DIST_ZONE_MID_FREQ  2461
+#define DIST_ZONE_HIGH      2464
+#define DIST_ZONE_LEVEL     2465
+#define DIST_DEATH_LOW      2477
+#define DIST_DEATH_MID      2476
+#define DIST_DEATH_HIGH     2479
+#define DIST_DEATH_LVL      2478
+#define DIST_GONK_GONK      2480
+#define DIST_GONK_SMEAR     2471
+#define DIST_GONK_SUCK      2470
+#define DIST_GONK_HEAVE     2472
+#define DIST_FUZZY_FUZZ     2458
+#define DIST_FUZZY_VOLUME   2459
+#define DIST_MP_SUSTAIN     2445
+#define DIST_MP_TONE        2446
+#define DIST_MP_VOLUME      2447
 
 enum {
   EQ_TYPE_BRIGHT = 0,
@@ -103,14 +106,17 @@ enum {
   NOISEGATE_SWELL
 };
 
+#define NOISEGATE_ON_OFF 705
+#define NOISEGATE_POSITION 12
+
 /* available only in Gate mode */
-#define NOISEGATE_GATE_TRESHOLD 0x46
+#define NOISEGATE_GATE_TRESHOLD 710
 /* available only in Swell mode */
-#define NOISEGATE_SWELL_SENS    0x47
+#define NOISEGATE_SWELL_SENS    711
 /* available in both Gate and Swell modes */
-#define NOISEGATE_ATTACK        0x48
-#define NOISEGATE_RELEASE       0x49
-#define NOISEGATE_ATTN          0x4A
+#define NOISEGATE_ATTACK        712
+#define NOISEGATE_RELEASE       713
+#define NOISEGATE_ATTN          714
 
 enum {
   CHORUS_TYPE_CE = 0,
@@ -321,32 +327,35 @@ enum {
   REVERB_TYPE_EMT240_PLATE
 };
 
-#define TWIN_REVERB 0x05
+#define REVERB_ON_OFF 1921
+#define REVERB_POSITION 16
 
-#define LEX_AMBIENCE_PREDELAY 0x02
-#define LEX_AMBIENCE_DECAY 0x07
-#define LEX_AMBIENCE_LIVELINESS 0x0D
-#define LEX_AMBIENCE_LEVEL 0x05
+#define TWIN_REVERB 1925
 
-#define LEX_STUDIO_PREDELAY 0x02
-#define LEX_STUDIO_DECAY 0x07
-#define LEX_STUDIO_LIVELINESS 0x0D
-#define LEX_STUDIO_LEVEL 0x05
+#define LEX_AMBIENCE_PREDELAY 1922
+#define LEX_AMBIENCE_DECAY 1927
+#define LEX_AMBIENCE_LIVELINESS 1933
+#define LEX_AMBIENCE_LEVEL 1925
 
-#define LEX_ROOM_PREDELAY 0x02
-#define LEX_ROOM_DECAY 0x07
-#define LEX_ROOM_LIVELINESS 0x0D
-#define LEX_ROOM_LEVEL 0x05
+#define LEX_STUDIO_PREDELAY 1922
+#define LEX_STUDIO_DECAY 1927
+#define LEX_STUDIO_LIVELINESS 1933
+#define LEX_STUDIO_LEVEL 1925
 
-#define LEX_HALL_PREDELAY 0x02
-#define LEX_HALL_DECAY 0x07
-#define LEX_HALL_LIVELINESS 0x0D
-#define LEX_HALL_LEVEL 0x05
+#define LEX_ROOM_PREDELAY 1922
+#define LEX_ROOM_DECAY 1927
+#define LEX_ROOM_LIVELINESS 1933
+#define LEX_ROOM_LEVEL 1925
 
-#define EMT240_PLATE_PREDELAY 0x02
-#define EMT240_PLATE_DECAY 0x07
-#define EMT240_PLATE_LIVELINESS 0x0D
-#define EMT240_PLATE_LEVEL 0x05
+#define LEX_HALL_PREDELAY 1922
+#define LEX_HALL_DECAY 1927
+#define LEX_HALL_LIVELINESS 1933
+#define LEX_HALL_LEVEL 1925
+
+#define EMT240_PLATE_PREDELAY 1922
+#define EMT240_PLATE_DECAY 1927
+#define EMT240_PLATE_LIVELINESS 1933
+#define EMT240_PLATE_LEVEL 1925
 
 void set_wah_min(int level);
 void set_wah_max(int level);

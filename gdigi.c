@@ -141,7 +141,7 @@ void check_preset(struct usb_dev_handle *handle)
 }
 
 /*
-   id - ID as found preset file
+   id - ID as found in preset file
    position - Position as found in preset file
    value - Value as found in preset file
 */
@@ -387,28 +387,12 @@ void set_dist_type(int type)
 
 void set_dist_option(guint32 option, int value)
 {
-    static char set_option[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x09, 0x00 /* option */, 0x06, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_option[11] = option;
-    set_option[13] = value;
-    set_option[14] = calculate_checksum(set_option, sizeof(set_option), 14) ^ 0x07;
-
-    send_data(set_option, sizeof(set_option));
+    set_option(option, DIST_POSITION, value);
 }
 
 void set_dist_on_off(gboolean val)
 {
-    static char set_dist[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x09, 0x01, 0x06, 0x00 /* on/off */, 0x00 /* checksum */, 0xF7};
-
-    if (val == FALSE) { /* turn dist off */
-        set_dist[13] = 0;
-    } else { /* turn dist on */
-        set_dist[13] = 1;
-    }
-
-    set_dist[14] = calculate_checksum(set_dist, sizeof(set_dist), 14) ^ 0x07;
-
-    send_data(set_dist, sizeof(set_dist));
+    set_option(DIST_ON_OFF, DIST_POSITION, (val == TRUE) ? 1 : 0);
 }
 
 /* level = 0 to 99 */
@@ -629,28 +613,12 @@ void set_noisegate_type(int type)
 /* x = 0 to 99 */
 void set_gate_option(guint32 option, int x)
 {
-    static char set_option[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x02, 0x00 /* option */, 0x0C, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_option[11] = option;
-    set_option[13] = x;
-    set_option[14] = calculate_checksum(set_option, sizeof(set_option), 14) ^ 0x07;
-
-    send_data(set_option, sizeof(set_option));
+    set_option(option, NOISEGATE_POSITION, x);
 }
 
 void set_noisegate_on_off(gboolean val)
 {
-    static char set_gate[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x02, 0x41, 0x0C, 0x00 /* on/off */, 0x00 /* checksum */, 0xF7};
-
-    if (val == FALSE) { /* turn noisegate off */
-        set_gate[13] = 0;
-    } else { /* turn noisegate on */
-        set_gate[13] = 1;
-    }
-
-    set_gate[14] = calculate_checksum(set_gate, sizeof(set_gate), 14) ^ 0x07;
-
-    send_data(set_gate, sizeof(set_gate));
+    set_option(NOISEGATE_ON_OFF, NOISEGATE_POSITION, (val == TRUE) ? 1 : 0);
 }
 
 void set_chorusfx_option(guint32 option, int x)
@@ -746,13 +714,7 @@ void set_delay_on_off(gboolean val)
 /* x = 0 to 15 (predelay), otherwise 0 to 99 */
 void set_reverb_option(guint32 option, int x)
 {
-    static char set_option[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x07, 0x00 /* option */, 0x10, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-    set_option[11] = option;
-    set_option[13] = x;
-    set_option[14] = calculate_checksum(set_option, sizeof(set_option), 14) ^ 0x07;
-
-    send_data(set_option, sizeof(set_option));
+    set_option(option, REVERB_POSITION, x);
 }
 
 void set_reverb_type(int type)
@@ -776,17 +738,7 @@ void set_reverb_type(int type)
 
 void set_reverb_on_off(gboolean val)
 {
-    static char set_reverb[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x07, 0x01, 0x10, 0x00 /* on/off */, 0x00 /* checksum */, 0xF7};
-
-    if (val == FALSE) { /* turn reverb off */
-        set_reverb[13] = 0;
-    } else { /* turn reverb on */
-        set_reverb[13] = 1;
-    }
-
-    set_reverb[14] = calculate_checksum(set_reverb, sizeof(set_reverb), 14) ^ 0x07;
-
-    send_data(set_reverb, sizeof(set_reverb));
+    set_option(REVERB_ON_OFF, REVERB_POSITION, (val == TRUE) ? 1 : 0);
 }
 
 /* x = 0 to 59 (preset number) */
