@@ -18,9 +18,9 @@
 #include <glib.h>
 
 enum {
-  WAH_TYPE_CRY = 0,
-  WAH_TYPE_FULLRANGE,
-  WAH_TYPE_CLYDE
+  WAH_TYPE_CRY = 132,
+  WAH_TYPE_FULLRANGE = 133,
+  WAH_TYPE_CLYDE = 134
 };
 
 #define WAH_POSITION_MIN_MAX 20
@@ -34,8 +34,8 @@ enum {
 #define WAH_LEVEL 133
 
 enum {
-  COMP_TYPE_DIGI = 0,
-  COMP_TYPE_CS
+  COMP_TYPE_DIGI = 195,
+  COMP_TYPE_CS = 196
 };
 
 #define COMP_ON_OFF 193
@@ -47,8 +47,8 @@ enum {
 #define COMP_LEVEL 210
 
 enum {
-  PICKUP_TYPE_HB_SC = 0,
-  PICKUP_TYPE_SC_HB
+  PICKUP_TYPE_HB_SC = 66,
+  PICKUP_TYPE_SC_HB = 65
 };
 
 #define PICKUP_ON_OFF 65
@@ -119,10 +119,10 @@ enum {
 #define PRESET_LEVEL 2626
 
 enum {
-  EQ_TYPE_BRIGHT = 0,
-  EQ_TYPE_MIDBOOST,
-  EQ_TYPE_SCOOP,
-  EQ_TYPE_WARM
+  EQ_TYPE_BRIGHT = 1474,
+  EQ_TYPE_MIDBOOST = 1472,
+  EQ_TYPE_SCOOP = 1473,
+  EQ_TYPE_WARM = 1475
 };
 
 #define AMP_POSITION 8
@@ -136,6 +136,7 @@ enum {
 #define EQ_BASS 3203
 #define EQ_MID 3204
 #define EQ_TREBLE 3205
+
 enum {
   NOISEGATE_GATE = 768,
   NOISEGATE_SWELL = 769
