@@ -23,6 +23,16 @@ enum {
   WAH_TYPE_CLYDE
 };
 
+#define WAH_POSITION_MIN_MAX 20
+
+#define WAH_MIN 8195
+#define WAH_MAX 8196
+
+#define WAH_ON_OFF 129
+#define WAH_POSITION 3
+
+#define WAH_LEVEL 133
+
 enum {
   COMP_TYPE_DIGI = 0,
   COMP_TYPE_CS
@@ -40,6 +50,9 @@ enum {
   PICKUP_TYPE_HB_SC = 0,
   PICKUP_TYPE_SC_HB
 };
+
+#define PICKUP_ON_OFF 65
+#define PICKUP_POSITION 2
 
 enum {
   DIST_TYPE_SCREAMER = 0,
@@ -101,6 +114,9 @@ enum {
 #define DIST_MP_SUSTAIN     2445
 #define DIST_MP_TONE        2446
 #define DIST_MP_VOLUME      2447
+
+#define PRESET_POSITION 18
+#define PRESET_LEVEL 2626
 
 enum {
   EQ_TYPE_BRIGHT = 0,
