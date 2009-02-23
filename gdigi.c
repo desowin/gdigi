@@ -189,13 +189,19 @@ void set_wah_level(int level)
 
 void set_wah_type(int type)
 {
-    /* ID = 128 */
+    gint id = 128;
+
     static char set_type[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41,
-                              0x2C, 0x00, 0x00, /* ??? */
+                              0x00, 0x00, 0x00, /* ID */
                               0x03, /* seems to be position */
                               0x01, /* ??? */
                               0x00, /* type */
                               0x00, /* checksum */ 0xF7};
+
+    set_type[9] = ((id & 0x80) >> 2) | 0x0C; /* Why 0x0C? */
+
+    set_type[10] = ((id & 0xFF00) >> 8);
+    set_type[11] = ((id & 0x007F));
 
     /* 8th bit of type is always 1 - check how does it affect command */
     set_type[14] = (type & 0x007F);
@@ -236,13 +242,19 @@ void set_comp_level(int level)
 
 void set_comp_type(int type)
 {
-    /* ID = 207 */
+    gint id = 207;
+
     static char set_type[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41,
-                              0x2C, 0x00, 0x4F, /* ??? */
+                              0x00, 0x00, 0x00, /* ID */
                               0x04, /* seems to be position */
                               0x01, /* ??? */
                               0x00, /* type */
                               0x00, /* checksum */ 0xF7};
+
+    set_type[9] = ((id & 0x80) >> 2) | 0x0C; /* Why 0x0C? */
+
+    set_type[10] = ((id & 0xFF00) >> 8);
+    set_type[11] = ((id & 0x007F));
 
     /* 8th bit of type is always 1 - check how does it affect command */
     set_type[14] = (type & 0x007F);
@@ -281,12 +293,18 @@ void switch_system_preset(int x)
 
 void set_pickup_type(int type)
 {
-    /* ID = 64 */
+    gint id = 64;
+
     static char pickup[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41,
-                            0x00, 0x00, 0x40, /* ??? */
+                            0x00, 0x00, 0x40, /* ID */
                             0x02, /* seems to be position */
                             0x00, /* type */
                             0x00, /* checksum */ 0xF7};
+
+    pickup[9] = ((id & 0x80) >> 2);
+
+    pickup[10] = ((id & 0xFF00) >> 8);
+    pickup[11] = ((id & 0x007F));
 
     pickup[13] = type;
 
@@ -302,13 +320,19 @@ void set_pickup_on_off(gboolean val)
 
 void set_dist_type(int type)
 {
-    /* ID = 2432 */
+    gint id = 2432;
+
     static char set_dist[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41,
-                              0x28, 0x09, 0x00, /* ??? */
+                              0x00, 0x00, 0x00, /* ID */
                               0x06, /* seems to be position */
                               0x02, /* ??? */
                               0x00, 0x00, /* type */
                               0x00 /* checksum */, 0xF7};
+
+    set_dist[9] = ((id & 0x80) >> 2) | 0x08; /* Why 0x08? */
+
+    set_dist[10] = ((id & 0xFF00) >> 8);
+    set_dist[11] = ((id & 0x007F));
 
     set_dist[14] = ((type & 0xFF00) >> 8);
     set_dist[15] = ((type & 0x00FF));
@@ -336,13 +360,19 @@ void set_preset_level(int level)
 
 void set_eq_type(int type)
 {
-    /* ID = 3202 */
+    gint id = 3202;
+
     static char set_eq[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41,
-                            0x2A, 0x0C, 0x02,
+                            0x00, 0x00, 0x00, /* ID */
                             0x18, /* seems to be position */
                             0x02, /* ??? */
                             0x05, 0x00, /* type */
                             0x00, /* checksum */ 0xF7};
+
+    set_eq[9] = ((id & 0x80) >> 2) | 0x0A; /* Why 0x0A? */
+
+    set_eq[10] = ((id & 0xFF00) >> 8);
+    set_eq[11] = ((id & 0x007F));
 
     /* 8th bit of type is always 1 - check how does it affect command */
     set_eq[14] = ((type & 0xFF00) >> 8);
@@ -492,13 +522,19 @@ void set_eq_on_off(gboolean val)
 
 void set_noisegate_type(int type)
 {
-    /* ID = 704 */
+    gint id = 704;
+
     static char set_type[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41,
-                              0x28, 0x02, 0x40, /* ??? */
+                              0x00, 0x00, 0x00, /* ID */
                               0x0C, /* seems to be position */
                               0x02, /* ??? */
                               0x00, 0x00, /* type */
                               0x00 /* checksum */, 0xF7};
+
+    set_type[9] = ((id & 0x80) >> 2) | 0x08; /* Why 0x08? */
+
+    set_type[10] = ((id & 0xFF00) >> 8);
+    set_type[11] = ((id & 0x007F));
 
     set_type[14] = ((type & 0xFF00) >> 8);
     set_type[15] = ((type & 0x00FF));
@@ -526,18 +562,24 @@ void set_chorusfx_option(guint32 option, int x)
 
 void set_chorusfx_type(int type)
 {
-    /* ID = 768 */
+    gint id = 768;
+
     static char set_type[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41,
-                              0x00 /* ? */, 0x03, 0x00, /* ??? */
+                              0x00, 0x00, 0x00, /* ID */
                               0x0E, /* seems to be position */
                               0x02, /* ??? */
                               0x00, 0x00, /* type */
                               0x00 /* checksum */, 0xF7};
 
+    set_type[9] = ((id & 0x80) >> 2);
+
+    set_type[10] = ((id & 0xFF00) >> 8);
+    set_type[11] = ((id & 0x007F));
+
     if (((type & 0x80) >> 7) == 1)
-        set_type[9] = 0x0A;
+        set_type[9] |= 0x0A;
     else
-        set_type[9] = 0x08;
+        set_type[9] |= 0x08;
 
     set_type[14] = ((type & 0xFF00) >> 8);
     set_type[15] = ((type & 0x007F));
@@ -574,16 +616,22 @@ void set_delay_time(int x)
 
 void set_delay_type(int type)
 {
-    /* ID = 1856 */
+    gint id = 1856;
+
     static char set_type[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41,
-                              0x08, 0x07, 0x40, /* ??? */
+                              0x00, 0x00, 0x00, /* ID */
                               0x0F, /* seems to be position */
                               0x02, /* ??? */
                               0x00, 0x00 /* type */,
                               0x00 /* checksum */, 0xF7};
 
+    set_type[9] = ((id & 0x80) >> 2) | 0x08; /* Why 0x08? */
+
+    set_type[10] = ((id & 0xFF00) >> 8);
+    set_type[11] = ((id & 0x007F));
+
     set_type[14] = ((type & 0xFF00) >> 8);
-    set_type[15] = ((type & 0x00FF));
+    set_type[15] = ((type & 0x007F));
 
     set_type[16] = calculate_checksum(set_type, sizeof(set_type), 16) ^ 0x07;
 
@@ -608,13 +656,19 @@ void set_reverb_option(guint32 option, int x)
 
 void set_reverb_type(int type)
 {
-    /* ID = 1920 */
+    gint id = 1920;
+
     static char set_type[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41,
-                              0x28, 0x07, 0x00, /* ??? */
+                              0x00, 0x00, 0x00, /* ID */
                               0x10, /* seems to be position */
                               0x02, /* ??? */
                               0x00, 0x00, /* type1 */
                               0x00 /* checksum */, 0xF7};
+
+    set_type[9] = ((id & 0x80) >> 2) | 0x08; /* Why 0x08? */
+
+    set_type[10] = ((id & 0xFF00) >> 8);
+    set_type[11] = ((id & 0x007F));
 
     set_type[14] = ((type & 0xFF00) >> 8);
     set_type[15] = ((type & 0x00FF));
