@@ -28,6 +28,7 @@ enum {
 #define WAH_MIN 8195
 #define WAH_MAX 8196
 
+#define WAH_TYPE 128
 #define WAH_ON_OFF 129
 #define WAH_POSITION 3
 
@@ -38,6 +39,7 @@ enum {
   COMP_TYPE_CS = 196
 };
 
+#define COMP_TYPE 207
 #define COMP_ON_OFF 193
 #define COMP_POSITION 4
 
@@ -51,6 +53,7 @@ enum {
   PICKUP_TYPE_SC_HB = 65
 };
 
+#define PICKUP_TYPE 64
 #define PICKUP_ON_OFF 65
 #define PICKUP_POSITION 2
 
@@ -70,6 +73,7 @@ enum {
   DIST_TYPE_MP = 1284
 };
 
+#define DIST_TYPE 2432
 #define DIST_ON_OFF 2433
 #define DIST_POSITION 6
 
@@ -130,6 +134,7 @@ enum {
 #define AMP_GAIN 2497
 #define AMP_LEVEL 2498
 
+#define EQ_TYPE 3202
 #define EQ_ON_OFF 3212
 #define EQ_POSITION 24
 
@@ -142,6 +147,7 @@ enum {
   NOISEGATE_SWELL = 769
 };
 
+#define NOISEGATE_TYPE 704
 #define NOISEGATE_ON_OFF 705
 #define NOISEGATE_POSITION 12
 
@@ -176,6 +182,7 @@ enum {
   CHORUS_TYPE_IPS = 0x541
 };
 
+#define CHORUSFX_TYPE 768
 #define CHORUSFX_ON_OFF 769
 #define CHORUSFX_POSITION 14
 
@@ -329,6 +336,7 @@ enum {
   DELAY_TYPE_TAPE = 1049
 };
 
+#define DELAY_TYPE 1856
 #define DELAY_ON_OFF 1857
 #define DELAY_POSITION 15
 
@@ -363,6 +371,7 @@ enum {
   REVERB_TYPE_EMT240_PLATE = 1151
 };
 
+#define REVERB_TYPE 1920
 #define REVERB_ON_OFF 1921
 #define REVERB_POSITION 16
 

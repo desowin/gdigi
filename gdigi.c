@@ -187,28 +187,57 @@ void set_wah_level(int level)
     set_option(WAH_LEVEL, WAH_POSITION, level);
 }
 
-void set_wah_type(int type)
+void set_higher_option(gint id, gint position, int type)
 {
-    gint id = 128;
-
     static char set_type[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41,
                               0x00, 0x00, 0x00, /* ID */
-                              0x03, /* seems to be position */
-                              0x01, /* ??? */
-                              0x00, /* type */
+                              0x00, /* position */
+                              0x00, /* value length */
+                              0x00, 0x00, /* type */
                               0x00, /* checksum */ 0xF7};
 
-    set_type[9] = ((id & 0x80) >> 2) | 0x0C; /* Why 0x0C? */
+    set_type[9] = ((id & 0x80) >> 2);
 
     set_type[10] = ((id & 0xFF00) >> 8);
     set_type[11] = ((id & 0x007F));
 
-    /* 8th bit of type is always 1 - check how does it affect command */
-    set_type[14] = (type & 0x007F);
+    set_type[12] = position;
 
-    set_type[15] = calculate_checksum(set_type, sizeof(set_type), 15) ^ 0x07;
+    if (type < 0x80) {
+        // [13] = type, [14] - checksum, [15] = 0xF7
+    } else if (type <= 0xFF) {
+        set_type[9] |= 0x08; // there'll be length before value
+        if (((type & 0x80) >> 7) == 1)
+            set_type[9] |= 0x04;
 
-    send_data(set_type, sizeof(set_type));
+        set_type[13] = 0x01;
+        // [14] = type, [15] - checksum, [16] = 0xF7
+        set_type[14] = (type & 0x007F);
+
+        set_type[16] = 0xF7;
+        set_type[15] = calculate_checksum(set_type, 17, 15) ^ 0x07;
+
+        send_data(set_type, 17);
+    } else if (type < 0xFFFF) {
+        set_type[9] |= 0x08; // there'll be length before value
+        if (((type & 0x80) >> 7) == 1)
+            set_type[9] |= 0x02;
+
+        set_type[13] = 0x02;
+
+        set_type[14] = ((type & 0xFF00) >> 8);
+        set_type[15] = ((type & 0x007F));
+
+        set_type[17] = 0xF7;
+        set_type[16] = calculate_checksum(set_type, 18, 16) ^ 0x07;
+
+        send_data(set_type, 18);
+    }
+}
+
+void set_wah_type(int type)
+{
+    set_higher_option(WAH_TYPE, WAH_POSITION, type);
 }
 
 void set_wah_on_off(gboolean val)
@@ -242,26 +271,7 @@ void set_comp_level(int level)
 
 void set_comp_type(int type)
 {
-    gint id = 207;
-
-    static char set_type[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41,
-                              0x00, 0x00, 0x00, /* ID */
-                              0x04, /* seems to be position */
-                              0x01, /* ??? */
-                              0x00, /* type */
-                              0x00, /* checksum */ 0xF7};
-
-    set_type[9] = ((id & 0x80) >> 2) | 0x0C; /* Why 0x0C? */
-
-    set_type[10] = ((id & 0xFF00) >> 8);
-    set_type[11] = ((id & 0x007F));
-
-    /* 8th bit of type is always 1 - check how does it affect command */
-    set_type[14] = (type & 0x007F);
-
-    set_type[15] = calculate_checksum(set_type, sizeof(set_type), 15) ^ 0x07;
-
-    send_data(set_type, sizeof(set_type));
+    set_higher_option(COMP_TYPE, COMP_POSITION, type);
 }
 
 void set_comp_on_off(gboolean val)
@@ -293,24 +303,7 @@ void switch_system_preset(int x)
 
 void set_pickup_type(int type)
 {
-    gint id = 64;
-
-    static char pickup[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41,
-                            0x00, 0x00, 0x40, /* ID */
-                            0x02, /* seems to be position */
-                            0x00, /* type */
-                            0x00, /* checksum */ 0xF7};
-
-    pickup[9] = ((id & 0x80) >> 2);
-
-    pickup[10] = ((id & 0xFF00) >> 8);
-    pickup[11] = ((id & 0x007F));
-
-    pickup[13] = type;
-
-    pickup[14] = calculate_checksum(pickup, sizeof(pickup), 14) ^ 0x07;
-
-    send_data(pickup, sizeof(pickup));
+    set_option(PICKUP_TYPE, PICKUP_POSITION, type);
 }
 
 void set_pickup_on_off(gboolean val)
@@ -320,26 +313,7 @@ void set_pickup_on_off(gboolean val)
 
 void set_dist_type(int type)
 {
-    gint id = 2432;
-
-    static char set_dist[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41,
-                              0x00, 0x00, 0x00, /* ID */
-                              0x06, /* seems to be position */
-                              0x02, /* ??? */
-                              0x00, 0x00, /* type */
-                              0x00 /* checksum */, 0xF7};
-
-    set_dist[9] = ((id & 0x80) >> 2) | 0x08; /* Why 0x08? */
-
-    set_dist[10] = ((id & 0xFF00) >> 8);
-    set_dist[11] = ((id & 0x007F));
-
-    set_dist[14] = ((type & 0xFF00) >> 8);
-    set_dist[15] = ((type & 0x00FF));
-
-    set_dist[16] = calculate_checksum(set_dist, sizeof(set_dist), 16) ^ 0x07;
-
-    send_data(set_dist, sizeof(set_dist));
+    set_higher_option(DIST_TYPE, DIST_POSITION, type);
 }
 
 void set_dist_option(guint32 option, int value)
@@ -360,27 +334,7 @@ void set_preset_level(int level)
 
 void set_eq_type(int type)
 {
-    gint id = 3202;
-
-    static char set_eq[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41,
-                            0x00, 0x00, 0x00, /* ID */
-                            0x18, /* seems to be position */
-                            0x02, /* ??? */
-                            0x05, 0x00, /* type */
-                            0x00, /* checksum */ 0xF7};
-
-    set_eq[9] = ((id & 0x80) >> 2) | 0x0A; /* Why 0x0A? */
-
-    set_eq[10] = ((id & 0xFF00) >> 8);
-    set_eq[11] = ((id & 0x007F));
-
-    /* 8th bit of type is always 1 - check how does it affect command */
-    set_eq[14] = ((type & 0xFF00) >> 8);
-    set_eq[15] = ((type & 0x007F));
-
-    set_eq[16] = calculate_checksum(set_eq, sizeof(set_eq), 16) ^ 0x07;
-
-    send_data(set_eq, sizeof(set_eq));
+    set_higher_option(EQ_TYPE, EQ_POSITION, type);
 }
 
 /* x = 0 to 99 */
@@ -522,26 +476,7 @@ void set_eq_on_off(gboolean val)
 
 void set_noisegate_type(int type)
 {
-    gint id = 704;
-
-    static char set_type[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41,
-                              0x00, 0x00, 0x00, /* ID */
-                              0x0C, /* seems to be position */
-                              0x02, /* ??? */
-                              0x00, 0x00, /* type */
-                              0x00 /* checksum */, 0xF7};
-
-    set_type[9] = ((id & 0x80) >> 2) | 0x08; /* Why 0x08? */
-
-    set_type[10] = ((id & 0xFF00) >> 8);
-    set_type[11] = ((id & 0x007F));
-
-    set_type[14] = ((type & 0xFF00) >> 8);
-    set_type[15] = ((type & 0x00FF));
-
-    set_type[16] = calculate_checksum(set_type, sizeof(set_type), 16) ^ 0x07;
-
-    send_data(set_type, sizeof(set_type));
+    set_higher_option(NOISEGATE_TYPE, NOISEGATE_POSITION, type);
 }
 
 /* x = 0 to 99 */
@@ -562,31 +497,7 @@ void set_chorusfx_option(guint32 option, int x)
 
 void set_chorusfx_type(int type)
 {
-    gint id = 768;
-
-    static char set_type[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41,
-                              0x00, 0x00, 0x00, /* ID */
-                              0x0E, /* seems to be position */
-                              0x02, /* ??? */
-                              0x00, 0x00, /* type */
-                              0x00 /* checksum */, 0xF7};
-
-    set_type[9] = ((id & 0x80) >> 2);
-
-    set_type[10] = ((id & 0xFF00) >> 8);
-    set_type[11] = ((id & 0x007F));
-
-    if (((type & 0x80) >> 7) == 1)
-        set_type[9] |= 0x0A;
-    else
-        set_type[9] |= 0x08;
-
-    set_type[14] = ((type & 0xFF00) >> 8);
-    set_type[15] = ((type & 0x007F));
-
-    set_type[16] = calculate_checksum(set_type, sizeof(set_type), 16) ^ 0x07;
-
-    send_data(set_type, sizeof(set_type));
+    set_higher_option(CHORUSFX_TYPE, CHORUSFX_POSITION, type);
 }
 
 void set_chorusfx_on_off(gboolean val)
@@ -616,26 +527,7 @@ void set_delay_time(int x)
 
 void set_delay_type(int type)
 {
-    gint id = 1856;
-
-    static char set_type[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41,
-                              0x00, 0x00, 0x00, /* ID */
-                              0x0F, /* seems to be position */
-                              0x02, /* ??? */
-                              0x00, 0x00 /* type */,
-                              0x00 /* checksum */, 0xF7};
-
-    set_type[9] = ((id & 0x80) >> 2) | 0x08; /* Why 0x08? */
-
-    set_type[10] = ((id & 0xFF00) >> 8);
-    set_type[11] = ((id & 0x007F));
-
-    set_type[14] = ((type & 0xFF00) >> 8);
-    set_type[15] = ((type & 0x007F));
-
-    set_type[16] = calculate_checksum(set_type, sizeof(set_type), 16) ^ 0x07;
-
-    send_data(set_type, sizeof(set_type));
+    set_higher_option(DELAY_TYPE, DELAY_POSITION, type);
 }
 
 void set_delay_option(guint32 option, int x)
@@ -656,26 +548,7 @@ void set_reverb_option(guint32 option, int x)
 
 void set_reverb_type(int type)
 {
-    gint id = 1920;
-
-    static char set_type[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41,
-                              0x00, 0x00, 0x00, /* ID */
-                              0x10, /* seems to be position */
-                              0x02, /* ??? */
-                              0x00, 0x00, /* type1 */
-                              0x00 /* checksum */, 0xF7};
-
-    set_type[9] = ((id & 0x80) >> 2) | 0x08; /* Why 0x08? */
-
-    set_type[10] = ((id & 0xFF00) >> 8);
-    set_type[11] = ((id & 0x007F));
-
-    set_type[14] = ((type & 0xFF00) >> 8);
-    set_type[15] = ((type & 0x00FF));
-
-    set_type[16] = calculate_checksum(set_type, sizeof(set_type), 16) ^ 0x07;
-
-    send_data(set_type, sizeof(set_type));
+    set_higher_option(REVERB_TYPE, REVERB_POSITION, type);
 }
 
 void set_reverb_on_off(gboolean val)
