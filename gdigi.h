@@ -140,7 +140,9 @@ enum {
 
 #define EQ_BASS 3203
 #define EQ_MID 3204
+#define EQ_MID_HZ 3206
 #define EQ_TREBLE 3205
+#define EQ_TREBLE_HZ 3211
 
 enum {
   NOISEGATE_GATE = 768,
@@ -339,6 +341,8 @@ enum {
 #define DELAY_TYPE 1856
 #define DELAY_ON_OFF 1857
 #define DELAY_POSITION 15
+
+#define DELAY_TIME 1888
 
 #define ANALOG_LEVEL 1860
 #define ANALOG_REPEATS 1863

@@ -368,47 +368,9 @@ void set_eq_mid(int x)
 void set_eq_mid_hz(int x)
 {
     if (x <= 0x7F) {
-        static char set_hz[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x0C, 0x06, 0x18, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-        set_hz[13] = x;
-        set_hz[14] = calculate_checksum(set_hz, sizeof(set_hz), 14) ^ 0x07;
-
-        send_data(set_hz, sizeof(set_hz));
+        set_option(EQ_MID_HZ, EQ_POSITION, x);
     } else {
-        x -= 0x80;
-        if (x <= 0x7F) {
-            static char set_hz[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x2C, 0x0C, 0x06, 0x18, 0x01, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-            set_hz[14] = x;
-            set_hz[15] = calculate_checksum(set_hz, sizeof(set_hz), 15) ^ 0x07;
-
-            send_data(set_hz, sizeof(set_hz));
-        } else {
-            x -= 0x80;
-            int a, b, c;
-            a = 0x28;
-            b = 0x01;
-            c = 0;
-            while (x > 0x7F) {
-               c++;
-               if ((c % 2) == 0) {
-                   a ^= 0x02; b++;
-               } else {
-                   a ^= 0x02;
-               }
-
-               x -= 0x80;
-            }
-
-            static char set_hz[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x00 /* a */, 0x0C, 0x06, 0x18, 0x02, 0x00 /* b */, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-            set_hz[9] = a;
-            set_hz[14] = b;
-            set_hz[15] = x;
-            set_hz[16] = calculate_checksum(set_hz, sizeof(set_hz), 16) ^ 0x07;
-
-            send_data(set_hz, sizeof(set_hz));
-        }
+        set_higher_option(EQ_MID_HZ, EQ_POSITION, x);
     }
 }
 
@@ -425,47 +387,9 @@ void set_eq_treble(int x)
 void set_eq_treb_hz(int x)
 {
     if (x <= 0x7F) {
-        static char set_hz[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x20, 0x0C, 0x0B, 0x18, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-        set_hz[13] = x;
-        set_hz[14] = calculate_checksum(set_hz, sizeof(set_hz), 14) ^ 0x07;
-
-        send_data(set_hz, sizeof(set_hz));
+        set_option(EQ_TREBLE_HZ, EQ_POSITION, x);
     } else {
-        x -= 0x80;
-        if (x <= 0x7F) {
-            static char set_hz[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x2C, 0x0C, 0x0B, 0x18, 0x01, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-            set_hz[14] = x;
-            set_hz[15] = calculate_checksum(set_hz, sizeof(set_hz), 15) ^ 0x07;
-
-            send_data(set_hz, sizeof(set_hz));
-        } else {
-            x -= 0x80;
-            int a, b, c;
-            a = 0x28;
-            b = 0x01;
-            c = 0;
-            while (x > 0x7F) {
-               c++;
-               if ((c % 2) == 0) {
-                   a ^= 0x02; b++;
-               } else {
-                   a ^= 0x02;
-               }
-
-               x -= 0x80;
-            }
-
-            static char set_hz[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x00 /* a */, 0x0C, 0x0B, 0x18, 0x02, 0x00 /* b */, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-            set_hz[9] = a;
-            set_hz[14] = b;
-            set_hz[15] = x;
-            set_hz[16] = calculate_checksum(set_hz, sizeof(set_hz), 16) ^ 0x07;
-
-            send_data(set_hz, sizeof(set_hz));
-        }
+        set_higher_option(EQ_TREBLE_HZ, EQ_POSITION, x);
     }
 }
 
@@ -509,19 +433,9 @@ void set_chorusfx_on_off(gboolean val)
 void set_delay_time(int x)
 {
     if (x <= 0x7F) {
-        static char set_time[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x00, 0x07, 0x60, 0x0F, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-        set_time[13] = x;
-        set_time[14] = calculate_checksum(set_time, sizeof(set_time), 14) ^ 0x07;
-
-        send_data(set_time, sizeof(set_time));
+        set_option(DELAY_TIME, DELAY_POSITION, x);
     } else {
-        static char set_time[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41, 0x0C, 0x07, 0x60, 0x0F, 0x01, 0x00 /* value */, 0x00 /* checksum */, 0xF7};
-
-        set_time[14] = x - 0x80;
-        set_time[15] = calculate_checksum(set_time, sizeof(set_time), 15) ^ 0x07;
-
-        send_data(set_time, sizeof(set_time));
+        set_higher_option(DELAY_TIME, DELAY_POSITION, x);
     }
 }
 
