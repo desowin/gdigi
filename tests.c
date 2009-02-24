@@ -620,6 +620,50 @@ void test_reverb()
     set_reverb_on_off(FALSE);
 }
 
+void test_exp()
+{
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_NONE);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_PICKUP_ENABLE);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_PIKCUP_TYPE);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_COMP_ENABLE);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_COMP_SUST);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_COMP_TONE);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_COMP_LEVEL);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_COMP_ATTACK);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_DIST_ENABLE);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_DIST_DISTORTION);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_DIST_FILTER);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_DIST_VOLUME);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_AMP_ENABLE);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_AMP_GAIN);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_AMP_LEVEL);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_EQ_ENABLE);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_EQ_BASS);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_EQ_MID);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_EQ_TREB);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_GATE_ENABLE);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_GATE_THRESHOLD);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_GATE_ATTACK);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_GATE_RELEASE);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_GATE_ATTN);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_CHORUSFX_ENABLE);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_PHASER_SPEED);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_PHASER_DEPTH);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_PHASER_REGEN);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_PHASER_WAVEFORM);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_PHASER_LEVEL);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_DELAY_ENABLE);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_DELAY_TIME);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_DELAY_REPEATS);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_DELAY_LEVEL);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_DELAY_DUCK_THRESH);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_DELAY_DUCK_LEVEL);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_REVERB_ENABLE);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_REVERB_LEVEL);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_VOLUME_PRE_FX);
+    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_VOLUME_POST_FX);
+}
+
 void test_all()
 {
     test_wah();

@@ -193,7 +193,7 @@ void set_higher_option(gint id, gint position, int type)
                               0x00, 0x00, 0x00, /* ID */
                               0x00, /* position */
                               0x00, /* value length */
-                              0x00, 0x00, /* type */
+                              0x00, 0x00, 0x00, /* type */
                               0x00, /* checksum */ 0xF7};
 
     set_type[9] = ((id & 0x80) >> 2);
@@ -232,6 +232,21 @@ void set_higher_option(gint id, gint position, int type)
         set_type[16] = calculate_checksum(set_type, 18, 16) ^ 0x07;
 
         send_data(set_type, 18);
+    } else if (type < 0xFFFFFF) {
+        set_type[9] |= 0x08; // there'll be length before value
+        if (((type & 0x80) >> 7) == 1)
+            set_type[9] |= 0x01;
+
+        set_type[13] = 0x03;
+
+        set_type[14] = ((type & 0xFF0000) >> 16);
+        set_type[15] = ((type & 0x00FF00) >> 8);
+        set_type[16] = ((type & 0x00007F));
+
+        set_type[18] = 0xF7;
+        set_type[17] = calculate_checksum(set_type, 19, 17) ^ 0x07;
+
+        send_data(set_type, 19);
     }
 }
 
