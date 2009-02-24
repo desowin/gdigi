@@ -1,0 +1,68 @@
+In general everything brings down to figure out:
+-ID
+-Position
+-Possible value range
+
+There seems to be two possible ways to figure that out.
+1) Use USB sniffer together with X-Edit
+   Once you set up X-Edit and usb sniffer, set some option.
+   USB sniffer should report something like this being sent to device:
+   (all numbers here are hex)
+   04 F0 00 00 04 10 00 5E 04 02 41 00 04 30 09 00 07 00 34 F7
+
+   To get SysEx command out of it, remove every 4th byte, so we have:
+      F0 00 00    10 00 5E    02 41 00    30 09 00    00 34 F7
+
+   SysEx message format seems to be formed like this:
+   magic bytes - F0 00 00 10 00 5E 02 41
+   status byte - in this example 00
+   ID - in this example 30 09
+   Position - in this example 00
+   Value - in this example 00 (can be more bytes long, see below)
+   Checksum - to calculate it, XOR all bytes, and then XOR it with 07
+   Every message ends with F7
+
+   Status byte bits explained:
+      7th - ???
+      6th - if active add 80 to ID
+      5th - ???
+      4th - is active when value will start with length
+            In such case value can be something like:
+              01 12 or 02 12 34 or 03 12 34 56
+            and proper values are:
+              01 - 12
+              02 - 1234
+              03 - 123456
+      3rd - when 4th bit is also active, and first value byte is 01
+            then add 80 to value
+      2nd - when 4th bit is also active, and first value byte is 02
+            then add 80 to value
+      1st - when 4th bit is also active, and first value byte is 03
+            then add 80 to value
+
+      So for above example:
+      ID = 3009 (hex) = 12297 (decimal)
+      Position = 0
+      One of possible values is 0. Usually value range is 0 to 99,
+      albeit in some cases it's different - you have to check what values can
+      X-Edit assign (there doesn't seem to be any sanity check in firmware)
+      This is especially needed for IDs that set some effect type.
+      
+2) Save preset patch
+   Patches seem to be simple XML files.
+   Every parameter is written like this:
+     <Param>
+       <ID>65</ID>
+       <Position>2</Position>
+       <Value>0</Value>
+       <Name>Pickup Enable</Name>
+       <Text>Off</Text>
+     </Param>
+   ID is ID, Position is Position and Value is one of possible values.
+   To get all possible values you can:
+     do
+       change value to next one possible in X-Edit
+         (for example next effect type)
+       save new patch
+       check patch file and note the change
+     while you don't have all possible values
