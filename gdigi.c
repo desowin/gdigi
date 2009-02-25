@@ -154,7 +154,6 @@ void check_preset(struct usb_dev_handle *handle)
 */
 void set_option(guint id, guint position, guint value)
 {
-sleep(3);
     static char option[] = {0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41,
                             0x00, 0x00, 0x00, /* ID */
                             0x00, /* position */
@@ -222,16 +221,6 @@ sleep(3);
     }
 }
 
-void set_wah_on_off(gboolean val)
-{
-    set_option(WAH_ON_OFF, WAH_POSITION, (val == TRUE) ? 1 : 0);
-}
-
-void set_comp_on_off(gboolean val)
-{
-    set_option(COMP_ON_OFF, COMP_POSITION, (val == TRUE) ? 1 : 0);
-}
-
 /* x = 0 to 60 */
 void switch_user_preset(int x)
 {
@@ -254,45 +243,10 @@ void switch_system_preset(int x)
     send_data(switch_preset, sizeof(switch_preset));
 }
 
-void set_pickup_on_off(gboolean val)
-{
-    set_option(PICKUP_ON_OFF, PICKUP_POSITION, (val == TRUE) ? 1 : 0);
-}
-
-void set_dist_on_off(gboolean val)
-{
-    set_option(DIST_ON_OFF, DIST_POSITION, (val == TRUE) ? 1 : 0);
-}
-
 /* level = 0 to 99 */
 void set_preset_level(int level)
 {
     set_option(PRESET_LEVEL, PRESET_POSITION, level);
-}
-
-void set_eq_on_off(gboolean val)
-{
-    set_option(EQ_ON_OFF, EQ_POSITION, (val == TRUE) ? 1 : 0);
-}
-
-void set_noisegate_on_off(gboolean val)
-{
-    set_option(NOISEGATE_ON_OFF, NOISEGATE_POSITION, (val == TRUE) ? 1 : 0);
-}
-
-void set_chorusfx_on_off(gboolean val)
-{
-    set_option(CHORUSFX_ON_OFF, CHORUSFX_POSITION, (val == TRUE) ? 1 : 0);
-}
-
-void set_delay_on_off(gboolean val)
-{
-    set_option(DELAY_ON_OFF, DELAY_POSITION, (val == TRUE) ? 1 : 0);
-}
-
-void set_reverb_on_off(gboolean val)
-{
-    set_option(REVERB_ON_OFF, REVERB_POSITION, (val == TRUE) ? 1 : 0);
 }
 
 /* x = 0 to 59 (preset number) */

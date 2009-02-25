@@ -440,35 +440,35 @@ static WidgetContainer eq_container[] = {
 };
 
 static VBoxWidget wah_vbox[] = {
-    {"Wah", FALSE, set_wah_on_off, wah_container, G_N_ELEMENTS(wah_container)},
+    {"Wah", FALSE, WAH_ON_OFF, WAH_POSITION, wah_container, G_N_ELEMENTS(wah_container)},
 };
 
 static VBoxWidget comp_vbox[] = {
-    {"Compressor", FALSE, set_comp_on_off, comp_container, G_N_ELEMENTS(comp_container)},
+    {"Compressor", FALSE, COMP_ON_OFF, COMP_POSITION, comp_container, G_N_ELEMENTS(comp_container)},
 };
 
 static VBoxWidget dist_vbox[] = {
-    {"Distortion", FALSE, set_dist_on_off, dist_container, G_N_ELEMENTS(dist_container)},
+    {"Distortion", FALSE, DIST_ON_OFF, DIST_POSITION, dist_container, G_N_ELEMENTS(dist_container)},
 };
 
 static VBoxWidget noisegate_vbox[] = {
-    {"Noisegate", FALSE, set_noisegate_on_off, noisegate_container, G_N_ELEMENTS(noisegate_container)},
+    {"Noisegate", FALSE, NOISEGATE_ON_OFF, NOISEGATE_POSITION, noisegate_container, G_N_ELEMENTS(noisegate_container)},
 };
 
 static VBoxWidget chorusfx_vbox[] = {
-    {"Chorus/FX", FALSE, set_chorusfx_on_off, chorusfx_container, G_N_ELEMENTS(chorusfx_container)},
+    {"Chorus/FX", FALSE, CHORUSFX_ON_OFF, CHORUSFX_POSITION, chorusfx_container, G_N_ELEMENTS(chorusfx_container)},
 };
 
 static VBoxWidget delay_vbox[] = {
-    {"Delay", FALSE, set_delay_on_off, delay_container, G_N_ELEMENTS(delay_container)},
+    {"Delay", FALSE, DELAY_ON_OFF, DELAY_POSITION, delay_container, G_N_ELEMENTS(delay_container)},
 };
 
 static VBoxWidget reverb_vbox[] = {
-    {"Reverb", FALSE, set_reverb_on_off, reverb_container, G_N_ELEMENTS(reverb_container)},
+    {"Reverb", FALSE, REVERB_ON_OFF, REVERB_POSITION, reverb_container, G_N_ELEMENTS(reverb_container)},
 };
 
 static VBoxWidget eq_vbox[] = {
-    {"EQ", FALSE, set_eq_on_off, eq_container, G_N_ELEMENTS(eq_container)},
+    {"EQ", FALSE, EQ_ON_OFF, EQ_POSITION, eq_container, G_N_ELEMENTS(eq_container)},
 };
 
 VBoxes vboxes[] = {

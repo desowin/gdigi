@@ -30,10 +30,12 @@ void value_changed_option_cb(GtkSpinButton *spinbutton, SettingsWidget *setting)
     set_option(setting->option, setting->position, val);
 }
 
-void toggled_cb(GtkToggleButton *button, void (*callback)(gboolean))
+void toggled_cb(GtkToggleButton *button, VBoxWidget *widget)
 {
-    gboolean val = gtk_toggle_button_get_active(button);
-    callback(val);
+    g_return_if_fail(widget != NULL);
+
+    guint val = gtk_toggle_button_get_active(button);
+    set_option(widget->option, widget->position, val);
 }
 
 GtkWidget *create_table(SettingsWidget *widgets, gint amt)
@@ -57,11 +59,11 @@ GtkWidget *create_table(SettingsWidget *widgets, gint amt)
     return table;
 }
 
-GtkWidget *create_on_off_button(const gchar *label, gboolean state, void (*callback)(int))
+GtkWidget *create_on_off_button(VBoxWidget *widget)
 {
-    GtkWidget *button = gtk_toggle_button_new_with_label(label);
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), state);
-    g_signal_connect(G_OBJECT(button), "toggled", G_CALLBACK(toggled_cb), callback);
+    GtkWidget *button = gtk_toggle_button_new_with_label(widget->label);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), widget->value);
+    g_signal_connect(G_OBJECT(button), "toggled", G_CALLBACK(toggled_cb), widget);
     return button;
 }
 
@@ -169,7 +171,7 @@ GtkWidget *create_vbox(VBoxWidget *widgets, gint amt)
     gtk_box_set_homogeneous(GTK_BOX(hbox), TRUE);
 
     for (x = 0; x<amt; x++) {
-        widget = create_on_off_button(widgets[x].label, widgets[x].value, widgets[x].callback);
+        widget = create_on_off_button(&widgets[x]);
         gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 2);
 
         table = create_widget_container(widgets[x].widgets, widgets[x].widgets_amt);

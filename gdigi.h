@@ -460,15 +460,6 @@ enum {
 #define USB_AUDIO_LEVEL 12307
 
 void set_option(guint id, guint position, guint value);
-void set_wah_on_off(gboolean val);
-void set_comp_on_off(gboolean val);
 void switch_user_preset(int x);
 void switch_system_preset(int x);
-void set_pickup_on_off(gboolean val);
-void set_dist_on_off(gboolean val);
 void set_preset_level(int level);
-void set_eq_on_off(gboolean val);
-void set_noisegate_on_off(gboolean val);
-void set_chorusfx_on_off(gboolean val);
-void set_delay_on_off(gboolean val);
-void set_reverb_on_off(gboolean val);

@@ -36,7 +36,8 @@ typedef struct {
 typedef struct {
     char *label;
     gboolean value;
-    void (*callback)(gboolean);
+    guint option;
+    guint position;
     WidgetContainer *widgets;
     gint widgets_amt;
 } VBoxWidget;

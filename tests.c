@@ -50,8 +50,8 @@ void test_wah()
     for (x=0; x<=12; x++)
         set_option(WAH_LEVEL, WAH_POSITION, x);
 
-    set_wah_on_off(TRUE);
-    set_wah_on_off(FALSE);
+    set_option(WAH_ON_OFF, WAH_POSITION, 1);
+    set_option(WAH_ON_OFF, WAH_POSITION, 0);
 }
 
 void test_compressor()
@@ -81,8 +81,8 @@ void test_compressor()
     for (x=0; x<=99; x++)
         set_option(COMP_LEVEL, COMP_POSITION, x);
 
-    set_comp_on_off(TRUE);
-    set_comp_on_off(FALSE);
+    set_option(COMP_ON_OFF, COMP_POSITION, 1);
+    set_option(COMP_ON_OFF, COMP_POSITION, 0);
 }
 
 void test_dist()
@@ -197,8 +197,8 @@ void test_dist()
     for (x=0; x<=99; x++)
         set_option(DIST_MP_VOLUME, DIST_POSITION, x);
 
-    set_dist_on_off(TRUE);
-    set_dist_on_off(FALSE);
+    set_option(DIST_ON_OFF, DIST_POSITION, 1);
+    set_option(DIST_ON_OFF, DIST_POSITION, 0);
 }
 
 void test_presets()
@@ -220,8 +220,8 @@ void test_pickups()
     set_option(PICKUP_TYPE, PICKUP_POSITION, PICKUP_TYPE_HB_SC);
     set_option(PICKUP_TYPE, PICKUP_POSITION, PICKUP_TYPE_SC_HB);
 
-    set_pickup_on_off(TRUE);
-    set_pickup_on_off(FALSE);
+    set_option(PICKUP_ON_OFF, PICKUP_POSITION, 1);
+    set_option(PICKUP_ON_OFF, PICKUP_POSITION, 0);
 }
 
 void test_eq()
@@ -249,8 +249,8 @@ void test_eq()
     for (x=0; x<=7500; x++)
         set_option(EQ_TREBLE_HZ, EQ_POSITION, x);
 
-    set_eq_on_off(TRUE);
-    set_eq_on_off(FALSE);
+    set_option(EQ_ON_OFF, EQ_POSITION, 1);
+    set_option(EQ_ON_OFF, EQ_POSITION, 0);
 }
 
 void test_noisegate()
@@ -277,8 +277,8 @@ void test_noisegate()
     for (x=0; x<=99; x++)
         set_option(NOISEGATE_ATTN, NOISEGATE_POSITION, x);
 
-    set_noisegate_on_off(TRUE);
-    set_noisegate_on_off(FALSE);
+    set_option(NOISEGATE_ON_OFF, NOISEGATE_POSITION, 1);
+    set_option(NOISEGATE_ON_OFF, NOISEGATE_POSITION, 0);
 }
 
 void test_chorusfx()
@@ -492,8 +492,8 @@ void test_chorusfx()
     for (x=0; x<=99; x++)
         set_option(IPS_LEVEL, CHORUSFX_POSITION, x);
 
-    set_chorusfx_on_off(TRUE);
-    set_chorusfx_on_off(FALSE);
+    set_option(CHORUSFX_ON_OFF, CHORUSFX_POSITION, 1);
+    set_option(CHORUSFX_ON_OFF, CHORUSFX_POSITION, 0);
 }
 
 void test_delay()
@@ -554,8 +554,8 @@ void test_delay()
     for (x=0; x<=99; x++)
         set_option(TAPE_FLUTTER, DELAY_POSITION, x);
 
-    set_delay_on_off(TRUE);
-    set_delay_on_off(FALSE);
+    set_option(DELAY_ON_OFF, DELAY_POSITION, 1);
+    set_option(DELAY_ON_OFF, DELAY_POSITION, 0);
 }
 
 void test_reverb()
@@ -616,8 +616,8 @@ void test_reverb()
     for (x=0; x<=99; x++)
         set_option(EMT240_PLATE_LEVEL, REVERB_POSITION, x);
 
-    set_reverb_on_off(TRUE);
-    set_reverb_on_off(FALSE);
+    set_option(REVERB_ON_OFF, REVERB_POSITION, 1);
+    set_option(REVERB_ON_OFF, REVERB_POSITION, 0);
 }
 
 void test_exp()
