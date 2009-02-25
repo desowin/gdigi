@@ -17,32 +17,31 @@
 #include <glib/gtypes.h>
 
 typedef struct {
-    char *label;
-    gdouble min;
-    gdouble max;
-    guint option;
-    guint position;
-} SettingsWidget;
+    char *label;    /* Parameter name */
+    gdouble min;    /* Parameter minumum value */
+    gdouble max;    /* Parameter maximum value */
+    guint option;   /* ID (to set parameter) */
+    guint position; /* position */
+} EffectSettings;
 
 typedef struct {
-    guint id;
-    gchar *label;
-    guint option;
-    guint position;
-    SettingsWidget *widgets;
-    gint widgets_amt;
-} WidgetContainer;
+    guint id;                  /* value (type) */
+    gchar *label;              /* Effect name */
+    guint option;              /* ID (to set effect type) */
+    guint position;            /* position */
+    EffectSettings *settings;  /* possible parameters */
+    gint settings_amt;         /* possible parameters length */
+} EffectGroup;
 
 typedef struct {
-    char *label;
-    gboolean value;
-    guint option;
-    guint position;
-    WidgetContainer *widgets;
-    gint widgets_amt;
-} VBoxWidget;
+    char *label;        /* Base effect name */
+    guint option;       /* ID (to set effect on/off) */
+    guint position;     /* position */
+    EffectGroup *group; /* possible effect types */
+    gint group_amt;     /* possible effect types length */
+} Effect;
 
 typedef struct {
-    VBoxWidget *widget;
-    gint amt;
-} VBoxes;
+    Effect *effect; /* list of supported effects */
+    gint amt;       /* list of supported effects length */
+} EffectList;

@@ -19,10 +19,10 @@
 #include "gui.h"
 #include "effects.h"
 
-extern VBoxes vboxes[];
-extern int n_vboxes;
+extern EffectList effects[];
+extern int n_effects;
 
-void value_changed_option_cb(GtkSpinButton *spinbutton, SettingsWidget *setting)
+void value_changed_option_cb(GtkSpinButton *spinbutton, EffectSettings *setting)
 {
     g_return_if_fail(setting != NULL);
 
@@ -30,15 +30,15 @@ void value_changed_option_cb(GtkSpinButton *spinbutton, SettingsWidget *setting)
     set_option(setting->option, setting->position, val);
 }
 
-void toggled_cb(GtkToggleButton *button, VBoxWidget *widget)
+void toggled_cb(GtkToggleButton *button, Effect *effect)
 {
-    g_return_if_fail(widget != NULL);
+    g_return_if_fail(effect != NULL);
 
     guint val = gtk_toggle_button_get_active(button);
-    set_option(widget->option, widget->position, val);
+    set_option(effect->option, effect->position, val);
 }
 
-GtkWidget *create_table(SettingsWidget *widgets, gint amt)
+GtkWidget *create_table(EffectSettings *settings, gint amt)
 {
     GtkWidget *table, *label, *widget;
     GtkObject *adj;
@@ -47,10 +47,10 @@ GtkWidget *create_table(SettingsWidget *widgets, gint amt)
     table = gtk_table_new(2, amt, FALSE);
 
     for (x = 0; x<amt; x++) {
-        label = gtk_label_new(widgets[x].label);
-        adj = gtk_adjustment_new(0.0, widgets[x].min, widgets[x].max, 1.0, 1.0, 1.0);
+        label = gtk_label_new(settings[x].label);
+        adj = gtk_adjustment_new(0.0, settings[x].min, settings[x].max, 1.0, 1.0, 1.0);
         widget = gtk_spin_button_new(GTK_ADJUSTMENT(adj), 1.0, 0);
-        g_signal_connect(G_OBJECT(widget), "value-changed", G_CALLBACK(value_changed_option_cb), &widgets[x]);
+        g_signal_connect(G_OBJECT(widget), "value-changed", G_CALLBACK(value_changed_option_cb), &settings[x]);
 
         gtk_table_attach(GTK_TABLE(table), label, 0, 1, x, x+1, GTK_SHRINK, GTK_SHRINK, 2, 2);
         gtk_table_attach(GTK_TABLE(table), widget, 1, 2, x, x+1, GTK_SHRINK, GTK_SHRINK, 2, 2);
@@ -59,11 +59,11 @@ GtkWidget *create_table(SettingsWidget *widgets, gint amt)
     return table;
 }
 
-GtkWidget *create_on_off_button(VBoxWidget *widget)
+GtkWidget *create_on_off_button(Effect *effect)
 {
-    GtkWidget *button = gtk_toggle_button_new_with_label(widget->label);
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), widget->value);
-    g_signal_connect(G_OBJECT(button), "toggled", G_CALLBACK(toggled_cb), widget);
+    GtkWidget *button = gtk_toggle_button_new_with_label(effect->label);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), FALSE);
+    g_signal_connect(G_OBJECT(button), "toggled", G_CALLBACK(toggled_cb), effect);
     return button;
 }
 
@@ -113,7 +113,7 @@ void combo_box_changed_cb(GtkComboBox *widget, gpointer data)
     }
 }
 
-GtkWidget *create_widget_container(WidgetContainer *widgets, gint amt)
+GtkWidget *create_widget_container(EffectGroup *group, gint amt)
 {
     GtkWidget *vbox;
     GtkWidget *widget;
@@ -126,30 +126,30 @@ GtkWidget *create_widget_container(WidgetContainer *widgets, gint amt)
     vbox = gtk_vbox_new(FALSE, 0);
 
     for (x = 0; x<amt; x++) {
-        if (widgets[x].label) {
+        if (group[x].label) {
             if (combo_box == NULL) {
                 combo_box = gtk_combo_box_new_text();
                 gtk_container_add(GTK_CONTAINER(vbox), combo_box);
-                g_signal_connect(G_OBJECT(combo_box), "changed", G_CALLBACK(combo_box_changed_cb), widgets);
+                g_signal_connect(G_OBJECT(combo_box), "changed", G_CALLBACK(combo_box_changed_cb), group);
                 g_object_set_data(G_OBJECT(combo_box), "vbox", vbox);
             }
-            gtk_combo_box_append_text(GTK_COMBO_BOX(combo_box), widgets[x].label);
+            gtk_combo_box_append_text(GTK_COMBO_BOX(combo_box), group[x].label);
             cmbox_no++;
 
-            widget = create_table(widgets[x].widgets, widgets[x].widgets_amt);
+            widget = create_table(group[x].settings, group[x].settings_amt);
             g_object_ref_sink(widget);
 
             settings = g_malloc(sizeof(EffectSettingsGroup));
-            settings->id = widgets[x].id;
-            settings->option = widgets[x].option;
-            settings->position = widgets[x].position;
+            settings->id = group[x].id;
+            settings->option = group[x].option;
+            settings->position = group[x].position;
             settings->child = widget;
 
             name = g_strdup_printf("SettingsGroup%d", cmbox_no);
             g_object_set_data_full(G_OBJECT(combo_box), name, settings, ((GDestroyNotify)effect_settings_group_free));
             g_free(name);
         } else {
-            widget = create_table(widgets[x].widgets, widgets[x].widgets_amt);
+            widget = create_table(group[x].settings, group[x].settings_amt);
             gtk_container_add(GTK_CONTAINER(vbox), widget);
         }
     }
@@ -157,7 +157,7 @@ GtkWidget *create_widget_container(WidgetContainer *widgets, gint amt)
     return vbox;
 };
 
-GtkWidget *create_vbox(VBoxWidget *widgets, gint amt)
+GtkWidget *create_vbox(Effect *widgets, gint amt)
 {
     GtkWidget *vbox;
     GtkWidget *hbox;
@@ -174,7 +174,7 @@ GtkWidget *create_vbox(VBoxWidget *widgets, gint amt)
         widget = create_on_off_button(&widgets[x]);
         gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 2);
 
-        table = create_widget_container(widgets[x].widgets, widgets[x].widgets_amt);
+        table = create_widget_container(widgets[x].group, widgets[x].group_amt);
         gtk_box_pack_start(GTK_BOX(hbox), table, TRUE, TRUE, 2);
     }
 
@@ -195,12 +195,12 @@ void create_window()
     vbox = gtk_vbox_new(FALSE, 0);
     gtk_container_add(GTK_CONTAINER(window), vbox);
 
-    for (x = 0; x<n_vboxes; x++) {
+    for (x = 0; x<n_effects; x++) {
         if ((x % 2) == 0) {
             hbox = gtk_hbox_new(TRUE, 0);
             gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 2);
         }
-        widget = create_vbox(vboxes[x].widget, vboxes[x].amt);
+        widget = create_vbox(effects[x].effect, effects[x].amt);
         gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 2);
     }
 
