@@ -27,4 +27,5 @@ void test_chorusfx();
 void test_delay();
 void test_reverb();
 void test_exp();
+void test_usb();
 void test_all();

@@ -455,6 +455,10 @@ enum {
 #define EXP_MIN 8195
 #define EXP_MAX 8196
 
+#define USB_POSITION 0
+#define USB_AUDIO_PLAYBACK_MIX 12297
+#define USB_AUDIO_LEVEL 12307
+
 void set_option(guint id, guint position, guint value);
 void set_wah_min(int level);
 void set_wah_max(int level);

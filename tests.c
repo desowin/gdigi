@@ -861,6 +861,17 @@ void test_exp()
         set_option(EXP_MAX, EXP_POSITION, x);
 }
 
+void test_usb()
+{
+    int x;
+
+    for (x=0; x<=100; x++)
+        set_option(USB_AUDIO_PLAYBACK_MIX, USB_POSITION, x);
+
+    for (x=0; x<=36; x++)
+        set_option(USB_AUDIO_LEVEL, USB_POSITION, x);
+}
+
 void test_all()
 {
     test_wah();
@@ -874,4 +885,5 @@ void test_all()
     test_delay();
     test_reverb();
     test_exp();
+    test_usb();
 }
