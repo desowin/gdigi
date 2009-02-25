@@ -26,4 +26,5 @@ void test_noisegate();
 void test_chorusfx();
 void test_delay();
 void test_reverb();
+void test_exp();
 void test_all();

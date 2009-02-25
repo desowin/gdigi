@@ -150,23 +150,68 @@ void set_option(guint id, guint position, guint value)
     static char option[] = {0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41,
                             0x00, 0x00, 0x00, /* ID */
                             0x00, /* position */
-                            0x00, /* value */
-                            0x00, /* checksum */
-                            0xF7};
+                            0x00, /* value length (not necesarry) */
+                            0x00, 0x00, 0x00, /* value (can be either 1, 2 or 3 bytes) */
+                            0x00, /* checksum */ 0xF7};
 
-    if (((id & 0x80) >> 7) == 1) /* 8th bit equals 1 */
-        option[8] = 0x20;
-    else                         /* otherwise */
-        option[8] = 0x00;
+    option[8] = ((id & 0x80) >> 2);
 
-    option[9]  = ((id & 0xFF00) >> 8);
-    option[10] = ((id & 0x007F));      /* 8th bit has to be zero */
+    option[9] = ((id & 0xFF00) >> 8);
+    option[10] = ((id & 0x007F));
 
     option[11] = position;
-    option[12] = value;
-    option[13] = calculate_checksum(option, sizeof(option), 13) ^ 0x07;
 
-    send_data(option, sizeof(option));
+    if (value < 0x80) {
+        // [12] = value, [13] - checksum, [14] = 0xF7
+        option[12] = value;
+
+        option[14] = 0xF7;
+        option[13] = calculate_checksum(option, 15, 13) ^ 0x07;
+
+        send_data(option, 15);
+    } else if (value <= 0xFF) {
+        option[8] |= 0x08; // there'll be length before value
+        if (((value & 0x80) >> 7) == 1)
+            option[8] |= 0x04;
+
+        option[12] = 0x01;
+        // [13] = value, [14] - checksum, [15] = 0xF7
+        option[13] = (value & 0x007F);
+
+        option[15] = 0xF7;
+        option[14] = calculate_checksum(option, 16, 14) ^ 0x07;
+
+        send_data(option, 16);
+    } else if (value <= 0xFFFF) {
+        option[8] |= 0x08; // there'll be length before value
+        if (((value & 0x80) >> 7) == 1)
+            option[8] |= 0x02;
+
+        option[12] = 0x02;
+
+        option[13] = ((value & 0xFF00) >> 8);
+        option[14] = ((value & 0x007F));
+
+        option[16] = 0xF7;
+        option[15] = calculate_checksum(option, 17, 15) ^ 0x07;
+
+        send_data(option, 17);
+    } else if (value <= 0xFFFFFF) {
+        option[8] |= 0x08; // there'll be length before value
+        if (((value & 0x80) >> 7) == 1)
+            option[8] |= 0x01;
+
+        option[12] = 0x03;
+
+        option[13] = ((value & 0xFF0000) >> 16);
+        option[14] = ((value & 0x00FF00) >> 8);
+        option[15] = ((value & 0x00007F));
+
+        option[17] = 0xF7;
+        option[16] = calculate_checksum(option, 18, 16) ^ 0x07;
+
+        send_data(option, 18);
+    }
 }
 
 /* level = 0 to 99 */
@@ -187,72 +232,9 @@ void set_wah_level(int level)
     set_option(WAH_LEVEL, WAH_POSITION, level);
 }
 
-void set_higher_option(gint id, gint position, int type)
-{
-    static char set_type[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x41,
-                              0x00, 0x00, 0x00, /* ID */
-                              0x00, /* position */
-                              0x00, /* value length */
-                              0x00, 0x00, 0x00, /* type */
-                              0x00, /* checksum */ 0xF7};
-
-    set_type[9] = ((id & 0x80) >> 2);
-
-    set_type[10] = ((id & 0xFF00) >> 8);
-    set_type[11] = ((id & 0x007F));
-
-    set_type[12] = position;
-
-    if (type < 0x80) {
-        // [13] = type, [14] - checksum, [15] = 0xF7
-    } else if (type <= 0xFF) {
-        set_type[9] |= 0x08; // there'll be length before value
-        if (((type & 0x80) >> 7) == 1)
-            set_type[9] |= 0x04;
-
-        set_type[13] = 0x01;
-        // [14] = type, [15] - checksum, [16] = 0xF7
-        set_type[14] = (type & 0x007F);
-
-        set_type[16] = 0xF7;
-        set_type[15] = calculate_checksum(set_type, 17, 15) ^ 0x07;
-
-        send_data(set_type, 17);
-    } else if (type < 0xFFFF) {
-        set_type[9] |= 0x08; // there'll be length before value
-        if (((type & 0x80) >> 7) == 1)
-            set_type[9] |= 0x02;
-
-        set_type[13] = 0x02;
-
-        set_type[14] = ((type & 0xFF00) >> 8);
-        set_type[15] = ((type & 0x007F));
-
-        set_type[17] = 0xF7;
-        set_type[16] = calculate_checksum(set_type, 18, 16) ^ 0x07;
-
-        send_data(set_type, 18);
-    } else if (type < 0xFFFFFF) {
-        set_type[9] |= 0x08; // there'll be length before value
-        if (((type & 0x80) >> 7) == 1)
-            set_type[9] |= 0x01;
-
-        set_type[13] = 0x03;
-
-        set_type[14] = ((type & 0xFF0000) >> 16);
-        set_type[15] = ((type & 0x00FF00) >> 8);
-        set_type[16] = ((type & 0x00007F));
-
-        set_type[18] = 0xF7;
-        set_type[17] = calculate_checksum(set_type, 19, 17) ^ 0x07;
-
-        send_data(set_type, 19);
-    }
-}
-
 void set_wah_type(int type)
 {
-    set_higher_option(WAH_TYPE, WAH_POSITION, type);
+    set_option(WAH_TYPE, WAH_POSITION, type);
 }
 
 void set_wah_on_off(gboolean val)
@@ -286,7 +268,7 @@ void set_comp_level(int level)
 
 void set_comp_type(int type)
 {
-    set_higher_option(COMP_TYPE, COMP_POSITION, type);
+    set_option(COMP_TYPE, COMP_POSITION, type);
 }
 
 void set_comp_on_off(gboolean val)
@@ -328,7 +310,7 @@ void set_pickup_on_off(gboolean val)
 
 void set_dist_type(int type)
 {
-    set_higher_option(DIST_TYPE, DIST_POSITION, type);
+    set_option(DIST_TYPE, DIST_POSITION, type);
 }
 
 void set_dist_option(guint32 option, int value)
@@ -349,7 +331,7 @@ void set_preset_level(int level)
 
 void set_eq_type(int type)
 {
-    set_higher_option(EQ_TYPE, EQ_POSITION, type);
+    set_option(EQ_TYPE, EQ_POSITION, type);
 }
 
 /* x = 0 to 99 */
@@ -382,11 +364,7 @@ void set_eq_mid(int x)
 */
 void set_eq_mid_hz(int x)
 {
-    if (x <= 0x7F) {
-        set_option(EQ_MID_HZ, EQ_POSITION, x);
-    } else {
-        set_higher_option(EQ_MID_HZ, EQ_POSITION, x);
-    }
+    set_option(EQ_MID_HZ, EQ_POSITION, x);
 }
 
 /* x = 0x00 (-12dB) to 0x18 (12dB) */
@@ -401,11 +379,7 @@ void set_eq_treble(int x)
 */
 void set_eq_treb_hz(int x)
 {
-    if (x <= 0x7F) {
-        set_option(EQ_TREBLE_HZ, EQ_POSITION, x);
-    } else {
-        set_higher_option(EQ_TREBLE_HZ, EQ_POSITION, x);
-    }
+    set_option(EQ_TREBLE_HZ, EQ_POSITION, x);
 }
 
 void set_eq_on_off(gboolean val)
@@ -415,7 +389,7 @@ void set_eq_on_off(gboolean val)
 
 void set_noisegate_type(int type)
 {
-    set_higher_option(NOISEGATE_TYPE, NOISEGATE_POSITION, type);
+    set_option(NOISEGATE_TYPE, NOISEGATE_POSITION, type);
 }
 
 /* x = 0 to 99 */
@@ -436,7 +410,7 @@ void set_chorusfx_option(guint32 option, int x)
 
 void set_chorusfx_type(int type)
 {
-    set_higher_option(CHORUSFX_TYPE, CHORUSFX_POSITION, type);
+    set_option(CHORUSFX_TYPE, CHORUSFX_POSITION, type);
 }
 
 void set_chorusfx_on_off(gboolean val)
@@ -447,16 +421,12 @@ void set_chorusfx_on_off(gboolean val)
 /* x = 0 to 139 */
 void set_delay_time(int x)
 {
-    if (x <= 0x7F) {
-        set_option(DELAY_TIME, DELAY_POSITION, x);
-    } else {
-        set_higher_option(DELAY_TIME, DELAY_POSITION, x);
-    }
+    set_option(DELAY_TIME, DELAY_POSITION, x);
 }
 
 void set_delay_type(int type)
 {
-    set_higher_option(DELAY_TYPE, DELAY_POSITION, type);
+    set_option(DELAY_TYPE, DELAY_POSITION, type);
 }
 
 void set_delay_option(guint32 option, int x)
@@ -477,7 +447,7 @@ void set_reverb_option(guint32 option, int x)
 
 void set_reverb_type(int type)
 {
-    set_higher_option(REVERB_TYPE, REVERB_POSITION, type);
+    set_option(REVERB_TYPE, REVERB_POSITION, type);
 }
 
 void set_reverb_on_off(gboolean val)

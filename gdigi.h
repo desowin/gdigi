@@ -452,8 +452,10 @@ enum {
 #define EXP_TYPE 8194
 #define EXP_POSITION 19
 
+#define EXP_MIN 8195
+#define EXP_MAX 8196
+
 void set_option(guint id, guint position, guint value);
-void set_higher_option(gint id, gint position, int type);
 void set_wah_min(int level);
 void set_wah_max(int level);
 void set_wah_level(int level);

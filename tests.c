@@ -622,46 +622,243 @@ void test_reverb()
 
 void test_exp()
 {
+    int x;
+
     set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_NONE);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_PICKUP_ENABLE);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_PIKCUP_TYPE);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_COMP_ENABLE);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_COMP_SUST);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_COMP_TONE);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_COMP_LEVEL);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_COMP_ATTACK);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_DIST_ENABLE);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_DIST_DISTORTION);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_DIST_FILTER);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_DIST_VOLUME);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_AMP_ENABLE);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_AMP_GAIN);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_AMP_LEVEL);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_EQ_ENABLE);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_EQ_BASS);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_EQ_MID);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_EQ_TREB);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_GATE_ENABLE);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_GATE_THRESHOLD);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_GATE_ATTACK);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_GATE_RELEASE);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_GATE_ATTN);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_CHORUSFX_ENABLE);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_PHASER_SPEED);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_PHASER_DEPTH);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_PHASER_REGEN);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_PHASER_WAVEFORM);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_PHASER_LEVEL);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_DELAY_ENABLE);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_DELAY_TIME);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_DELAY_REPEATS);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_DELAY_LEVEL);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_DELAY_DUCK_THRESH);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_DELAY_DUCK_LEVEL);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_REVERB_ENABLE);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_REVERB_LEVEL);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_VOLUME_PRE_FX);
-    set_higher_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_VOLUME_POST_FX);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_PICKUP_ENABLE);
+    for (x=0; x<=1; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=1; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_PIKCUP_TYPE);
+    for (x=0; x<=1; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=1; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_COMP_ENABLE);
+    for (x=0; x<=1; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=1; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_COMP_SUST);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_COMP_TONE);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_COMP_LEVEL);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_COMP_ATTACK);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_DIST_ENABLE);
+    for (x=0; x<=1; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=1; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_DIST_DISTORTION);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_DIST_FILTER);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_DIST_VOLUME);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_AMP_ENABLE);
+    for (x=0; x<=1; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=1; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_AMP_GAIN);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_AMP_LEVEL);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_EQ_ENABLE);
+    for (x=0; x<=1; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=1; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_EQ_BASS);
+    for (x=0; x<=24; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=24; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_EQ_MID);
+    for (x=0; x<=24; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=24; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_EQ_TREB);
+    for (x=0; x<=24; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=24; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_GATE_ENABLE);
+    for (x=0; x<=1; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=1; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_GATE_THRESHOLD);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_GATE_ATTACK);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_GATE_RELEASE);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_GATE_ATTN);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_CHORUSFX_ENABLE);
+    for (x=0; x<=1; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=1; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_PHASER_SPEED);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_PHASER_DEPTH);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_PHASER_REGEN);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_PHASER_WAVEFORM);
+    for (x=0; x<=2; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=2; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_PHASER_LEVEL);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_DELAY_ENABLE);
+    for (x=0; x<=1; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=1; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_DELAY_TIME);
+    for (x=0; x<=139; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=139; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_DELAY_REPEATS);
+    for (x=0; x<=100; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=100; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_DELAY_LEVEL);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_DELAY_DUCK_THRESH);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_DELAY_DUCK_LEVEL);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_REVERB_ENABLE);
+    for (x=0; x<=1; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=1; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_REVERB_LEVEL);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_VOLUME_PRE_FX);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
+
+    set_option(EXP_TYPE, EXP_POSITION, EXP_TYPE_VOLUME_POST_FX);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MIN, EXP_POSITION, x);
+    for (x=0; x<=99; x++)
+        set_option(EXP_MAX, EXP_POSITION, x);
 }
 
 void test_all()
@@ -676,4 +873,5 @@ void test_all()
     test_chorusfx();
     test_delay();
     test_reverb();
+    test_exp();
 }
