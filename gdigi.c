@@ -62,14 +62,21 @@ char calculate_checksum(gchar *array, int length, int check)
 {
     int x;
     char checksum;
-    checksum = 0;
+
+    checksum = 0x07;
+
     for (x = 0; x<length; x++) {
         if (x == check) continue;
         checksum ^= array[x];
     }
+
     return checksum;
 }
 
+/*
+   opens MIDI device
+   Returns TRUE on error
+*/
 gboolean open_device()
 {
     int err;
@@ -166,7 +173,7 @@ void set_option(guint id, guint position, guint value)
         option[12] = value;
 
         option[14] = 0xF7;
-        option[13] = calculate_checksum(option, 15, 13) ^ 0x07;
+        option[13] = calculate_checksum(option, 15, 13);
 
         send_data(option, 15);
     } else if (value <= 0xFF) {
@@ -179,7 +186,7 @@ void set_option(guint id, guint position, guint value)
         option[13] = (value & 0x007F);
 
         option[15] = 0xF7;
-        option[14] = calculate_checksum(option, 16, 14) ^ 0x07;
+        option[14] = calculate_checksum(option, 16, 14);
 
         send_data(option, 16);
     } else if (value <= 0xFFFF) {
@@ -193,7 +200,7 @@ void set_option(guint id, guint position, guint value)
         option[14] = ((value & 0x007F));
 
         option[16] = 0xF7;
-        option[15] = calculate_checksum(option, 17, 15) ^ 0x07;
+        option[15] = calculate_checksum(option, 17, 15);
 
         send_data(option, 17);
     } else if (value <= 0xFFFFFF) {
@@ -208,7 +215,7 @@ void set_option(guint id, guint position, guint value)
         option[15] = ((value & 0x00007F));
 
         option[17] = 0xF7;
-        option[16] = calculate_checksum(option, 18, 16) ^ 0x07;
+        option[16] = calculate_checksum(option, 18, 16);
 
         send_data(option, 18);
     }
@@ -240,7 +247,7 @@ void switch_user_preset(int x)
     static char switch_preset[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x39, 0x00, 0x01 /* bank = user */, 0x00 /* no */, 0x04, 0x00, 0x00, 0x01, 0x00 /* confirm */, 0xF7};
 
     switch_preset[11] = x;
-    switch_preset[16] = calculate_checksum(switch_preset, sizeof(switch_preset), 16) ^ 0x07;
+    switch_preset[16] = calculate_checksum(switch_preset, sizeof(switch_preset), 16);
 
     send_data(switch_preset, sizeof(switch_preset));
 }
@@ -251,7 +258,7 @@ void switch_system_preset(int x)
     static char switch_preset[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x39, 0x00, 0x00 /* bank = system */, 0x00 /* no */, 0x04, 0x00, 0x00, 0x01, 0x00 /* confirm */, 0xF7};
 
     switch_preset[11] = x;
-    switch_preset[16] = calculate_checksum(switch_preset, sizeof(switch_preset), 16) ^ 0x07;
+    switch_preset[16] = calculate_checksum(switch_preset, sizeof(switch_preset), 16);
 
     send_data(switch_preset, sizeof(switch_preset));
 }
@@ -356,7 +363,7 @@ void set_preset_name(int x, gchar *name)
         set_name[12+a+b] = 0x00;
 
     set_name[12+a+2+b] = 0xF7;
-    set_name[12+a+1+b] = calculate_checksum(set_name, 12+a+3+b, 12+a+1+b) ^ 0x07;
+    set_name[12+a+1+b] = calculate_checksum(set_name, 12+a+3+b, 12+a+1+b);
 
     send_data(set_name, 13+a+3+b);
 }

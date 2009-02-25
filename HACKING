@@ -40,13 +40,13 @@ There seems to be two possible ways to figure that out.
       1st - when 4th bit is also active, and first value byte is 03
             then add 80 to value
 
-      So for above example:
-      ID = 3009 (hex) = 12297 (decimal)
-      Position = 0
-      One of possible values is 0. Usually value range is 0 to 99,
-      albeit in some cases it's different - you have to check what values can
-      X-Edit assign (there doesn't seem to be any sanity check in firmware)
-      This is especially needed for IDs that set some effect type.
+   So for above example:
+   ID = 3009 (hex) = 12297 (decimal)
+   Position = 0
+   One of possible values is 0. Usually value range is 0 to 99,
+   albeit in some cases it's different - you have to check what values can
+   X-Edit assign (there doesn't seem to be any sanity check in firmware)
+   This is especially needed for IDs that set some effect type.
       
 2) Save preset patch
    Patches seem to be simple XML files.
