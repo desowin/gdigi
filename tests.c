@@ -22,33 +22,33 @@ void test_wah()
 
     set_wah_type(WAH_TYPE_CRY);
     for (x=0; x<=99; x++)
-        set_wah_min(x);
+        set_option(WAH_MIN, WAH_POSITION_MIN_MAX, x);
 
     for (x=0; x<=99; x++)
-        set_wah_max(x);
+        set_option(WAH_MAX, WAH_POSITION_MIN_MAX, x);
 
     for (x=0; x<=12; x++)
-        set_wah_level(x);
+        set_option(WAH_LEVEL, WAH_POSITION, x);
 
     set_wah_type(WAH_TYPE_FULLRANGE);
     for (x=0; x<=99; x++)
-        set_wah_min(x);
+        set_option(WAH_MIN, WAH_POSITION_MIN_MAX, x);
 
     for (x=0; x<=99; x++)
-        set_wah_max(x);
+        set_option(WAH_MAX, WAH_POSITION_MIN_MAX, x);
 
     for (x=0; x<=12; x++)
-        set_wah_level(x);
+        set_option(WAH_LEVEL, WAH_POSITION, x);
 
     set_wah_type(WAH_TYPE_CLYDE);
     for (x=0; x<=99; x++)
-        set_wah_min(x);
+        set_option(WAH_MIN, WAH_POSITION_MIN_MAX, x);
 
     for (x=0; x<=99; x++)
-        set_wah_max(x);
+        set_option(WAH_MAX, WAH_POSITION_MIN_MAX, x);
 
     for (x=0; x<=12; x++)
-        set_wah_level(x);
+        set_option(WAH_LEVEL, WAH_POSITION, x);
 
     set_wah_on_off(TRUE);
     set_wah_on_off(FALSE);
@@ -60,26 +60,26 @@ void test_compressor()
 
     set_comp_type(COMP_TYPE_DIGI);
     for (x=0; x<=99; x++)
-        set_comp_sustain(x);
+        set_option(COMP_SUSTAIN, COMP_POSITION, x);
 
     for (x=0; x<=99; x++)
-        set_comp_tone(x);
+        set_option(COMP_TONE, COMP_POSITION, x);
 
     for (x=0; x<=99; x++)
-        set_comp_attack(x);
+        set_option(COMP_ATTACK, COMP_POSITION, x);
 
     for (x=0; x<=99; x++)
-        set_comp_level(x);
+        set_option(COMP_LEVEL, COMP_POSITION, x);
 
     set_comp_type(COMP_TYPE_CS);
     for (x=0; x<=99; x++)
-        set_comp_sustain(x);
+        set_option(COMP_SUSTAIN, COMP_POSITION, x);
 
     for (x=0; x<=99; x++)
-        set_comp_attack(x);
+        set_option(COMP_ATTACK, COMP_POSITION, x);
 
     for (x=0; x<=99; x++)
-        set_comp_level(x);
+        set_option(COMP_LEVEL, COMP_POSITION, x);
 
     set_comp_on_off(TRUE);
     set_comp_on_off(FALSE);
@@ -91,111 +91,111 @@ void test_dist()
 
     set_dist_type(DIST_TYPE_SCREAMER);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_SCREAMER_DRIVE, x);
+        set_option(DIST_SCREAMER_DRIVE, DIST_POSITION, x);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_SCREAMER_TONE, x);
+        set_option(DIST_SCREAMER_TONE, DIST_POSITION, x);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_SCREAMER_LVL, x);
+        set_option(DIST_SCREAMER_LVL, DIST_POSITION, x);
 
     set_dist_type(DIST_TYPE_808);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_808_OVERDRIVE, x);
+        set_option(DIST_808_OVERDRIVE, DIST_POSITION, x);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_808_TONE, x);
+        set_option(DIST_808_TONE, DIST_POSITION, x);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_808_LVL, x);
+        set_option(DIST_808_LVL, DIST_POSITION, x);
 
     set_dist_type(DIST_TYPE_GUYOD);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_GUYOD_DRIVE, x);
+        set_option(DIST_GUYOD_DRIVE, DIST_POSITION, x);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_GUYOD_LVL, x);
+        set_option(DIST_GUYOD_LVL, DIST_POSITION, x);
 
     set_dist_type(DIST_TYPE_DOD250);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_DOD250_GAIN, x);
+        set_option(DIST_DOD250_GAIN, DIST_POSITION, x);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_DOD250_LVL, x);
+        set_option(DIST_DOD250_LVL, DIST_POSITION, x);
 
     set_dist_type(DIST_TYPE_RODENT);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_RODENT_DIST, x);
+        set_option(DIST_RODENT_DIST, DIST_POSITION, x);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_RODENT_FILTER, x);
+        set_option(DIST_RODENT_FILTER, DIST_POSITION, x);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_RODENT_LVL, x);
+        set_option(DIST_RODENT_LVL, DIST_POSITION, x);
 
     set_dist_type(DIST_TYPE_MX);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_MX_DIST, x);
+        set_option(DIST_MX_DIST, DIST_POSITION, x);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_MX_OUTPUT, x);
+        set_option(DIST_MX_OUTPUT, DIST_POSITION, x);
 
     set_dist_type(DIST_TYPE_DS);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_DS_GAIN, x);
+        set_option(DIST_DS_GAIN, DIST_POSITION, x);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_DS_TONE, x);
+        set_option(DIST_DS_TONE, DIST_POSITION, x);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_DS_LVL, x);
+        set_option(DIST_DS_LVL, DIST_POSITION, x);
 
     set_dist_type(DIST_TYPE_GRUNGE);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_GRUNGE_GRUNGE, x);
+        set_option(DIST_GRUNGE_GRUNGE, DIST_POSITION, x);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_GRUNGE_FACE, x);
+        set_option(DIST_GRUNGE_FACE, DIST_POSITION, x);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_GRUNGE_LOUD, x);
+        set_option(DIST_GRUNGE_LOUD, DIST_POSITION, x);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_GRUNGE_BUTT, x);
+        set_option(DIST_GRUNGE_BUTT, DIST_POSITION, x);
 
     set_dist_type(DIST_TYPE_ZONE);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_ZONE_GAIN, x);
+        set_option(DIST_ZONE_GAIN, DIST_POSITION, x);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_ZONE_LOW, x);
+        set_option(DIST_ZONE_LOW, DIST_POSITION, x);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_ZONE_MID_LVL, x);
+        set_option(DIST_ZONE_MID_LVL, DIST_POSITION, x);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_ZONE_MID_FREQ, x);
+        set_option(DIST_ZONE_MID_FREQ, DIST_POSITION, x);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_ZONE_HIGH, x);
+        set_option(DIST_ZONE_HIGH, DIST_POSITION, x);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_ZONE_LEVEL, x);
+        set_option(DIST_ZONE_LEVEL, DIST_POSITION, x);
 
     set_dist_type(DIST_TYPE_DEATH);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_DEATH_LOW, x);
+        set_option(DIST_DEATH_LOW, DIST_POSITION, x);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_DEATH_MID, x);
+        set_option(DIST_DEATH_MID, DIST_POSITION, x);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_DEATH_HIGH, x);
+        set_option(DIST_DEATH_HIGH, DIST_POSITION, x);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_DEATH_LVL, x);
+        set_option(DIST_DEATH_LVL, DIST_POSITION, x);
 
     set_dist_type(DIST_TYPE_GONK);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_GONK_GONK, x);
+        set_option(DIST_GONK_GONK, DIST_POSITION, x);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_GONK_SMEAR, x);
+        set_option(DIST_GONK_SMEAR, DIST_POSITION, x);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_GONK_SUCK, x);
+        set_option(DIST_GONK_SUCK, DIST_POSITION, x);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_GONK_HEAVE, x);
+        set_option(DIST_GONK_HEAVE, DIST_POSITION, x);
 
     set_dist_type(DIST_TYPE_FUZZY);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_FUZZY_FUZZ, x);
+        set_option(DIST_FUZZY_FUZZ, DIST_POSITION, x);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_FUZZY_VOLUME, x);
+        set_option(DIST_FUZZY_VOLUME, DIST_POSITION, x);
 
     set_dist_type(DIST_TYPE_MP);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_MP_SUSTAIN, x);
+        set_option(DIST_MP_SUSTAIN, DIST_POSITION, x);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_MP_TONE, x);
+        set_option(DIST_MP_TONE, DIST_POSITION, x);
     for (x=0; x<=99; x++)
-        set_dist_option(DIST_MP_VOLUME, x);
+        set_option(DIST_MP_VOLUME, DIST_POSITION, x);
 
     set_dist_on_off(TRUE);
     set_dist_on_off(FALSE);
@@ -234,20 +234,20 @@ void test_eq()
     set_eq_type(EQ_TYPE_WARM);
 
     for (x=0; x<=99; x++)
-        set_eq_gain(x);
+        set_option(AMP_GAIN, AMP_POSITION, x);
     for (x=0; x<=99; x++)
-        set_eq_level(x);
+        set_option(AMP_LEVEL, AMP_POSITION, x);
 
     for (x=0; x<=0x18; x++)
-        set_eq_bass(x);
+        set_option(EQ_BASS, EQ_POSITION, x);
     for (x=0; x<=0x18; x++)
-        set_eq_mid(x);
+        set_option(EQ_MID, EQ_POSITION, x);
     for (x=0; x<=4700; x++)
-        set_eq_mid_hz(x);
+        set_option(EQ_MID_HZ, EQ_POSITION, x);
     for (x=0; x<=0x18; x++)
-        set_eq_treble(x);
+        set_option(EQ_TREBLE, EQ_POSITION, x);
     for (x=0; x<=7500; x++)
-        set_eq_treb_hz(x);
+        set_option(EQ_TREBLE_HZ, EQ_POSITION, x);
 
     set_eq_on_off(TRUE);
     set_eq_on_off(FALSE);
@@ -259,23 +259,23 @@ void test_noisegate()
 
     set_noisegate_type(NOISEGATE_GATE);
     for (x=0; x<=99; x++)
-        set_gate_option(NOISEGATE_GATE_TRESHOLD, x);
+        set_option(NOISEGATE_GATE_TRESHOLD, NOISEGATE_POSITION, x);
     for (x=0; x<=99; x++)
-        set_gate_option(NOISEGATE_ATTACK, x);
+        set_option(NOISEGATE_ATTACK, NOISEGATE_POSITION, x);
     for (x=0; x<=99; x++)
-        set_gate_option(NOISEGATE_RELEASE, x);
+        set_option(NOISEGATE_RELEASE, NOISEGATE_POSITION, x);
     for (x=0; x<=99; x++)
-        set_gate_option(NOISEGATE_ATTN, x);
+        set_option(NOISEGATE_ATTN, NOISEGATE_POSITION, x);
 
     set_noisegate_type(NOISEGATE_SWELL);
     for (x=0; x<=99; x++)
-        set_gate_option(NOISEGATE_SWELL_SENS, x);
+        set_option(NOISEGATE_SWELL_SENS, NOISEGATE_POSITION, x);
     for (x=0; x<=99; x++)
-        set_gate_option(NOISEGATE_ATTACK, x);
+        set_option(NOISEGATE_ATTACK, NOISEGATE_POSITION, x);
     for (x=0; x<=99; x++)
-        set_gate_option(NOISEGATE_RELEASE, x);
+        set_option(NOISEGATE_RELEASE, NOISEGATE_POSITION, x);
     for (x=0; x<=99; x++)
-        set_gate_option(NOISEGATE_ATTN, x);
+        set_option(NOISEGATE_ATTN, NOISEGATE_POSITION, x);
 
     set_noisegate_on_off(TRUE);
     set_noisegate_on_off(FALSE);
@@ -287,210 +287,210 @@ void test_chorusfx()
 
     set_chorusfx_type(CHORUS_TYPE_CE);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(CE_CHORUS_SPEED, x);
+        set_option(CE_CHORUS_SPEED, CHORUSFX_POSITION, x);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(CE_CHORUS_DEPTH, x);
+        set_option(CE_CHORUS_DEPTH, CHORUSFX_POSITION, x);
 
     set_chorusfx_type(CHORUS_TYPE_DUAL);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(DUAL_CHORUS_SPEED, x);
+        set_option(DUAL_CHORUS_SPEED, CHORUSFX_POSITION, x);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(DUAL_CHORUS_DEPTH, x);
+        set_option(DUAL_CHORUS_DEPTH, CHORUSFX_POSITION, x);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(DUAL_CHORUS_LEVEL, x);
-    set_chorusfx_option(DUAL_CHORUS_WAVE, WAVE_TRI);
-    set_chorusfx_option(DUAL_CHORUS_WAVE, WAVE_SINE);
-    set_chorusfx_option(DUAL_CHORUS_WAVE, WAVE_SQUARE);
+        set_option(DUAL_CHORUS_LEVEL, CHORUSFX_POSITION, x);
+    set_option(DUAL_CHORUS_WAVE, CHORUSFX_POSITION, WAVE_TRI);
+    set_option(DUAL_CHORUS_WAVE, CHORUSFX_POSITION, WAVE_SINE);
+    set_option(DUAL_CHORUS_WAVE, CHORUSFX_POSITION, WAVE_SQUARE);
 
     set_chorusfx_type(CHORUS_TYPE_MULTI);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(MULTI_CHORUS_SPEED, x);
+        set_option(MULTI_CHORUS_SPEED, CHORUSFX_POSITION, x);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(MULTI_CHORUS_DEPTH, x);
+        set_option(MULTI_CHORUS_DEPTH, CHORUSFX_POSITION, x);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(MULTI_CHORUS_LEVEL, x);
-    set_chorusfx_option(MULTI_CHORUS_WAVE, WAVE_TRI);
-    set_chorusfx_option(MULTI_CHORUS_WAVE, WAVE_SINE);
-    set_chorusfx_option(MULTI_CHORUS_WAVE, WAVE_SQUARE);
+        set_option(MULTI_CHORUS_LEVEL, CHORUSFX_POSITION, x);
+    set_option(MULTI_CHORUS_WAVE, CHORUSFX_POSITION, WAVE_TRI);
+    set_option(MULTI_CHORUS_WAVE, CHORUSFX_POSITION, WAVE_SINE);
+    set_option(MULTI_CHORUS_WAVE, CHORUSFX_POSITION, WAVE_SQUARE);
 
     set_chorusfx_type(CHORUS_TYPE_FLANGER);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(FLANGER_SPEED, x);
+        set_option(FLANGER_SPEED, CHORUSFX_POSITION, x);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(FLANGER_DEPTH, x);
+        set_option(FLANGER_DEPTH, CHORUSFX_POSITION, x);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(FLANGER_REGEN, x);
+        set_option(FLANGER_REGEN, CHORUSFX_POSITION, x);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(FLANGER_LEVEL, x);
-    set_chorusfx_option(FLANGER_WAVE, WAVE_TRI);
-    set_chorusfx_option(FLANGER_WAVE, WAVE_SINE);
-    set_chorusfx_option(FLANGER_WAVE, WAVE_SQUARE);
+        set_option(FLANGER_LEVEL, CHORUSFX_POSITION, x);
+    set_option(FLANGER_WAVE, CHORUSFX_POSITION, WAVE_TRI);
+    set_option(FLANGER_WAVE, CHORUSFX_POSITION, WAVE_SINE);
+    set_option(FLANGER_WAVE, CHORUSFX_POSITION, WAVE_SQUARE);
 
     set_chorusfx_type(CHORUS_TYPE_MXR_FLANGER);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(MXR_FLANGER_SPEED, x);
+        set_option(MXR_FLANGER_SPEED, CHORUSFX_POSITION, x);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(MXR_FLANGER_WIDTH, x);
+        set_option(MXR_FLANGER_WIDTH, CHORUSFX_POSITION, x);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(MXR_FLANGER_REGEN, x);
+        set_option(MXR_FLANGER_REGEN, CHORUSFX_POSITION, x);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(MXR_FLANGER_MANUAL, x);
+        set_option(MXR_FLANGER_MANUAL, CHORUSFX_POSITION, x);
 
     set_chorusfx_type(CHORUS_TYPE_PHASER);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(PHASER_SPEED, x);
+        set_option(PHASER_SPEED, CHORUSFX_POSITION, x);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(PHASER_DEPTH, x);
+        set_option(PHASER_DEPTH, CHORUSFX_POSITION, x);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(PHASER_REGEN, x);
+        set_option(PHASER_REGEN, CHORUSFX_POSITION, x);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(PHASER_LEVEL, x);
-    set_chorusfx_option(PHASER_WAVE, WAVE_TRI);
-    set_chorusfx_option(PHASER_WAVE, WAVE_SINE);
-    set_chorusfx_option(PHASER_WAVE, WAVE_SQUARE);
+        set_option(PHASER_LEVEL, CHORUSFX_POSITION, x);
+    set_option(PHASER_WAVE, CHORUSFX_POSITION, WAVE_TRI);
+    set_option(PHASER_WAVE, CHORUSFX_POSITION, WAVE_SINE);
+    set_option(PHASER_WAVE, CHORUSFX_POSITION, WAVE_SQUARE);
 
     set_chorusfx_type(CHORUS_TYPE_VIBRATO);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(VIBRATO_SPEED, x);
+        set_option(VIBRATO_SPEED, CHORUSFX_POSITION, x);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(VIBRATO_DEPTH, x);
+        set_option(VIBRATO_DEPTH, CHORUSFX_POSITION, x);
 
     set_chorusfx_type(CHORUS_TYPE_ROTARY);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(ROTARY_SPEED, x);
+        set_option(ROTARY_SPEED, CHORUSFX_POSITION, x);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(ROTARY_INTENSITY, x);
+        set_option(ROTARY_INTENSITY, CHORUSFX_POSITION, x);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(ROTARY_DOPPLER, x);
+        set_option(ROTARY_DOPPLER, CHORUSFX_POSITION, x);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(ROTARY_CROSSOVER, x);
+        set_option(ROTARY_CROSSOVER, CHORUSFX_POSITION, x);
 
     set_chorusfx_type(CHORUS_TYPE_VIBROPAN);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(VIBROPAN_SPEED, x);
+        set_option(VIBROPAN_SPEED, CHORUSFX_POSITION, x);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(VIBROPAN_DEPTH, x);
+        set_option(VIBROPAN_DEPTH, CHORUSFX_POSITION, x);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(VIBROPAN_VIBRA, x);
-    set_chorusfx_option(VIBROPAN_WAVE, WAVE_TRI);
-    set_chorusfx_option(VIBROPAN_WAVE, WAVE_SINE);
-    set_chorusfx_option(VIBROPAN_WAVE, WAVE_SQUARE);
+        set_option(VIBROPAN_VIBRA, CHORUSFX_POSITION, x);
+    set_option(VIBROPAN_WAVE, CHORUSFX_POSITION, WAVE_TRI);
+    set_option(VIBROPAN_WAVE, CHORUSFX_POSITION, WAVE_SINE);
+    set_option(VIBROPAN_WAVE, CHORUSFX_POSITION, WAVE_SQUARE);
 
     set_chorusfx_type(CHORUS_TYPE_TREMOLO);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(TREMOLO_SPEED, x);
+        set_option(TREMOLO_SPEED, CHORUSFX_POSITION, x);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(TREMOLO_DEPTH, x);
-    set_chorusfx_option(TREMOLO_WAVE, WAVE_TRI);
-    set_chorusfx_option(TREMOLO_WAVE, WAVE_SINE);
-    set_chorusfx_option(TREMOLO_WAVE, WAVE_SQUARE);
+        set_option(TREMOLO_DEPTH, CHORUSFX_POSITION, x);
+    set_option(TREMOLO_WAVE, CHORUSFX_POSITION, WAVE_TRI);
+    set_option(TREMOLO_WAVE, CHORUSFX_POSITION, WAVE_SINE);
+    set_option(TREMOLO_WAVE, CHORUSFX_POSITION, WAVE_SQUARE);
 
     set_chorusfx_type(CHORUS_TYPE_PANNER);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(PANNER_SPEED, x);
+        set_option(PANNER_SPEED, CHORUSFX_POSITION, x);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(PANNER_DEPTH, x);
-    set_chorusfx_option(PANNER_WAVE, WAVE_TRI);
-    set_chorusfx_option(PANNER_WAVE, WAVE_SINE);
-    set_chorusfx_option(PANNER_WAVE, WAVE_SQUARE);
+        set_option(PANNER_DEPTH, CHORUSFX_POSITION, x);
+    set_option(PANNER_WAVE, CHORUSFX_POSITION, WAVE_TRI);
+    set_option(PANNER_WAVE, CHORUSFX_POSITION, WAVE_SINE);
+    set_option(PANNER_WAVE, CHORUSFX_POSITION, WAVE_SQUARE);
 
     set_chorusfx_type(CHORUS_TYPE_ENVELOPE);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(ENVELOPE_SENSITIVITY, x);
+        set_option(ENVELOPE_SENSITIVITY, CHORUSFX_POSITION, x);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(ENVELOPE_RANGE, x);
+        set_option(ENVELOPE_RANGE, CHORUSFX_POSITION, x);
 
     set_chorusfx_type(CHORUS_TYPE_AUTOYA);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(AUTOYA_SPEED, x);
+        set_option(AUTOYA_SPEED, CHORUSFX_POSITION, x);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(AUTOYA_INTENSITY, x);
+        set_option(AUTOYA_INTENSITY, CHORUSFX_POSITION, x);
     for (x=0; x<=0x31; x++)
-        set_chorusfx_option(AUTOYA_RANGE, x);
+        set_option(AUTOYA_RANGE, CHORUSFX_POSITION, x);
 
     set_chorusfx_type(CHORUS_TYPE_YAYA);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(YAYA_PEDAL, x);
+        set_option(YAYA_PEDAL, CHORUSFX_POSITION, x);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(YAYA_INTENSITY, x);
+        set_option(YAYA_INTENSITY, CHORUSFX_POSITION, x);
     for (x=0; x<=0x31; x++)
-        set_chorusfx_option(YAYA_RANGE, x);
+        set_option(YAYA_RANGE, CHORUSFX_POSITION, x);
 
     set_chorusfx_type(CHORUS_TYPE_STEP_FILTER);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(STEP_FILTER_SPEED, x);
+        set_option(STEP_FILTER_SPEED, CHORUSFX_POSITION, x);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(STEP_FILTER_INTENSITY, x);
+        set_option(STEP_FILTER_INTENSITY, CHORUSFX_POSITION, x);
 
     set_chorusfx_type(CHORUS_TYPE_WHAMMY);
-    set_chorusfx_option(WHAMMY_AMOUNT, WHAMMY_OCT_UP);
-    set_chorusfx_option(WHAMMY_AMOUNT, WHAMMY_2OCT_UP);
-    set_chorusfx_option(WHAMMY_AMOUNT, WHAMMY_2ND_DN);
-    set_chorusfx_option(WHAMMY_AMOUNT, WHAMMY_RV_2ND);
-    set_chorusfx_option(WHAMMY_AMOUNT, WHAMMY_4TH_DN);
-    set_chorusfx_option(WHAMMY_AMOUNT, WHAMMY_OCT_DN);
-    set_chorusfx_option(WHAMMY_AMOUNT, WHAMMY_2OCT_DN);
-    set_chorusfx_option(WHAMMY_AMOUNT, WHAMMY_DIV_BMB);
-    set_chorusfx_option(WHAMMY_AMOUNT, WHAMMY_M3_MA);
-    set_chorusfx_option(WHAMMY_AMOUNT, WHAMMY_2ND_MA3);
-    set_chorusfx_option(WHAMMY_AMOUNT, WHAMMY_3RD_4TH);
-    set_chorusfx_option(WHAMMY_AMOUNT, WHAMMY_4TH_5TH);
-    set_chorusfx_option(WHAMMY_AMOUNT, WHAMMY_5TH_OCT);
-    set_chorusfx_option(WHAMMY_AMOUNT, WHAMMY_HOCT_UP);
-    set_chorusfx_option(WHAMMY_AMOUNT, WHAMMY_HOCT_DN);
-    set_chorusfx_option(WHAMMY_AMOUNT, WHAMMY_OCT_UD);
+    set_option(WHAMMY_AMOUNT, CHORUSFX_POSITION, WHAMMY_OCT_UP);
+    set_option(WHAMMY_AMOUNT, CHORUSFX_POSITION, WHAMMY_2OCT_UP);
+    set_option(WHAMMY_AMOUNT, CHORUSFX_POSITION, WHAMMY_2ND_DN);
+    set_option(WHAMMY_AMOUNT, CHORUSFX_POSITION, WHAMMY_RV_2ND);
+    set_option(WHAMMY_AMOUNT, CHORUSFX_POSITION, WHAMMY_4TH_DN);
+    set_option(WHAMMY_AMOUNT, CHORUSFX_POSITION, WHAMMY_OCT_DN);
+    set_option(WHAMMY_AMOUNT, CHORUSFX_POSITION, WHAMMY_2OCT_DN);
+    set_option(WHAMMY_AMOUNT, CHORUSFX_POSITION, WHAMMY_DIV_BMB);
+    set_option(WHAMMY_AMOUNT, CHORUSFX_POSITION, WHAMMY_M3_MA);
+    set_option(WHAMMY_AMOUNT, CHORUSFX_POSITION, WHAMMY_2ND_MA3);
+    set_option(WHAMMY_AMOUNT, CHORUSFX_POSITION, WHAMMY_3RD_4TH);
+    set_option(WHAMMY_AMOUNT, CHORUSFX_POSITION, WHAMMY_4TH_5TH);
+    set_option(WHAMMY_AMOUNT, CHORUSFX_POSITION, WHAMMY_5TH_OCT);
+    set_option(WHAMMY_AMOUNT, CHORUSFX_POSITION, WHAMMY_HOCT_UP);
+    set_option(WHAMMY_AMOUNT, CHORUSFX_POSITION, WHAMMY_HOCT_DN);
+    set_option(WHAMMY_AMOUNT, CHORUSFX_POSITION, WHAMMY_OCT_UD);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(WHAMMY_PEDAL, x);
+        set_option(WHAMMY_PEDAL, CHORUSFX_POSITION, x);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(WHAMMY_MIX, x);
+        set_option(WHAMMY_MIX, CHORUSFX_POSITION, x);
 
     set_chorusfx_type(CHORUS_TYPE_PITCH_SHIFT);
     for (x=0; x<=0x30; x++)
-        set_chorusfx_option(PITCH_AMOUNT, x);
+        set_option(PITCH_AMOUNT, CHORUSFX_POSITION, x);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(PITCH_MIX, x);
+        set_option(PITCH_MIX, CHORUSFX_POSITION, x);
 
     set_chorusfx_type(CHORUS_TYPE_DETUNE);
     for (x=0; x<=0x30; x++)
-        set_chorusfx_option(DETUNE_AMOUNT, x);
+        set_option(DETUNE_AMOUNT, CHORUSFX_POSITION, x);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(DETUNE_LEVEL, x);
+        set_option(DETUNE_LEVEL, CHORUSFX_POSITION, x);
 
     set_chorusfx_type(CHORUS_TYPE_IPS);
-    set_chorusfx_option(IPS_SHIFT_AMOUNT, IPS_OCT_D);
-    set_chorusfx_option(IPS_SHIFT_AMOUNT, IPS_7TH_DN);
-    set_chorusfx_option(IPS_SHIFT_AMOUNT, IPS_6TH_DN);
-    set_chorusfx_option(IPS_SHIFT_AMOUNT, IPS_5TH_DN);
-    set_chorusfx_option(IPS_SHIFT_AMOUNT, IPS_4TH_DN);
-    set_chorusfx_option(IPS_SHIFT_AMOUNT, IPS_3RD_DN);
-    set_chorusfx_option(IPS_SHIFT_AMOUNT, IPS_2ND_DN);
-    set_chorusfx_option(IPS_SHIFT_AMOUNT, IPS_2ND_UP);
-    set_chorusfx_option(IPS_SHIFT_AMOUNT, IPS_3RD_UP);
-    set_chorusfx_option(IPS_SHIFT_AMOUNT, IPS_4TH_UP);
-    set_chorusfx_option(IPS_SHIFT_AMOUNT, IPS_5TH_UP);
-    set_chorusfx_option(IPS_SHIFT_AMOUNT, IPS_6TH_UP);
-    set_chorusfx_option(IPS_SHIFT_AMOUNT, IPS_7TH_UP);
-    set_chorusfx_option(IPS_SHIFT_AMOUNT, IPS_OCT_U);
-    set_chorusfx_option(IPS_KEY, IPS_E);
-    set_chorusfx_option(IPS_KEY, IPS_F);
-    set_chorusfx_option(IPS_KEY, IPS_GB);
-    set_chorusfx_option(IPS_KEY, IPS_G);
-    set_chorusfx_option(IPS_KEY, IPS_AB);
-    set_chorusfx_option(IPS_KEY, IPS_A);
-    set_chorusfx_option(IPS_KEY, IPS_BB);
-    set_chorusfx_option(IPS_KEY, IPS_B);
-    set_chorusfx_option(IPS_KEY, IPS_C);
-    set_chorusfx_option(IPS_KEY, IPS_DD);
-    set_chorusfx_option(IPS_KEY, IPS_D);
-    set_chorusfx_option(IPS_KEY, IPS_EB);
-    set_chorusfx_option(IPS_SCALE, IPS_MAJOR);
-    set_chorusfx_option(IPS_SCALE, IPS_MINOR);
-    set_chorusfx_option(IPS_SCALE, IPS_DORIA);
-    set_chorusfx_option(IPS_SCALE, IPS_MIXLYD);
-    set_chorusfx_option(IPS_SCALE, IPS_LYDIAN);
-    set_chorusfx_option(IPS_SCALE, IPS_HMINO);
+    set_option(IPS_SHIFT_AMOUNT, CHORUSFX_POSITION, IPS_OCT_D);
+    set_option(IPS_SHIFT_AMOUNT, CHORUSFX_POSITION, IPS_7TH_DN);
+    set_option(IPS_SHIFT_AMOUNT, CHORUSFX_POSITION, IPS_6TH_DN);
+    set_option(IPS_SHIFT_AMOUNT, CHORUSFX_POSITION, IPS_5TH_DN);
+    set_option(IPS_SHIFT_AMOUNT, CHORUSFX_POSITION, IPS_4TH_DN);
+    set_option(IPS_SHIFT_AMOUNT, CHORUSFX_POSITION, IPS_3RD_DN);
+    set_option(IPS_SHIFT_AMOUNT, CHORUSFX_POSITION, IPS_2ND_DN);
+    set_option(IPS_SHIFT_AMOUNT, CHORUSFX_POSITION, IPS_2ND_UP);
+    set_option(IPS_SHIFT_AMOUNT, CHORUSFX_POSITION, IPS_3RD_UP);
+    set_option(IPS_SHIFT_AMOUNT, CHORUSFX_POSITION, IPS_4TH_UP);
+    set_option(IPS_SHIFT_AMOUNT, CHORUSFX_POSITION, IPS_5TH_UP);
+    set_option(IPS_SHIFT_AMOUNT, CHORUSFX_POSITION, IPS_6TH_UP);
+    set_option(IPS_SHIFT_AMOUNT, CHORUSFX_POSITION, IPS_7TH_UP);
+    set_option(IPS_SHIFT_AMOUNT, CHORUSFX_POSITION, IPS_OCT_U);
+    set_option(IPS_KEY, CHORUSFX_POSITION, IPS_E);
+    set_option(IPS_KEY, CHORUSFX_POSITION, IPS_F);
+    set_option(IPS_KEY, CHORUSFX_POSITION, IPS_GB);
+    set_option(IPS_KEY, CHORUSFX_POSITION, IPS_G);
+    set_option(IPS_KEY, CHORUSFX_POSITION, IPS_AB);
+    set_option(IPS_KEY, CHORUSFX_POSITION, IPS_A);
+    set_option(IPS_KEY, CHORUSFX_POSITION, IPS_BB);
+    set_option(IPS_KEY, CHORUSFX_POSITION, IPS_B);
+    set_option(IPS_KEY, CHORUSFX_POSITION, IPS_C);
+    set_option(IPS_KEY, CHORUSFX_POSITION, IPS_DD);
+    set_option(IPS_KEY, CHORUSFX_POSITION, IPS_D);
+    set_option(IPS_KEY, CHORUSFX_POSITION, IPS_EB);
+    set_option(IPS_SCALE, CHORUSFX_POSITION, IPS_MAJOR);
+    set_option(IPS_SCALE, CHORUSFX_POSITION, IPS_MINOR);
+    set_option(IPS_SCALE, CHORUSFX_POSITION, IPS_DORIA);
+    set_option(IPS_SCALE, CHORUSFX_POSITION, IPS_MIXLYD);
+    set_option(IPS_SCALE, CHORUSFX_POSITION, IPS_LYDIAN);
+    set_option(IPS_SCALE, CHORUSFX_POSITION, IPS_HMINO);
     for (x=0; x<=99; x++)
-        set_chorusfx_option(IPS_LEVEL, x);
+        set_option(IPS_LEVEL, CHORUSFX_POSITION, x);
 
     set_chorusfx_on_off(TRUE);
     set_chorusfx_on_off(FALSE);
@@ -502,57 +502,57 @@ void test_delay()
 
     set_delay_type(DELAY_TYPE_ANALOG);
     for (x=0; x<=139; x++)
-        set_delay_time(x);
+        set_option(DELAY_TIME, DELAY_POSITION, x);
     for (x=0; x<=99; x++)
-        set_delay_option(ANALOG_LEVEL, x);
+        set_option(ANALOG_LEVEL, DELAY_POSITION, x);
     for (x=0; x<=100; x++)
-        set_delay_option(ANALOG_REPEATS, x);
+        set_option(ANALOG_REPEATS, DELAY_POSITION, x);
 
     set_delay_type(DELAY_TYPE_DIGITAL);
     for (x=0; x<=139; x++)
-        set_delay_time(x);
+        set_option(DELAY_TIME, DELAY_POSITION, x);
     for (x=0; x<=99; x++)
-        set_delay_option(DIGITAL_LEVEL, x);
+        set_option(DIGITAL_LEVEL, DELAY_POSITION, x);
     for (x=0; x<=100; x++)
-        set_delay_option(DIGITAL_REPEATS, x);
+        set_option(DIGITAL_REPEATS, DELAY_POSITION, x);
     for (x=0; x<=99; x++)
-        set_delay_option(DIGITAL_DUCKER_THRESH, x);
+        set_option(DIGITAL_DUCKER_THRESH, DELAY_POSITION, x);
     for (x=0; x<=99; x++)
-        set_delay_option(DIGITAL_DUCKER_LEVEL, x);
+        set_option(DIGITAL_DUCKER_LEVEL, DELAY_POSITION, x);
 
     set_delay_type(DELAY_TYPE_MODULATED);
     for (x=0; x<=139; x++)
-        set_delay_time(x);
+        set_option(DELAY_TIME, DELAY_POSITION, x);
     for (x=0; x<=99; x++)
-        set_delay_option(MODULATED_LEVEL, x);
+        set_option(MODULATED_LEVEL, DELAY_POSITION, x);
     for (x=0; x<=100; x++)
-        set_delay_option(MODULATED_REPEATS, x);
+        set_option(MODULATED_REPEATS, DELAY_POSITION, x);
     for (x=0; x<=99; x++)
-        set_delay_option(MODULATED_DEPTH, x);
+        set_option(MODULATED_DEPTH, DELAY_POSITION, x);
 
     set_delay_type(DELAY_TYPE_PONG);
     for (x=0; x<=139; x++)
-        set_delay_time(x);
+        set_option(DELAY_TIME, DELAY_POSITION, x);
     for (x=0; x<=99; x++)
-        set_delay_option(PONG_LEVEL, x);
+        set_option(PONG_LEVEL, DELAY_POSITION, x);
     for (x=0; x<=100; x++)
-        set_delay_option(PONG_REPEATS, x);
+        set_option(PONG_REPEATS, DELAY_POSITION, x);
     for (x=0; x<=99; x++)
-        set_delay_option(PONG_DUCKER_THRESH, x);
+        set_option(PONG_DUCKER_THRESH, DELAY_POSITION, x);
     for (x=0; x<=99; x++)
-        set_delay_option(PONG_DUCKER_LEVEL, x);
+        set_option(PONG_DUCKER_LEVEL, DELAY_POSITION, x);
 
     set_delay_type(DELAY_TYPE_TAPE);
     for (x=0; x<=139; x++)
-        set_delay_time(x);
+        set_option(DELAY_TIME, DELAY_POSITION, x);
     for (x=0; x<=99; x++)
-        set_delay_option(TAPE_LEVEL, x);
+        set_option(TAPE_LEVEL, DELAY_POSITION, x);
     for (x=0; x<=100; x++)
-        set_delay_option(TAPE_REPEATS, x);
+        set_option(TAPE_REPEATS, DELAY_POSITION, x);
     for (x=0; x<=99; x++)
-        set_delay_option(TAPE_WOW, x);
+        set_option(TAPE_WOW, DELAY_POSITION, x);
     for (x=0; x<=99; x++)
-        set_delay_option(TAPE_FLUTTER, x);
+        set_option(TAPE_FLUTTER, DELAY_POSITION, x);
 
     set_delay_on_off(TRUE);
     set_delay_on_off(FALSE);
@@ -564,57 +564,57 @@ void test_reverb()
 
     set_reverb_type(REVERB_TYPE_TWIN);
     for (x=0; x<=99; x++)
-        set_reverb_option(TWIN_REVERB, x);
+        set_option(TWIN_REVERB, REVERB_POSITION, x);
 
     set_reverb_type(REVERB_TYPE_LEX_AMBIENCE);
     for (x=0; x<=15; x++)
-        set_reverb_option(LEX_AMBIENCE_PREDELAY, x);
+        set_option(LEX_AMBIENCE_PREDELAY, REVERB_POSITION, x);
     for (x=0; x<=99; x++)
-        set_reverb_option(LEX_AMBIENCE_DECAY, x);
+        set_option(LEX_AMBIENCE_DECAY, REVERB_POSITION, x);
     for (x=0; x<=99; x++)
-        set_reverb_option(LEX_AMBIENCE_LIVELINESS, x);
+        set_option(LEX_AMBIENCE_LIVELINESS, REVERB_POSITION, x);
     for (x=0; x<=99; x++)
-        set_reverb_option(LEX_AMBIENCE_LEVEL, x);
+        set_option(LEX_AMBIENCE_LEVEL, REVERB_POSITION, x);
 
     set_reverb_type(REVERB_TYPE_LEX_STUDIO);
     for (x=0; x<=15; x++)
-        set_reverb_option(LEX_STUDIO_PREDELAY, x);
+        set_option(LEX_STUDIO_PREDELAY, REVERB_POSITION, x);
     for (x=0; x<=99; x++)
-        set_reverb_option(LEX_STUDIO_DECAY, x);
+        set_option(LEX_STUDIO_DECAY, REVERB_POSITION, x);
     for (x=0; x<=99; x++)
-        set_reverb_option(LEX_STUDIO_LIVELINESS, x);
+        set_option(LEX_STUDIO_LIVELINESS, REVERB_POSITION, x);
     for (x=0; x<=99; x++)
-        set_reverb_option(LEX_STUDIO_LEVEL, x);
+        set_option(LEX_STUDIO_LEVEL, REVERB_POSITION, x);
 
     set_reverb_type(REVERB_TYPE_LEX_ROOM);
     for (x=0; x<=15; x++)
-        set_reverb_option(LEX_ROOM_PREDELAY, x);
+        set_option(LEX_ROOM_PREDELAY, REVERB_POSITION, x);
     for (x=0; x<=99; x++)
-        set_reverb_option(LEX_ROOM_DECAY, x);
+        set_option(LEX_ROOM_DECAY, REVERB_POSITION, x);
     for (x=0; x<=99; x++)
-        set_reverb_option(LEX_ROOM_LIVELINESS, x);
+        set_option(LEX_ROOM_LIVELINESS, REVERB_POSITION, x);
     for (x=0; x<=99; x++)
-        set_reverb_option(LEX_ROOM_LEVEL, x);
+        set_option(LEX_ROOM_LEVEL, REVERB_POSITION, x);
 
     set_reverb_type(REVERB_TYPE_LEX_HALL);
     for (x=0; x<=15; x++)
-        set_reverb_option(LEX_HALL_PREDELAY, x);
+        set_option(LEX_HALL_PREDELAY, REVERB_POSITION, x);
     for (x=0; x<=99; x++)
-        set_reverb_option(LEX_HALL_DECAY, x);
+        set_option(LEX_HALL_DECAY, REVERB_POSITION, x);
     for (x=0; x<=99; x++)
-        set_reverb_option(LEX_HALL_LIVELINESS, x);
+        set_option(LEX_HALL_LIVELINESS, REVERB_POSITION, x);
     for (x=0; x<=99; x++)
-        set_reverb_option(LEX_HALL_LEVEL, x);
+        set_option(LEX_HALL_LEVEL, REVERB_POSITION, x);
 
     set_reverb_type(REVERB_TYPE_EMT240_PLATE);
     for (x=0; x<=15; x++)
-        set_reverb_option(EMT240_PLATE_PREDELAY, x);
+        set_option(EMT240_PLATE_PREDELAY, REVERB_POSITION, x);
     for (x=0; x<=99; x++)
-        set_reverb_option(EMT240_PLATE_DECAY, x);
+        set_option(EMT240_PLATE_DECAY, REVERB_POSITION, x);
     for (x=0; x<=99; x++)
-        set_reverb_option(EMT240_PLATE_LIVELINESS, x);
+        set_option(EMT240_PLATE_LIVELINESS, REVERB_POSITION, x);
     for (x=0; x<=99; x++)
-        set_reverb_option(EMT240_PLATE_LEVEL, x);
+        set_option(EMT240_PLATE_LEVEL, REVERB_POSITION, x);
 
     set_reverb_on_off(TRUE);
     set_reverb_on_off(FALSE);

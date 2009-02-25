@@ -22,17 +22,12 @@
 extern VBoxes vboxes[];
 extern int n_vboxes;
 
-void value_changed_cb(GtkSpinButton *spinbutton, void (*callback)(int))
+void value_changed_option_cb(GtkSpinButton *spinbutton, SettingsWidget *setting)
 {
-    int val = gtk_spin_button_get_value_as_int(spinbutton);
-    callback(val);
-}
+    g_return_if_fail(setting != NULL);
 
-void value_changed_option_cb(GtkSpinButton *spinbutton, void (*callback)(guint32, int))
-{
     int val = gtk_spin_button_get_value_as_int(spinbutton);
-    guint32 option = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(spinbutton), "option_id"));
-    callback(option, val);
+    set_option(setting->option, setting->position, val);
 }
 
 void toggled_cb(GtkToggleButton *button, void (*callback)(gboolean))
@@ -53,13 +48,7 @@ GtkWidget *create_table(SettingsWidget *widgets, gint amt)
         label = gtk_label_new(widgets[x].label);
         adj = gtk_adjustment_new(0.0, widgets[x].min, widgets[x].max, 1.0, 1.0, 1.0);
         widget = gtk_spin_button_new(GTK_ADJUSTMENT(adj), 1.0, 0);
-        if (widgets[x].callback)
-            g_signal_connect(G_OBJECT(widget), "value-changed", G_CALLBACK(value_changed_cb), widgets[x].callback);
-
-        if (widgets[x].callback_with_option) {
-            g_object_set_data(G_OBJECT(widget), "option_id", GINT_TO_POINTER(widgets[x].option));
-            g_signal_connect(G_OBJECT(widget), "value-changed", G_CALLBACK(value_changed_option_cb), widgets[x].callback_with_option);
-        }
+        g_signal_connect(G_OBJECT(widget), "value-changed", G_CALLBACK(value_changed_option_cb), &widgets[x]);
 
         gtk_table_attach(GTK_TABLE(table), label, 0, 1, x, x+1, GTK_SHRINK, GTK_SHRINK, 2, 2);
         gtk_table_attach(GTK_TABLE(table), widget, 1, 2, x, x+1, GTK_SHRINK, GTK_SHRINK, 2, 2);

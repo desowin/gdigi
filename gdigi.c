@@ -214,24 +214,6 @@ void set_option(guint id, guint position, guint value)
     }
 }
 
-/* level = 0 to 99 */
-void set_wah_min(int level)
-{
-    set_option(WAH_MIN, WAH_POSITION_MIN_MAX, level);
-}
-
-/* level = 0 to 99 */
-void set_wah_max(int level)
-{
-    set_option(WAH_MAX, WAH_POSITION_MIN_MAX, level);
-}
-
-/* level = 0 to 12 */
-void set_wah_level(int level)
-{
-    set_option(WAH_LEVEL, WAH_POSITION, level);
-}
-
 void set_wah_type(int type)
 {
     set_option(WAH_TYPE, WAH_POSITION, type);
@@ -240,30 +222,6 @@ void set_wah_type(int type)
 void set_wah_on_off(gboolean val)
 {
     set_option(WAH_ON_OFF, WAH_POSITION, (val == TRUE) ? 1 : 0);
-}
-
-/* level = 0 to 99 */
-void set_comp_sustain(int level)
-{
-    set_option(COMP_SUSTAIN, COMP_POSITION, level);
-}
-
-/* level = 0 to 99, available only in digi comp */
-void set_comp_tone(int level)
-{
-    set_option(COMP_TONE, COMP_POSITION, level);
-}
-
-/* level = 0 to 99 */
-void set_comp_attack(int level)
-{
-    set_option(COMP_ATTACK, COMP_POSITION, level);
-}
-
-/* level = 0 to 99 */
-void set_comp_level(int level)
-{
-    set_option(COMP_LEVEL, COMP_POSITION, level);
 }
 
 void set_comp_type(int type)
@@ -313,11 +271,6 @@ void set_dist_type(int type)
     set_option(DIST_TYPE, DIST_POSITION, type);
 }
 
-void set_dist_option(guint32 option, int value)
-{
-    set_option(option, DIST_POSITION, value);
-}
-
 void set_dist_on_off(gboolean val)
 {
     set_option(DIST_ON_OFF, DIST_POSITION, (val == TRUE) ? 1 : 0);
@@ -334,54 +287,6 @@ void set_eq_type(int type)
     set_option(EQ_TYPE, EQ_POSITION, type);
 }
 
-/* x = 0 to 99 */
-void set_eq_gain(int x)
-{
-    set_option(AMP_GAIN, AMP_POSITION, x);
-}
-
-/* x = 0 to 99 */
-void set_eq_level(int x)
-{
-    set_option(AMP_LEVEL, AMP_POSITION, x);
-}
-
-/* x = 0x00 (-12dB) to 0x18 (12dB) */
-void set_eq_bass(int x)
-{
-    set_option(EQ_BASS, EQ_POSITION, x);
-}
-
-/* x = 0x00 (-12dB) to 0x18 (12dB) */
-void set_eq_mid(int x)
-{
-    set_option(EQ_MID, EQ_POSITION, x);
-}
-
-/*
-   x = 0 to 4700 (which transforms into 300-5000 Hz)
-   device itself will accept higher value, but X-Edit allows only 300-5000Hz
-*/
-void set_eq_mid_hz(int x)
-{
-    set_option(EQ_MID_HZ, EQ_POSITION, x);
-}
-
-/* x = 0x00 (-12dB) to 0x18 (12dB) */
-void set_eq_treble(int x)
-{
-    set_option(EQ_TREBLE, EQ_POSITION, x);
-}
-
-/*
-   x = 0 to 7500 (which transforms into 500-8000 Hz)
-   device itself will accept higher value, but X-Edit allows only 500-8000Hz
-*/
-void set_eq_treb_hz(int x)
-{
-    set_option(EQ_TREBLE_HZ, EQ_POSITION, x);
-}
-
 void set_eq_on_off(gboolean val)
 {
     set_option(EQ_ON_OFF, EQ_POSITION, (val == TRUE) ? 1 : 0);
@@ -392,20 +297,9 @@ void set_noisegate_type(int type)
     set_option(NOISEGATE_TYPE, NOISEGATE_POSITION, type);
 }
 
-/* x = 0 to 99 */
-void set_gate_option(guint32 option, int x)
-{
-    set_option(option, NOISEGATE_POSITION, x);
-}
-
 void set_noisegate_on_off(gboolean val)
 {
     set_option(NOISEGATE_ON_OFF, NOISEGATE_POSITION, (val == TRUE) ? 1 : 0);
-}
-
-void set_chorusfx_option(guint32 option, int x)
-{
-    set_option(option, CHORUSFX_POSITION, x);
 }
 
 void set_chorusfx_type(int type)
@@ -418,31 +312,14 @@ void set_chorusfx_on_off(gboolean val)
     set_option(CHORUSFX_ON_OFF, CHORUSFX_POSITION, (val == TRUE) ? 1 : 0);
 }
 
-/* x = 0 to 139 */
-void set_delay_time(int x)
-{
-    set_option(DELAY_TIME, DELAY_POSITION, x);
-}
-
 void set_delay_type(int type)
 {
     set_option(DELAY_TYPE, DELAY_POSITION, type);
 }
 
-void set_delay_option(guint32 option, int x)
-{
-    set_option(option, DELAY_POSITION, x);
-}
-
 void set_delay_on_off(gboolean val)
 {
     set_option(DELAY_ON_OFF, DELAY_POSITION, (val == TRUE) ? 1 : 0);
-}
-
-/* x = 0 to 15 (predelay), otherwise 0 to 99 */
-void set_reverb_option(guint32 option, int x)
-{
-    set_option(option, REVERB_POSITION, x);
 }
 
 void set_reverb_type(int type)

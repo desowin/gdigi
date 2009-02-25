@@ -18,11 +18,10 @@
 
 typedef struct {
     char *label;
-    void (*callback)(int);
-    void (*callback_with_option)(guint32, int);
     gdouble min;
     gdouble max;
-    guint32 option;
+    guint option;
+    guint position;
 } SettingsWidget;
 
 typedef struct {
