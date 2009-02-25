@@ -66,8 +66,9 @@ GtkWidget *create_on_off_button(const gchar *label, gboolean state, void (*callb
 }
 
 typedef struct {
-    gint id;               /* effect group ID */
-    void (*callback)(int); /* callback to call when switching to this effect group */
+    gint id;               /* effect group ID (value) */
+    gint option;           /* option ID */
+    gint position;         /* position */
     GtkWidget *child;      /* child widget */
 } EffectSettingsGroup;
 
@@ -97,8 +98,8 @@ void combo_box_changed_cb(GtkComboBox *widget, gpointer data)
         settings = g_object_get_data(G_OBJECT(widget), name);
         g_free(name);
 
-        if (settings->callback != NULL)
-            settings->callback(settings->id);
+        if (settings != NULL)
+            set_option(settings->option, settings->position, settings->id);
 
         child = g_object_get_data(G_OBJECT(widget), "active_child");
         if (child != NULL) {
@@ -138,13 +139,14 @@ GtkWidget *create_widget_container(WidgetContainer *widgets, gint amt)
 
             settings = g_malloc(sizeof(EffectSettingsGroup));
             settings->id = widgets[x].id;
-            settings->callback = widgets[x].callback;
+            settings->option = widgets[x].option;
+            settings->position = widgets[x].position;
             settings->child = widget;
 
             name = g_strdup_printf("SettingsGroup%d", cmbox_no);
             g_object_set_data_full(G_OBJECT(combo_box), name, settings, ((GDestroyNotify)effect_settings_group_free));
             g_free(name);
-        } else if (widgets[x].id == -1) {
+        } else {
             widget = create_table(widgets[x].widgets, widgets[x].widgets_amt);
             gtk_container_add(GTK_CONTAINER(vbox), widget);
         }

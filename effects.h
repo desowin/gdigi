@@ -25,9 +25,10 @@ typedef struct {
 } SettingsWidget;
 
 typedef struct {
-    gint id;
+    guint id;
     gchar *label;
-    void (*callback)(int);
+    guint option;
+    guint position;
     SettingsWidget *widgets;
     gint widgets_amt;
 } WidgetContainer;

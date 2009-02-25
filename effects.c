@@ -362,81 +362,81 @@ static SettingsWidget reverb_emt240_plate_widgets[] = {
 };
 
 static WidgetContainer wah_container[] = {
-    {WAH_TYPE_CRY, "Cry wah", set_wah_type, wah_widgets, G_N_ELEMENTS(wah_widgets)},
-    {WAH_TYPE_FULLRANGE, "Fullrange wah", set_wah_type, wah_widgets, G_N_ELEMENTS(wah_widgets)},
-    {WAH_TYPE_CLYDE, "Clyde wah", set_wah_type, wah_widgets, G_N_ELEMENTS(wah_widgets)},
+    {WAH_TYPE_CRY, "Cry wah", WAH_TYPE, WAH_POSITION, wah_widgets, G_N_ELEMENTS(wah_widgets)},
+    {WAH_TYPE_FULLRANGE, "Fullrange wah", WAH_TYPE, WAH_POSITION, wah_widgets, G_N_ELEMENTS(wah_widgets)},
+    {WAH_TYPE_CLYDE, "Clyde wah", WAH_TYPE, WAH_POSITION, wah_widgets, G_N_ELEMENTS(wah_widgets)},
 };
 
 static WidgetContainer comp_container[] = {
-    {COMP_TYPE_DIGI, "Digital compressor", set_comp_type, comp_digi_widgets, G_N_ELEMENTS(comp_digi_widgets)},
-    {COMP_TYPE_CS, "CS compressor", set_comp_type, comp_cs_widgets, G_N_ELEMENTS(comp_cs_widgets)},
+    {COMP_TYPE_DIGI, "Digital compressor", COMP_TYPE, COMP_POSITION, comp_digi_widgets, G_N_ELEMENTS(comp_digi_widgets)},
+    {COMP_TYPE_CS, "CS compressor", COMP_TYPE, COMP_POSITION, comp_cs_widgets, G_N_ELEMENTS(comp_cs_widgets)},
 };
 
 static WidgetContainer dist_container[] = {
-    {DIST_TYPE_SCREAMER, "Screamer", set_dist_type, dist_screamer_widgets, G_N_ELEMENTS(dist_screamer_widgets)},
-    {DIST_TYPE_808, "808", set_dist_type, dist_808_widgets, G_N_ELEMENTS(dist_808_widgets)},
-    {DIST_TYPE_GUYOD, "GuyOD", set_dist_type, dist_guyod_widgets, G_N_ELEMENTS(dist_guyod_widgets)},
-    {DIST_TYPE_DOD250, "DOD250", set_dist_type, dist_dod250_widgets, G_N_ELEMENTS(dist_dod250_widgets)},
-    {DIST_TYPE_RODENT, "Rodent", set_dist_type, dist_rodent_widgets, G_N_ELEMENTS(dist_rodent_widgets)},
-    {DIST_TYPE_MX, "MX", set_dist_type, dist_mx_widgets, G_N_ELEMENTS(dist_mx_widgets)},
-    {DIST_TYPE_DS, "DS", set_dist_type, dist_ds_widgets, G_N_ELEMENTS(dist_ds_widgets)},
-    {DIST_TYPE_GRUNGE, "Grunge", set_dist_type, dist_grunge_widgets, G_N_ELEMENTS(dist_grunge_widgets)},
-    {DIST_TYPE_ZONE, "Zone", set_dist_type, dist_zone_widgets, G_N_ELEMENTS(dist_zone_widgets)},
-    {DIST_TYPE_DEATH, "Death", set_dist_type, dist_death_widgets, G_N_ELEMENTS(dist_death_widgets)},
-    {DIST_TYPE_GONK, "Gonk", set_dist_type, dist_gonk_widgets, G_N_ELEMENTS(dist_gonk_widgets)},
-    {DIST_TYPE_FUZZY, "Fuzzy", set_dist_type, dist_fuzzy_widgets, G_N_ELEMENTS(dist_fuzzy_widgets)},
-    {DIST_TYPE_MP, "MP", set_dist_type, dist_mp_widgets, G_N_ELEMENTS(dist_mp_widgets)},
+    {DIST_TYPE_SCREAMER, "Screamer", DIST_TYPE, DIST_POSITION, dist_screamer_widgets, G_N_ELEMENTS(dist_screamer_widgets)},
+    {DIST_TYPE_808, "808", DIST_TYPE, DIST_POSITION, dist_808_widgets, G_N_ELEMENTS(dist_808_widgets)},
+    {DIST_TYPE_GUYOD, "GuyOD", DIST_TYPE, DIST_POSITION, dist_guyod_widgets, G_N_ELEMENTS(dist_guyod_widgets)},
+    {DIST_TYPE_DOD250, "DOD250", DIST_TYPE, DIST_POSITION, dist_dod250_widgets, G_N_ELEMENTS(dist_dod250_widgets)},
+    {DIST_TYPE_RODENT, "Rodent", DIST_TYPE, DIST_POSITION, dist_rodent_widgets, G_N_ELEMENTS(dist_rodent_widgets)},
+    {DIST_TYPE_MX, "MX", DIST_TYPE, DIST_POSITION, dist_mx_widgets, G_N_ELEMENTS(dist_mx_widgets)},
+    {DIST_TYPE_DS, "DS", DIST_TYPE, DIST_POSITION, dist_ds_widgets, G_N_ELEMENTS(dist_ds_widgets)},
+    {DIST_TYPE_GRUNGE, "Grunge", DIST_TYPE, DIST_POSITION, dist_grunge_widgets, G_N_ELEMENTS(dist_grunge_widgets)},
+    {DIST_TYPE_ZONE, "Zone", DIST_TYPE, DIST_POSITION, dist_zone_widgets, G_N_ELEMENTS(dist_zone_widgets)},
+    {DIST_TYPE_DEATH, "Death", DIST_TYPE, DIST_POSITION, dist_death_widgets, G_N_ELEMENTS(dist_death_widgets)},
+    {DIST_TYPE_GONK, "Gonk", DIST_TYPE, DIST_POSITION, dist_gonk_widgets, G_N_ELEMENTS(dist_gonk_widgets)},
+    {DIST_TYPE_FUZZY, "Fuzzy", DIST_TYPE, DIST_POSITION, dist_fuzzy_widgets, G_N_ELEMENTS(dist_fuzzy_widgets)},
+    {DIST_TYPE_MP, "MP", DIST_TYPE, DIST_POSITION, dist_mp_widgets, G_N_ELEMENTS(dist_mp_widgets)},
 };
 
 static WidgetContainer noisegate_container[] = {
-    {NOISEGATE_GATE, "Gate", set_noisegate_type, noisegate_gate_widgets, G_N_ELEMENTS(noisegate_gate_widgets)},
-    {NOISEGATE_SWELL, "Swell", set_noisegate_type, noisegate_swell_widgets, G_N_ELEMENTS(noisegate_swell_widgets)},
+    {NOISEGATE_GATE, "Gate", NOISEGATE_TYPE, NOISEGATE_POSITION, noisegate_gate_widgets, G_N_ELEMENTS(noisegate_gate_widgets)},
+    {NOISEGATE_SWELL, "Swell", NOISEGATE_TYPE, NOISEGATE_POSITION, noisegate_swell_widgets, G_N_ELEMENTS(noisegate_swell_widgets)},
 };
 
 static WidgetContainer chorusfx_container[] = {
-    {CHORUS_TYPE_CE, "CE Chorus", set_chorusfx_type, chorusfx_ce_widgets, G_N_ELEMENTS(chorusfx_ce_widgets)},
-    {CHORUS_TYPE_DUAL, "Dual Chorus", set_chorusfx_type, chorusfx_dual_widgets, G_N_ELEMENTS(chorusfx_dual_widgets)},
-    {CHORUS_TYPE_MULTI, "Multi Chorus", set_chorusfx_type, chorusfx_multi_widgets, G_N_ELEMENTS(chorusfx_multi_widgets)},
-    {CHORUS_TYPE_FLANGER, "Flanger", set_chorusfx_type, chorusfx_flanger_widgets, G_N_ELEMENTS(chorusfx_flanger_widgets)},
-    {CHORUS_TYPE_MXR_FLANGER, "MXR FLANGER", set_chorusfx_type, chorusfx_mxr_flanger_widgets, G_N_ELEMENTS(chorusfx_mxr_flanger_widgets)},
-    {CHORUS_TYPE_PHASER, "Phaser", set_chorusfx_type, chorusfx_phaser_widgets, G_N_ELEMENTS(chorusfx_phaser_widgets)},
-    {CHORUS_TYPE_VIBRATO, "Vibrato", set_chorusfx_type, chorusfx_vibrato_widgets, G_N_ELEMENTS(chorusfx_vibrato_widgets)},
-    {CHORUS_TYPE_ROTARY, "Rotary", set_chorusfx_type, chorusfx_rotary_widgets, G_N_ELEMENTS(chorusfx_rotary_widgets)},
-    {CHORUS_TYPE_VIBROPAN, "Vibropan", set_chorusfx_type, chorusfx_vibropan_widgets, G_N_ELEMENTS(chorusfx_vibropan_widgets)},
-    {CHORUS_TYPE_TREMOLO, "Tremolo", set_chorusfx_type, chorusfx_tremolo_widgets, G_N_ELEMENTS(chorusfx_tremolo_widgets)},
-    {CHORUS_TYPE_PANNER, "Panner", set_chorusfx_type, chorusfx_panner_widgets, G_N_ELEMENTS(chorusfx_panner_widgets)},
-    {CHORUS_TYPE_ENVELOPE, "Envelope", set_chorusfx_type, chorusfx_envelope_widgets, G_N_ELEMENTS(chorusfx_envelope_widgets)},
-    {CHORUS_TYPE_AUTOYA, "AutoYa", set_chorusfx_type, chorusfx_autoya_widgets, G_N_ELEMENTS(chorusfx_autoya_widgets)},
-    {CHORUS_TYPE_YAYA, "YaYa", set_chorusfx_type, chorusfx_yaya_widgets, G_N_ELEMENTS(chorusfx_yaya_widgets)},
-    {CHORUS_TYPE_STEP_FILTER, "Step Filter", set_chorusfx_type, chorusfx_step_filter_widgets, G_N_ELEMENTS(chorusfx_step_filter_widgets)},
-    {CHORUS_TYPE_WHAMMY, "Whammy", set_chorusfx_type, chorusfx_whammy_widgets, G_N_ELEMENTS(chorusfx_whammy_widgets)},
-    {CHORUS_TYPE_PITCH_SHIFT, "Pitch Shift", set_chorusfx_type, chorusfx_pitch_shift_widgets, G_N_ELEMENTS(chorusfx_pitch_shift_widgets)},
-    {CHORUS_TYPE_DETUNE, "Detune", set_chorusfx_type, chorusfx_detune_widgets, G_N_ELEMENTS(chorusfx_detune_widgets)},
-    {CHORUS_TYPE_IPS, "IPS", set_chorusfx_type, chorusfx_ips_widgets, G_N_ELEMENTS(chorusfx_ips_widgets)},
+    {CHORUS_TYPE_CE, "CE Chorus", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_ce_widgets, G_N_ELEMENTS(chorusfx_ce_widgets)},
+    {CHORUS_TYPE_DUAL, "Dual Chorus", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_dual_widgets, G_N_ELEMENTS(chorusfx_dual_widgets)},
+    {CHORUS_TYPE_MULTI, "Multi Chorus", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_multi_widgets, G_N_ELEMENTS(chorusfx_multi_widgets)},
+    {CHORUS_TYPE_FLANGER, "Flanger", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_flanger_widgets, G_N_ELEMENTS(chorusfx_flanger_widgets)},
+    {CHORUS_TYPE_MXR_FLANGER, "MXR FLANGER", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_mxr_flanger_widgets, G_N_ELEMENTS(chorusfx_mxr_flanger_widgets)},
+    {CHORUS_TYPE_PHASER, "Phaser", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_phaser_widgets, G_N_ELEMENTS(chorusfx_phaser_widgets)},
+    {CHORUS_TYPE_VIBRATO, "Vibrato", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_vibrato_widgets, G_N_ELEMENTS(chorusfx_vibrato_widgets)},
+    {CHORUS_TYPE_ROTARY, "Rotary", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_rotary_widgets, G_N_ELEMENTS(chorusfx_rotary_widgets)},
+    {CHORUS_TYPE_VIBROPAN, "Vibropan", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_vibropan_widgets, G_N_ELEMENTS(chorusfx_vibropan_widgets)},
+    {CHORUS_TYPE_TREMOLO, "Tremolo", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_tremolo_widgets, G_N_ELEMENTS(chorusfx_tremolo_widgets)},
+    {CHORUS_TYPE_PANNER, "Panner", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_panner_widgets, G_N_ELEMENTS(chorusfx_panner_widgets)},
+    {CHORUS_TYPE_ENVELOPE, "Envelope", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_envelope_widgets, G_N_ELEMENTS(chorusfx_envelope_widgets)},
+    {CHORUS_TYPE_AUTOYA, "AutoYa", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_autoya_widgets, G_N_ELEMENTS(chorusfx_autoya_widgets)},
+    {CHORUS_TYPE_YAYA, "YaYa", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_yaya_widgets, G_N_ELEMENTS(chorusfx_yaya_widgets)},
+    {CHORUS_TYPE_STEP_FILTER, "Step Filter", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_step_filter_widgets, G_N_ELEMENTS(chorusfx_step_filter_widgets)},
+    {CHORUS_TYPE_WHAMMY, "Whammy", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_whammy_widgets, G_N_ELEMENTS(chorusfx_whammy_widgets)},
+    {CHORUS_TYPE_PITCH_SHIFT, "Pitch Shift", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_pitch_shift_widgets, G_N_ELEMENTS(chorusfx_pitch_shift_widgets)},
+    {CHORUS_TYPE_DETUNE, "Detune", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_detune_widgets, G_N_ELEMENTS(chorusfx_detune_widgets)},
+    {CHORUS_TYPE_IPS, "IPS", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_ips_widgets, G_N_ELEMENTS(chorusfx_ips_widgets)},
 };
 
 static WidgetContainer delay_container[] = {
-    {DELAY_TYPE_ANALOG, "Analog", set_delay_type, delay_analog_widgets, G_N_ELEMENTS(delay_analog_widgets)},
-    {DELAY_TYPE_DIGITAL, "Digital", set_delay_type, delay_digital_widgets, G_N_ELEMENTS(delay_digital_widgets)},
-    {DELAY_TYPE_MODULATED, "Modulated", set_delay_type, delay_modulated_widgets, G_N_ELEMENTS(delay_modulated_widgets)},
-    {DELAY_TYPE_PONG, "Pong", set_delay_type, delay_pong_widgets, G_N_ELEMENTS(delay_pong_widgets)},
-    {DELAY_TYPE_TAPE, "Tape", set_delay_type, delay_tape_widgets, G_N_ELEMENTS(delay_tape_widgets)},
+    {DELAY_TYPE_ANALOG, "Analog", DELAY_TYPE, DELAY_POSITION, delay_analog_widgets, G_N_ELEMENTS(delay_analog_widgets)},
+    {DELAY_TYPE_DIGITAL, "Digital", DELAY_TYPE, DELAY_POSITION, delay_digital_widgets, G_N_ELEMENTS(delay_digital_widgets)},
+    {DELAY_TYPE_MODULATED, "Modulated", DELAY_TYPE, DELAY_POSITION, delay_modulated_widgets, G_N_ELEMENTS(delay_modulated_widgets)},
+    {DELAY_TYPE_PONG, "Pong", DELAY_TYPE, DELAY_POSITION, delay_pong_widgets, G_N_ELEMENTS(delay_pong_widgets)},
+    {DELAY_TYPE_TAPE, "Tape", DELAY_TYPE, DELAY_POSITION, delay_tape_widgets, G_N_ELEMENTS(delay_tape_widgets)},
 };
 
 static WidgetContainer reverb_container[] = {
-    {REVERB_TYPE_TWIN, "Twin", set_reverb_type, reverb_twin_widgets, G_N_ELEMENTS(reverb_twin_widgets)},
-    {REVERB_TYPE_LEX_AMBIENCE, "Lexicon ambience", set_reverb_type, reverb_lex_ambience_widgets, G_N_ELEMENTS(reverb_lex_ambience_widgets)},
-    {REVERB_TYPE_LEX_STUDIO, "Lexicon studio", set_reverb_type, reverb_lex_studio_widgets, G_N_ELEMENTS(reverb_lex_studio_widgets)},
-    {REVERB_TYPE_LEX_ROOM, "Lexicon room", set_reverb_type, reverb_lex_room_widgets, G_N_ELEMENTS(reverb_lex_room_widgets)},
-    {REVERB_TYPE_LEX_HALL, "Lexicon hall", set_reverb_type, reverb_lex_hall_widgets, G_N_ELEMENTS(reverb_lex_hall_widgets)},
-    {REVERB_TYPE_EMT240_PLATE, "EMT240 Plate", set_reverb_type, reverb_emt240_plate_widgets, G_N_ELEMENTS(reverb_emt240_plate_widgets)},
+    {REVERB_TYPE_TWIN, "Twin", REVERB_TYPE, REVERB_POSITION, reverb_twin_widgets, G_N_ELEMENTS(reverb_twin_widgets)},
+    {REVERB_TYPE_LEX_AMBIENCE, "Lexicon ambience", REVERB_TYPE, REVERB_POSITION, reverb_lex_ambience_widgets, G_N_ELEMENTS(reverb_lex_ambience_widgets)},
+    {REVERB_TYPE_LEX_STUDIO, "Lexicon studio", REVERB_TYPE, REVERB_POSITION, reverb_lex_studio_widgets, G_N_ELEMENTS(reverb_lex_studio_widgets)},
+    {REVERB_TYPE_LEX_ROOM, "Lexicon room", REVERB_TYPE, REVERB_POSITION, reverb_lex_room_widgets, G_N_ELEMENTS(reverb_lex_room_widgets)},
+    {REVERB_TYPE_LEX_HALL, "Lexicon hall", REVERB_TYPE, REVERB_POSITION, reverb_lex_hall_widgets, G_N_ELEMENTS(reverb_lex_hall_widgets)},
+    {REVERB_TYPE_EMT240_PLATE, "EMT240 Plate", REVERB_TYPE, REVERB_POSITION, reverb_emt240_plate_widgets, G_N_ELEMENTS(reverb_emt240_plate_widgets)},
 };
 
 static WidgetContainer eq_container[] = {
-    {EQ_TYPE_BRIGHT, "Bright", set_eq_type, eq_widgets, G_N_ELEMENTS(eq_widgets)},
-    {EQ_TYPE_MIDBOOST, "Mid Boost", set_eq_type, eq_widgets, G_N_ELEMENTS(eq_widgets)},
-    {EQ_TYPE_SCOOP, "Scoop", set_eq_type, eq_widgets, G_N_ELEMENTS(eq_widgets)},
-    {EQ_TYPE_WARM, "Warm", set_eq_type, eq_widgets, G_N_ELEMENTS(eq_widgets)},
+    {EQ_TYPE_BRIGHT, "Bright", EQ_TYPE, EQ_POSITION, eq_widgets, G_N_ELEMENTS(eq_widgets)},
+    {EQ_TYPE_MIDBOOST, "Mid Boost", EQ_TYPE, EQ_POSITION, eq_widgets, G_N_ELEMENTS(eq_widgets)},
+    {EQ_TYPE_SCOOP, "Scoop", EQ_TYPE, EQ_POSITION, eq_widgets, G_N_ELEMENTS(eq_widgets)},
+    {EQ_TYPE_WARM, "Warm", EQ_TYPE, EQ_POSITION, eq_widgets, G_N_ELEMENTS(eq_widgets)},
 };
 
 static VBoxWidget wah_vbox[] = {

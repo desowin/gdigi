@@ -7,3 +7,4 @@
 -handling presets (loading, saving, exporting/importing to/from xml patches)
 -buildsystem
 -figure out how to get current device settings, start gui with proper values
+-fix expression pedal settings (possible types depend on active preset)
