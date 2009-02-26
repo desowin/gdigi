@@ -23,6 +23,7 @@
 #include "gui.h"
 
 static snd_rawmidi_t *output;
+static snd_rawmidi_t *input;
 static char *device = "hw:1,0,0";
 
 /*
@@ -54,7 +55,7 @@ gboolean open_device()
 {
     int err;
 
-    err = snd_rawmidi_open(NULL, &output, device, SND_RAWMIDI_NONBLOCK);
+    err = snd_rawmidi_open(&input, &output, device, SND_RAWMIDI_NONBLOCK);
     if (err) {
         fprintf(stderr, "snd_rawmidi_open %s failed: %d\n", device, err);
         return TRUE;
@@ -65,6 +66,9 @@ gboolean open_device()
         fprintf(stderr, "snd_rawmidi_nonblock failed: %d\n", err);
         return TRUE;
     }
+
+    snd_rawmidi_read(input, NULL, 0); /* trigger reading */
+
     return FALSE;
 }
 
@@ -74,6 +78,66 @@ void send_data(char *data, int length)
         open_device();
 
     snd_rawmidi_write(output, data, length);
+    snd_rawmidi_drain(output);
+}
+
+GString* read_data()
+{
+    /* This is mostly taken straight from alsa-utils-1.0.19 amidi/amidi.c
+       by Clemens Ladisch <clemens@ladisch.de> */
+    int err;
+    int npfds;
+    struct pollfd *pfds;
+    GString *string = NULL;
+
+    npfds = snd_rawmidi_poll_descriptors_count(input);
+    pfds = alloca(npfds * sizeof(struct pollfd));
+    snd_rawmidi_poll_descriptors(input, pfds, npfds);
+
+    for (;;) {
+        char buf[20];
+        int i, length;
+        unsigned short revents;
+
+        err = poll(pfds, npfds, 200);
+        if (err < 0 && errno == EINTR)
+            break;
+        if (err < 0) {
+            g_error("poll failed: %s", strerror(errno));
+            break;
+        }
+        if (err == 0) {
+            break;
+        }
+        if ((err = snd_rawmidi_poll_descriptors_revents(input, pfds, npfds, &revents)) < 0) {
+            g_error("cannot get poll events: %s", snd_strerror(errno));
+            break;
+        }
+        if (revents & (POLLERR | POLLHUP))
+            break;
+        if (!(revents & POLLIN))
+            continue;
+        err = snd_rawmidi_read(input, buf, sizeof(buf));
+        if (err == -EAGAIN)
+            continue;
+        if (err < 0) {
+            g_error("cannot read: %s", snd_strerror(err));
+            break;
+        }
+        length = 0;
+        for (i = 0; i < err; ++i)
+            if (buf[i] != 0xfe) // ignore active sensing
+                buf[length++] = buf[i];
+        if (length == 0)
+            continue;
+
+        if (string == NULL) {
+            string = g_string_new_len(buf, length);
+        } else {
+            string = g_string_append_len(string, buf, length);
+        }
+     }
+     return string;
 }
 
 /*
@@ -207,6 +271,63 @@ void set_preset_name(int x, gchar *name)
     send_data(set_name, 13+a+3+b);
 }
 
+void query_user_presets()
+{
+    GString *data = NULL;
+    int x;                /* used to iterate over whole reply */
+    int n = 0;            /* current preset number */
+    int n_total;          /* total number of presets */
+
+    /* clear MIDI IN buffer */
+    data = read_data();
+    if (data != NULL)
+        g_string_free(data, TRUE);
+
+    /* query user preset names */
+    char command[] = {0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x21, 0x00, 0x01, 0x6C, 0xF7};
+    send_data(command, sizeof(command));
+
+    /* read reply */
+    data = read_data();
+
+    if (data != NULL) {
+        char preset_reply_magic[] = {0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x22, 0x00, 0x01};
+        if (strncmp(data->str, preset_reply_magic, sizeof(preset_reply_magic)) == 0) {
+            char buf[10]; /* temporary, used to read single preset name */
+            int b = 0;    /* used to iterate over buf */
+
+            if (data->len >= 10) {
+                n_total = data->str[10];
+                printf("Read %d presets\n", n_total);
+            }
+
+            for (x=11; x<data->len; x++) {
+                if ((x % 8) == 0) // every 8th byte is 0x00
+                    continue;
+
+                if (data->str[x] == 0xF7) // every message ends with 0xF7
+                    break;
+
+                if (data->str[x] == 0) { // presets are splitted with 0x00
+                    gchar *name = g_strndup(buf, b);
+                    printf("%d: %s\n", n, name);
+                    g_free(name);
+                    b = 0;
+                    n++;
+                } else {
+                    if (b < 10) {
+                        buf[b] = data->str[x];
+                        b++;
+                    } else {
+                        g_message("Preset name seems to be longer than 10 chars!");
+                    }
+                }
+            }
+        }
+        g_string_free(data, TRUE);
+    }
+}
+
 int main(int argc, char *argv[]) {
     gtk_init(&argc, &argv);
 
@@ -245,6 +366,8 @@ int main(int argc, char *argv[]) {
 
     if (output != NULL)
         snd_rawmidi_close(output);
+    if (input != NULL)
+        snd_rawmidi_close(input);
 
     return 0;
 }
