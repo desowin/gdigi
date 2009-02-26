@@ -14,6 +14,9 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses>.
  */
 
+#ifndef GDIGI_TESTS_H
+#define GDIGI_TESTS_H
+
 #include "gdigi.h"
 
 void test_wah();
@@ -29,3 +32,5 @@ void test_reverb();
 void test_exp();
 void test_usb();
 void test_all();
+
+#endif /* GDIGI_TESTS_H */

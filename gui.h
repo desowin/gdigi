@@ -14,4 +14,9 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses>.
  */
 
+#ifndef GDIGI_GUI_H
+#define GDIGI_GUI_H
+
 void create_window();
+
+#endif /* GDIGI_GUI_H */

@@ -14,6 +14,9 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses>.
  */
 
+#ifndef GDIGI_EFFECTS_H
+#define GDIGI_EFFECTS_H
+
 #include <glib/gtypes.h>
 
 typedef struct {
@@ -45,3 +48,5 @@ typedef struct {
     Effect *effect; /* list of supported effects */
     gint amt;       /* list of supported effects length */
 } EffectList;
+
+#endif /* GDIGI_EFFECTS_H */

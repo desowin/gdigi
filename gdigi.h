@@ -14,6 +14,9 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses>.
  */
 
+#ifndef GDIGI_H
+#define GDIGI_H
+
 #include <glib.h>
 
 enum {
@@ -462,3 +465,5 @@ void set_option(guint id, guint position, guint value);
 void switch_user_preset(int x);
 void switch_system_preset(int x);
 void set_preset_level(int level);
+
+#endif /* GDIGI_H */
