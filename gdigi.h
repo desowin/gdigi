@@ -461,9 +461,15 @@ enum {
 #define USB_AUDIO_PLAYBACK_MIX 12297
 #define USB_AUDIO_LEVEL 12307
 
+typedef enum {
+  PRESETS_SYSTEM = 0,
+  PRESETS_USER = 1
+} PresetBank;
+
 void set_option(guint id, guint position, guint value);
 void switch_user_preset(int x);
 void switch_system_preset(int x);
 void set_preset_level(int level);
+GStrv query_preset_names(PresetBank bank);
 
 #endif /* GDIGI_H */

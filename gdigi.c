@@ -18,12 +18,12 @@
 #include <gtk/gtk.h>
 #include <getopt.h>
 #include <alsa/asoundlib.h>
-#include <string.h>
+#include <alloca.h>
 #include "gdigi.h"
 #include "gui.h"
 
-static snd_rawmidi_t *output;
-static snd_rawmidi_t *input;
+static snd_rawmidi_t *output = NULL;
+static snd_rawmidi_t *input = NULL;
 static char *device = "hw:1,0,0";
 
 /*
@@ -81,6 +81,11 @@ void send_data(char *data, int length)
     snd_rawmidi_drain(output);
 }
 
+/*
+   reads data from MIDI IN
+   returns GString containing data
+   if no data was read it returns NULL
+*/
 GString* read_data()
 {
     /* This is mostly taken straight from alsa-utils-1.0.19 amidi/amidi.c
@@ -94,7 +99,7 @@ GString* read_data()
     pfds = alloca(npfds * sizeof(struct pollfd));
     snd_rawmidi_poll_descriptors(input, pfds, npfds);
 
-    for (;;) {
+    do {
         char buf[20];
         int i, length;
         unsigned short revents;
@@ -104,9 +109,6 @@ GString* read_data()
             break;
         if (err < 0) {
             g_error("poll failed: %s", strerror(errno));
-            break;
-        }
-        if (err == 0) {
             break;
         }
         if ((err = snd_rawmidi_poll_descriptors_revents(input, pfds, npfds, &revents)) < 0) {
@@ -126,17 +128,18 @@ GString* read_data()
         }
         length = 0;
         for (i = 0; i < err; ++i)
-            if (buf[i] != 0xfe) // ignore active sensing
+            if (buf[i] != 0xFE) // ignore active sensing
                 buf[length++] = buf[i];
-        if (length == 0)
-            continue;
 
-        if (string == NULL) {
-            string = g_string_new_len(buf, length);
-        } else {
-            string = g_string_append_len(string, buf, length);
+        if (length != 0) {
+            if (string == NULL) {
+                string = g_string_new_len(buf, length);
+            } else {
+                string = g_string_append_len(string, buf, length);
+            }
         }
-     }
+     } while (err != 0);
+
      return string;
 }
 
@@ -271,12 +274,19 @@ void set_preset_name(int x, gchar *name)
     send_data(set_name, 13+a+3+b);
 }
 
-void query_user_presets()
+/*
+    Queries user preset names
+    Valid bank values are PRESETS_SYSTEM and PRESETS_USER
+    Returns GStrv which must be freed with g_strfreev
+    Returns NULL on error
+*/
+GStrv query_preset_names(PresetBank bank)
 {
     GString *data = NULL;
-    int x;                /* used to iterate over whole reply */
-    int n = 0;            /* current preset number */
-    int n_total;          /* total number of presets */
+    int x;                    /* used to iterate over whole reply */
+    int n = 0;                /* current preset number */
+    int n_total;              /* total number of presets */
+    gchar **str_array = NULL;
 
     /* clear MIDI IN buffer */
     data = read_data();
@@ -284,7 +294,9 @@ void query_user_presets()
         g_string_free(data, TRUE);
 
     /* query user preset names */
-    char command[] = {0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x21, 0x00, 0x01, 0x6C, 0xF7};
+    char command[] = {0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x21, 0x00, 0x00 /* bank */, 0x00 /* checksum */, 0xF7};
+    command[9] = bank;
+    command[10] = calculate_checksum(command, sizeof(command), 10);
     send_data(command, sizeof(command));
 
     /* read reply */
@@ -298,7 +310,8 @@ void query_user_presets()
 
             if (data->len >= 10) {
                 n_total = data->str[10];
-                printf("Read %d presets\n", n_total);
+                str_array = g_new(gchar*, n_total + 1);
+                str_array[n_total] = NULL;
             }
 
             for (x=11; x<data->len; x++) {
@@ -309,9 +322,14 @@ void query_user_presets()
                     break;
 
                 if (data->str[x] == 0) { // presets are splitted with 0x00
-                    gchar *name = g_strndup(buf, b);
-                    printf("%d: %s\n", n, name);
-                    g_free(name);
+                    gchar *name;
+
+                    name = g_new(gchar, b+1);
+                    strncpy(name, buf, b);
+                    name[b] = 0;
+                    if (n < n_total)
+                        str_array[n] = name;
+
                     b = 0;
                     n++;
                 } else {
@@ -326,6 +344,7 @@ void query_user_presets()
         }
         g_string_free(data, TRUE);
     }
+    return str_array;
 }
 
 int main(int argc, char *argv[]) {
