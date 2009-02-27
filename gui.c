@@ -282,7 +282,7 @@ void create_window()
     gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 2);
 
     for (x = 0; x<n_effects; x++) {
-        if ((x % 2) == 0) {
+        if ((x % 3) == 0) {
             hbox = gtk_hbox_new(TRUE, 0);
             gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 2);
         }

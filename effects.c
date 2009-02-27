@@ -116,9 +116,16 @@ static EffectSettings dist_mp_settings[] = {
     {"MP volume", 0.0, 99.0, DIST_MP_VOLUME, DIST_POSITION},
 };
 
+static EffectSettings amp_settings[] = {
+    {"AMP gain", 0.0, 99.0, AMP_GAIN, AMP_POSITION},
+    {"AMP level", 0.0, 99.0, AMP_LEVEL, AMP_POSITION},
+};
+
+static EffectSettings amp_settings2[] = {
+    {"AMP level", 0.0, 99.0, AMP_LEVEL, AMP_POSITION},
+};
+
 static EffectSettings eq_settings[] = {
-    {"EQ gain", 0.0, 99.0, AMP_GAIN, AMP_POSITION},
-    {"EQ level", 0.0, 99.0, AMP_LEVEL, AMP_POSITION},
     // TODO: make those display propertly (display range -12 to 12)
     {"EQ bass", 0.0, 24.0, EQ_BASS, EQ_POSITION},
     {"EQ mid", 0.0, 24.0, EQ_MID, EQ_POSITION},
@@ -432,6 +439,31 @@ static EffectGroup reverb_group[] = {
     {REVERB_TYPE_EMT240_PLATE, "EMT240 Plate", REVERB_TYPE, REVERB_POSITION, reverb_emt240_plate_settings, G_N_ELEMENTS(reverb_emt240_plate_settings)},
 };
 
+static EffectGroup amp_group[] = {
+    {AMP_TYPE_TWEED_CHAMP, "Tweed Champ", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
+    {AMP_TYPE_TWEED_DELUXE, "Tweed Deluxe", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
+    {AMP_TYPE_TWEED_BASSMAN, "Tweed Bassman", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
+    {AMP_TYPE_BLACKFACE_TWIN, "Blackface Twin", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
+    {AMP_TYPE_BLACKFACE_DELUXE, "Blackface Deluxe", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
+    {AMP_TYPE_SUPER_LEAD_PLEXI, "Super Lead Plexi", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
+    {AMP_TYPE_MASTER_VOLUME, "Master Volume", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
+    {AMP_TYPE_JCM800, "JCM800", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
+    {AMP_TYPE_JCM900, "JCM900", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
+    {AMP_TYPE_AC15, "AC15", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
+    {AMP_TYPE_AC30TB, "AC30TB", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
+    {AMP_TYPE_HIWATT_100, "Hiwatt 100", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
+    {AMP_TYPE_BOOGIE_MARK_II, "Boogie Mark II", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
+    {AMP_TYPE_DUAL_RECTIFIER, "Dual Rectifier", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
+    {AMP_TYPE_MATCHLESS_HC30, "Matchless HC30", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
+    {AMP_TYPE_SOLO, "Solo", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
+    {AMP_TYPE_METAL, "Metal", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
+    {AMP_TYPE_BRIGHT, "Bright", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
+    {AMP_TYPE_CLEAN, "Clean", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
+    {AMP_TYPE_HIGH_GAIN, "High Gain", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
+    {AMP_TYPE_ACOUSTIC, "Acoustic", AMP_TYPE, AMP_POSITION, amp_settings2, G_N_ELEMENTS(amp_settings2)},
+    {AMP_TYPE_DIRECT, "Direct", AMP_TYPE, AMP_POSITION, amp_settings2, G_N_ELEMENTS(amp_settings2)},
+};
+
 static EffectGroup eq_group[] = {
     {EQ_TYPE_BRIGHT, "Bright", EQ_TYPE, EQ_POSITION, eq_settings, G_N_ELEMENTS(eq_settings)},
     {EQ_TYPE_MIDBOOST, "Mid Boost", EQ_TYPE, EQ_POSITION, eq_settings, G_N_ELEMENTS(eq_settings)},
@@ -467,12 +499,17 @@ static Effect reverb_effect[] = {
     {"Reverb", REVERB_ON_OFF, REVERB_POSITION, reverb_group, G_N_ELEMENTS(reverb_group)},
 };
 
+static Effect amp_effect[] = {
+    {"Amp", AMP_ON_OFF, AMP_POSITION, amp_group, G_N_ELEMENTS(amp_group)},
+};
+
 static Effect eq_effect[] = {
     {"EQ", EQ_ON_OFF, EQ_POSITION, eq_group, G_N_ELEMENTS(eq_group)},
 };
 
 EffectList effects[] = {
     {wah_effect, G_N_ELEMENTS(wah_effect)},
+    {amp_effect, G_N_ELEMENTS(amp_effect)},
     {eq_effect, G_N_ELEMENTS(eq_effect)},
     {comp_effect, G_N_ELEMENTS(comp_effect)},
     {dist_effect, G_N_ELEMENTS(dist_effect)},
