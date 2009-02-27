@@ -18,6 +18,7 @@
 #define GDIGI_H
 
 #include <glib.h>
+#include <glib-object.h>
 
 enum {
   WAH_TYPE_CRY = 132,

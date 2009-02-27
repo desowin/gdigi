@@ -347,28 +347,26 @@ GStrv query_preset_names(PresetBank bank)
     return str_array;
 }
 
+static GOptionEntry options[] = {
+    {"device", 'd', G_OPTION_FLAG_IN_MAIN, G_OPTION_ARG_STRING, &device, "MIDI device port to use", NULL},
+    {NULL}
+};
+
 int main(int argc, char *argv[]) {
-    gtk_init(&argc, &argv);
+    GError *error = NULL;
+    GOptionContext *context;
+    context = g_option_context_new(NULL);
+    g_option_context_add_main_entries(context, options, NULL);
+    g_option_context_add_group(context, gtk_get_option_group(TRUE));
 
-    int c;
-    while (1) {
-        static struct option long_options[] = {
-            {"device", required_argument, 0, 'd'},
-            {0, 0, 0, 0}
-        };
-        int option_index = 0;
-        c = getopt_long(argc, argv, "d:", long_options, &option_index);
-        if (c == -1)
-            break;
-
-        switch(c) {
-            case 'd':
-                device = optarg;
-                break;
-            default:
-                abort();
-        }
+    if (!g_option_context_parse(context, &argc, &argv, &error)) {
+        g_message("option parsing failed: %s\n", error->message);
+        g_error_free(error);
+        g_option_context_free(context);
+        exit(EXIT_FAILURE);
     }
+
+    g_option_context_free(context);
 
     if (open_device() == TRUE) {
         GtkWidget *msg = gtk_message_dialog_new(NULL, GTK_DIALOG_MODAL,
@@ -388,5 +386,5 @@ int main(int argc, char *argv[]) {
     if (input != NULL)
         snd_rawmidi_close(input);
 
-    return 0;
+    return EXIT_SUCCESS;
 }
