@@ -218,21 +218,11 @@ void set_option(guint id, guint position, guint value)
 }
 
 /* x = 0 to 60 */
-void switch_user_preset(int x)
+void switch_preset(guint bank, guint x)
 {
-    static char switch_preset[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x39, 0x00, 0x01 /* bank = user */, 0x00 /* no */, 0x04, 0x00, 0x00, 0x01, 0x00 /* confirm */, 0xF7};
+    static char switch_preset[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x39, 0x00, 0x00 /* bank */, 0x00 /* no */, 0x04, 0x00, 0x00, 0x01, 0x00 /* confirm */, 0xF7};
 
-    switch_preset[11] = x;
-    switch_preset[16] = calculate_checksum(switch_preset, sizeof(switch_preset), 16);
-
-    send_data(switch_preset, sizeof(switch_preset));
-}
-
-/* x = 0 to 60 */
-void switch_system_preset(int x)
-{
-    static char switch_preset[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x39, 0x00, 0x00 /* bank = system */, 0x00 /* no */, 0x04, 0x00, 0x00, 0x01, 0x00 /* confirm */, 0xF7};
-
+    switch_preset[10] = bank;
     switch_preset[11] = x;
     switch_preset[16] = calculate_checksum(switch_preset, sizeof(switch_preset), 16);
 
@@ -280,7 +270,7 @@ void set_preset_name(int x, gchar *name)
     Returns GStrv which must be freed with g_strfreev
     Returns NULL on error
 */
-GStrv query_preset_names(PresetBank bank)
+GStrv query_preset_names(guint bank)
 {
     GString *data = NULL;
     int x;                    /* used to iterate over whole reply */

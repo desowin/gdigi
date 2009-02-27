@@ -206,10 +206,10 @@ void test_presets()
     int x;
 
     for (x=0; x<=60; x++)
-        switch_user_preset(x);
+        switch_preset(PRESETS_USER, x);
 
     for (x=0; x<=60; x++)
-        switch_system_preset(x);
+        switch_preset(PRESETS_SYSTEM, x);
 
     for (x=0; x<=99; x++)
         set_preset_level(x);

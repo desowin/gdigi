@@ -182,18 +182,104 @@ GtkWidget *create_vbox(Effect *widgets, gint amt)
     return vbox;
 }
 
+enum {
+  PRESET_NAME_COLUMN = 0,
+  PRESET_NUMBER_COLUMN,
+  PRESET_BANK_COLUMN,
+  NUM_COLUMNS
+};
+
+void row_activate_cb(GtkTreeView *treeview, GtkTreePath *path, GtkTreeViewColumn *column, GtkTreeModel *model) {
+    GtkTreeIter iter;
+    gint id;
+    gint bank;
+
+    gtk_tree_model_get_iter(model, &iter, path);
+    gtk_tree_model_get(model, &iter, PRESET_NUMBER_COLUMN, &id, PRESET_BANK_COLUMN, &bank, -1);
+
+    if ((bank != -1) && (id != -1))
+        switch_preset(bank, id);
+}
+
+static void fill_store_with_presets(GtkTreeStore *model, guint bank, gchar *name)
+{
+    GtkTreeIter iter;
+    GtkTreeIter child_iter;
+    int x;
+
+    GStrv presets = query_preset_names(bank);
+    gtk_tree_store_append(model, &iter, NULL);
+    gtk_tree_store_set(model, &iter,
+                       PRESET_NAME_COLUMN, name,
+                       PRESET_NUMBER_COLUMN, -1,
+                       PRESET_BANK_COLUMN, -1,
+                       -1);
+
+    for (x=0; x<g_strv_length(presets); x++) {
+        gtk_tree_store_append(model, &child_iter, &iter);
+        gtk_tree_store_set(model, &child_iter,
+                           PRESET_NAME_COLUMN, presets[x],
+                           PRESET_NUMBER_COLUMN, x,
+                           PRESET_BANK_COLUMN, bank,
+                           -1);
+    }
+    g_strfreev(presets);
+}
+
+static void fill_store(GtkTreeStore *model)
+{
+    fill_store_with_presets(model, PRESETS_USER, "User Presets");
+    fill_store_with_presets(model, PRESETS_SYSTEM, "System Presets");
+}
+
+GtkWidget *create_preset_tree()
+{
+    GtkWidget *treeview;
+    GtkTreeStore *store;
+    GtkCellRenderer *renderer;
+
+    store = gtk_tree_store_new(NUM_COLUMNS, G_TYPE_STRING, G_TYPE_INT, G_TYPE_INT);
+    fill_store(store);
+
+    treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
+    g_object_unref(store);
+
+    renderer = gtk_cell_renderer_text_new();
+    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview),
+                                                -1, "Preset name",
+                                                renderer, "text",
+                                                PRESET_NAME_COLUMN, NULL);
+
+    g_object_set(G_OBJECT(treeview), "headers-visible", FALSE, NULL);
+    g_signal_connect(G_OBJECT(treeview), "realize", G_CALLBACK(gtk_tree_view_expand_all), NULL);
+    g_signal_connect(G_OBJECT(treeview), "row-activated", G_CALLBACK(row_activate_cb), GTK_TREE_MODEL(store));
+
+    return treeview;
+}
+
 void create_window()
 {
     GtkWidget *window;
     GtkWidget *vbox;
     GtkWidget *hbox;
     GtkWidget *widget;
+    GtkWidget *sw;     /* scrolled window to carry preset treeview */
     gint x;
 
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
+    hbox = gtk_hbox_new(FALSE, 0);
+    gtk_container_add(GTK_CONTAINER(window), hbox);
+
+    sw = gtk_scrolled_window_new(NULL, NULL);
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+    gtk_box_pack_start(GTK_BOX(hbox), sw, FALSE, FALSE, 0);
+
+    widget = create_preset_tree();
+    gtk_container_add(GTK_CONTAINER(sw), widget);
+
     vbox = gtk_vbox_new(FALSE, 0);
-    gtk_container_add(GTK_CONTAINER(window), vbox);
+    gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 2);
 
     for (x = 0; x<n_effects; x++) {
         if ((x % 2) == 0) {
