@@ -496,7 +496,7 @@ typedef enum {
 
 void set_option(guint id, guint position, guint value);
 void switch_preset(guint bank, guint x);
-void store_preset_name(int x, gchar *name);
+void store_preset_name(int x, const gchar *name);
 void set_preset_level(int level);
 GStrv query_preset_names(PresetBank bank);
 

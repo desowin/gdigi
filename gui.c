@@ -258,6 +258,59 @@ GtkWidget *create_preset_tree()
     return treeview;
 }
 
+static void show_store_preset_window(GtkWidget *window, gchar *default_name)
+{
+    GtkWidget *dialog, *cmbox, *entry, *table, *label;
+    GStrv names;
+    int x;
+
+    dialog = gtk_dialog_new_with_buttons("Store preset",
+                                         GTK_WINDOW(window),
+                                         GTK_DIALOG_DESTROY_WITH_PARENT,
+                                         GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                                         GTK_STOCK_OK, GTK_RESPONSE_ACCEPT,
+                                         NULL);
+
+    table = gtk_table_new(2, 2, FALSE);
+    gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), table);
+
+    cmbox = gtk_combo_box_new_text();
+    names = query_preset_names(PRESETS_USER);
+    for (x=0; x<g_strv_length(names); x++) {
+        gchar *title = g_strdup_printf("%d - %s", x+1, names[x]);
+        gtk_combo_box_append_text(GTK_COMBO_BOX(cmbox), title);
+        g_free(title);
+    }
+    g_strfreev(names);
+    gtk_table_attach_defaults(GTK_TABLE(table), cmbox, 1, 2, 0, 1);
+
+    entry = gtk_entry_new();
+    if (default_name != NULL)
+        gtk_entry_set_text(GTK_ENTRY(entry), default_name);
+    gtk_table_attach_defaults(GTK_TABLE(table), entry, 1, 2, 1, 2);
+
+    label = gtk_label_new("Preset slot:");
+    gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 0, 1);
+
+    label = gtk_label_new("Preset name:");
+    gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 1, 2);
+
+    gtk_widget_show_all(GTK_DIALOG(dialog)->vbox);
+    if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
+        gint number = gtk_combo_box_get_active(GTK_COMBO_BOX(cmbox));
+        if (number != -1) {
+            store_preset_name(number, gtk_entry_get_text(GTK_ENTRY(entry)));
+        }
+    }
+
+    gtk_widget_destroy(dialog);
+}
+static void action_store_cb(GtkAction *action)
+{
+    GtkWidget *window = g_object_get_data(G_OBJECT(action), "window");
+    show_store_preset_window(window, NULL);
+}
+
 static void action_show_about_dialog_cb(GtkAction *action)
 {
     static const gchar * const authors[] = {
@@ -326,6 +379,21 @@ static void action_open_preset_cb(GtkAction *action)
         gchar *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
         Preset *preset = create_preset_from_xml_file(filename);
         if (preset != NULL) {
+            gtk_widget_hide(dialog);
+
+            GList *iter = preset->params;
+            while (iter) {
+                SettingParam *param = iter->data;
+                iter = iter->next;
+
+                /* sending those is likely to freeze/reboot device */
+                if ((param->id == 8704) || (param->id == 8705))
+                    continue;
+
+                set_option(param->id, param->position, param->value);
+            };
+            show_store_preset_window(window, preset->name);
+
             preset_free(preset);
             loaded = TRUE;
         }
@@ -347,9 +415,11 @@ static void action_quit_cb(GtkAction *action)
 
 static GtkActionEntry entries[] = {
     {"File", NULL, "_File"},
+    {"Preset", NULL, "_Preset"},
     {"Help", NULL, "_Help"},
     {"Open", GTK_STOCK_OPEN, "_Open", "<control>O", "Open preset file", G_CALLBACK(action_open_preset_cb)},
     {"Quit", GTK_STOCK_QUIT, "_Quit", "<control>Q", "Quit", G_CALLBACK(action_quit_cb)},
+    {"Store", NULL, "_Store", "<control>S", "Store", G_CALLBACK(action_store_cb)},
     {"About", GTK_STOCK_ABOUT, "_About", "<control>A", "About", G_CALLBACK(action_show_about_dialog_cb)},
 };
 static guint n_entries = G_N_ELEMENTS(entries);
@@ -361,6 +431,9 @@ static const gchar *menu_info =
 "   <menuitem action='Open'/>"
 "   <separator/>"
 "   <menuitem action='Quit'/>"
+"  </menu>"
+"  <menu action='Preset'>"
+"   <menuitem action='Store'/>"
 "  </menu>"
 "  <menu action='Help'>"
 "   <menuitem action='About'/>"
@@ -396,6 +469,9 @@ static void add_menubar(GtkWidget *window, GtkWidget *vbox)
     g_object_set_data(G_OBJECT(action), "window", window);
 
     action = gtk_ui_manager_get_action(ui, "/MenuBar/File/Open");
+    g_object_set_data(G_OBJECT(action), "window", window);
+
+    action = gtk_ui_manager_get_action(ui, "/MenuBar/Preset/Store");
     g_object_set_data(G_OBJECT(action), "window", window);
 
     action = gtk_ui_manager_get_action(ui, "/MenuBar/Help/About");
