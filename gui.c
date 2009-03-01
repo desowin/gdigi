@@ -23,6 +23,16 @@
 extern EffectList effects[];
 extern int n_effects;
 
+typedef struct {
+    GtkWidget *widget;
+    gint id;
+    gint position;
+
+    /* used for combo boxes, if widget isn't combo box, then both value and x are -1 */
+    gint value;           /* effect type value */
+    gint x;               /* combo box item number */
+} WidgetListElem;
+
 void value_changed_option_cb(GtkSpinButton *spinbutton, EffectSettings *setting)
 {
     g_return_if_fail(setting != NULL);
@@ -39,7 +49,21 @@ void toggled_cb(GtkToggleButton *button, Effect *effect)
     set_option(effect->option, effect->position, val);
 }
 
-GtkWidget *create_table(EffectSettings *settings, gint amt)
+static void widget_list_add(GList **list, GtkWidget *widget, gint id, gint position, gint value, gint x)
+{
+    WidgetListElem *el;
+
+    el = g_malloc(sizeof(WidgetListElem));
+    el->widget = widget;
+    el->id = id;
+    el->position = position;
+    el->value = value;
+    el->x = x;
+
+    *list = g_list_prepend(*list, el);
+}
+
+GtkWidget *create_table(GList **list, EffectSettings *settings, gint amt)
 {
     GtkWidget *table, *label, *widget;
     GtkObject *adj;
@@ -52,7 +76,7 @@ GtkWidget *create_table(EffectSettings *settings, gint amt)
         adj = gtk_adjustment_new(0.0, settings[x].min, settings[x].max, 1.0, 1.0, 1.0);
         widget = gtk_spin_button_new(GTK_ADJUSTMENT(adj), 1.0, 0);
         g_signal_connect(G_OBJECT(widget), "value-changed", G_CALLBACK(value_changed_option_cb), &settings[x]);
-
+        widget_list_add(list, widget, settings[x].option, settings[x].position, -1, -1);
         gtk_table_attach(GTK_TABLE(table), label, 0, 1, x, x+1, GTK_SHRINK, GTK_SHRINK, 2, 2);
         gtk_table_attach(GTK_TABLE(table), widget, 1, 2, x, x+1, GTK_SHRINK, GTK_SHRINK, 2, 2);
     }
@@ -60,11 +84,12 @@ GtkWidget *create_table(EffectSettings *settings, gint amt)
     return table;
 }
 
-GtkWidget *create_on_off_button(Effect *effect)
+GtkWidget *create_on_off_button(GList **list, Effect *effect)
 {
     GtkWidget *button = gtk_toggle_button_new_with_label(effect->label);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), FALSE);
     g_signal_connect(G_OBJECT(button), "toggled", G_CALLBACK(toggled_cb), effect);
+    widget_list_add(list, button, effect->option, effect->position, -1, -1);
     return button;
 }
 
@@ -114,7 +139,7 @@ void combo_box_changed_cb(GtkComboBox *widget, gpointer data)
     }
 }
 
-GtkWidget *create_widget_container(EffectGroup *group, gint amt)
+GtkWidget *create_widget_container(GList **list, EffectGroup *group, gint amt)
 {
     GtkWidget *vbox;
     GtkWidget *widget;
@@ -137,7 +162,7 @@ GtkWidget *create_widget_container(EffectGroup *group, gint amt)
             gtk_combo_box_append_text(GTK_COMBO_BOX(combo_box), group[x].label);
             cmbox_no++;
 
-            widget = create_table(group[x].settings, group[x].settings_amt);
+            widget = create_table(list, group[x].settings, group[x].settings_amt);
             g_object_ref_sink(widget);
 
             settings = g_malloc(sizeof(EffectSettingsGroup));
@@ -145,12 +170,13 @@ GtkWidget *create_widget_container(EffectGroup *group, gint amt)
             settings->option = group[x].option;
             settings->position = group[x].position;
             settings->child = widget;
+            widget_list_add(list, combo_box, group[x].option, group[x].position, group[x].id, x);
 
             name = g_strdup_printf("SettingsGroup%d", cmbox_no);
             g_object_set_data_full(G_OBJECT(combo_box), name, settings, ((GDestroyNotify)effect_settings_group_free));
             g_free(name);
         } else {
-            widget = create_table(group[x].settings, group[x].settings_amt);
+            widget = create_table(list, group[x].settings, group[x].settings_amt);
             gtk_container_add(GTK_CONTAINER(vbox), widget);
         }
     }
@@ -158,7 +184,7 @@ GtkWidget *create_widget_container(EffectGroup *group, gint amt)
     return vbox;
 };
 
-GtkWidget *create_vbox(Effect *widgets, gint amt)
+GtkWidget *create_vbox(GList **list, Effect *widgets, gint amt)
 {
     GtkWidget *vbox;
     GtkWidget *hbox;
@@ -172,10 +198,10 @@ GtkWidget *create_vbox(Effect *widgets, gint amt)
     gtk_box_set_homogeneous(GTK_BOX(hbox), TRUE);
 
     for (x = 0; x<amt; x++) {
-        widget = create_on_off_button(&widgets[x]);
+        widget = create_on_off_button(list, &widgets[x]);
         gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 2);
 
-        table = create_widget_container(widgets[x].group, widgets[x].group_amt);
+        table = create_widget_container(list, widgets[x].group, widgets[x].group_amt);
         gtk_box_pack_start(GTK_BOX(hbox), table, TRUE, TRUE, 2);
     }
 
@@ -305,6 +331,34 @@ static void show_store_preset_window(GtkWidget *window, gchar *default_name)
 
     gtk_widget_destroy(dialog);
 }
+
+static void apply_widget_setting(WidgetListElem *el, SettingParam *param)
+{
+    if ((el->id == param->id) && (el->position == param->position)) {
+        if (el->value == -1) {
+            if (GTK_IS_TOGGLE_BUTTON(el->widget))
+                gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(el->widget), (param->value == 0) ? FALSE : TRUE);
+            else if (GTK_IS_SPIN_BUTTON(el->widget))
+                gtk_spin_button_set_value(GTK_SPIN_BUTTON(el->widget), param->value);
+        } else { /* combo box */
+            if (el->value == param->value)
+                gtk_combo_box_set_active(GTK_COMBO_BOX(el->widget), el->x);
+        }
+    }
+}
+
+static void apply_preset_to_gui(GList *list, Preset *preset)
+{
+    GList *iter = preset->params;
+    while (iter) {
+        SettingParam *param = iter->data;
+        iter = iter->next;
+
+        if (param != NULL)
+            g_list_foreach(list, (GFunc)apply_widget_setting, param);
+    }
+}
+
 static void action_store_cb(GtkAction *action)
 {
     GtkWidget *window = g_object_get_data(G_OBJECT(action), "window");
@@ -342,21 +396,18 @@ static guint n_file_types = G_N_ELEMENTS(file_types);
 static void action_open_preset_cb(GtkAction *action)
 {
     static GtkWidget *dialog = NULL;
-    static gchar *last_directory = NULL;
 
     if (dialog != NULL)
         return;
 
     GtkWidget *window = g_object_get_data(G_OBJECT(action), "window");
+    GList **list = g_object_get_data(G_OBJECT(action), "widget-list");
 
     dialog = gtk_file_chooser_dialog_new("Open Preset", GTK_WINDOW(window),
                                          GTK_FILE_CHOOSER_ACTION_OPEN,
                                          GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                          GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
                                          NULL);
-
-    if (last_directory)
-        gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), last_directory);
 
     GtkFileFilter *filter;
     filter = gtk_file_filter_new();
@@ -379,6 +430,9 @@ static void action_open_preset_cb(GtkAction *action)
         gchar *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
         Preset *preset = create_preset_from_xml_file(filename);
         if (preset != NULL) {
+            if (list != NULL)
+                apply_preset_to_gui(*list, preset);
+
             gtk_widget_hide(dialog);
 
             GList *iter = preset->params;
@@ -398,17 +452,29 @@ static void action_open_preset_cb(GtkAction *action)
             loaded = TRUE;
         }
         g_free(filename);
-        if (last_directory) g_free(last_directory);
-        last_directory = g_strdup(gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER(dialog)));
     }
 
     gtk_widget_destroy(dialog);
     dialog = NULL;
 }
 
+static void widget_list_free(GList *list)
+{
+    GList *iter;
+    for (iter = list; iter; iter = iter->next) {
+        g_free(iter->data);
+    }
+    g_list_free(list);
+}
+
 static void action_quit_cb(GtkAction *action)
 {
     GtkWidget *window = g_object_get_data(G_OBJECT(action), "window");
+    GList **list = g_object_get_data(G_OBJECT(action), "widget-list");
+
+    widget_list_free(*list);
+    *list = NULL;
+
     gtk_widget_destroy(window);
     gtk_main_quit();
 }
@@ -441,11 +507,19 @@ static const gchar *menu_info =
 " </menubar>"
 "</ui>";
 
-static void add_menubar(GtkWidget *window, GtkWidget *vbox)
+static void add_action_data(GtkUIManager *ui, const gchar *path, GtkWidget *window, GList **list)
+{
+    GtkAction *action;
+
+    action = gtk_ui_manager_get_action(ui, path);
+    g_object_set_data(G_OBJECT(action), "window", window);
+    g_object_set_data(G_OBJECT(action), "widget-list", list);
+}
+
+static void add_menubar(GList **list, GtkWidget *window, GtkWidget *vbox)
 {
     GtkUIManager *ui;
     GtkActionGroup *actions;
-    GtkAction *action;
     GError *error = NULL;
 
     actions = gtk_action_group_new("Actions");
@@ -465,17 +539,10 @@ static void add_menubar(GtkWidget *window, GtkWidget *vbox)
                        gtk_ui_manager_get_widget(ui, "/MenuBar"),
                        FALSE, FALSE, 0);
 
-    action = gtk_ui_manager_get_action(ui, "/MenuBar/File/Quit");
-    g_object_set_data(G_OBJECT(action), "window", window);
-
-    action = gtk_ui_manager_get_action(ui, "/MenuBar/File/Open");
-    g_object_set_data(G_OBJECT(action), "window", window);
-
-    action = gtk_ui_manager_get_action(ui, "/MenuBar/Preset/Store");
-    g_object_set_data(G_OBJECT(action), "window", window);
-
-    action = gtk_ui_manager_get_action(ui, "/MenuBar/Help/About");
-    g_object_set_data(G_OBJECT(action), "window", window);
+    add_action_data(ui, "/MenuBar/File/Quit", window, list);
+    add_action_data(ui, "/MenuBar/File/Open", window, list);
+    add_action_data(ui, "/MenuBar/Preset/Store", window, list);
+    add_action_data(ui, "/MenuBar/Help/About", window, list);
 
     g_object_unref(ui);
 }
@@ -486,7 +553,8 @@ void create_window()
     GtkWidget *vbox;
     GtkWidget *hbox;
     GtkWidget *widget;
-    GtkWidget *sw;     /* scrolled window to carry preset treeview */
+    GtkWidget *sw;             /* scrolled window to carry preset treeview */
+    static GList *list = NULL; /* widget list (every data element is WidgetListElem) */
     gint x;
 
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -495,7 +563,7 @@ void create_window()
     vbox = gtk_vbox_new(FALSE, 0);
     gtk_container_add(GTK_CONTAINER(window), vbox);
 
-    add_menubar(window, vbox);
+    add_menubar(&list, window, vbox);
 
     hbox = gtk_hbox_new(FALSE, 0);
     gtk_container_add(GTK_CONTAINER(vbox), hbox);
@@ -515,7 +583,7 @@ void create_window()
             hbox = gtk_hbox_new(TRUE, 0);
             gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 2);
         }
-        widget = create_vbox(effects[x].effect, effects[x].amt);
+        widget = create_vbox(&list, effects[x].effect, effects[x].amt);
         gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 2);
     }
 

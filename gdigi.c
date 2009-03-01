@@ -335,7 +335,7 @@ GStrv query_preset_names(guint bank)
                 str_array[n_total] = NULL;
             }
 
-            for (x=11; x<data->len; x++) {
+            for (x=11; ((x<data->len) && (n<n_total)); x++) {
                 if ((x % 8) == 0) // every 8th byte is 0x00
                     continue;
 
