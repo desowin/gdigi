@@ -18,6 +18,7 @@
 #include "gdigi.h"
 #include "gui.h"
 #include "effects.h"
+#include "preset.h"
 
 extern EffectList effects[];
 extern int n_effects;
@@ -257,6 +258,152 @@ GtkWidget *create_preset_tree()
     return treeview;
 }
 
+static void action_show_about_dialog_cb(GtkAction *action)
+{
+    static const gchar * const authors[] = {
+        "Tomasz Moń <desowin@gmail.com>",
+        NULL
+    };
+    static const gchar copyright[] = "Copyright \xc2\xa9 2009 Tomasz Moń";
+    static const gchar website[] = "http://desowin.org/gdigi/";
+
+    GtkWidget *window = g_object_get_data(G_OBJECT(action), "window");
+
+    gtk_show_about_dialog(GTK_WINDOW(window),
+                          "authors", authors,
+                          "copyright", copyright,
+                          "website", website,
+                          NULL);
+}
+
+typedef struct {
+    gchar *name;
+    gchar *suffix;
+} SupportedFileTypes;
+
+static SupportedFileTypes file_types[] = {
+    {"RP250Preset", "*.rp250p"},
+};
+static guint n_file_types = G_N_ELEMENTS(file_types);
+
+static void action_open_preset_cb(GtkAction *action)
+{
+    static GtkWidget *dialog = NULL;
+    static gchar *last_directory = NULL;
+
+    if (dialog != NULL)
+        return;
+
+    GtkWidget *window = g_object_get_data(G_OBJECT(action), "window");
+
+    dialog = gtk_file_chooser_dialog_new("Open Preset", GTK_WINDOW(window),
+                                         GTK_FILE_CHOOSER_ACTION_OPEN,
+                                         GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                                         GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+                                         NULL);
+
+    if (last_directory)
+        gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), last_directory);
+
+    GtkFileFilter *filter;
+    filter = gtk_file_filter_new();
+    gtk_file_filter_set_name(filter, "All Supported Types");
+    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
+
+    int x;
+    for (x=0; x<n_file_types; x++) {
+        GtkFileFilter *current_filter = gtk_file_filter_new();
+
+        gtk_file_filter_set_name(current_filter, file_types[x].name);
+        gtk_file_filter_add_pattern(current_filter, file_types[x].suffix);
+        gtk_file_filter_add_pattern(filter, file_types[x].suffix);
+
+        gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), current_filter);
+    }
+
+    gboolean loaded = FALSE;
+    while (!loaded && gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
+        gchar *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+        Preset *preset = create_preset_from_xml_file(filename);
+        if (preset != NULL) {
+            preset_free(preset);
+            loaded = TRUE;
+        }
+        g_free(filename);
+        if (last_directory) g_free(last_directory);
+        last_directory = g_strdup(gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER(dialog)));
+    }
+
+    gtk_widget_destroy(dialog);
+    dialog = NULL;
+}
+
+static void action_quit_cb(GtkAction *action)
+{
+    GtkWidget *window = g_object_get_data(G_OBJECT(action), "window");
+    gtk_widget_destroy(window);
+    gtk_main_quit();
+}
+
+static GtkActionEntry entries[] = {
+    {"File", NULL, "_File"},
+    {"Help", NULL, "_Help"},
+    {"Open", GTK_STOCK_OPEN, "_Open", "<control>O", "Open preset file", G_CALLBACK(action_open_preset_cb)},
+    {"Quit", GTK_STOCK_QUIT, "_Quit", "<control>Q", "Quit", G_CALLBACK(action_quit_cb)},
+    {"About", GTK_STOCK_ABOUT, "_About", "<control>A", "About", G_CALLBACK(action_show_about_dialog_cb)},
+};
+static guint n_entries = G_N_ELEMENTS(entries);
+
+static const gchar *menu_info =
+"<ui>"
+" <menubar name='MenuBar'>"
+"  <menu action='File'>"
+"   <menuitem action='Open'/>"
+"   <separator/>"
+"   <menuitem action='Quit'/>"
+"  </menu>"
+"  <menu action='Help'>"
+"   <menuitem action='About'/>"
+"  </menu>"
+" </menubar>"
+"</ui>";
+
+static void add_menubar(GtkWidget *window, GtkWidget *vbox)
+{
+    GtkUIManager *ui;
+    GtkActionGroup *actions;
+    GtkAction *action;
+    GError *error = NULL;
+
+    actions = gtk_action_group_new("Actions");
+    gtk_action_group_add_actions(actions, entries, n_entries, NULL);
+
+    ui = gtk_ui_manager_new();
+    gtk_ui_manager_insert_action_group(ui, actions, 0);
+    g_object_unref(actions);
+    gtk_window_add_accel_group(GTK_WINDOW(window), gtk_ui_manager_get_accel_group(ui));
+
+    if (!gtk_ui_manager_add_ui_from_string(ui, menu_info, -1, &error)) {
+        g_message("building menus failed: %s", error->message);
+        g_error_free(error);
+        error = NULL;
+    }
+    gtk_box_pack_start(GTK_BOX(vbox),
+                       gtk_ui_manager_get_widget(ui, "/MenuBar"),
+                       FALSE, FALSE, 0);
+
+    action = gtk_ui_manager_get_action(ui, "/MenuBar/File/Quit");
+    g_object_set_data(G_OBJECT(action), "window", window);
+
+    action = gtk_ui_manager_get_action(ui, "/MenuBar/File/Open");
+    g_object_set_data(G_OBJECT(action), "window", window);
+
+    action = gtk_ui_manager_get_action(ui, "/MenuBar/Help/About");
+    g_object_set_data(G_OBJECT(action), "window", window);
+
+    g_object_unref(ui);
+}
+
 void create_window()
 {
     GtkWidget *window;
@@ -267,9 +414,15 @@ void create_window()
     gint x;
 
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title(GTK_WINDOW(window), "gdigi");
+
+    vbox = gtk_vbox_new(FALSE, 0);
+    gtk_container_add(GTK_CONTAINER(window), vbox);
+
+    add_menubar(window, vbox);
 
     hbox = gtk_hbox_new(FALSE, 0);
-    gtk_container_add(GTK_CONTAINER(window), hbox);
+    gtk_container_add(GTK_CONTAINER(vbox), hbox);
 
     sw = gtk_scrolled_window_new(NULL, NULL);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
