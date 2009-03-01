@@ -78,7 +78,6 @@ void send_data(char *data, int length)
         open_device();
 
     snd_rawmidi_write(output, data, length);
-    snd_rawmidi_drain(output);
 }
 
 /*
@@ -233,6 +232,38 @@ void switch_preset(guint bank, guint x)
 void set_preset_level(int level)
 {
     set_option(PRESET_LEVEL, PRESET_POSITION, level);
+}
+
+void store_preset_name(int x, gchar *name)
+{
+    static char set_name[] = {0xF0, 0x00, 0x00, 0x10, 0x00, 0x5e, 0x02, 0x39, 0x00, 0x04, 0x00, 0x01, 0x00 /* preset number */, 0x00 /* name starts here */, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+
+    set_name[12] = x;
+
+    int a;
+    int b;
+    b = 0;
+    for (a=0; (name != NULL && a<strlen(name)) && a<10 ; a++) {
+        if (a == 3) {
+            set_name[13+a] = 0x00;
+            b++;
+        }
+        set_name[13+a+b] = name[a];
+    }
+
+    if (a == 3) {
+        set_name[13+a+1+b] = 0x00;
+        a++;
+    } else
+        set_name[13+a+b] = 0x00;
+
+    set_name[13+a+1+b] = 0x00;
+    set_name[13+a+3+b] = 0xF7;
+    set_name[13+a+2+b] = calculate_checksum(set_name, 13+a+4+b, 13+a+2+b);
+
+    send_data(set_name, 14+a+3+b);
+
+    switch_preset(PRESETS_USER, x);
 }
 
 /* x = 0 to 59 (preset number) */
