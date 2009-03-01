@@ -1,4 +1,4 @@
-Requirments: alsa, gtk+, glib
+Requirments: alsa, gtk+, glib, expat
 
 Getting started guide:
 -to compile: make
