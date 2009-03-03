@@ -473,19 +473,63 @@ static void action_open_preset_cb(GtkAction *action)
 
             gtk_widget_hide(dialog);
 
+            GString *msg = g_string_sized_new(500);
             GList *iter = preset->params;
+            gint len = g_list_length(iter);
+
+            g_string_append_printf(msg, "%c%c",
+                                   ((len & 0xFF00) >> 8),
+                                   (len & 0xFF));
+
             while (iter) {
                 SettingParam *param = iter->data;
                 iter = iter->next;
 
-                /* sending those is likely to freeze/reboot device */
-                if ((param->id == 8704) || (param->id == 8705))
-                    continue;
+                g_string_append_printf(msg, "%c%c%c",
+                                       ((param->id & 0xFF00) >> 8),
+                                       (param->id & 0xFF),
+                                       param->position);
 
-                set_option(param->id, param->position, param->value);
+                /* check how many bytes long the value is */
+                gint temp = param->value;
+                gint n = 0;
+                do {
+                    n++;
+                    temp = temp >> 8;
+                } while (temp);
+
+                if (n == 1) {
+                    if (param->value & 0x80)
+                        n = 2;
+                    else
+                        g_string_append_printf(msg, "%c", param->value);
+                }
+
+                if (n > 1) {
+                    gint x;
+                    g_string_append_printf(msg, "%c", (n | 0x80));
+                    for (x=0; x<n; x++) {
+                        g_string_append_printf(msg, "%c",
+                                               ((param->value >> (8*(n-x-1))) & 0xFF));
+                    }
+                }
             };
+
+            GString *start = g_string_new(NULL);
+            g_string_append_printf(start,
+                                   "%c%c%s%c%c%c",
+                                   PRESETS_EDIT_BUFFER, 0,
+                                   preset->name, 0 /* NULL terminated string */,
+                                   0 /* modified */, 2 /* messages to follow */);
+
+            send_message(RECEIVE_PRESET_START, start->str, start->len);
+            send_message(RECEIVE_PRESET_PARAMETERS, msg->str, msg->len);
+            send_message(RECEIVE_PRESET_END, NULL, 0);
+
             show_store_preset_window(window, preset->name);
 
+            g_string_free(start, TRUE);
+            g_string_free(msg, TRUE);
             preset_free(preset);
             loaded = TRUE;
         }

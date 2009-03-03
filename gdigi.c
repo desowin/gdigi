@@ -173,7 +173,41 @@ static void clear_midi_in_buffer()
     } while (str != NULL);
 }
 
-static void send_message(gint procedure, gchar *data, gint len)
+GString *pack_data(gchar *data, gint len)
+{
+    GString *packed;
+    gint i;
+    gint new_len;
+    u_char status;
+    gint offset;
+    gint status_byte;
+
+    new_len = len + (len/7);
+    packed = g_string_sized_new(new_len);
+    status = 0;
+    offset = -1;
+    status_byte = 0;
+
+    for (i=0; i<len; i++) {
+        if ((i % 7) == 0) {
+            packed->str[status_byte] = status;
+            status = 0;
+            status_byte = packed->len;
+            g_string_append_c(packed, '\0');
+        }
+        g_string_append_c(packed, (data[i] & 0x7F));
+        status |= (data[i] & 0x80) >> ((i%7) + 1);
+    }
+    packed->str[status_byte] = status;
+
+    return packed;
+}
+
+/*
+   data - unpacked data to send
+   len  - data length
+*/
+void send_message(gint procedure, gchar *data, gint len)
 {
     GString *msg = g_string_new_len("\xF0"          /* SysEx status byte */
                                     "\x00\x00\x10", /* Manufacturer ID   */
@@ -184,8 +218,11 @@ static void send_message(gint procedure, gchar *data, gint len)
                            device_id, family_id, product_id,
                            procedure);
 
-    if (len > 0)
-        g_string_append_len(msg, data, len);
+    if (len > 0) {
+        GString *tmp = pack_data(data, len);
+        g_string_append_len(msg, tmp->str, tmp->len);
+        g_string_free(tmp, TRUE);
+    }
 
     g_string_append_printf(msg, "%c\xF7",
                            calc_checksum(&msg->str[1], msg->len - 1));
@@ -444,7 +481,6 @@ static void unpack_message(GString *msg)
     i = 8;
 
     do {
-        printf("status byte [%d] 0x%02x\n", offset-1, msg->str[offset-1]);
         status = (u_char)msg->str[offset-1];
         for (x=0; x<7; x++) {
             if ((u_char)msg->str[offset+x] == 0xF7) {
@@ -453,8 +489,6 @@ static void unpack_message(GString *msg)
             }
 
             msg->str[i] = (((status << (x+1)) & 0x80) | (u_char)msg->str[x+offset]);
-            printf("merging byte [%d] with byte [%d] MSB is %d\n",
-                   i, x+offset, (((status << (x+1)) & 0x80) >> 7));
             i++;
         }
         offset += 8;
@@ -468,7 +502,7 @@ GString *get_current_preset()
     /* clear MIDI IN buffer */
     clear_midi_in_buffer();
 
-    send_message(REQUEST_PRESET, "\x00\x04\x00", 3);
+    send_message(REQUEST_PRESET, "\x04\x00", 3);
 
     /* read reply */
     data = read_data();
