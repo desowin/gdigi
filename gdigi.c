@@ -22,9 +22,9 @@
 #include "gdigi.h"
 #include "gui.h"
 
-static u_char device_id = 0x7F;
-static u_char family_id = 0x7F;
-static u_char product_id = 0x7F;
+static unsigned char device_id = 0x7F;
+static unsigned char family_id = 0x7F;
+static unsigned char product_id = 0x7F;
 
 static snd_rawmidi_t *output = NULL;
 static snd_rawmidi_t *input = NULL;
@@ -146,10 +146,10 @@ GString* read_data()
 
         length = 0;
         for (i = 0; i < err; ++i)
-            if (buf[i] != 0xFE) // ignore active sensing
+            if (buf[i] != 0xFE) /* ignore active sensing */
                 buf[length++] = buf[i];
 
-        if ((u_char)buf[length-1] == 0xF7)
+        if ((unsigned char)buf[length-1] == 0xF7)
             stop = TRUE;
 
         if (length != 0) {
@@ -178,7 +178,7 @@ GString *pack_data(gchar *data, gint len)
     GString *packed;
     gint i;
     gint new_len;
-    u_char status;
+    unsigned char status;
     gint offset;
     gint status_byte;
 
@@ -235,7 +235,7 @@ void send_message(gint procedure, gchar *data, gint len)
 static gint get_message_id(GString *msg)
 {
     if (msg->len > 7) {
-        return (u_char)msg->str[7];
+        return (unsigned char)msg->str[7];
     }
     return -1;
 }
@@ -405,13 +405,13 @@ GStrv query_preset_names(guint bank)
             }
 
             for (x=11; ((x<data->len) && (n<n_total)); x++) {
-                if ((x % 8) == 0) // every 8th byte is 0x00
+                if ((x % 8) == 0) /* every 8th byte is 0x00 */
                     continue;
 
-                if (data->str[x] == 0xF7) // every message ends with 0xF7
+                if (data->str[x] == 0xF7) /* every message ends with 0xF7 */
                     break;
 
-                if (data->str[x] == 0) { // presets are splitted with 0x00
+                if (data->str[x] == 0) { /* presets are splitted with 0x00 */
                     gchar *name;
 
                     name = g_new(gchar, b+1);
@@ -442,7 +442,7 @@ static void unpack_message(GString *msg)
     int offset;
     int x;
     int i;
-    u_char status;
+    unsigned char status;
     gboolean finish = FALSE;
 
     offset = 9;
@@ -450,14 +450,14 @@ static void unpack_message(GString *msg)
     i = 8;
 
     do {
-        status = (u_char)msg->str[offset-1];
+        status = (unsigned char)msg->str[offset-1];
         for (x=0; x<7; x++) {
-            if ((u_char)msg->str[offset+x] == 0xF7) {
+            if ((unsigned char)msg->str[offset+x] == 0xF7) {
                 msg->str[i] = 0xF7;
                 finish = TRUE;
             }
 
-            msg->str[i] = (((status << (x+1)) & 0x80) | (u_char)msg->str[x+offset]);
+            msg->str[i] = (((status << (x+1)) & 0x80) | (unsigned char)msg->str[x+offset]);
             i++;
         }
         offset += 8;
@@ -484,8 +484,8 @@ GString *get_current_preset()
     return data;
 }
 
-static gboolean request_who_am_i(u_char *device_id, u_char *family_id,
-                                 u_char *product_id)
+static gboolean request_who_am_i(unsigned char *device_id, unsigned char *family_id,
+                                 unsigned char *product_id)
 {
     send_message(REQUEST_WHO_AM_I, NULL, 0);
 

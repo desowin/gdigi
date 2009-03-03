@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = `pkg-config --cflags glib-2.0 gio-2.0 gtk+-2.0` -Wall -g
+CFLAGS = `pkg-config --cflags glib-2.0 gio-2.0 gtk+-2.0` -Wall -g -ansi
 OFLAG = -o
 LIBS = `pkg-config --libs glib-2.0 gio-2.0 gtk+-2.0 alsa` -lexpat
 

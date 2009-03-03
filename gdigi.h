@@ -457,7 +457,7 @@ enum {
     PRESETS_FACTORY2 = 5,
 
     /* Version 2 and later */
-    PRESETS_EXTERNAL = 6,
+    PRESETS_EXTERNAL = 6
 };
 
 enum {
@@ -511,7 +511,7 @@ enum {
     RECEIVE_DEVICE_NOTIFICATION = 0x70,
 
     ACK = 0x7E,
-    NACK = 0x7F,
+    NACK = 0x7F
 };
 
 void send_message(gint procedure, gchar *data, gint len);

@@ -126,13 +126,13 @@ static EffectSettings amp_settings2[] = {
 };
 
 static EffectSettings eq_settings[] = {
-    // TODO: make those display propertly (display range -12 to 12)
+    /* TODO: make those display propertly (display range -12 to 12) */
     {"EQ bass", 0.0, 24.0, EQ_BASS, EQ_POSITION},
     {"EQ mid", 0.0, 24.0, EQ_MID, EQ_POSITION},
     {"EQ treble", 0.0, 24.0, EQ_TREBLE, EQ_POSITION},
-    // TODO: make this display propertly (display range 300 to 5000)
+    /* TODO: make this display propertly (display range 300 to 5000) */
     {"EQ mid Hz", 0.0, 4700.0, EQ_MID_HZ, EQ_POSITION},
-    // TODO: make this display propertly (display range 500 to 8000)
+    /* TODO: make this display propertly (display range 500 to 8000) */
     {"EQ treb Hz", 0.0, 7500.0, EQ_TREBLE_HZ, EQ_POSITION},
 };
 
@@ -159,14 +159,14 @@ static EffectSettings chorusfx_dual_settings[] = {
     {"Dual chorus speed", 0.0, 99.0, DUAL_CHORUS_SPEED, CHORUSFX_POSITION},
     {"Dual chorus depth", 0.0, 99.0, DUAL_CHORUS_DEPTH, CHORUSFX_POSITION},
     {"Dual chorus level", 0.0, 99.0, DUAL_CHORUS_LEVEL, CHORUSFX_POSITION},
-    // TODO: DUAL_CHORUS_WAVE with valid options WAVE_TRI, WAVE_SINE, WAVE_SQUARE
+    /* TODO: DUAL_CHORUS_WAVE with valid options WAVE_TRI, WAVE_SINE, WAVE_SQUARE */
 };
 
 static EffectSettings chorusfx_multi_settings[] = {
     {"Multi chorus speed", 0.0, 99.0, MULTI_CHORUS_SPEED, CHORUSFX_POSITION},
     {"Multi chorus depth", 0.0, 99.0, MULTI_CHORUS_DEPTH, CHORUSFX_POSITION},
     {"Multi chorus level", 0.0, 99.0, MULTI_CHORUS_LEVEL, CHORUSFX_POSITION},
-    // TODO: MULTI_CHORUS_WAVE with valid options WAVE_TRI, WAVE_SINE, WAVE_SQUARE
+    /* TODO: MULTI_CHORUS_WAVE with valid options WAVE_TRI, WAVE_SINE, WAVE_SQUARE */
 };
 
 static EffectSettings chorusfx_flanger_settings[] = {
@@ -174,7 +174,7 @@ static EffectSettings chorusfx_flanger_settings[] = {
     {"Flanger depth", 0.0, 99.0, FLANGER_DEPTH, CHORUSFX_POSITION},
     {"Flanger regen", 0.0, 99.0, FLANGER_REGEN, CHORUSFX_POSITION},
     {"Flanger level", 0.0, 99.0, FLANGER_LEVEL, CHORUSFX_POSITION},
-    // TODO: FLANGER_WAVE with valid options WAVE_TRI, WAVE_SINE, WAVE_SQUARE
+    /* TODO: FLANGER_WAVE with valid options WAVE_TRI, WAVE_SINE, WAVE_SQUARE */
 };
 
 static EffectSettings chorusfx_mxr_flanger_settings[] = {
@@ -189,7 +189,7 @@ static EffectSettings chorusfx_phaser_settings[] = {
     {"Phaser depth", 0.0, 99.0, PHASER_DEPTH, CHORUSFX_POSITION},
     {"Phaser regen", 0.0, 99.0, PHASER_REGEN, CHORUSFX_POSITION},
     {"Phaser level", 0.0, 99.0, PHASER_LEVEL, CHORUSFX_POSITION},
-    // TODO: PHASER_WAVE with valid options WAVE_TRI, WAVE_SINE, WAVE_SQUARE
+    /* TODO: PHASER_WAVE with valid options WAVE_TRI, WAVE_SINE, WAVE_SQUARE */
 };
 
 static EffectSettings chorusfx_vibrato_settings[] = {
@@ -208,19 +208,19 @@ static EffectSettings chorusfx_vibropan_settings[] = {
     {"Vibropan speed", 0.0, 99.0, VIBROPAN_SPEED, CHORUSFX_POSITION},
     {"Vibropan depth", 0.0, 99.0, VIBROPAN_DEPTH, CHORUSFX_POSITION},
     {"Vibropan vibra", 0.0, 99.0, VIBROPAN_VIBRA, CHORUSFX_POSITION},
-    // TODO: VIBROPAN_WAVE with valid options WAVE_TRI, WAVE_SINE, WAVE_SQUARE
+    /* TODO: VIBROPAN_WAVE with valid options WAVE_TRI, WAVE_SINE, WAVE_SQUARE */
 };
 
 static EffectSettings chorusfx_tremolo_settings[] = {
     {"Tremolo speed", 0.0, 99.0, TREMOLO_SPEED, CHORUSFX_POSITION},
     {"Tremolo depth", 0.0, 99.0, TREMOLO_DEPTH, CHORUSFX_POSITION},
-    // TODO: TREMOLO_WAVE with valid options WAVE_TRI, WAVE_SINE, WAVE_SQUARE
+    /* TODO: TREMOLO_WAVE with valid options WAVE_TRI, WAVE_SINE, WAVE_SQUARE */
 };
 
 static EffectSettings chorusfx_panner_settings[] = {
     {"Panner speed", 0.0, 99.0, PANNER_SPEED, CHORUSFX_POSITION},
     {"Panner depth", 0.0, 99.0, PANNER_DEPTH, CHORUSFX_POSITION},
-    // TODO: PANNER_WAVE with valid options WAVE_TRI, WAVE_SINE, WAVE_SQUARE
+    /* TODO: PANNER_WAVE with valid options WAVE_TRI, WAVE_SINE, WAVE_SQUARE */
 };
 
 static EffectSettings chorusfx_envelope_settings[] = {
@@ -248,15 +248,17 @@ static EffectSettings chorusfx_step_filter_settings[] = {
 static EffectSettings chorusfx_whammy_settings[] = {
     {"Whammy pedal", 0.0, 99.0, WHAMMY_PEDAL, CHORUSFX_POSITION},
     {"Whammy mix", 0.0, 99.0, WHAMMY_MIX, CHORUSFX_POSITION},
-    //TODO: WHAMMY_AMOUNT with valid options:
-    //      WHAMMY_OCT_UP, WHAMMY_2OCT_UP, WHAMMY_2ND_DN, WHAMMY_RV_2ND,
-    //      WHAMMY_4TH_DN, WHAMMY_OCT_DN, WHAMMY_2OCT_DN, WHAMMY_DIV_BMB,
-    //      WHAMMY_M3_MA, WHAMMY_2ND_MA3, WHAMMY_3RD_4TH, WHAMMY_4TH_5TH,
-    //      WHAMMY_5TH_OCT, WHAMMY_HOCT_UP, WHAMMY_HOCT_DN, WHAMMY_OCT_UD
+    /*
+       TODO: WHAMMY_AMOUNT with valid options:
+             WHAMMY_OCT_UP, WHAMMY_2OCT_UP, WHAMMY_2ND_DN, WHAMMY_RV_2ND,
+             WHAMMY_4TH_DN, WHAMMY_OCT_DN, WHAMMY_2OCT_DN, WHAMMY_DIV_BMB,
+             WHAMMY_M3_MA, WHAMMY_2ND_MA3, WHAMMY_3RD_4TH, WHAMMY_4TH_5TH,
+             WHAMMY_5TH_OCT, WHAMMY_HOCT_UP, WHAMMY_HOCT_DN, WHAMMY_OCT_UD
+    */
 };
 
 static EffectSettings chorusfx_pitch_shift_settings[] = {
-    // TODO: make this display propertly (display range -24 to 24)
+    /* TODO: make this display propertly (display range -24 to 24) */
     {"Pitch amount", 0.0, 48.0, PITCH_AMOUNT, CHORUSFX_POSITION},
     {"Pitch mix", 0.0, 99.0, PITCH_MIX, CHORUSFX_POSITION},
 };
@@ -267,63 +269,65 @@ static EffectSettings chorusfx_detune_settings[] = {
 };
 
 static EffectSettings chorusfx_ips_settings[] = {
-    // TODO: IPS_SHIFT_AMOUNT with valid options:
-    //       IPS_7TH_DN, IPS_6TH_DN, IPS_5TH_DN, IPS_4TH_DN, IPS_3RD_DN,
-    //       IPS_2ND_DN, IPS_2ND_UP, IPS_3RD_UP, IPS_4TH_UP, IPS_5TH_UP,
-    //       IPS_6TH_UP, IPS_7TH_UP, IPS_OCT_U
+    /*
+       TODO: IPS_SHIFT_AMOUNT with valid options:
+             IPS_7TH_DN, IPS_6TH_DN, IPS_5TH_DN, IPS_4TH_DN, IPS_3RD_DN,
+             IPS_2ND_DN, IPS_2ND_UP, IPS_3RD_UP, IPS_4TH_UP, IPS_5TH_UP,
+             IPS_6TH_UP, IPS_7TH_UP, IPS_OCT_U
 
-    // TODO: IPS_KEY with valid options:
-    //       IPS_E, IPS_F, IPS_GB, IPS_G, IPS_AB, IPS_A, IPS_BB, IPS_B,
-    //       IPS_C, IPS_DD, IPS_D, IPS_EB
+       TODO: IPS_KEY with valid options:
+             IPS_E, IPS_F, IPS_GB, IPS_G, IPS_AB, IPS_A, IPS_BB, IPS_B,
+             IPS_C, IPS_DD, IPS_D, IPS_EB
 
-    // TODO: IPS_SCALE with valid options:
-    //       IPS_MAJOR, IPS_MINOR, IPS_DORIA, IPS_MIXLYD, IPS_LYDIAN, IPS_HMINO
+       TODO: IPS_SCALE with valid options:
+             IPS_MAJOR, IPS_MINOR, IPS_DORIA, IPS_MIXLYD, IPS_LYDIAN, IPS_HMINO
+    */
 
     {"IPS level", 0.0, 99.0, IPS_LEVEL, CHORUSFX_POSITION},
 };
 
 static EffectSettings delay_analog_settings[] = {
-    // TODO: make this display propertly (10 msec to 5 sec)
+    /* TODO: make this display propertly (10 msec to 5 sec) */
     {"Delay time", 0.0, 139.0, DELAY_TIME, DELAY_POSITION},
     {"Delay analog level", 0.0, 99.0, ANALOG_LEVEL, DELAY_POSITION},
-    // TODO: make last value display propertly
+    /* TODO: make last value display propertly */
     {"Delay analog repeats", 0.0, 100.0, ANALOG_REPEATS, DELAY_POSITION},
 };
 
 static EffectSettings delay_digital_settings[] = {
-    // TODO: make this display propertly (10 msec to 5 sec)
+    /* TODO: make this display propertly (10 msec to 5 sec) */
     {"Delay time", 0.0, 139.0, DELAY_TIME, DELAY_POSITION},
     {"Delay digital level", 0.0, 99.0, DIGITAL_LEVEL, DELAY_POSITION},
-    // TODO: make last value display propertly
+    /* TODO: make last value display propertly */
     {"Delay digital repeats", 0.0, 100.0, DIGITAL_REPEATS, DELAY_POSITION},
     {"Delay digital ducker thresh", 0.0, 99.0, DIGITAL_DUCKER_THRESH, DELAY_POSITION},
     {"Delay digital ducker level", 0.0, 99.0, DIGITAL_DUCKER_LEVEL, DELAY_POSITION},
 };
 
 static EffectSettings delay_modulated_settings[] = {
-    // TODO: make this display propertly (10 msec to 5 sec)
+    /* TODO: make this display propertly (10 msec to 5 sec) */
     {"Delay time", 0.0, 139.0, DELAY_TIME, DELAY_POSITION},
     {"Delay modulated level", 0.0, 99.0, MODULATED_LEVEL, DELAY_POSITION},
-    // TODO: make last value display propertly
+    /* TODO: make last value display propertly */
     {"Delay modulated repeats", 0.0, 100.0, MODULATED_REPEATS, DELAY_POSITION},
     {"Delay modulated depth", 0.0, 99.0, MODULATED_DEPTH, DELAY_POSITION},
 };
 
 static EffectSettings delay_pong_settings[] = {
-    // TODO: make this display propertly (10 msec to 5 sec)
+    /* TODO: make this display propertly (10 msec to 5 sec) */
     {"Delay time", 0.0, 139.0, DELAY_TIME, DELAY_POSITION},
     {"Delay pong level", 0.0, 99.0, PONG_LEVEL, DELAY_POSITION},
-    // TODO: make last value display propertly
+    /* TODO: make last value display propertly */
     {"Delay pong repeats", 0.0, 100.0, PONG_REPEATS, DELAY_POSITION},
     {"Delay pong ducker thresh", 0.0, 99.0, PONG_DUCKER_THRESH, DELAY_POSITION},
     {"Delay pong ducker level", 0.0, 99.0, PONG_DUCKER_LEVEL, DELAY_POSITION},
 };
 
 static EffectSettings delay_tape_settings[] = {
-    // TODO: make this display propertly (10 msec to 5 sec)
+    /* TODO: make this display propertly (10 msec to 5 sec) */
     {"Delay time", 0.0, 139.0, DELAY_TIME, DELAY_POSITION},
     {"Delay tape level", 0.0, 99.0, TAPE_LEVEL, DELAY_POSITION},
-    // TODO: make last value display propertly
+    /* TODO: make last value display propertly */
     {"Delay tape repeats", 0.0, 100.0, TAPE_REPEATS, DELAY_POSITION},
     {"Delay tape wow", 0.0, 99.0, TAPE_WOW, DELAY_POSITION},
     {"Delay tape flutter", 0.0, 99.0, TAPE_FLUTTER, DELAY_POSITION},

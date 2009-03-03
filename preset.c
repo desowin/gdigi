@@ -177,7 +177,7 @@ Preset *create_preset_from_data(GString *data)
 
     x = 0x09;
     n = 0;
-    total = (u_char)data->str[x];
+    total = (unsigned char)data->str[x];
     x++;
 
     Preset *preset = g_malloc(sizeof(Preset));
@@ -185,8 +185,8 @@ Preset *create_preset_from_data(GString *data)
     preset->params = NULL;
 
     do {
-        id = ((u_char)data->str[x] << 8) | (u_char)data->str[x+1];
-        position = (u_char)data->str[x+2];
+        id = ((unsigned char)data->str[x] << 8) | (unsigned char)data->str[x+1];
+        position = (unsigned char)data->str[x+2];
         x+=3;
         value = data->str[x];
         x++;
@@ -195,7 +195,7 @@ Preset *create_preset_from_data(GString *data)
             value = 0;
             gint i;
             for (i=0; i<tmp; i++) {
-                value |= ((u_char)data->str[x+i] << (8*(tmp-i-1)));
+                value |= ((unsigned char)data->str[x+i] << (8*(tmp-i-1)));
             }
             x+=tmp;
         }
