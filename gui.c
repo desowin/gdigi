@@ -82,6 +82,46 @@ static void widget_list_add(GList **list, GtkWidget *widget, gint id, gint posit
     *list = g_list_prepend(*list, el);
 }
 
+static void apply_widget_setting(WidgetListElem *el, SettingParam *param)
+{
+    if ((el->id == param->id) && (el->position == param->position)) {
+        if (el->value == -1) {
+            if (GTK_IS_TOGGLE_BUTTON(el->widget))
+                gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(el->widget), (param->value == 0) ? FALSE : TRUE);
+            else if (GTK_IS_SPIN_BUTTON(el->widget))
+                gtk_spin_button_set_value(GTK_SPIN_BUTTON(el->widget), param->value);
+        } else { /* combo box */
+            if (el->value == param->value)
+                gtk_combo_box_set_active(GTK_COMBO_BOX(el->widget), el->x);
+        }
+    }
+}
+
+static void apply_preset_to_gui(GList *list, Preset *preset)
+{
+    allow_send = FALSE;
+
+    GList *iter = preset->params;
+    while (iter) {
+        SettingParam *param = iter->data;
+        iter = iter->next;
+
+        if (param != NULL)
+            g_list_foreach(list, (GFunc)apply_widget_setting, param);
+    }
+
+    allow_send = TRUE;
+}
+
+static void apply_current_preset(GList *list)
+{
+    GString *msg = get_current_preset();
+    Preset *preset = create_preset_from_data(msg);
+    g_string_free(msg, TRUE);
+    apply_preset_to_gui(list, preset);
+    preset_free(preset);
+}
+
 GtkWidget *create_table(GList **list, EffectSettings *settings, gint amt)
 {
     GtkWidget *table, *label, *widget;
@@ -243,8 +283,12 @@ void row_activate_cb(GtkTreeView *treeview, GtkTreePath *path, GtkTreeViewColumn
     gtk_tree_model_get_iter(model, &iter, path);
     gtk_tree_model_get(model, &iter, PRESET_NUMBER_COLUMN, &id, PRESET_BANK_COLUMN, &bank, -1);
 
-    if ((bank != -1) && (id != -1))
+    if ((bank != -1) && (id != -1)) {
+        GList **list = g_object_get_data(G_OBJECT(treeview), "widgets-list");
         switch_preset(bank, id);
+        if (*list != NULL)
+            apply_current_preset(*list);
+    }
 }
 
 static void fill_store_with_presets(GtkTreeStore *model, guint bank, gchar *name)
@@ -278,7 +322,7 @@ static void fill_store(GtkTreeStore *model)
     fill_store_with_presets(model, PRESETS_SYSTEM, "System Presets");
 }
 
-GtkWidget *create_preset_tree()
+GtkWidget *create_preset_tree(GList **list)
 {
     GtkWidget *treeview;
     GtkTreeStore *store;
@@ -299,6 +343,8 @@ GtkWidget *create_preset_tree()
     g_object_set(G_OBJECT(treeview), "headers-visible", FALSE, NULL);
     g_signal_connect(G_OBJECT(treeview), "realize", G_CALLBACK(gtk_tree_view_expand_all), NULL);
     g_signal_connect(G_OBJECT(treeview), "row-activated", G_CALLBACK(row_activate_cb), GTK_TREE_MODEL(store));
+
+    g_object_set_data(G_OBJECT(treeview), "widgets-list", list);
 
     return treeview;
 }
@@ -349,37 +395,6 @@ static void show_store_preset_window(GtkWidget *window, gchar *default_name)
     }
 
     gtk_widget_destroy(dialog);
-}
-
-static void apply_widget_setting(WidgetListElem *el, SettingParam *param)
-{
-    if ((el->id == param->id) && (el->position == param->position)) {
-        if (el->value == -1) {
-            if (GTK_IS_TOGGLE_BUTTON(el->widget))
-                gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(el->widget), (param->value == 0) ? FALSE : TRUE);
-            else if (GTK_IS_SPIN_BUTTON(el->widget))
-                gtk_spin_button_set_value(GTK_SPIN_BUTTON(el->widget), param->value);
-        } else { /* combo box */
-            if (el->value == param->value)
-                gtk_combo_box_set_active(GTK_COMBO_BOX(el->widget), el->x);
-        }
-    }
-}
-
-static void apply_preset_to_gui(GList *list, Preset *preset)
-{
-    allow_send = FALSE;
-
-    GList *iter = preset->params;
-    while (iter) {
-        SettingParam *param = iter->data;
-        iter = iter->next;
-
-        if (param != NULL)
-            g_list_foreach(list, (GFunc)apply_widget_setting, param);
-    }
-
-    allow_send = TRUE;
 }
 
 static void action_store_cb(GtkAction *action)
@@ -570,15 +585,6 @@ static void add_menubar(GList **list, GtkWidget *window, GtkWidget *vbox)
     g_object_unref(ui);
 }
 
-static void apply_current_preset(GList *list)
-{
-    GString *msg = get_current_preset();
-    Preset *preset = create_preset_from_data(msg);
-    g_string_free(msg, TRUE);
-    apply_preset_to_gui(list, preset);
-    preset_free(preset);
-}
-
 void create_window()
 {
     GtkWidget *window;
@@ -604,7 +610,7 @@ void create_window()
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
     gtk_box_pack_start(GTK_BOX(hbox), sw, FALSE, FALSE, 0);
 
-    widget = create_preset_tree();
+    widget = create_preset_tree(&list);
     gtk_container_add(GTK_CONTAINER(sw), widget);
 
     vbox = gtk_vbox_new(FALSE, 0);
