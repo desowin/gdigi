@@ -195,6 +195,14 @@ static void send_message(gint procedure, gchar *data, gint len)
     g_string_free(msg, TRUE);
 }
 
+static gint get_message_id(GString *msg)
+{
+    if (msg->len > 7) {
+        return (u_char)msg->str[7];
+    }
+    return -1;
+}
+
 /*
    id - ID as found in preset file
    position - Position as found in preset file
@@ -372,7 +380,11 @@ GStrv query_preset_names(guint bank)
     send_data(command, sizeof(command));
 
     /* read reply */
-    data = read_data();
+    do {
+        if (data)
+            g_string_free(data, TRUE);
+        data = read_data();
+    } while (get_message_id(data) != RECEIVE_PRESET_NAMES);
 
     if (data != NULL) {
         char preset_reply_magic[] = {0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x22, 0x00, 0x01};
