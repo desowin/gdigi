@@ -23,6 +23,21 @@
 extern EffectList effects[];
 extern int n_effects;
 
+static gboolean allow_send = FALSE;
+
+void show_error_message(GtkWidget *parent, gchar *message)
+{
+    g_return_if_fail(message != NULL);
+
+    GtkWidget *msg = gtk_message_dialog_new(NULL, GTK_DIALOG_MODAL,
+                                            GTK_MESSAGE_ERROR,
+                                            GTK_BUTTONS_OK,
+                                            message);
+
+    gtk_dialog_run(GTK_DIALOG(msg));
+    gtk_widget_destroy(msg);
+}
+
 typedef struct {
     GtkWidget *widget;
     gint id;
@@ -37,16 +52,20 @@ void value_changed_option_cb(GtkSpinButton *spinbutton, EffectSettings *setting)
 {
     g_return_if_fail(setting != NULL);
 
-    int val = gtk_spin_button_get_value_as_int(spinbutton);
-    set_option(setting->option, setting->position, val);
+    if (allow_send) {
+        gint val = gtk_spin_button_get_value_as_int(spinbutton);
+        set_option(setting->option, setting->position, val);
+    }
 }
 
 void toggled_cb(GtkToggleButton *button, Effect *effect)
 {
     g_return_if_fail(effect != NULL);
 
-    guint val = gtk_toggle_button_get_active(button);
-    set_option(effect->option, effect->position, val);
+    if (allow_send) {
+        guint val = gtk_toggle_button_get_active(button);
+        set_option(effect->option, effect->position, val);
+    }
 }
 
 static void widget_list_add(GList **list, GtkWidget *widget, gint id, gint position, gint value, gint x)
@@ -73,7 +92,7 @@ GtkWidget *create_table(GList **list, EffectSettings *settings, gint amt)
 
     for (x = 0; x<amt; x++) {
         label = gtk_label_new(settings[x].label);
-        adj = gtk_adjustment_new(0.0, settings[x].min, settings[x].max, 1.0, 1.0, 1.0);
+        adj = gtk_adjustment_new(0.0, settings[x].min, settings[x].max, 1.0, 1.0, 0.0);
         widget = gtk_spin_button_new(GTK_ADJUSTMENT(adj), 1.0, 0);
         g_signal_connect(G_OBJECT(widget), "value-changed", G_CALLBACK(value_changed_option_cb), &settings[x]);
         widget_list_add(list, widget, settings[x].option, settings[x].position, -1, -1);
@@ -126,7 +145,7 @@ void combo_box_changed_cb(GtkComboBox *widget, gpointer data)
         settings = g_object_get_data(G_OBJECT(widget), name);
         g_free(name);
 
-        if (settings != NULL)
+        if (settings != NULL && allow_send)
             set_option(settings->option, settings->position, settings->id);
 
         child = g_object_get_data(G_OBJECT(widget), "active_child");
@@ -349,6 +368,8 @@ static void apply_widget_setting(WidgetListElem *el, SettingParam *param)
 
 static void apply_preset_to_gui(GList *list, Preset *preset)
 {
+    allow_send = FALSE;
+
     GList *iter = preset->params;
     while (iter) {
         SettingParam *param = iter->data;
@@ -357,6 +378,8 @@ static void apply_preset_to_gui(GList *list, Preset *preset)
         if (param != NULL)
             g_list_foreach(list, (GFunc)apply_widget_setting, param);
     }
+
+    allow_send = TRUE;
 }
 
 static void action_store_cb(GtkAction *action)
@@ -547,6 +570,15 @@ static void add_menubar(GList **list, GtkWidget *window, GtkWidget *vbox)
     g_object_unref(ui);
 }
 
+static void apply_current_preset(GList *list)
+{
+    GString *msg = get_current_preset();
+    Preset *preset = create_preset_from_data(msg);
+    g_string_free(msg, TRUE);
+    apply_preset_to_gui(list, preset);
+    preset_free(preset);
+}
+
 void create_window()
 {
     GtkWidget *window;
@@ -587,6 +619,7 @@ void create_window()
         gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 2);
     }
 
+    apply_current_preset(list);
     gtk_widget_show_all(window);
 
     g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(gtk_main_quit), NULL);

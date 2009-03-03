@@ -165,6 +165,54 @@ Preset *create_preset_from_xml_file(gchar *filename)
     return preset;
 }
 
+Preset *create_preset_from_data(GString *data)
+{
+    gint total;
+    gint n;
+    gint id;
+    gint position;
+    guint value;
+    gint x;
+    gint tmp;
+
+    x = 0x09;
+    n = 0;
+    total = (u_char)data->str[x];
+    x++;
+
+    Preset *preset = g_malloc(sizeof(Preset));
+    preset->name = NULL; /* TODO */
+    preset->params = NULL;
+
+    do {
+        id = ((u_char)data->str[x] << 8) | (u_char)data->str[x+1];
+        position = (u_char)data->str[x+2];
+        x+=3;
+        value = data->str[x];
+        x++;
+        if (value > 0x80) {
+            tmp = value & 0x7F;
+            value = 0;
+            gint i;
+            for (i=0; i<tmp; i++) {
+                value |= ((u_char)data->str[x+i] << (8*(tmp-i-1)));
+            }
+            x+=tmp;
+        }
+        n++;
+        SettingParam *param = (SettingParam *)g_malloc(sizeof(SettingParam));
+        param->id = id;
+        param->position = position;
+        param->value = value;
+        preset->params = g_list_prepend(preset->params, param);
+        g_message("%d ID %d Position %d Value %d", n, id, position, value);
+    } while ((x < data->len) && n<total);
+    g_message("TOTAL %d", total);
+    preset->params = g_list_reverse(preset->params);
+
+    return preset;
+}
+
 void preset_free(Preset *preset)
 {
     g_return_if_fail(preset != NULL);

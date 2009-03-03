@@ -17,6 +17,7 @@
 #ifndef GDIGI_GUI_H
 #define GDIGI_GUI_H
 
+void show_error_message(GtkWidget *parent, gchar *message);
 void create_window();
 
 #endif /* GDIGI_GUI_H */

@@ -489,15 +489,51 @@ enum {
 #define USB_AUDIO_PLAYBACK_MIX 12297
 #define USB_AUDIO_LEVEL 12307
 
-typedef enum {
-  PRESETS_SYSTEM = 0,
-  PRESETS_USER = 1
-} PresetBank;
+enum {
+    PRESETS_SYSTEM = 0,
+    PRESETS_USER = 1,
+    PRESETS_ARTIST = 2,
+
+    /* Version 1 and later */
+    PRESETS_MEDIA_CARD = 3,
+    PRESETS_EDIT_BUFFER = 4, /* Current preset edit buffer, index must be 0 */
+    PRESETS_FACTORY2 = 5,
+
+    /* Version 2 and later */
+    PRESETS_EXTERNAL = 6,
+};
+
+enum {
+    REQUEST_WHO_AM_I = 0x01,
+    RECEIVE_WHO_AM_I = 0x02,
+
+    REQUEST_DEVICE_CONFIGURATION = 0x08,
+    RECEIVE_DEVICE_CONFIGURATION = 0x09,
+
+    REQUEST_GLOBAL_PARAMETERS = 0x10,
+    RECEIVE_GLOBAL_PARAMETERS = 0x11,
+
+    REQUEST_BULK_DUMP = 0x18,
+    RECEIVE_BULK_DUMP_START = 0x19,
+    RECEIVE_BULK_DUMP_END = 0x1B,
+
+    REQUEST_PRESET_NAMES = 0x21,
+    RECEIVE_PRESET_NAMES = 0x22,
+
+    REQUEST_PRESET_NAME = 0x28,
+    RECEIVE_PRESET_NAME = 0x29,
+
+    REQUEST_PRESET = 0x2A,
+    RECEIVE_PRESET_START = 0x2B,
+    RECEIVE_PRESET_END = 0x2C,
+    RECEIVE_PRESET_PARAMETERS = 0x2D,
+};
 
 void set_option(guint id, guint position, guint value);
 void switch_preset(guint bank, guint x);
 void store_preset_name(int x, const gchar *name);
 void set_preset_level(int level);
-GStrv query_preset_names(PresetBank bank);
+GStrv query_preset_names(guint bank);
+GString *get_current_preset();
 
 #endif /* GDIGI_H */

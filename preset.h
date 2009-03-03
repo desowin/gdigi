@@ -31,6 +31,7 @@ typedef struct {
 } Preset;
 
 Preset *create_preset_from_xml_file(gchar *filename);
+Preset *create_preset_from_data(GString *data);
 void preset_free(Preset *preset);
 
 #endif /* GDIGI_PRESET_H */

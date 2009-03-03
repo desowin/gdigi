@@ -22,6 +22,10 @@
 #include "gdigi.h"
 #include "gui.h"
 
+static u_char device_id = 0x7F;
+static u_char family_id = 0x7F;
+static u_char product_id = 0x7F;
+
 static snd_rawmidi_t *output = NULL;
 static snd_rawmidi_t *input = NULL;
 static char *device = "hw:1,0,0";
@@ -41,6 +45,18 @@ char calculate_checksum(gchar *array, int length, int check)
 
     for (x = 0; x<length; x++) {
         if (x == check) continue;
+        checksum ^= array[x];
+    }
+
+    return checksum;
+}
+
+static char calc_checksum(gchar *array, gint length)
+{
+    int x;
+    int checksum = 0;
+
+    for (x = 0; x<length; x++) {
         checksum ^= array[x];
     }
 
@@ -91,6 +107,7 @@ GString* read_data()
        by Clemens Ladisch <clemens@ladisch.de> */
     int err;
     int npfds;
+    gboolean stop = FALSE;
     struct pollfd *pfds;
     GString *string = NULL;
 
@@ -118,6 +135,7 @@ GString* read_data()
             break;
         if (!(revents & POLLIN))
             continue;
+
         err = snd_rawmidi_read(input, buf, sizeof(buf));
         if (err == -EAGAIN)
             continue;
@@ -125,10 +143,14 @@ GString* read_data()
             g_error("cannot read: %s", snd_strerror(err));
             break;
         }
+
         length = 0;
         for (i = 0; i < err; ++i)
             if (buf[i] != 0xFE) // ignore active sensing
                 buf[length++] = buf[i];
+
+        if ((u_char)buf[length-1] == 0xF7)
+            stop = TRUE;
 
         if (length != 0) {
             if (string == NULL) {
@@ -137,9 +159,40 @@ GString* read_data()
                 string = g_string_append_len(string, buf, length);
             }
         }
-     } while (err != 0);
+    } while ((err != 0) && (stop == FALSE));
 
-     return string;
+    return string;
+}
+
+static void clear_midi_in_buffer()
+{
+    GString *str;
+
+    do {
+        str = read_data();
+    } while (str != NULL);
+}
+
+static void send_message(gint procedure, gchar *data, gint len)
+{
+    GString *msg = g_string_new_len("\xF0"          /* SysEx status byte */
+                                    "\x00\x00\x10", /* Manufacturer ID   */
+                                    4);
+    g_string_append_printf(msg,
+                           "%c%c%c"   /* device, family, product ID */
+                           "%c",      /* procedure */
+                           device_id, family_id, product_id,
+                           procedure);
+
+    if (len > 0)
+        g_string_append_len(msg, data, len);
+
+    g_string_append_printf(msg, "%c\xF7",
+                           calc_checksum(&msg->str[1], msg->len - 1));
+
+    send_data(msg->str, msg->len);
+
+    g_string_free(msg, TRUE);
 }
 
 /*
@@ -310,9 +363,7 @@ GStrv query_preset_names(guint bank)
     gchar **str_array = NULL;
 
     /* clear MIDI IN buffer */
-    data = read_data();
-    if (data != NULL)
-        g_string_free(data, TRUE);
+    clear_midi_in_buffer();
 
     /* query user preset names */
     char command[] = {0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x21, 0x00, 0x00 /* bank */, 0x00 /* checksum */, 0xF7};
@@ -368,6 +419,75 @@ GStrv query_preset_names(guint bank)
     return str_array;
 }
 
+static void unpack_message(GString *msg)
+{
+    int offset;
+    int x;
+    int i;
+    u_char status;
+    gboolean finish = FALSE;
+
+    offset = 9;
+    x = 0;
+    i = 8;
+
+    do {
+        printf("status byte [%d] 0x%02x\n", offset-1, msg->str[offset-1]);
+        status = (u_char)msg->str[offset-1];
+        for (x=0; x<7; x++) {
+            if ((u_char)msg->str[offset+x] == 0xF7) {
+                msg->str[i] = 0xF7;
+                finish = TRUE;
+            }
+
+            msg->str[i] = (((status << (x+1)) & 0x80) | (u_char)msg->str[x+offset]);
+            printf("merging byte [%d] with byte [%d] MSB is %d\n",
+                   i, x+offset, (((status << (x+1)) & 0x80) >> 7));
+            i++;
+        }
+        offset += 8;
+    } while (finish == FALSE && offset < msg->len);
+}
+
+GString *get_current_preset()
+{
+    GString *data = NULL;
+
+    /* clear MIDI IN buffer */
+    clear_midi_in_buffer();
+
+    send_message(REQUEST_PRESET, "\x00\x04\x00", 3);
+
+    /* read reply */
+    data = read_data();
+    g_string_free(data, TRUE);
+
+    data = read_data();
+
+    unpack_message(data);
+
+    return data;
+}
+
+static gboolean request_who_am_i(u_char *device_id, u_char *family_id,
+                                 u_char *product_id)
+{
+    send_message(REQUEST_WHO_AM_I, NULL, 0);
+
+    GString *data = read_data();
+    if (data != NULL) {
+        if ((data->len == 15) && (data->str[7] == RECEIVE_WHO_AM_I)) {
+            *device_id = data->str[9];
+            *family_id = data->str[10];
+            *product_id = data->str[11];
+            g_string_free(data, TRUE);
+            return TRUE;
+        }
+        g_string_free(data, TRUE);
+    }
+    return FALSE;
+}
+
 static GOptionEntry options[] = {
     {"device", 'd', G_OPTION_FLAG_IN_MAIN, G_OPTION_ARG_STRING, &device, "MIDI device port to use", NULL},
     {NULL}
@@ -390,16 +510,14 @@ int main(int argc, char *argv[]) {
     g_option_context_free(context);
 
     if (open_device() == TRUE) {
-        GtkWidget *msg = gtk_message_dialog_new(NULL, GTK_DIALOG_MODAL,
-                                                GTK_MESSAGE_ERROR,
-                                                GTK_BUTTONS_OK,
-                                                "Failed to open MIDI device");
-
-        gtk_dialog_run(GTK_DIALOG(msg));
-        gtk_widget_destroy(msg);
+        show_error_message(NULL, "Failed to open MIDI device");
     } else {
-        create_window();
-        gtk_main();
+        if (request_who_am_i(&device_id, &family_id, &product_id) == FALSE) {
+            show_error_message(NULL, "No suitable reply from device - is it connected?");
+        } else {
+            create_window();
+            gtk_main();
+        }
     }
 
     if (output != NULL)
