@@ -286,13 +286,14 @@ void set_option(guint id, guint position, guint value)
 /* x = 0 to 60 */
 void switch_preset(guint bank, guint x)
 {
-    static char switch_preset[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x39, 0x00, 0x00 /* bank */, 0x00 /* no */, 0x04, 0x00, 0x00, 0x01, 0x00 /* confirm */, 0xF7};
-
-    switch_preset[10] = bank;
-    switch_preset[11] = x;
-    switch_preset[16] = calculate_checksum(switch_preset, sizeof(switch_preset), 16);
-
-    send_data(switch_preset, sizeof(switch_preset));
+    GString *msg = g_string_sized_new(6);
+    g_string_append_printf(msg, "%c%c%c%c%c%c",
+                           bank, x,                /* source */
+                           PRESETS_EDIT_BUFFER, 0, /* destination */
+                           0,                      /* keep existing name */
+                           1);                     /* load */
+    send_message(MOVE_PRESET, msg->str, msg->len);
+    g_string_free(msg, TRUE);
 }
 
 /* level = 0 to 99 */
@@ -303,63 +304,26 @@ void set_preset_level(int level)
 
 void store_preset_name(int x, const gchar *name)
 {
-    static char set_name[] = {0xF0, 0x00, 0x00, 0x10, 0x00, 0x5e, 0x02, 0x39, 0x00, 0x04, 0x00, 0x01, 0x00 /* preset number */, 0x00 /* name starts here */, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-
-    set_name[12] = x;
-
-    int a;
-    int b;
-    b = 0;
-    for (a=0; (name != NULL && a<strlen(name)) && a<10 ; a++) {
-        if (a == 3) {
-            set_name[13+a] = 0x00;
-            b++;
-        }
-        set_name[13+a+b] = name[a];
-    }
-
-    if (a == 3) {
-        set_name[13+a+1+b] = 0x00;
-        a++;
-    } else
-        set_name[13+a+b] = 0x00;
-
-    set_name[13+a+1+b] = 0x00;
-    set_name[13+a+3+b] = 0xF7;
-    set_name[13+a+2+b] = calculate_checksum(set_name, 13+a+4+b, 13+a+2+b);
-
-    send_data(set_name, 14+a+3+b);
-
-    switch_preset(PRESETS_USER, x);
+    GString *msg = g_string_sized_new(6);
+    g_string_append_printf(msg, "%c%c%c%c%s%c%c",
+                           PRESETS_EDIT_BUFFER, 0, /* source */
+                           PRESETS_USER, x,        /* destination */
+                           name, 0,                /* name */
+                           1);                     /* load */
+    send_message(MOVE_PRESET, msg->str, msg->len);
+    g_string_free(msg, TRUE);
 }
 
 /* x = 0 to 59 (preset number) */
 void set_preset_name(int x, gchar *name)
 {
-    static char set_name[] = {0x00, 0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x29, 0x00, 0x01, 0x00 /* preset no */, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-
-    set_name[11] = x;
-
-    int a;
-    int b;
-    b = 0;
-    for (a=0; (name != NULL && a<strlen(name)) && a<10 ; a++) {
-        if (a == 5) {
-            set_name[12+a] = 0x00;
-            b++;
-        }
-        set_name[12+a+b] = name[a];
-    }
-
-    if (a == 5)
-        a = 4;
-    else
-        set_name[12+a+b] = 0x00;
-
-    set_name[12+a+2+b] = 0xF7;
-    set_name[12+a+1+b] = calculate_checksum(set_name, 12+a+3+b, 12+a+1+b);
-
-    send_data(set_name, 13+a+3+b);
+    GString *msg = g_string_sized_new(12);
+    g_string_append_printf(msg, "%c%c%s%c",
+                           PRESETS_USER,    /* preset bank */
+                           x,               /* preset index */
+                           name, 0);        /* name */
+    send_message(RECEIVE_PRESET_NAME, msg->str, msg->len);
+    g_string_free(msg, TRUE);
 }
 
 /*
@@ -368,7 +332,7 @@ void set_preset_name(int x, gchar *name)
     Returns GStrv which must be freed with g_strfreev
     Returns NULL on error
 */
-GStrv query_preset_names(guint bank)
+GStrv query_preset_names(gchar bank)
 {
     GString *data = NULL;
     int x;                    /* used to iterate over whole reply */
@@ -380,10 +344,7 @@ GStrv query_preset_names(guint bank)
     clear_midi_in_buffer();
 
     /* query user preset names */
-    char command[] = {0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x21, 0x00, 0x00 /* bank */, 0x00 /* checksum */, 0xF7};
-    command[9] = bank;
-    command[10] = calculate_checksum(command, sizeof(command), 10);
-    send_data(command, sizeof(command));
+    send_message(REQUEST_PRESET_NAMES, &bank, 1);
 
     /* read reply */
     do {
