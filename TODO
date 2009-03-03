@@ -1,9 +1,8 @@
--figure out all magic commands
 -make complete gui
 -cabinet models
 -tone library
 -effects library
 -effects level
--handling presets (loading, saving, exporting to xml patches)
+-handling presets (saving, exporting to xml patches)
 -buildsystem
--fix expression pedal settings (possible types depend on active effects)
+-expression pedal settings

@@ -490,29 +490,7 @@ static void action_open_preset_cb(GtkAction *action)
                                        (param->id & 0xFF),
                                        param->position);
 
-                /* check how many bytes long the value is */
-                gint temp = param->value;
-                gint n = 0;
-                do {
-                    n++;
-                    temp = temp >> 8;
-                } while (temp);
-
-                if (n == 1) {
-                    if (param->value & 0x80)
-                        n = 2;
-                    else
-                        g_string_append_printf(msg, "%c", param->value);
-                }
-
-                if (n > 1) {
-                    gint x;
-                    g_string_append_printf(msg, "%c", (n | 0x80));
-                    for (x=0; x<n; x++) {
-                        g_string_append_printf(msg, "%c",
-                                               ((param->value >> (8*(n-x-1))) & 0xFF));
-                    }
-                }
+                append_value(msg, param->value);
             };
 
             GString *start = g_string_new(NULL);
