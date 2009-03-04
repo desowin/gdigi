@@ -298,6 +298,8 @@ static void fill_store_with_presets(GtkTreeStore *model, guint bank, gchar *name
     int x;
 
     GStrv presets = query_preset_names(bank);
+    g_return_if_fail(presets != NULL);
+
     gtk_tree_store_append(model, &iter, NULL);
     gtk_tree_store_set(model, &iter,
                        PRESET_NAME_COLUMN, name,
