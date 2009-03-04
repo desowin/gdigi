@@ -96,6 +96,65 @@ void send_data(char *data, int length)
     snd_rawmidi_write(output, data, length);
 }
 
+GString *pack_data(gchar *data, gint len)
+{
+    GString *packed;
+    gint i;
+    gint new_len;
+    unsigned char status;
+    gint offset;
+    gint status_byte;
+
+    new_len = len + (len/7);
+    packed = g_string_sized_new(new_len);
+    status = 0;
+    offset = -1;
+    status_byte = 0;
+
+    for (i=0; i<len; i++) {
+        if ((i % 7) == 0) {
+            packed->str[status_byte] = status;
+            status = 0;
+            status_byte = packed->len;
+            g_string_append_c(packed, '\0');
+        }
+        g_string_append_c(packed, (data[i] & 0x7F));
+        status |= (data[i] & 0x80) >> ((i%7) + 1);
+    }
+    packed->str[status_byte] = status;
+
+    return packed;
+}
+
+static void unpack_message(GString *msg)
+{
+    int offset;
+    int x;
+    int i;
+    unsigned char status;
+    gboolean stop = FALSE;
+
+    g_return_if_fail(msg != NULL);
+
+    offset = 9;
+    x = 0;
+    i = 8;
+
+    do {
+        status = (unsigned char)msg->str[offset-1];
+        for (x=0; x<7; x++) {
+            if ((unsigned char)msg->str[offset+x] == 0xF7) {
+                msg->str[i] = 0xF7;
+                stop = TRUE;
+            }
+
+            msg->str[i] = (((status << (x+1)) & 0x80) | (unsigned char)msg->str[x+offset]);
+            i++;
+        }
+        offset += 8;
+    } while (!stop);
+}
+
 /*
    reads data from MIDI IN
    returns GString containing data
@@ -173,36 +232,6 @@ static void clear_midi_in_buffer()
     } while (str != NULL);
 }
 
-GString *pack_data(gchar *data, gint len)
-{
-    GString *packed;
-    gint i;
-    gint new_len;
-    unsigned char status;
-    gint offset;
-    gint status_byte;
-
-    new_len = len + (len/7);
-    packed = g_string_sized_new(new_len);
-    status = 0;
-    offset = -1;
-    status_byte = 0;
-
-    for (i=0; i<len; i++) {
-        if ((i % 7) == 0) {
-            packed->str[status_byte] = status;
-            status = 0;
-            status_byte = packed->len;
-            g_string_append_c(packed, '\0');
-        }
-        g_string_append_c(packed, (data[i] & 0x7F));
-        status |= (data[i] & 0x80) >> ((i%7) + 1);
-    }
-    packed->str[status_byte] = status;
-
-    return packed;
-}
-
 /*
    data - unpacked data to send
    len  - data length
@@ -234,6 +263,8 @@ void send_message(gint procedure, gchar *data, gint len)
 
 static gint get_message_id(GString *msg)
 {
+    g_return_val_if_fail(msg != NULL, -1);
+
     if (msg->len > 7) {
         return (unsigned char)msg->str[7];
     }
@@ -353,76 +384,26 @@ GStrv query_preset_names(gchar bank)
         data = read_data();
     } while (get_message_id(data) != RECEIVE_PRESET_NAMES);
 
+    unpack_message(data);
+
     if (data != NULL) {
-        char preset_reply_magic[] = {0xF0, 0x00, 0x00, 0x10, 0x00, 0x5E, 0x02, 0x22, 0x00, 0x01};
-        if (strncmp(data->str, preset_reply_magic, sizeof(preset_reply_magic)) == 0) {
-            char buf[10]; /* temporary, used to read single preset name */
-            int b = 0;    /* used to iterate over buf */
+        if (data->len >= 10) {
+            n_total = data->str[9];
+            str_array = g_new(gchar*, n_total + 1);
+            str_array[n_total] = NULL;
+        }
 
-            if (data->len >= 10) {
-                n_total = data->str[10];
-                str_array = g_new(gchar*, n_total + 1);
-                str_array[n_total] = NULL;
-            }
+        for (x=10; ((x<data->len) && (n<n_total)); x++) {
+            if (data->str[x] == 0xF7) /* every message ends with 0xF7 */
+                break;
 
-            for (x=11; ((x<data->len) && (n<n_total)); x++) {
-                if ((x % 8) == 0) /* every 8th byte is 0x00 */
-                    continue;
-
-                if (data->str[x] == 0xF7) /* every message ends with 0xF7 */
-                    break;
-
-                if (data->str[x] == 0) { /* presets are splitted with 0x00 */
-                    gchar *name;
-
-                    name = g_new(gchar, b+1);
-                    strncpy(name, buf, b);
-                    name[b] = 0;
-                    if (n < n_total)
-                        str_array[n] = name;
-
-                    b = 0;
-                    n++;
-                } else {
-                    if (b < 10) {
-                        buf[b] = data->str[x];
-                        b++;
-                    } else {
-                        g_message("Preset name seems to be longer than 10 chars!");
-                    }
-                }
-            }
+            str_array[n] = g_strdup(&data->str[x]);
+            x += strlen(str_array[n]);
+            n++;
         }
         g_string_free(data, TRUE);
     }
     return str_array;
-}
-
-static void unpack_message(GString *msg)
-{
-    int offset;
-    int x;
-    int i;
-    unsigned char status;
-    gboolean finish = FALSE;
-
-    offset = 9;
-    x = 0;
-    i = 8;
-
-    do {
-        status = (unsigned char)msg->str[offset-1];
-        for (x=0; x<7; x++) {
-            if ((unsigned char)msg->str[offset+x] == 0xF7) {
-                msg->str[i] = 0xF7;
-                finish = TRUE;
-            }
-
-            msg->str[i] = (((status << (x+1)) & 0x80) | (unsigned char)msg->str[x+offset]);
-            i++;
-        }
-        offset += 8;
-    } while (finish == FALSE && offset < msg->len);
 }
 
 GString *get_current_preset()
@@ -439,7 +420,6 @@ GString *get_current_preset()
     g_string_free(data, TRUE);
 
     data = read_data();
-
     unpack_message(data);
 
     return data;
