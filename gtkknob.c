@@ -1,13 +1,10 @@
 /*****************************************************************************
  *
- * gtkknob.c
- *
- * PHASEX:  [P]hase [H]armonic [A]dvanced [S]ynthesis [EX]periment
- *
  * Most of this code comes from gAlan 0.2.0, copyright (C) 1999
  * Tony Garnock-Jones, with modifications from Sean Bolton,
- * copyright (C) 2004, William Weston copyright (C) 2007, and
- * Pete Shorthose copyright (C) 2007.
+ * copyright (C) 2004, William Weston copyright (C) 2007,
+ * Pete Shorthose copyright (C) 2007, and Tomasz Moń,
+ * copyright (C) 2009
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -60,7 +57,7 @@ static gint gtk_knob_motion_notify(GtkWidget *widget, GdkEventMotion *event);
 static gint gtk_knob_timer(GtkKnob *knob);
 
 static void gtk_knob_update_mouse_update(GtkKnob *knob);
-static void gtk_knob_update_mouse(GtkKnob *knob, gint x, gint y, gboolean absolute);
+static void gtk_knob_update_mouse(GtkKnob *knob, gint x, gint y, gboolean step);
 static void gtk_knob_update(GtkKnob *knob);
 static void gtk_knob_adjustment_changed(GtkAdjustment *adjustment, gpointer data);
 static void gtk_knob_adjustment_value_changed(GtkAdjustment *adjustment, gpointer data);
@@ -510,19 +507,6 @@ gtk_knob_button_release(GtkWidget *widget, GdkEventButton *event) {
     case STATE_PRESSED:
 	gtk_grab_remove (widget);
 	knob->state = STATE_IDLE;
-
-	switch (event->button) {
-	case 1:
-	    knob->adjustment->value -= knob->adjustment->page_increment;
-	    gtk_signal_emit_by_name (GTK_OBJECT (knob->adjustment),
-				     "value_changed");
-	    break;
-	case 3:
-	    knob->adjustment->value += knob->adjustment->page_increment;
-	    gtk_signal_emit_by_name (GTK_OBJECT (knob->adjustment),
-				     "value_changed");
-	    break;
-	}
 	break;
 
     case STATE_DRAGGING:
@@ -648,7 +632,7 @@ gtk_knob_update_mouse_update(GtkKnob *knob) {
  *
  *****************************************************************************/
 static void
-gtk_knob_update_mouse(GtkKnob *knob, gint x, gint y, gboolean absolute) {
+gtk_knob_update_mouse(GtkKnob *knob, gint x, gint y, gboolean step) {
     gfloat old_value, new_value, dv, dh;
     gfloat angle;
 
@@ -659,44 +643,31 @@ gtk_knob_update_mouse(GtkKnob *knob, gint x, gint y, gboolean absolute) {
 
     angle = atan2f (-y + (knob->height >> 1), x - (knob->width >> 1));
 
-    if (absolute) {
-	/* map [1.25pi, -0.25pi] onto [0, 1] */
-	angle *= M_1_PI;
-	if (angle < -0.5) {
-	    angle += 2.0;
-	}
-	new_value = -0.66666666666666666666 * (angle - 1.25);
-	new_value *= knob->adjustment->upper - knob->adjustment->lower;
-	new_value += knob->adjustment->lower;
-    }
-    else {
-	/* inverted cartesian graphics coordinate system */
-	dv = knob->saved_y - y;
-	dh = x - knob->saved_x;
-	knob->saved_x = x;
-	knob->saved_y = y;
+    /* inverted cartesian graphics coordinate system */
+    dv = knob->saved_y - y;
+    dh = x - knob->saved_x;
+    knob->saved_x = x;
+    knob->saved_y = y;
 
-	if ((x >= 0) && (x <= knob->width)) {
-	    dh = 0;  /* dead zone */
-	}
-	else {
-	    angle = cosf (angle);
-	    dh *= angle * angle;
-	}
-
-	new_value = knob->adjustment->value +
-	    dv * knob->adjustment->step_increment +
-	    dh * (knob->adjustment->upper -
-		  knob->adjustment->lower) * 0.005; /* 0.005 == (1 / 200) */
+    if ((x >= 0) && (x <= knob->width)) {
+        dh = 0;  /* dead zone */
+    } else {
+        angle = cosf (angle);
+        dh *= angle * angle;
     }
+
+    new_value = knob->adjustment->value +
+                dv * (step ? knob->adjustment->step_increment : knob->adjustment->page_increment) +
+                dh * (knob->adjustment->upper -
+                knob->adjustment->lower) * 0.005; /* 0.005 == (1 / 200) */
 
     new_value = MAX (MIN (new_value, knob->adjustment->upper),
-		     knob->adjustment->lower);
+                     knob->adjustment->lower);
 
     knob->adjustment->value = new_value;
 
     if (knob->adjustment->value != old_value) {
-	gtk_knob_update_mouse_update (knob);
+        gtk_knob_update_mouse_update (knob);
     }
 }
 
