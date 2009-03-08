@@ -9,8 +9,8 @@ LIBS = `pkg-config --libs glib-2.0 gio-2.0 gtk+-2.0 alsa` -lexpat
 
 all: gdigi
 
-gdigi: gdigi.o tests.o gui.o effects.o preset.o
-	$(CC) $(LIBS) $(OFLAG) gdigi gdigi.o tests.o gui.o effects.o preset.o
+gdigi: gdigi.o tests.o gui.o effects.o preset.o gtkknob.o
+	$(CC) $(LIBS) $(OFLAG) gdigi gdigi.o tests.o gui.o effects.o preset.o gtkknob.o
 
 gdigi.o: gdigi.c
 
@@ -21,6 +21,8 @@ gui.o: gui.c
 effects.o: effects.c
 
 preset.o: preset.c
+
+gtkknob.o: gtkknob.c
 
 clean:
 	rm *.o
