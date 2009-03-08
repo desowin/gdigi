@@ -6,3 +6,7 @@
 -handling presets (saving, exporting to xml patches)
 -buildsystem
 -expression pedal settings
+  -finish modifier_linkable_list() (gdigi.c)
+  -make modifiers[] complete (gdigi.c)
+  -add it to gui
+

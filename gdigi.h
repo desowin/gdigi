@@ -348,7 +348,7 @@ enum {
 #define IPS_BB 0x06
 #define IPS_B 0x07
 #define IPS_C 0x08
-#define IPS_DD 0x09
+#define IPS_DB 0x09
 #define IPS_D 0x0A
 #define IPS_EB 0x0B
 

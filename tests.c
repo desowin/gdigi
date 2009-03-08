@@ -480,7 +480,7 @@ void test_chorusfx()
     set_option(IPS_KEY, CHORUSFX_POSITION, IPS_BB);
     set_option(IPS_KEY, CHORUSFX_POSITION, IPS_B);
     set_option(IPS_KEY, CHORUSFX_POSITION, IPS_C);
-    set_option(IPS_KEY, CHORUSFX_POSITION, IPS_DD);
+    set_option(IPS_KEY, CHORUSFX_POSITION, IPS_DB);
     set_option(IPS_KEY, CHORUSFX_POSITION, IPS_D);
     set_option(IPS_KEY, CHORUSFX_POSITION, IPS_EB);
     set_option(IPS_SCALE, CHORUSFX_POSITION, IPS_MAJOR);

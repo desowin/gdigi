@@ -135,14 +135,20 @@ static void unpack_message(GString *msg)
     gboolean stop = FALSE;
 
     g_return_if_fail(msg != NULL);
+    g_return_if_fail(msg->len > 9);
 
-    offset = 9;
+    offset = 1;
     x = 0;
     i = 8;
 
     do {
+        offset += 8;
         status = (unsigned char)msg->str[offset-1];
         for (x=0; x<7; x++) {
+            if (offset+x >= msg->len) {
+                stop = TRUE;
+                break;
+            }
             if ((unsigned char)msg->str[offset+x] == 0xF7) {
                 msg->str[i] = 0xF7;
                 stop = TRUE;
@@ -151,8 +157,9 @@ static void unpack_message(GString *msg)
             msg->str[i] = (((status << (x+1)) & 0x80) | (unsigned char)msg->str[x+offset]);
             i++;
         }
-        offset += 8;
-    } while (!stop);
+    } while (!stop && (offset+x < msg->len));
+
+    g_string_truncate(msg, i);
 }
 
 /*
@@ -442,6 +449,157 @@ static gboolean request_who_am_i(unsigned char *device_id, unsigned char *family
         g_string_free(data, TRUE);
     }
     return FALSE;
+}
+
+static void request_device_configuration()
+{
+    gint os_major, os_minor;
+    gint cpu_major, cpu_minor;
+    gint protocol_version;
+    gint current_bank, current_preset;
+    gint media_card;
+
+    send_message(REQUEST_DEVICE_CONFIGURATION, NULL, 0);
+
+    GString *data = NULL;
+
+    do {
+        if (data)
+            g_string_free(data, TRUE);
+        data = read_data();
+    } while (get_message_id(data) != RECEIVE_DEVICE_CONFIGURATION);
+
+    unpack_message(data);
+
+    if (data->len > 14) {
+        os_major = data->str[8];
+        os_minor = (((data->str[9] & 0xF0) >> 4) * 10) |
+                   (data->str[9] & 0x0F);
+        g_message("OS version: %d.%d", os_major, os_minor);
+
+        cpu_major = data->str[10];
+        cpu_minor = data->str[11];
+        g_message("CPU version: %d.%d", cpu_major, cpu_minor);
+
+        protocol_version = data->str[12];
+        g_message("Protocol version: %d", protocol_version);
+
+        current_bank = data->str[13];
+        current_preset = data->str[14];
+        g_message("Active bank: %d", current_bank);
+        g_message("Active preset: %d", current_preset);
+
+        if (os_major >= 1) {
+            media_card = data->str[15];
+            g_message("Media card present: %d", media_card);
+        }
+    }
+}
+
+typedef struct {
+    const gchar *label;
+    guint id;
+    guint position;
+} Modifiers;
+
+static Modifiers modifiers[] = {
+    {"None", 0, 0},
+    {"Pickup Enable", PICKUP_ON_OFF, PICKUP_POSITION},
+    {"Pickup Type", PICKUP_TYPE, PICKUP_POSITION},
+    {"Compressor Enable", COMP_ON_OFF, COMP_POSITION},
+    {"Compressor Sustain", COMP_SUSTAIN, COMP_POSITION},
+    {"Compressor Tone", COMP_TONE, COMP_POSITION},
+    {"Compressor Level", COMP_LEVEL, COMP_POSITION},
+    {"Compressor Attack", COMP_ATTACK, COMP_POSITION},
+    {"Dist Enable", DIST_ON_OFF, DIST_POSITION},
+    {"Dist Distortion", DIST_RODENT_DIST, DIST_POSITION},
+    {"Dist Filter", DIST_RODENT_FILTER, DIST_POSITION},
+    {"Dist Volume", DIST_RODENT_LVL, DIST_POSITION},
+    {"Dist Gain", DIST_DOD250_GAIN, DIST_POSITION},
+    {"Dist Level", DIST_DOD250_LVL, DIST_POSITION},
+    {"Amp Channel Enable", AMP_ON_OFF, AMP_POSITION},
+    {"Amp Gain", AMP_GAIN, AMP_POSITION},
+    {"Amp Level", AMP_LEVEL, AMP_POSITION},
+    {"EQ Enable", EQ_ON_OFF, EQ_POSITION},
+    {"EQ Bass", EQ_BASS, EQ_POSITION},
+    {"EQ Mid", EQ_MID, EQ_POSITION},
+    {"EQ Treb", EQ_TREBLE, EQ_POSITION},
+    {"Gate Enable", NOISEGATE_ON_OFF, NOISEGATE_POSITION},
+    {"Gate Threshold", NOISEGATE_GATE_TRESHOLD, NOISEGATE_POSITION},
+    {"Gate Attack", NOISEGATE_ATTACK, NOISEGATE_POSITION},
+    {"Gate Release", NOISEGATE_RELEASE, NOISEGATE_POSITION},
+    {"Gate Attenuation", NOISEGATE_ATTN, NOISEGATE_POSITION},
+    {"Chorus/FX Enable", CHORUSFX_ON_OFF, CHORUSFX_POSITION},
+    {"Phaser Speed", PHASER_SPEED, CHORUSFX_POSITION},
+    {"Phaser Depth", PHASER_DEPTH, CHORUSFX_POSITION},
+    {"Phaser Regen", PHASER_REGEN, CHORUSFX_POSITION},
+    {"Phaser Waveform", PHASER_WAVE, CHORUSFX_POSITION},
+    {"Phaser Level", PHASER_LEVEL, CHORUSFX_POSITION},
+    {"Chorus Speed", CE_CHORUS_SPEED, CHORUSFX_POSITION},
+    {"Chorus Depth", CE_CHORUS_DEPTH, CHORUSFX_POSITION},
+    {"Chorus Level", DUAL_CHORUS_LEVEL, CHORUSFX_POSITION},
+    {"Chorus Waveform", DUAL_CHORUS_WAVE, CHORUSFX_POSITION},
+    {"Delay Enable", DELAY_ON_OFF, DELAY_POSITION},
+    {"Delay Time", DELAY_TIME, DELAY_POSITION},
+    {"Delay Repeats", ANALOG_REPEATS, DELAY_POSITION},
+    {"Delay Level", ANALOG_LEVEL, DELAY_POSITION},
+    {"Delay Duck Thresh", DIGITAL_DUCKER_THRESH, DELAY_POSITION},
+    {"Delay Duck Level", DIGITAL_DUCKER_LEVEL, DELAY_POSITION},
+    {"Reverb Enable", REVERB_ON_OFF, REVERB_POSITION},
+    {"Reverb Decay", LEX_AMBIENCE_DECAY, REVERB_POSITION},
+    {"Reverb Liveliness", LEX_STUDIO_LIVELINESS, REVERB_POSITION},
+    {"Reverb Level", LEX_STUDIO_LEVEL, REVERB_POSITION},
+    {"Reverb Predelay", LEX_STUDIO_PREDELAY, REVERB_POSITION},
+    {"Volume Pre FX", 2626, 13},
+    {"Volume Post FX", 2626, 17},
+};
+
+int n_modifiers = G_N_ELEMENTS(modifiers);
+
+/*
+    returned value must not be freed
+*/
+static const gchar *get_modifier_label(guint id, guint position)
+{
+    gint x;
+
+    for (x=0; x<n_modifiers; x++)
+        if ((modifiers[x].id == id) && (modifiers[x].position == position))
+            return modifiers[x].label;
+
+    return NULL;
+}
+
+static void modifier_linkable_list()
+{
+    guint group_id;
+    guint count;
+    guint i;
+
+    send_message(REQUEST_MODIFIER_LINKABLE_LIST, "\x00\x01", 2);
+
+    GString *data = NULL;
+
+    do {
+        if (data)
+            g_string_free(data, TRUE);
+        data = read_data();
+    } while (get_message_id(data) != RECEIVE_MOFIFIER_LINKABLE_LIST);
+
+    unpack_message(data);
+
+    unsigned char *str = (unsigned char*)data->str;
+
+    group_id = (str[8] << 8) | str[9];
+    count = (str[10] << 8) | str[11];
+
+    g_message("Group %d count %d", group_id, count);
+    for (i=0; i<count; i++) {
+        guint id = (str[12 + (i*3)] << 8) | str[13 + (i*3)];
+        guint position = str[14 + (i*3)];
+
+        g_message("ID: %d Position: %d Label: %s", id, position, get_modifier_label(id, position));
+    }
 }
 
 static GOptionEntry options[] = {
