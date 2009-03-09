@@ -43,7 +43,8 @@ void show_error_message(GtkWidget *parent, gchar *message)
 {
     g_return_if_fail(message != NULL);
 
-    GtkWidget *msg = gtk_message_dialog_new(parent, GTK_DIALOG_MODAL,
+    GtkWidget *msg = gtk_message_dialog_new(GTK_WINDOW(parent),
+                                            GTK_DIALOG_MODAL,
                                             GTK_MESSAGE_ERROR,
                                             GTK_BUTTONS_OK,
                                             message);
@@ -278,7 +279,7 @@ GtkWidget *create_widget_container(EffectGroup *group, gint amt)
     }
 
     return vbox;
-};
+}
 
 GtkWidget *create_vbox(Effect *widgets, gint amt)
 {
