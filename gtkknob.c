@@ -299,6 +299,7 @@ gtk_knob_realize(GtkWidget *widget) {
     g_return_if_fail (GTK_IS_KNOB (widget));
 
     GTK_WIDGET_SET_FLAGS (widget, GTK_REALIZED);
+    GTK_WIDGET_SET_FLAGS (widget, GTK_CAN_FOCUS);
     knob = GTK_KNOB (widget);
 
     attributes.x           = widget->allocation.x;
@@ -407,6 +408,12 @@ gtk_knob_expose(GtkWidget *widget, GdkEventExpose *event) {
 		     dx, 0, 0, 0, knob->width, knob->height,
 		     GDK_RGB_DITHER_NONE, 0, 0);
 
+    if (GTK_WIDGET_HAS_FOCUS(widget)) {
+        gtk_paint_focus (widget->style, widget->window, widget->state,
+                         NULL, widget, NULL, 0, 0,
+                         widget->allocation.width, widget->allocation.height);
+    }
+
     return FALSE;
 }
 
@@ -465,7 +472,8 @@ gtk_knob_button_press(GtkWidget *widget, GdkEventButton *event) {
 	switch (event->button) {
 	case 1:
 	case 3:
-	    gtk_grab_add (widget);
+	    if (!GTK_WIDGET_HAS_FOCUS(widget))
+	        gtk_widget_grab_focus(widget);
 	    knob->state   = STATE_PRESSED;
 	    knob->saved_x = event->x;
 	    knob->saved_y = event->y;
@@ -503,12 +511,10 @@ gtk_knob_button_release(GtkWidget *widget, GdkEventButton *event) {
     switch (knob->state) {
 
     case STATE_PRESSED:
-	gtk_grab_remove (widget);
 	knob->state = STATE_IDLE;
 	break;
 
     case STATE_DRAGGING:
-	gtk_grab_remove (widget);
 	knob->state = STATE_IDLE;
 
 	switch (event->button) {
