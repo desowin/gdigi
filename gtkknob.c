@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <gtk/gtkmain.h>
 #include <gtk/gtksignal.h>
+#include <gdk/gdkkeysyms.h>
 
 #include "gtkknob.h"
 
@@ -53,6 +54,7 @@ static gint gtk_knob_expose(GtkWidget *widget, GdkEventExpose *event);
 static gint gtk_knob_scroll(GtkWidget *widget, GdkEventScroll *event);
 static gint gtk_knob_button_press(GtkWidget *widget, GdkEventButton *event);
 static gint gtk_knob_button_release(GtkWidget *widget, GdkEventButton *event);
+static gint gtk_knob_key_press(GtkWidget *widget, GdkEventKey *event);
 static gint gtk_knob_motion_notify(GtkWidget *widget, GdkEventMotion *event);
 static gint gtk_knob_timer(GtkKnob *knob);
 
@@ -118,6 +120,7 @@ gtk_knob_class_init (GtkKnobClass *class) {
     widget_class->scroll_event         = gtk_knob_scroll;
     widget_class->button_press_event   = gtk_knob_button_press;
     widget_class->button_release_event = gtk_knob_button_release;
+    widget_class->key_press_event      = gtk_knob_key_press;
     widget_class->motion_notify_event  = gtk_knob_motion_notify;
 }
 
@@ -535,6 +538,41 @@ gtk_knob_button_release(GtkWidget *widget, GdkEventButton *event) {
     return FALSE;
 }
 
+static gint gtk_knob_key_press(GtkWidget *widget, GdkEventKey *event)
+{
+    GtkKnob *knob;
+
+    g_return_val_if_fail (widget != NULL, FALSE);
+    g_return_val_if_fail (GTK_IS_KNOB (widget), FALSE);
+    g_return_val_if_fail (event != NULL, FALSE);
+
+    knob = GTK_KNOB (widget);
+
+    switch (event->keyval) {
+
+    case GDK_Up:
+        if (GTK_WIDGET_HAS_FOCUS (widget))
+        {
+            gtk_adjustment_set_value (knob->adjustment,
+                                      knob->old_value + knob->adjustment->step_increment);
+            return TRUE;
+        }
+        return FALSE;
+
+    case GDK_Down:
+        if (GTK_WIDGET_HAS_FOCUS (widget))
+        {
+            gtk_adjustment_set_value (knob->adjustment,
+                                      knob->old_value - knob->adjustment->step_increment);
+            return TRUE;
+        }
+        return FALSE;
+    default:
+        break;
+    }
+
+    return GTK_WIDGET_CLASS (parent_class)->key_press_event (widget, event);
+}
 
 /*****************************************************************************
  *
