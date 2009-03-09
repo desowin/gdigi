@@ -132,6 +132,7 @@ static void unpack_message(GString *msg)
     int x;
     int i;
     unsigned char status;
+    unsigned char *str;
     gboolean stop = FALSE;
 
     g_return_if_fail(msg != NULL);
@@ -141,20 +142,21 @@ static void unpack_message(GString *msg)
     x = 0;
     i = 8;
 
+    str = (unsigned char*)msg->str;
     do {
         offset += 8;
-        status = (unsigned char)msg->str[offset-1];
+        status = str[offset-1];
         for (x=0; x<7; x++) {
             if (offset+x >= msg->len) {
                 stop = TRUE;
                 break;
             }
-            if ((unsigned char)msg->str[offset+x] == 0xF7) {
-                msg->str[i] = 0xF7;
+            if (str[offset+x] == 0xF7) {
+                str[i] = 0xF7;
                 stop = TRUE;
             }
 
-            msg->str[i] = (((status << (x+1)) & 0x80) | (unsigned char)msg->str[x+offset]);
+            str[i] = (((status << (x+1)) & 0x80) | str[x+offset]);
             i++;
         }
     } while (!stop && (offset+x < msg->len));

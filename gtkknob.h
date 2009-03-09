@@ -1,9 +1,5 @@
 /*****************************************************************************
  *
- * gtkknob.h
- *
- * PHASEX:  [P]hase [H]armonic [A]dvanced [S]ynthesis [EX]periment
- *
  * Most of this code comes from gAlan 0.2.0, copyright (C) 1999
  * Tony Garnock-Jones, with modifications by Sean Bolton,
  * copyright (C) 2004, and minor modifications by William Weston,
@@ -90,7 +86,8 @@ typedef struct _GtkKnobAnim	GtkKnobAnim;
     extern GtkAdjustment *gtk_knob_get_adjustment(GtkKnob *knob);
     extern void gtk_knob_set_update_policy(GtkKnob *knob, GtkUpdateType  policy);
     extern void gtk_knob_set_adjustment(GtkKnob *knob, GtkAdjustment *adjustment);
-    
+
+    GtkKnobAnim *gtk_knob_animation_new_from_inline(const guint8 *pixbuf);
     GtkKnobAnim *gtk_knob_animation_new_from_file_full(gchar *filename,
 						       gint frame_width,
 						       gint width,

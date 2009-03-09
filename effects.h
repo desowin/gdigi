@@ -25,6 +25,8 @@ typedef struct {
     gdouble max;    /* Parameter maximum value */
     guint option;   /* ID (to set parameter) */
     guint position; /* position */
+
+    GStrv labels;   /* value labels */
 } EffectSettings;
 
 typedef struct {

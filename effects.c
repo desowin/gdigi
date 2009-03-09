@@ -17,6 +17,77 @@
 #include "gdigi.h"
 #include "effects.h"
 
+static gchar *wave_labels[] = {
+    "Tri",
+    "Sine",
+    "Square",
+    NULL,
+};
+
+static gchar *whammy_labels[] = {
+    "OctUp",
+    "2OctUp",
+    "2ndDn",
+    "Rv2nd",
+    "4thDn",
+    "OctDn",
+    "2OctDn",
+    "DivBmb",
+    "M3>Ma3",
+    "2ndMa3",
+    "3rd4th",
+    "4th5th",
+    "5thOct",
+    "HOctUp",
+    "HOctDn",
+    "OctU>D",
+    NULL,
+};
+
+static gchar *ips_shift_labels[] = {
+    "Oct Dn",
+    "7th Dn",
+    "6th Dn",
+    "5th Dn",
+    "4th Dn",
+    "3rd Dn",
+    "2nd Dn",
+    "2nd Up",
+    "3rd Up",
+    "4th Up",
+    "5th Up",
+    "6th Up",
+    "7th Up",
+    "Oct Up",
+    NULL,
+};
+
+static gchar *ips_key_labels[] = {
+    "E",
+    "F",
+    "Gb",
+    "G",
+    "Ab",
+    "A",
+    "Bb",
+    "B",
+    "C",
+    "Db",
+    "D",
+    "Eb",
+    NULL,
+};
+
+static gchar *ips_scale_labels[] = {
+    "Major",
+    "Minor",
+    "Dorian",
+    "Mixolydian",
+    "Lydian",
+    "HMinor",
+    NULL,
+};
+
 static EffectSettings wah_settings[] = {
     {"Wah min", 0.0, 99.0, WAH_MIN, WAH_POSITION_MIN_MAX},
     {"Wah max", 0.0, 99.0, WAH_MAX, WAH_POSITION_MIN_MAX},
@@ -159,14 +230,14 @@ static EffectSettings chorusfx_dual_settings[] = {
     {"Dual chorus speed", 0.0, 99.0, DUAL_CHORUS_SPEED, CHORUSFX_POSITION},
     {"Dual chorus depth", 0.0, 99.0, DUAL_CHORUS_DEPTH, CHORUSFX_POSITION},
     {"Dual chorus level", 0.0, 99.0, DUAL_CHORUS_LEVEL, CHORUSFX_POSITION},
-    /* TODO: DUAL_CHORUS_WAVE with valid options WAVE_TRI, WAVE_SINE, WAVE_SQUARE */
+    {"Dual chorus wave", 0.0, 2.0, DUAL_CHORUS_WAVE, CHORUSFX_POSITION, wave_labels},
 };
 
 static EffectSettings chorusfx_multi_settings[] = {
     {"Multi chorus speed", 0.0, 99.0, MULTI_CHORUS_SPEED, CHORUSFX_POSITION},
     {"Multi chorus depth", 0.0, 99.0, MULTI_CHORUS_DEPTH, CHORUSFX_POSITION},
     {"Multi chorus level", 0.0, 99.0, MULTI_CHORUS_LEVEL, CHORUSFX_POSITION},
-    /* TODO: MULTI_CHORUS_WAVE with valid options WAVE_TRI, WAVE_SINE, WAVE_SQUARE */
+    {"Multi chorus wave", 0.0, 2.0, MULTI_CHORUS_WAVE, CHORUSFX_POSITION, wave_labels},
 };
 
 static EffectSettings chorusfx_flanger_settings[] = {
@@ -174,7 +245,7 @@ static EffectSettings chorusfx_flanger_settings[] = {
     {"Flanger depth", 0.0, 99.0, FLANGER_DEPTH, CHORUSFX_POSITION},
     {"Flanger regen", 0.0, 99.0, FLANGER_REGEN, CHORUSFX_POSITION},
     {"Flanger level", 0.0, 99.0, FLANGER_LEVEL, CHORUSFX_POSITION},
-    /* TODO: FLANGER_WAVE with valid options WAVE_TRI, WAVE_SINE, WAVE_SQUARE */
+    {"Flanger wave", 0.0, 2.0, FLANGER_WAVE, CHORUSFX_POSITION, wave_labels},
 };
 
 static EffectSettings chorusfx_mxr_flanger_settings[] = {
@@ -189,7 +260,7 @@ static EffectSettings chorusfx_phaser_settings[] = {
     {"Phaser depth", 0.0, 99.0, PHASER_DEPTH, CHORUSFX_POSITION},
     {"Phaser regen", 0.0, 99.0, PHASER_REGEN, CHORUSFX_POSITION},
     {"Phaser level", 0.0, 99.0, PHASER_LEVEL, CHORUSFX_POSITION},
-    /* TODO: PHASER_WAVE with valid options WAVE_TRI, WAVE_SINE, WAVE_SQUARE */
+    {"Phaser wave", 0.0, 2.0, PHASER_WAVE, CHORUSFX_POSITION, wave_labels},
 };
 
 static EffectSettings chorusfx_vibrato_settings[] = {
@@ -208,19 +279,19 @@ static EffectSettings chorusfx_vibropan_settings[] = {
     {"Vibropan speed", 0.0, 99.0, VIBROPAN_SPEED, CHORUSFX_POSITION},
     {"Vibropan depth", 0.0, 99.0, VIBROPAN_DEPTH, CHORUSFX_POSITION},
     {"Vibropan vibra", 0.0, 99.0, VIBROPAN_VIBRA, CHORUSFX_POSITION},
-    /* TODO: VIBROPAN_WAVE with valid options WAVE_TRI, WAVE_SINE, WAVE_SQUARE */
+    {"Vibropan wave", 0.0, 2.0, VIBROPAN_WAVE, CHORUSFX_POSITION, wave_labels},
 };
 
 static EffectSettings chorusfx_tremolo_settings[] = {
     {"Tremolo speed", 0.0, 99.0, TREMOLO_SPEED, CHORUSFX_POSITION},
     {"Tremolo depth", 0.0, 99.0, TREMOLO_DEPTH, CHORUSFX_POSITION},
-    /* TODO: TREMOLO_WAVE with valid options WAVE_TRI, WAVE_SINE, WAVE_SQUARE */
+    {"Tremolo wave", 0.0, 2.0, TREMOLO_WAVE, CHORUSFX_POSITION, wave_labels},
 };
 
 static EffectSettings chorusfx_panner_settings[] = {
     {"Panner speed", 0.0, 99.0, PANNER_SPEED, CHORUSFX_POSITION},
     {"Panner depth", 0.0, 99.0, PANNER_DEPTH, CHORUSFX_POSITION},
-    /* TODO: PANNER_WAVE with valid options WAVE_TRI, WAVE_SINE, WAVE_SQUARE */
+    {"Panner wave", 0.0, 2.0, PANNER_WAVE, CHORUSFX_POSITION, wave_labels},
 };
 
 static EffectSettings chorusfx_envelope_settings[] = {
@@ -248,13 +319,7 @@ static EffectSettings chorusfx_step_filter_settings[] = {
 static EffectSettings chorusfx_whammy_settings[] = {
     {"Whammy pedal", 0.0, 99.0, WHAMMY_PEDAL, CHORUSFX_POSITION},
     {"Whammy mix", 0.0, 99.0, WHAMMY_MIX, CHORUSFX_POSITION},
-    /*
-       TODO: WHAMMY_AMOUNT with valid options:
-             WHAMMY_OCT_UP, WHAMMY_2OCT_UP, WHAMMY_2ND_DN, WHAMMY_RV_2ND,
-             WHAMMY_4TH_DN, WHAMMY_OCT_DN, WHAMMY_2OCT_DN, WHAMMY_DIV_BMB,
-             WHAMMY_M3_MA, WHAMMY_2ND_MA3, WHAMMY_3RD_4TH, WHAMMY_4TH_5TH,
-             WHAMMY_5TH_OCT, WHAMMY_HOCT_UP, WHAMMY_HOCT_DN, WHAMMY_OCT_UD
-    */
+    {"Whammy amount", 0.0, 15.0, WHAMMY_AMOUNT, CHORUSFX_POSITION, whammy_labels},
 };
 
 static EffectSettings chorusfx_pitch_shift_settings[] = {
@@ -269,20 +334,9 @@ static EffectSettings chorusfx_detune_settings[] = {
 };
 
 static EffectSettings chorusfx_ips_settings[] = {
-    /*
-       TODO: IPS_SHIFT_AMOUNT with valid options:
-             IPS_7TH_DN, IPS_6TH_DN, IPS_5TH_DN, IPS_4TH_DN, IPS_3RD_DN,
-             IPS_2ND_DN, IPS_2ND_UP, IPS_3RD_UP, IPS_4TH_UP, IPS_5TH_UP,
-             IPS_6TH_UP, IPS_7TH_UP, IPS_OCT_U
-
-       TODO: IPS_KEY with valid options:
-             IPS_E, IPS_F, IPS_GB, IPS_G, IPS_AB, IPS_A, IPS_BB, IPS_B,
-             IPS_C, IPS_DD, IPS_D, IPS_EB
-
-       TODO: IPS_SCALE with valid options:
-             IPS_MAJOR, IPS_MINOR, IPS_DORIA, IPS_MIXLYD, IPS_LYDIAN, IPS_HMINO
-    */
-
+    {"IPS shift", 0.0, 13.0, IPS_SHIFT_AMOUNT, CHORUSFX_POSITION, ips_shift_labels},
+    {"IPS key", 0.0, 11.0, IPS_KEY, CHORUSFX_POSITION, ips_key_labels},
+    {"IPS scale", 0.0, 5.0, IPS_SCALE, CHORUSFX_POSITION, ips_scale_labels},
     {"IPS level", 0.0, 99.0, IPS_LEVEL, CHORUSFX_POSITION},
 };
 

@@ -62,8 +62,6 @@ static void gtk_knob_update(GtkKnob *knob);
 static void gtk_knob_adjustment_changed(GtkAdjustment *adjustment, gpointer data);
 static void gtk_knob_adjustment_value_changed(GtkAdjustment *adjustment, gpointer data);
 
-GError *gerror;
-
 /* Local data */
 
 static GtkWidgetClass *parent_class = NULL;
@@ -792,6 +790,29 @@ gtk_knob_animation_new_from_file(gchar *filename) {
     return anim;
 }
 
+/*****************************************************************************
+ *
+ * gtk_knob_animation_new_from_inline()
+ *
+ *****************************************************************************/
+GtkKnobAnim *
+gtk_knob_animation_new_from_inline(const guint8 *pixbuf) {
+    GtkKnobAnim *anim = g_new0 (GtkKnobAnim, 1);
+
+    g_return_val_if_fail((pixbuf != NULL), NULL);
+
+    anim->pixbuf = gdk_pixbuf_new_from_inline(-1, pixbuf, FALSE, NULL);
+    if (anim->pixbuf == NULL) {
+        g_free(anim);
+        return NULL;
+    }
+
+    anim->height      = gdk_pixbuf_get_height (anim->pixbuf);
+    anim->width       = gdk_pixbuf_get_width (anim->pixbuf);
+    anim->frame_width = anim->height;
+
+    return anim;
+}
 
 /*****************************************************************************
  *
@@ -811,6 +832,8 @@ gtk_knob_animation_new_from_file_full(gchar *filename, gint frame_width,
     GtkKnobAnim *anim = g_new0 (GtkKnobAnim, 1);
 
     g_return_val_if_fail ((filename != NULL), NULL);
+
+    GError *gerror = NULL;
 
 #if GTK_MINOR_VERSION < 10
     if (!(anim->pixbuf = gdk_pixbuf_new_from_file (filename, &gerror))) {

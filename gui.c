@@ -19,10 +19,13 @@
 #include "gui.h"
 #include "effects.h"
 #include "preset.h"
+#include "gtkknob.h"
+#include "knob.h"
 
 extern EffectList effects[];
 extern int n_effects;
 
+static GtkKnobAnim *knob_anim = NULL;
 static gboolean allow_send = FALSE;
 
 void show_error_message(GtkWidget *parent, gchar *message)
@@ -39,7 +42,7 @@ void show_error_message(GtkWidget *parent, gchar *message)
 }
 
 typedef struct {
-    GtkWidget *widget;
+    GtkObject *widget;
     gint id;
     gint position;
 
@@ -48,13 +51,28 @@ typedef struct {
     gint x;               /* combo box item number */
 } WidgetListElem;
 
-void value_changed_option_cb(GtkSpinButton *spinbutton, EffectSettings *setting)
+void value_changed_option_cb(GtkAdjustment *adj, EffectSettings *setting)
 {
     g_return_if_fail(setting != NULL);
 
     if (allow_send) {
-        gint val = gtk_spin_button_get_value_as_int(spinbutton);
-        set_option(setting->option, setting->position, val);
+        gdouble val;
+        g_object_get(G_OBJECT(adj), "value", &val, NULL);
+        set_option(setting->option, setting->position, (gint)val);
+    }
+
+    if (setting->labels != NULL) {
+        GtkWidget *label;
+        gint x;
+        gdouble val = -1.0;
+        g_object_get(G_OBJECT(adj), "value", &val, NULL);
+
+        x = (gint)val;
+
+        if ((x >= setting->min) && (x <= setting->max)) {
+            label = g_object_get_data(G_OBJECT(adj), "label");
+            gtk_label_set_text(GTK_LABEL(label), setting->labels[x]);
+        }
     }
 }
 
@@ -68,7 +86,7 @@ void toggled_cb(GtkToggleButton *button, Effect *effect)
     }
 }
 
-static void widget_list_add(GList **list, GtkWidget *widget, gint id, gint position, gint value, gint x)
+static void widget_list_add(GList **list, GtkObject *widget, gint id, gint position, gint value, gint x)
 {
     WidgetListElem *el;
 
@@ -88,8 +106,8 @@ static void apply_widget_setting(WidgetListElem *el, SettingParam *param)
         if (el->value == -1) {
             if (GTK_IS_TOGGLE_BUTTON(el->widget))
                 gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(el->widget), (param->value == 0) ? FALSE : TRUE);
-            else if (GTK_IS_SPIN_BUTTON(el->widget))
-                gtk_spin_button_set_value(GTK_SPIN_BUTTON(el->widget), param->value);
+            else if (GTK_IS_ADJUSTMENT(el->widget))
+                gtk_adjustment_set_value(GTK_ADJUSTMENT(el->widget), (gdouble)param->value);
         } else { /* combo box */
             if (el->value == param->value)
                 gtk_combo_box_set_active(GTK_COMBO_BOX(el->widget), el->x);
@@ -124,20 +142,35 @@ static void apply_current_preset(GList *list)
 
 GtkWidget *create_table(GList **list, EffectSettings *settings, gint amt)
 {
-    GtkWidget *table, *label, *widget;
+    GtkWidget *table, *label, *widget, *knob;
     GtkObject *adj;
     int x;
 
-    table = gtk_table_new(2, amt, FALSE);
+    table = gtk_table_new(3, amt, FALSE);
 
     for (x = 0; x<amt; x++) {
         label = gtk_label_new(settings[x].label);
-        adj = gtk_adjustment_new(0.0, settings[x].min, settings[x].max, 1.0, 1.0, 0.0);
-        widget = gtk_spin_button_new(GTK_ADJUSTMENT(adj), 1.0, 0);
-        g_signal_connect(G_OBJECT(widget), "value-changed", G_CALLBACK(value_changed_option_cb), &settings[x]);
-        widget_list_add(list, widget, settings[x].option, settings[x].position, -1, -1);
+        adj = gtk_adjustment_new(0.0, settings[x].min, settings[x].max,
+                                 1.0,  /* step increment */
+                                 MAX((settings[x].max / 100), 5.0), /* page increment */
+                                 0.0);
+        knob = gtk_knob_new(GTK_ADJUSTMENT(adj), knob_anim);
+
+        if (settings[x].labels == NULL) {
+            widget = gtk_spin_button_new(GTK_ADJUSTMENT(adj), 1.0, 0);
+            gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(widget), TRUE);
+            gtk_spin_button_set_update_policy(GTK_SPIN_BUTTON(widget), GTK_UPDATE_IF_VALID);
+        } else {
+            widget = gtk_label_new(settings[x].labels[0]);
+            g_object_set_data(G_OBJECT(adj), "label", widget);
+        }
+
+        widget_list_add(list, adj, settings[x].option, settings[x].position, -1, -1);
         gtk_table_attach(GTK_TABLE(table), label, 0, 1, x, x+1, GTK_SHRINK, GTK_SHRINK, 2, 2);
-        gtk_table_attach(GTK_TABLE(table), widget, 1, 2, x, x+1, GTK_SHRINK, GTK_SHRINK, 2, 2);
+        gtk_table_attach(GTK_TABLE(table), knob, 1, 2, x, x+1, GTK_SHRINK, GTK_SHRINK, 2, 2);
+        gtk_table_attach(GTK_TABLE(table), widget, 2, 3, x, x+1, GTK_SHRINK, GTK_SHRINK, 2, 2);
+
+        g_signal_connect(G_OBJECT(adj), "value-changed", G_CALLBACK(value_changed_option_cb), &settings[x]);
     }
 
     return table;
@@ -148,7 +181,7 @@ GtkWidget *create_on_off_button(GList **list, Effect *effect)
     GtkWidget *button = gtk_toggle_button_new_with_label(effect->label);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), FALSE);
     g_signal_connect(G_OBJECT(button), "toggled", G_CALLBACK(toggled_cb), effect);
-    widget_list_add(list, button, effect->option, effect->position, -1, -1);
+    widget_list_add(list, GTK_OBJECT(button), effect->option, effect->position, -1, -1);
     return button;
 }
 
@@ -229,7 +262,7 @@ GtkWidget *create_widget_container(GList **list, EffectGroup *group, gint amt)
             settings->option = group[x].option;
             settings->position = group[x].position;
             settings->child = widget;
-            widget_list_add(list, combo_box, group[x].option, group[x].position, group[x].id, x);
+            widget_list_add(list, GTK_OBJECT(combo_box), group[x].option, group[x].position, group[x].id, x);
 
             name = g_strdup_printf("SettingsGroup%d", cmbox_no);
             g_object_set_data_full(G_OBJECT(combo_box), name, settings, ((GDestroyNotify)effect_settings_group_free));
@@ -639,6 +672,8 @@ void create_window()
 
     vbox = gtk_vbox_new(FALSE, 0);
     gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 2);
+
+    knob_anim = gtk_knob_animation_new_from_inline(knob_pixbuf);
 
     for (x = 0; x<n_effects; x++) {
         if ((x % 3) == 0) {
