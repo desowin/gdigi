@@ -837,11 +837,15 @@ gtk_knob_animation_new_from_file_full(gchar *filename, gint frame_width,
 
 #if GTK_MINOR_VERSION < 10
     if (!(anim->pixbuf = gdk_pixbuf_new_from_file (filename, &gerror))) {
+        g_error_free(gerror);
+        gerror = NULL;
 	return NULL;
     }
 #else /* GTK_MINOR_VERSION >= 10 */
     if (!(anim->pixbuf = gdk_pixbuf_new_from_file_at_size (filename, width,
 							   height, &gerror))) {
+        g_error_free(gerror);
+        gerror = NULL;
 	return NULL;
     }
 #endif /* GTK_MINOR_VERSION < 10 */
@@ -852,4 +856,19 @@ gtk_knob_animation_new_from_file_full(gchar *filename, gint frame_width,
     }
 
     return anim;
+}
+
+/*****************************************************************************
+ *
+ * gtk_knob_animation_free()
+ *
+ *****************************************************************************/
+void
+gtk_knob_animation_free(GtkKnobAnim *anim) {
+    g_return_if_fail (anim != NULL);
+
+    if (anim->pixbuf)
+        g_object_unref (anim->pixbuf);
+
+    g_free (anim);
 }

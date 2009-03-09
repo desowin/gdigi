@@ -95,6 +95,7 @@ typedef struct _GtkKnobAnim	GtkKnobAnim;
 
     GtkKnobAnim *gtk_knob_animation_new_from_file(gchar *filename);
     void gtk_knob_set_animation (GtkKnob *knob, GtkKnobAnim *anim);
+    void gtk_knob_animation_free(GtkKnobAnim *anim);
 
 #ifdef __cplusplus
 }

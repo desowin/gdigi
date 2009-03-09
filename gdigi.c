@@ -631,8 +631,9 @@ int main(int argc, char *argv[]) {
         if (request_who_am_i(&device_id, &family_id, &product_id) == FALSE) {
             show_error_message(NULL, "No suitable reply from device - is it connected?");
         } else {
-            create_window();
+            gui_create();
             gtk_main();
+            gui_free();
         }
     }
 
