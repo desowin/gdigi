@@ -112,10 +112,14 @@ static void XMLCALL text_cb(void *data, const char* text, int len)
     g_free(value);
 }
 
-/*
-   Parses preset file
-   On success returns Preset which must be freed using preset_free, or NULL on error
-*/
+/**
+ *  create_preset_from_xml_file:
+ *  @filename: valid path to file
+ *
+ *  Tries to open file pointed by path, then parses it.
+ *
+ *  Return value: Preset which must be freed using preset_free, or NULL on error.
+ **/
 Preset *create_preset_from_xml_file(gchar *filename)
 {
     GFile *file;
@@ -165,6 +169,14 @@ Preset *create_preset_from_xml_file(gchar *filename)
     return preset;
 }
 
+/**
+ *  create_preset_from_data:
+ *  @data: unpacked RECEIVE_PRESET_PARAMETERS message
+ *
+ *  Parses message
+ *
+ *  Return value: Preset which must be freed using preset_free, or NULL on error.
+ **/
 Preset *create_preset_from_data(GString *data)
 {
     gint total;
@@ -213,6 +225,12 @@ Preset *create_preset_from_data(GString *data)
     return preset;
 }
 
+/**
+ *  preset_free:
+ *  @preset: preset to be freed
+ *
+ *  Frees all memory used by preset
+ **/
 void preset_free(Preset *preset)
 {
     g_return_if_fail(preset != NULL);
