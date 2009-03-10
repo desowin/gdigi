@@ -229,7 +229,7 @@ Preset *create_preset_from_data(GString *data)
  *  preset_free:
  *  @preset: preset to be freed
  *
- *  Frees all memory used by preset
+ *  Frees all memory used by preset.
  **/
 void preset_free(Preset *preset)
 {

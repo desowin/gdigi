@@ -23,16 +23,16 @@ typedef struct {
     char *label;    /* Parameter name */
     gdouble min;    /* Parameter minumum value */
     gdouble max;    /* Parameter maximum value */
-    guint option;   /* ID (to set parameter) */
+    guint id;       /* ID (to set parameter) */
     guint position; /* position */
 
     GStrv labels;   /* value labels */
 } EffectSettings;
 
 typedef struct {
-    guint id;                  /* value (type) */
+    guint type;                /* value (type) */
     gchar *label;              /* Effect name */
-    guint option;              /* ID (to set effect type) */
+    guint id;                  /* ID (to set effect type) */
     guint position;            /* position */
     EffectSettings *settings;  /* possible parameters */
     gint settings_amt;         /* possible parameters length */
@@ -40,7 +40,7 @@ typedef struct {
 
 typedef struct {
     char *label;        /* Base effect name */
-    guint option;       /* ID (to set effect on/off) */
+    guint id;           /* ID (to set effect on/off) */
     guint position;     /* position */
     EffectGroup *group; /* possible effect types */
     gint group_amt;     /* possible effect types length */

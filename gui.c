@@ -74,7 +74,7 @@ void value_changed_option_cb(GtkAdjustment *adj, EffectSettings *setting)
     if (allow_send) {
         gdouble val;
         g_object_get(G_OBJECT(adj), "value", &val, NULL);
-        set_option(setting->option, setting->position, (gint)val);
+        set_option(setting->id, setting->position, (gint)val);
     }
 
     if (setting->labels != NULL) {
@@ -105,7 +105,7 @@ void toggled_cb(GtkToggleButton *button, Effect *effect)
 
     if (allow_send) {
         guint val = gtk_toggle_button_get_active(button);
-        set_option(effect->option, effect->position, val);
+        set_option(effect->id, effect->position, val);
     }
 }
 
@@ -228,7 +228,7 @@ GtkWidget *create_table(EffectSettings *settings, gint amt)
             g_object_set_data(G_OBJECT(adj), "label", widget);
         }
 
-        widget_list_add(adj, settings[x].option, settings[x].position, -1, -1);
+        widget_list_add(adj, settings[x].id, settings[x].position, -1, -1);
         gtk_table_attach(GTK_TABLE(table), label, 0, 1, x, x+1, GTK_SHRINK, GTK_SHRINK, 2, 2);
         gtk_table_attach(GTK_TABLE(table), knob, 1, 2, x, x+1, GTK_SHRINK, GTK_SHRINK, 2, 2);
         gtk_table_attach(GTK_TABLE(table), widget, 2, 3, x, x+1, GTK_SHRINK, GTK_SHRINK, 2, 2);
@@ -252,13 +252,13 @@ GtkWidget *create_on_off_button(Effect *effect)
     GtkWidget *button = gtk_toggle_button_new_with_label(effect->label);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), FALSE);
     g_signal_connect(G_OBJECT(button), "toggled", G_CALLBACK(toggled_cb), effect);
-    widget_list_add(GTK_OBJECT(button), effect->option, effect->position, -1, -1);
+    widget_list_add(GTK_OBJECT(button), effect->id, effect->position, -1, -1);
     return button;
 }
 
 typedef struct {
-    gint id;               /* effect group ID (value) */
-    gint option;           /* option ID */
+    gint type;             /* effect group type (value) */
+    gint id;               /* option ID */
     gint position;         /* position */
     GtkWidget *child;      /* child widget */
 } EffectSettingsGroup;
@@ -303,7 +303,7 @@ void combo_box_changed_cb(GtkComboBox *widget, gpointer data)
         g_free(name);
 
         if (settings != NULL && allow_send)
-            set_option(settings->option, settings->position, settings->id);
+            set_option(settings->id, settings->position, settings->type);
 
         child = g_object_get_data(G_OBJECT(widget), "active_child");
         if (child != NULL) {
@@ -352,10 +352,10 @@ GtkWidget *create_widget_container(EffectGroup *group, gint amt)
 
             settings = g_malloc(sizeof(EffectSettingsGroup));
             settings->id = group[x].id;
-            settings->option = group[x].option;
+            settings->type = group[x].type;
             settings->position = group[x].position;
             settings->child = widget;
-            widget_list_add(GTK_OBJECT(combo_box), group[x].option, group[x].position, group[x].id, x);
+            widget_list_add(GTK_OBJECT(combo_box), group[x].id, group[x].position, group[x].type, x);
 
             name = g_strdup_printf("SettingsGroup%d", cmbox_no);
             g_object_set_data_full(G_OBJECT(combo_box), name, settings, ((GDestroyNotify)effect_settings_group_free));
