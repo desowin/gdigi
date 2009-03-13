@@ -30,28 +30,16 @@ static snd_rawmidi_t *output = NULL;
 static snd_rawmidi_t *input = NULL;
 static char *device = "hw:1,0,0";
 
-/*
-   calculate checksum
-   array - the command to set over usb
-   length - length of array
-   check - position of checksum byte in array
-*/
-char calculate_checksum(gchar *array, int length, int check)
-{
-    int x;
-    char checksum;
-
-    checksum = 0x07;
-
-    for (x = 0; x<length; x++) {
-        if (x == check) continue;
-        checksum ^= array[x];
-    }
-
-    return checksum;
-}
-
-static char calc_checksum(gchar *array, gint length)
+/**
+ *  calculate_checksum:
+ *  @array: data to calculate checksum
+ *  @length: data length
+ *
+ *  Calculates message checksum
+ *
+ *  Return value: calculated checksum
+ **/
+static char calculate_checksum(gchar *array, gint length)
 {
     int x;
     int checksum = 0;
@@ -263,7 +251,7 @@ void send_message(gint procedure, gchar *data, gint len)
     }
 
     g_string_append_printf(msg, "%c\xF7",
-                           calc_checksum(&msg->str[1], msg->len - 1));
+                           calculate_checksum(&msg->str[1], msg->len - 1));
 
     send_data(msg->str, msg->len);
 
