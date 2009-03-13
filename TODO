@@ -7,5 +7,4 @@
 -buildsystem (install knob.png to share dir, don't use inline knob pixbuf)
 -expression pedal settings
   -finish modifier_linkable_list() (gdigi.c)
-  -make modifiers[] complete (gdigi.c)
   -add it to gui
