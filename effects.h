@@ -20,13 +20,16 @@
 #include <glib/gtypes.h>
 
 typedef struct {
-    char *label;    /* Parameter name */
-    gdouble min;    /* Parameter minumum value */
-    gdouble max;    /* Parameter maximum value */
-    guint id;       /* ID (to set parameter) */
-    guint position; /* position */
-
+    gdouble min;    /* Minumum value */
+    gdouble max;    /* Maximum value */
     GStrv labels;   /* value labels */
+} EffectValues;
+
+typedef struct {
+    char *label;          /* Parameter name */
+    guint id;             /* ID (to set parameter) */
+    guint position;       /* position */
+    EffectValues *values; /* valid parameter values */
 } EffectSettings;
 
 typedef struct {

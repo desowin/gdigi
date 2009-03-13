@@ -77,7 +77,7 @@ void value_changed_option_cb(GtkAdjustment *adj, EffectSettings *setting)
         set_option(setting->id, setting->position, (gint)val);
     }
 
-    if (setting->labels != NULL) {
+    if (setting->values != NULL && setting->values->labels != NULL) {
         GtkWidget *label;
         gint x;
         gdouble val = -1.0;
@@ -85,9 +85,9 @@ void value_changed_option_cb(GtkAdjustment *adj, EffectSettings *setting)
 
         x = (gint)val;
 
-        if ((x >= setting->min) && (x <= setting->max)) {
+        if ((x >= setting->values->min) && (x <= setting->values->max)) {
             label = g_object_get_data(G_OBJECT(adj), "label");
-            gtk_label_set_text(GTK_LABEL(label), setting->labels[x]);
+            gtk_label_set_text(GTK_LABEL(label), setting->values->labels[x]);
         }
     }
 }
@@ -213,18 +213,18 @@ GtkWidget *create_table(EffectSettings *settings, gint amt)
 
     for (x = 0; x<amt; x++) {
         label = gtk_label_new(settings[x].label);
-        adj = gtk_adjustment_new(0.0, settings[x].min, settings[x].max,
+        adj = gtk_adjustment_new(0.0, settings[x].values->min, settings[x].values->max,
                                  1.0,  /* step increment */
-                                 MAX((settings[x].max / 100), 5.0), /* page increment */
+                                 MAX((settings[x].values->max / 100), 5.0), /* page increment */
                                  0.0);
         knob = gtk_knob_new(GTK_ADJUSTMENT(adj), knob_anim);
 
-        if (settings[x].labels == NULL) {
+        if (settings[x].values->labels == NULL) {
             widget = gtk_spin_button_new(GTK_ADJUSTMENT(adj), 1.0, 0);
             gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(widget), TRUE);
             gtk_spin_button_set_update_policy(GTK_SPIN_BUTTON(widget), GTK_UPDATE_IF_VALID);
         } else {
-            widget = gtk_label_new(settings[x].labels[0]);
+            widget = gtk_label_new(settings[x].values->labels[0]);
             g_object_set_data(G_OBJECT(adj), "label", widget);
         }
 
