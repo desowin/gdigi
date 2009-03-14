@@ -739,9 +739,9 @@ typedef struct {
     guint id;
     guint position;
     EffectValues *values;
-} Modifiers;
+} Modifier;
 
-static Modifiers modifiers[] = {
+static Modifier modifiers[] = {
     {"None", 0, 0, NULL},
     {"Pickup Enable", PICKUP_ON_OFF, PICKUP_POSITION, &values_on_off},
     {"Pickup Type", PICKUP_TYPE, PICKUP_POSITION, &values_pickup_type},
@@ -882,13 +882,13 @@ int n_modifiers = G_N_ELEMENTS(modifiers);
 /*
     returned value must not be freed
 */
-static const gchar *get_modifier_label(guint id, guint position)
+static Modifier *get_modifier(guint id, guint position)
 {
     gint x;
 
     for (x=0; x<n_modifiers; x++)
         if ((modifiers[x].id == id) && (modifiers[x].position == position))
-            return modifiers[x].label;
+            return &(modifiers[x]);
 
     return NULL;
 }
@@ -913,6 +913,7 @@ void modifier_linkable_list()
         guint id = (str[12 + (i*3)] << 8) | str[13 + (i*3)];
         guint position = str[14 + (i*3)];
 
-        g_message("ID: %d Position: %d Label: %s", id, position, get_modifier_label(id, position));
+        Modifier *modifier = get_modifier(id, position);
+        g_message("ID: %d Position: %d Label: %s", id, position, modifier ? modifier->label : NULL);
     }
 }
