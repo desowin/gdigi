@@ -553,7 +553,7 @@ enum {
     PRESETS_EXTERNAL = 6
 };
 
-enum {
+typedef enum {
     REQUEST_WHO_AM_I = 0x01,
     RECEIVE_WHO_AM_I = 0x02,
 
@@ -584,7 +584,7 @@ enum {
     MOVE_PRESET = 0x39,
 
     REQUEST_MODIFIER_LINKABLE_LIST = 0x3A,
-    RECEIVE_MOFIFIER_LINKABLE_LIST = 0x3B,
+    RECEIVE_MODIFIER_LINKABLE_LIST = 0x3B,
 
     REQUEST_PARAMETER_VALUE = 0x40,
     RECEIVE_PARAMETER_VALUE = 0x41,
@@ -605,10 +605,11 @@ enum {
 
     ACK = 0x7E,
     NACK = 0x7F
-};
+} MessageID;
 
 void send_message(gint procedure, gchar *data, gint len);
 void append_value(GString *msg, guint value);
+GString *get_message_by_id(MessageID id);
 void set_option(guint id, guint position, guint value);
 void switch_preset(guint bank, guint x);
 void store_preset_name(int x, const gchar *name);

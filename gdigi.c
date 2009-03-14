@@ -268,6 +268,21 @@ static gint get_message_id(GString *msg)
     return -1;
 }
 
+GString *get_message_by_id(MessageID id)
+{
+    GString *data = NULL;
+
+    do {
+        if (data)
+            g_string_free(data, TRUE);
+        data = read_data();
+    } while (get_message_id(data) != id);
+
+    unpack_message(data);
+
+    return data;
+}
+
 void append_value(GString *msg, guint value)
 {
     /* check how many bytes long the value is */
@@ -375,13 +390,7 @@ GStrv query_preset_names(gchar bank)
     send_message(REQUEST_PRESET_NAMES, &bank, 1);
 
     /* read reply */
-    do {
-        if (data)
-            g_string_free(data, TRUE);
-        data = read_data();
-    } while (get_message_id(data) != RECEIVE_PRESET_NAMES);
-
-    unpack_message(data);
+    data = get_message_by_id(RECEIVE_PRESET_NAMES);
 
     if (data != NULL) {
         if (data->len >= 10) {
@@ -413,11 +422,7 @@ GString *get_current_preset()
     send_message(REQUEST_PRESET, "\x04\x00", 3);
 
     /* read reply */
-    data = read_data();
-    g_string_free(data, TRUE);
-
-    data = read_data();
-    unpack_message(data);
+    data = get_message_by_id(RECEIVE_PRESET_PARAMETERS);
 
     return data;
 }
@@ -451,15 +456,7 @@ static void request_device_configuration()
 
     send_message(REQUEST_DEVICE_CONFIGURATION, NULL, 0);
 
-    GString *data = NULL;
-
-    do {
-        if (data)
-            g_string_free(data, TRUE);
-        data = read_data();
-    } while (get_message_id(data) != RECEIVE_DEVICE_CONFIGURATION);
-
-    unpack_message(data);
+    GString *data = get_message_by_id(RECEIVE_DEVICE_CONFIGURATION);
 
     if (data->len > 14) {
         os_major = data->str[8];
@@ -652,15 +649,7 @@ static void modifier_linkable_list()
 
     send_message(REQUEST_MODIFIER_LINKABLE_LIST, "\x00\x01", 2);
 
-    GString *data = NULL;
-
-    do {
-        if (data)
-            g_string_free(data, TRUE);
-        data = read_data();
-    } while (get_message_id(data) != RECEIVE_MOFIFIER_LINKABLE_LIST);
-
-    unpack_message(data);
+    GString *data = get_message_by_id(RECEIVE_MODIFIER_LINKABLE_LIST);
 
     unsigned char *str = (unsigned char*)data->str;
 
