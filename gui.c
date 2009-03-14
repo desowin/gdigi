@@ -22,8 +22,12 @@
 #include "gtkknob.h"
 #include "knob.h"
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 extern EffectList effects[];
 extern int n_effects;
+
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
 typedef struct {
     GtkObject *widget;
@@ -31,18 +35,19 @@ typedef struct {
     gint position;
 
     /* used for combo boxes, if widget isn't combo box, then both value and x are -1 */
-    gint value;           /* effect type value */
-    gint x;               /* combo box item number */
+    gint value;           /**< effect type value */
+    gint x;               /**< combo box item number */
 } WidgetListElem;
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 static GtkKnobAnim *knob_anim = NULL; /* animation used by knobs */
-static GList *widget_list = NULL;     /* this list contains WidgetListElem data elements */
-static gboolean allow_send = FALSE;   /* if FALSE GUI parameter changes won't be sent to device */
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
+static GList *widget_list = NULL;     /**< this list contains WidgetListElem data elements */
+static gboolean allow_send = FALSE;   /**< if FALSE GUI parameter changes won't be sent to device */
 
 /**
- *  show_error_message:
- *  @parent: transient parent, or NULL for none
- *  @message: error description
+ *  \param parent transient parent, or NULL for none
+ *  \param message error description
  *
  *  Shows error message dialog.
  **/
@@ -61,9 +66,8 @@ void show_error_message(GtkWidget *parent, gchar *message)
 }
 
 /**
- *  value_changed_option_cb:
- *  @adj: the object which emitted the signal
- *  @setting: setting controlled by adj
+ *  \param adj the object which emitted the signal
+ *  \param setting setting controlled by adj
  *
  *  Sets effect value.
  **/
@@ -93,9 +97,8 @@ void value_changed_option_cb(GtkAdjustment *adj, EffectSettings *setting)
 }
 
 /**
- *  toggled_cb:
- *  @button: the object which emitted the signal
- *  @effect: effect controlled by button
+ *  \param button the object which emitted the signal
+ *  \param effect effect controlled by button
  *
  *  Turns effect on/off basing on state of button.
  **/
@@ -110,12 +113,11 @@ void toggled_cb(GtkToggleButton *button, Effect *effect)
 }
 
 /**
- *  widget_list_add:
- *  @widget: GtkObject to add to widget list
- *  @id: object controlled ID
- *  @position: object controlled position
- *  @value: effect value type (if widget is GtkComboBox, otherwise -1)
- *  @x: combo box item number (if widget is GtkComboBox, otherwise -1)
+ *  \param widget GtkObject to add to widget list
+ *  \param id object controlled ID
+ *  \param position object controlled position
+ *  \param value effect value type (if widget is GtkComboBox, otherwise -1)
+ *  \param x combo box item number (if widget is GtkComboBox, otherwise -1)
  *
  *  Adds widget to widget list.
  **/
@@ -134,9 +136,8 @@ static void widget_list_add(GtkObject *widget, gint id, gint position, gint valu
 }
 
 /**
- *  apply_widget_setting:
- *  @el: widget list element
- *  @param: parameter to set
+ *  \param el widget list element
+ *  \param param parameter to set
  *
  *  Sets widget list element value to param value.
  **/
@@ -156,8 +157,7 @@ static void apply_widget_setting(WidgetListElem *el, SettingParam *param)
 }
 
 /**
- *  apply_preset_to_gui:
- *  @preset: preset to sync
+ *  \param preset preset to sync
  *
  *  Synces GUI with preset.
  **/
@@ -181,8 +181,6 @@ static void apply_preset_to_gui(Preset *preset)
 }
 
 /**
- *  apply_current_preset:
- *
  *  Synces GUI with device current edit buffer.
  **/
 static void apply_current_preset()
@@ -195,13 +193,12 @@ static void apply_current_preset()
 }
 
 /**
- *  create_table:
- *  @settings: effect parameters
- *  @amt: amount of effect parameters
+ *  \param settings effect parameters
+ *  \param amt amount of effect parameters
  *
  *  Creates knobs that allow user to set effect parameters.
  *
- *  Return value: GtkTable containing necessary widgets to set effect parameters.
+ *  \return GtkTable containing necessary widgets to set effect parameters.
  **/
 GtkWidget *create_table(EffectSettings *settings, gint amt)
 {
@@ -240,12 +237,11 @@ GtkWidget *create_table(EffectSettings *settings, gint amt)
 }
 
 /**
- *  create_on_off_button:
- *  @effect: Effect that can be turned on/off
+ *  \param effect Effect that can be turned on/off
  *
  *  Creates toggle button that allow user to turn effect on/off.
  *
- *  Return value: GtkToggleButton
+ *  \return GtkToggleButton
  **/
 GtkWidget *create_on_off_button(Effect *effect)
 {
@@ -257,15 +253,14 @@ GtkWidget *create_on_off_button(Effect *effect)
 }
 
 typedef struct {
-    gint type;             /* effect group type (value) */
-    gint id;               /* option ID */
-    gint position;         /* position */
-    GtkWidget *child;      /* child widget */
+    gint type;             /**< effect group type (value) */
+    gint id;               /**< option ID */
+    gint position;         /**< position */
+    GtkWidget *child;      /**< child widget */
 } EffectSettingsGroup;
 
 /**
- *  effect_settings_group_free:
- *  @group: group to be freed
+ *  \param group group to be freed
  *
  *  Frees all memory used by group
  **/
@@ -280,9 +275,8 @@ void effect_settings_group_free(EffectSettingsGroup *group)
 }
 
 /**
- *  combo_box_changed_cb:
- *  @widget: the object which emitted the signal
- *  @data: user data (unused, can be anything)
+ *  \param widget the object which emitted the signal
+ *  \param data user data (unused, can be anything)
  *
  *  Switches effect type and shows widgets allowing to set selected effect type parameters.
  **/
@@ -316,13 +310,12 @@ void combo_box_changed_cb(GtkComboBox *widget, gpointer data)
 }
 
 /**
- *  create_widget_container:
- *  @group: Effect type groups
- *  @amt: amount of effect groups
+ *  \param group Effect type groups
+ *  \param amt amount of effect groups
  *
  *  Creates widget allowing user to choose effect type.
  *
- *  Return value: widget that allow user to set effect type.
+ *  \return widget that allow user to set effect type.
  **/
 GtkWidget *create_widget_container(EffectGroup *group, gint amt)
 {
@@ -370,13 +363,12 @@ GtkWidget *create_widget_container(EffectGroup *group, gint amt)
 }
 
 /**
- *  create_vbox:
- *  @widgets: Effect descriptions
- *  @amt: amount of effect descriptions
+ *  \param widgets Effect descriptions
+ *  \param amt amount of effect descriptions
  *
  *  Creates vbox containing widgets allowing user to set effect options.
  *
- *  Return value: widget that allow user to set effect options.
+ *  \return widget that allow user to set effect options.
  **/
 GtkWidget *create_vbox(Effect *widgets, gint amt)
 {
@@ -411,11 +403,10 @@ enum {
 };
 
 /**
- *  row_activate_cb:
- *  @treeview: the object which emitted the signal
- *  @path: the GtkTreePath for the activated row
- *  @column: the GtkTreeViewColumn in which the activation occurred
- *  @model: model holding preset names
+ *  \param treeview the object which emitted the signal
+ *  \param path the GtkTreePath for the activated row
+ *  \param column the GtkTreeViewColumn in which the activation occurred
+ *  \param model model holding preset names
  *
  *  Sets active device preset to preset selected by user.
  **/
@@ -434,10 +425,9 @@ void row_activate_cb(GtkTreeView *treeview, GtkTreePath *path, GtkTreeViewColumn
 }
 
 /**
- *  fill_store_with_presets:
- *  @model: model to fill
- *  @bank: preset bank
- *  @name: preset bank description visible to user
+ *  \param model model to fill
+ *  \param bank preset bank
+ *  \param name preset bank description visible to user
  *
  *  Appends to model preset names found in device preset bank.
  **/
@@ -469,8 +459,7 @@ static void fill_store_with_presets(GtkTreeStore *model, guint bank, gchar *name
 }
 
 /**
- *  fill_store:
- *  @model: model to fill
+ *  \param model model to fill
  *
  *  Fills model with preset names found on device.
  **/
@@ -481,11 +470,9 @@ static void fill_store(GtkTreeStore *model)
 }
 
 /**
- *  create_preset_tree:
- *
  *  Creates treeview showing list of presets available on device.
  *
- *  Return value: treeview containing all preset names found on device.
+ *  \return treeview containing all preset names found on device.
  **/
 GtkWidget *create_preset_tree()
 {
@@ -513,9 +500,8 @@ GtkWidget *create_preset_tree()
 }
 
 /**
- *  show_store_preset_window:
- *  @window: application toplevel window
- *  @default_name: default preset name
+ *  \param window application toplevel window
+ *  \param default_name default preset name
  *
  *  Shows window allowing user to store current edit buffer.
  **/
@@ -568,8 +554,7 @@ static void show_store_preset_window(GtkWidget *window, gchar *default_name)
 }
 
 /**
- *  action_store_cb:
- *  @action: the object which emitted the signal
+ *  \param action the object which emitted the signal
  *
  *  Shows store preset window.
  **/
@@ -580,8 +565,7 @@ static void action_store_cb(GtkAction *action)
 }
 
 /**
- *  action_show_about_dialog_cb:
- *  @action: the object which emitted the signal
+ *  \param action the object which emitted the signal
  *
  *  Shows about dialog.
  **/
@@ -603,6 +587,8 @@ static void action_show_about_dialog_cb(GtkAction *action)
                           NULL);
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 typedef struct {
     gchar *name;
     gchar *suffix;
@@ -611,11 +597,13 @@ typedef struct {
 static SupportedFileTypes file_types[] = {
     {"RP250Preset", "*.rp250p"},
 };
+
 static guint n_file_types = G_N_ELEMENTS(file_types);
 
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
+
 /**
- *  action_open_preset_cb:
- *  @action: the object which emitted the signal
+ *  \param action the object which emitted the signal
  *
  *  Shows file chooser dialog.
  *  If user opens valid preset file, the preset gets applied to edit buffer and store preset window is shown.
@@ -706,8 +694,7 @@ static void action_open_preset_cb(GtkAction *action)
 }
 
 /**
- *  widget_list_free:
- *  @list: widget list to be freed
+ *  \param list widget list to be freed
  *
  *  Frees all memory used by widget list.
  */
@@ -721,8 +708,7 @@ static void widget_list_free(GList *list)
 }
 
 /**
- *  action_quit_cb:
- *  @action: the object which emitted the signal
+ *  \param action the object which emitted the signal
  *
  *  Destroys action object "window" data, then stops gtk main loop.
  **/
@@ -733,6 +719,8 @@ static void action_quit_cb(GtkAction *action)
     gtk_widget_destroy(window);
     gtk_main_quit();
 }
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 static GtkActionEntry entries[] = {
     {"File", NULL, "_File"},
@@ -762,11 +750,12 @@ static const gchar *menu_info =
 " </menubar>"
 "</ui>";
 
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
+
 /**
- *  add_action_data:
- *  @ui: GtkUIManager to lookup actions
- *  @path: path to action
- *  @window: toplevel window
+ *  \param ui GtkUIManager to lookup actions
+ *  \param path path to action
+ *  \param window toplevel window
  *
  *  Sets action object "window" data to toplevel window.
  **/
@@ -781,9 +770,8 @@ static void add_action_data(GtkUIManager *ui, const gchar *path, GtkWidget *wind
 }
 
 /**
- *  add_menubar:
- *  @window: toplevel window
- *  @vbox: vbox to hold menubar
+ *  \param window toplevel window
+ *  \param vbox vbox to hold menubar
  *
  *  Creates menubar (adds accel group to toplevel window as well) and packs it into vbox.
  **/
@@ -819,8 +807,6 @@ static void add_menubar(GtkWidget *window, GtkWidget *vbox)
 }
 
 /**
- *  gui_create:
- *
  *  Creates main window.
  **/
 void gui_create()
@@ -871,8 +857,6 @@ void gui_create()
 }
 
 /**
- *  gui_free:
- *
  *  Frees memory allocated by gui_create which is not explicitly freed when main window is destroyed.
  **/
 void gui_free()

@@ -17,6 +17,8 @@
 #include "gdigi.h"
 #include "effects.h"
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 static gchar *wave_labels[] = {
     "Tri",
     "Sine",
@@ -115,22 +117,22 @@ static EffectValues values_0_to_15 = {
 };
 
 static EffectValues values_m24_to_24 = {
-    /* TODO: make this display propertly (display range -24 to 24) */
+    /** \todo make this display propertly (display range -24 to 24) */
     0.0, 48.0, NULL,
 };
 
 static EffectValues values_eq_db = {
-    /* TODO: make those display propertly (display range -12 to 12) */
+    /** \todo make those display propertly (display range -12dB to 12dB) */
     0.0, 24.0, NULL,
 };
 
 static EffectValues values_eq_mid_hz = {
-    /* TODO: make this display propertly (display range 300 to 5000) */
+    /** \todo make this display propertly (display range 300 to 5000) */
     0.0, 4700.0, NULL,
 };
 
 static EffectValues values_eq_treb_hz = {
-    /* TODO: make this display propertly (display range 500 to 8000) */
+    /** \todo make this display propertly (display range 500 to 8000) */
     0.0, 7500.0, NULL,
 };
 
@@ -155,12 +157,12 @@ static EffectValues values_ips_scale = {
 };
 
 static EffectValues values_delay_time = {
-    /* TODO: make this display propertly (10 msec to 5 sec) */
+    /** \todo make this display propertly (10 msec to 5 sec) */
     0.0, 139.0, NULL,
 };
 
 static EffectValues values_delay_repeats = {
-    /* TODO: make last value display propertly */
+    /** \todo make last value display propertly */
     0.0, 100.0, NULL,
 };
 
@@ -734,12 +736,16 @@ EffectList effects[] = {
 
 int n_effects = G_N_ELEMENTS(effects);
 
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
+
 typedef struct {
     gchar *label;
     guint id;
     guint position;
     EffectValues *values;
 } Modifier;
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 static Modifier modifiers[] = {
     {"None", 0, 0, NULL},
@@ -879,14 +885,15 @@ static Modifier modifiers[] = {
 
 int n_modifiers = G_N_ELEMENTS(modifiers);
 
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
+
 /**
- *  get_modifier:
- *  @id: modifier ID
- *  @position: modifier position
+ *  \param id modifier ID
+ *  \param position modifier position
  *
  *  Gets modifier info.
  *
- *  Return value: Modifier which must not be freed, or NULL if no matching Modifier has been found.
+ *  \return Modifier which must not be freed, or NULL if no matching Modifier has been found.
 */
 static Modifier *get_modifier(guint id, guint position)
 {
@@ -900,19 +907,18 @@ static Modifier *get_modifier(guint id, guint position)
 }
 
 /**
- *  get_modifier_settings:
- *  @values: possible setting values
+ *  \param values possible setting values
  *
  *  Creates EffectSettings containing expression pedal min and max settings.
  *
- *  Return value: EffectSettings which must be freed using effect_settings_free.
+ *  \return EffectSettings which must be freed using effect_settings_free.
  **/
 static EffectSettings *get_modifier_settings(EffectValues *values)
 {
     if (values == NULL)
         return NULL;
 
-    /* TODO: reuse exsisting settings if values is the same */
+    /** \todo reuse exsisting settings if values is the same */
     EffectSettings *settings = g_slice_alloc0(2 * sizeof(EffectSettings));
     settings[0].id = EXP_MIN;
     settings[1].id = EXP_MAX;
@@ -928,8 +934,7 @@ static EffectSettings *get_modifier_settings(EffectValues *values)
 }
 
 /**
- *  effect_settings_free:
- *  @settings: settings to be freed
+ *  \param settings settings to be freed
  *
  *  Frees all memory used by EffectSettings.
  **/
@@ -939,11 +944,9 @@ static void effect_settings_free(EffectSettings *settings)
 }
 
 /**
- *  modifier_linkable_list:
- *
  *  Retrieves modifier linkable gruop from device.
  *
- *  Return value: ModifierGroup which must be freed using modifier_group_free.
+ *  \return ModifierGroup which must be freed using modifier_group_free.
  **/
 ModifierGroup *modifier_linkable_list()
 {
@@ -996,8 +999,7 @@ ModifierGroup *modifier_linkable_list()
 }
 
 /**
- *  modifier_group_free:
- *  @modifier_group: group to be freed
+ *  \param modifier_group group to be freed
  *
  *  Frees all memory used by ModifierGroup.
  **/

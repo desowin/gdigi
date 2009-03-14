@@ -19,6 +19,8 @@
 #include <string.h>
 #include "preset.h"
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 enum {
   PARSER_TYPE_NOT_SET = -1,
   PARSER_TYPE_PRESET_NAME = 0,
@@ -112,13 +114,14 @@ static void XMLCALL text_cb(void *data, const char* text, int len)
     g_free(value);
 }
 
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
+
 /**
- *  create_preset_from_xml_file:
- *  @filename: valid path to file
+ *  \param filename valid path to file
  *
  *  Tries to open file pointed by path, then parses it.
  *
- *  Return value: Preset which must be freed using preset_free, or NULL on error.
+ *  \return Preset which must be freed using preset_free, or NULL on error.
  **/
 Preset *create_preset_from_xml_file(gchar *filename)
 {
@@ -170,12 +173,11 @@ Preset *create_preset_from_xml_file(gchar *filename)
 }
 
 /**
- *  create_preset_from_data:
- *  @data: unpacked RECEIVE_PRESET_PARAMETERS message
+ *  \param data unpacked RECEIVE_PRESET_PARAMETERS message
  *
  *  Parses message
  *
- *  Return value: Preset which must be freed using preset_free, or NULL on error.
+ *  \return Preset which must be freed using preset_free, or NULL on error.
  **/
 Preset *create_preset_from_data(GString *data)
 {
@@ -226,8 +228,7 @@ Preset *create_preset_from_data(GString *data)
 }
 
 /**
- *  preset_free:
- *  @preset: preset to be freed
+ *  \param preset preset to be freed
  *
  *  Frees all memory used by preset.
  **/

@@ -20,6 +20,8 @@
 #include <glib.h>
 #include <glib-object.h>
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 enum {
   WAH_TYPE_CRY = 132,
   WAH_TYPE_FULLRANGE = 133,
@@ -538,6 +540,8 @@ enum {
 #define USB_POSITION 0
 #define USB_AUDIO_PLAYBACK_MIX 12297
 #define USB_AUDIO_LEVEL 12307
+
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
 typedef enum {
     PRESETS_SYSTEM = 0,

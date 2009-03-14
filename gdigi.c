@@ -31,13 +31,12 @@ static snd_rawmidi_t *input = NULL;
 static char *device = "hw:1,0,0";
 
 /**
- *  calculate_checksum:
- *  @array: data to calculate checksum
- *  @length: data length
+ *  \param array data to calculate checksum
+ *  \param length data length
  *
- *  Calculates message checksum
+ *  Calculates message checksum.
  *
- *  Return value: calculated checksum
+ *  \return calculated checksum.
  **/
 static char calculate_checksum(gchar *array, gint length)
 {
@@ -52,11 +51,9 @@ static char calculate_checksum(gchar *array, gint length)
 }
 
 /**
- *  open_device:
- *
  *  Opens MIDI device. This function modifies global input and output variables.
  *
- *  Return value: FALSE on success, TRUE on error.
+ *  \return FALSE on success, TRUE on error.
  **/
 gboolean open_device()
 {
@@ -80,9 +77,8 @@ gboolean open_device()
 }
 
 /**
- *  send_data:
- *  @data: data to be sent
- *  @length: data length
+ *  \param data data to be sent
+ *  \param length data length
  *
  *  Sends data to device. This function uses global output variable.
  **/
@@ -92,13 +88,12 @@ void send_data(char *data, int length)
 }
 
 /**
- *  pack_data:
- *  @data: data to be packed
- *  @len: data length
+ *  \param data data to be packed
+ *  \param len data length
  *
  *  Packs data using method used on all newer DigiTech products.
  *
- *  Return value: GString containing packed data
+ *  \return GString containing packed data
  **/
 GString *pack_data(gchar *data, gint len)
 {
@@ -131,8 +126,7 @@ GString *pack_data(gchar *data, gint len)
 }
 
 /**
- *  unpack_message:
- *  @msg: message to unpack
+ *  \param msg message to unpack
  *
  *  Unpacks message data. This function modifies given GString.
  **/
@@ -175,11 +169,9 @@ static void unpack_message(GString *msg)
 }
 
 /**
- *  read_data:
- *
  *  Reads data from MIDI IN. This function uses global input variable.
  *
- *  Return value: GString containing data, or NULL when no data was read.
+ *  \return GString containing data, or NULL when no data was read.
  **/
 GString* read_data()
 {
@@ -245,10 +237,9 @@ GString* read_data()
 }
 
 /**
- *  send_message:
- *  @procedure: procedure ID
- *  @data: unpacked message data
- *  @len: data length
+ *  \param procedure procedure ID
+ *  \param data unpacked message data
+ *  \param len data length
  *
  *  Creates SysEx message then sends it. This function uses folowing global variables: device_id, family_id and product_id.
  **/
@@ -278,16 +269,15 @@ void send_message(gint procedure, gchar *data, gint len)
 }
 
 /**
- *  get_message_id:
- *  @msg: SysEx message
+ *  \param msg SysEx message
  *
  *  Checks message ID.
  *
- *  Return value: MessageID, or -1 on error.
+ *  \return MessageID, or -1 on error.
  **/
 static MessageID get_message_id(GString *msg)
 {
-    /* TODO: sanity checks */
+    /** \todo check if msg is valid SysEx message */
     g_return_val_if_fail(msg != NULL, -1);
 
     if (msg->len > 7) {
@@ -297,12 +287,11 @@ static MessageID get_message_id(GString *msg)
 }
 
 /**
- *  get_message_by_id:
- *  @id: MessageID of requested message
+ *  \param id MessageID of requested message
  *
  *  Reads data from MIDI IN until message with matching id is found.
  *
- *  Return value: GString containing unpacked message.
+ *  \return GString containing unpacked message.
  **/
 GString *get_message_by_id(MessageID id)
 {
@@ -320,9 +309,8 @@ GString *get_message_by_id(MessageID id)
 }
 
 /**
- *  append_value:
- *  @msg: message to append value
- *  @value: value to append
+ *  \param msg message to append value
+ *  \param value value to append
  *
  *  Packs value using scheme used on all newer DigiTech products.
  **/
@@ -354,10 +342,9 @@ void append_value(GString *msg, guint value)
 }
 
 /**
- *  set_option:
- *  @id: Parameter ID
- *  @position: Parameter position
- *  @value: Parameter value
+ *  \param id Parameter ID
+ *  \param position Parameter position
+ *  \param value Parameter value
  *
  *  Forms SysEx message to set parameter then sends it to device.
  **/
@@ -373,9 +360,8 @@ void set_option(guint id, guint position, guint value)
 }
 
 /**
- *  switch_preset:
- *  @bank: preset bank
- *  @x: preset index
+ *  \param bank preset bank
+ *  \param x preset index
  *
  *  Switches to selected preset.
  **/
@@ -392,9 +378,8 @@ void switch_preset(guint bank, guint x)
 }
 
 /**
- *  store_preset_name:
- *  @x: preset index
- *  @name: preset name
+ *  \param x preset index
+ *  \param name preset name
  *
  *  Stores current edit buffer in user presets bank.
  **/
@@ -411,9 +396,8 @@ void store_preset_name(int x, const gchar *name)
 }
 
 /**
- *  set_preset_name:
- *  @x: preset index
- *  @name: preset name
+ *  \param x preset index
+ *  \param name preset name
  *
  *  Sets preset name.
  **/
@@ -429,12 +413,11 @@ void set_preset_name(int x, gchar *name)
 }
 
 /**
- *  query_preset_names:
- *  @bank: preset bank
+ *  \param bank preset bank
  *
  *  Queries preset names.
  *
- *  Return value: GStrv which must be freed with g_strfreev, or NULL on error.
+ *  \return GStrv which must be freed with g_strfreev, or NULL on error.
  **/
 GStrv query_preset_names(gchar bank)
 {
@@ -471,11 +454,9 @@ GStrv query_preset_names(gchar bank)
 }
 
 /**
- *  get_current_preset:
- *
  *  Queries current edit buffer.
  *
- *  Return value: GString containing RECEIVE_PRESET_PARAMETERS SysEx message.
+ *  \return GString containing RECEIVE_PRESET_PARAMETERS SysEx message.
  **/
 GString *get_current_preset()
 {
@@ -490,14 +471,13 @@ GString *get_current_preset()
 }
 
 /**
- *  request_who_am_i:
- *  @device_id: Variable to hold device ID
- *  @family_id: Variable to hold family ID
- *  @product_id: Variable to hold product ID
+ *  \param device_id Variable to hold device ID
+ *  \param family_id Variable to hold family ID
+ *  \param product_id Variable to hold product ID
  *
  *  Requests device information.
  *
- *  Return value: TRUE on success, FALSE on error.
+ *  \return TRUE on success, FALSE on error.
  **/
 static gboolean request_who_am_i(unsigned char *device_id, unsigned char *family_id,
                                  unsigned char *product_id)
@@ -555,10 +535,14 @@ static void request_device_configuration()
     }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 static GOptionEntry options[] = {
     {"device", 'd', G_OPTION_FLAG_IN_MAIN, G_OPTION_ARG_STRING, &device, "MIDI device port to use", NULL},
     {NULL}
 };
+
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
 int main(int argc, char *argv[]) {
     GError *error = NULL;

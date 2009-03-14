@@ -20,38 +20,38 @@
 #include <glib/gtypes.h>
 
 typedef struct {
-    gdouble min;    /* Minumum value */
-    gdouble max;    /* Maximum value */
-    GStrv labels;   /* value labels */
+    gdouble min;    /**< Minumum value */
+    gdouble max;    /**< Maximum value */
+    GStrv labels;   /**< value labels */
 } EffectValues;
 
 typedef struct {
-    gchar *label;         /* Parameter name */
-    guint id;             /* ID (to set parameter) */
-    guint position;       /* position */
-    EffectValues *values; /* valid parameter values */
+    gchar *label;         /**< Parameter name */
+    guint id;             /**< ID (to set parameter) */
+    guint position;       /**< position */
+    EffectValues *values; /**< valid parameter values */
 } EffectSettings;
 
 typedef struct {
-    guint type;                /* value (type) */
-    gchar *label;              /* Effect name */
-    guint id;                  /* ID (to set effect type) */
-    guint position;            /* position */
-    EffectSettings *settings;  /* possible parameters */
-    gint settings_amt;         /* possible parameters length */
+    guint type;                /**< value (type) */
+    gchar *label;              /**< Effect name */
+    guint id;                  /**< ID (to set effect type) */
+    guint position;            /**< position */
+    EffectSettings *settings;  /**< possible parameters */
+    gint settings_amt;         /**< possible parameters length */
 } EffectGroup;
 
 typedef struct {
-    gchar *label;       /* Base effect name */
-    guint id;           /* ID (to set effect on/off) */
-    guint position;     /* position */
-    EffectGroup *group; /* possible effect types */
-    gint group_amt;     /* possible effect types length */
+    gchar *label;       /**< Base effect name */
+    guint id;           /**< ID (to set effect on/off) */
+    guint position;     /**< position */
+    EffectGroup *group; /**< possible effect types */
+    gint group_amt;     /**< possible effect types length */
 } Effect;
 
 typedef struct {
-    Effect *effect; /* list of supported effects */
-    gint amt;       /* list of supported effects length */
+    Effect *effect; /**< list of supported effects */
+    gint amt;       /**< list of supported effects length */
 } EffectList;
 
 typedef struct {
