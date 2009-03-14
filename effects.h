@@ -54,4 +54,12 @@ typedef struct {
     gint amt;       /* list of supported effects length */
 } EffectList;
 
+typedef struct {
+    EffectGroup *group;
+    gint group_amt;
+} ModifierGroup;
+
+ModifierGroup *modifier_linkable_list();
+void modifier_group_free(ModifierGroup *modifier_group);
+
 #endif /* GDIGI_EFFECTS_H */

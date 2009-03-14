@@ -893,7 +893,27 @@ static Modifier *get_modifier(guint id, guint position)
     return NULL;
 }
 
-void modifier_linkable_list()
+static EffectSettings *get_modifier_settings(EffectValues *values)
+{
+    if (values == NULL)
+        return NULL;
+
+    /* TODO: reuse exsisting settings if values is the same */
+    EffectSettings *settings = g_slice_alloc0(2 * sizeof(EffectSettings));
+    settings[0].id = EXP_MIN;
+    settings[1].id = EXP_MAX;
+
+    settings[0].label = "Min";
+    settings[1].label = "Max";
+
+    settings[0].position = settings[1].position = EXP_POSITION;
+
+    settings[0].values = settings[1].values = values;
+
+    return settings;
+}
+
+ModifierGroup *modifier_linkable_list()
 {
     guint group_id;
     guint count;
@@ -908,12 +928,52 @@ void modifier_linkable_list()
     group_id = (str[8] << 8) | str[9];
     count = (str[10] << 8) | str[11];
 
+    ModifierGroup *modifier_group = g_slice_new(ModifierGroup);
+
     g_message("Group %d count %d", group_id, count);
+    EffectGroup *group = g_slice_alloc(count * sizeof(EffectGroup));
+
     for (i=0; i<count; i++) {
         guint id = (str[12 + (i*3)] << 8) | str[13 + (i*3)];
         guint position = str[14 + (i*3)];
 
+        group[i].type = (position << 16) | id;
+        group[i].id = EXP_TYPE;
+        group[i].position = EXP_POSITION;
+
         Modifier *modifier = get_modifier(id, position);
+        if (modifier) {
+            group[i].label = modifier->label;
+            group[i].settings = get_modifier_settings(modifier->values);
+            group[i].settings_amt = 2;
+        } else {
+            group[i].label = NULL;
+            group[i].settings = NULL;
+        }
+
+        if (group[i].settings == NULL)
+            group[i].settings_amt = 0;
+
         g_message("ID: %d Position: %d Label: %s", id, position, modifier ? modifier->label : NULL);
     }
+
+    modifier_group->group = group;
+    modifier_group->group_amt = count;
+
+    return modifier_group;
+}
+
+void modifier_group_free(ModifierGroup *modifier_group)
+{
+    g_return_if_fail(modifier_group != NULL);
+
+    int x;
+    for (x=0; x<modifier_group->group_amt; x++) {
+        if (modifier_group->group[x].settings)
+            g_slice_free1(2 * sizeof(EffectSettings),
+                          modifier_group->group[x].settings);
+    }
+    g_slice_free1(modifier_group->group_amt * sizeof(EffectGroup),
+                  modifier_group->group);
+    g_slice_free(ModifierGroup, modifier_group);
 }
