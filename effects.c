@@ -715,3 +715,185 @@ EffectList effects[] = {
 };
 
 int n_effects = G_N_ELEMENTS(effects);
+
+typedef struct {
+    const gchar *label;
+    guint id;
+    guint position;
+} Modifiers;
+
+static Modifiers modifiers[] = {
+    {"None", 0, 0},
+    {"Pickup Enable", PICKUP_ON_OFF, PICKUP_POSITION},
+    {"Pickup Type", PICKUP_TYPE, PICKUP_POSITION},
+    {"Compressor Enable", COMP_ON_OFF, COMP_POSITION},
+    {"Compressor Sustain", COMP_SUSTAIN, COMP_POSITION},
+    {"Compressor Tone", COMP_TONE, COMP_POSITION},
+    {"Compressor Level", COMP_LEVEL, COMP_POSITION},
+    {"Compressor Attack", COMP_ATTACK, COMP_POSITION},
+    {"Dist Enable", DIST_ON_OFF, DIST_POSITION},
+    {"Dist Drive", DIST_SCREAMER_DRIVE, DIST_POSITION},
+    {"Dist Tone", DIST_SCREAMER_TONE, DIST_POSITION},
+    {"Dist Level", DIST_SCREAMER_LVL, DIST_POSITION},
+    {"Dist Overdrive", DIST_808_OVERDRIVE, DIST_POSITION},
+    {"Dist Tone", DIST_808_TONE, DIST_POSITION},
+    {"Dist Level", DIST_808_LVL, DIST_POSITION},
+    {"Dist Drive", DIST_GUYOD_DRIVE, DIST_POSITION},
+    {"Dist Level", DIST_GUYOD_LVL, DIST_POSITION},
+    {"Dist Gain", DIST_DOD250_GAIN, DIST_POSITION},
+    {"Dist Level", DIST_DOD250_LVL, DIST_POSITION},
+    {"Dist Distortion", DIST_RODENT_DIST, DIST_POSITION},
+    {"Dist Filter", DIST_RODENT_FILTER, DIST_POSITION},
+    {"Dist Volume", DIST_RODENT_LVL, DIST_POSITION},
+    {"Dist Distortion", DIST_MX_DIST, DIST_POSITION},
+    {"Dist Output", DIST_MX_OUTPUT, DIST_POSITION},
+    {"Dist Distortion", DIST_DS_GAIN, DIST_POSITION},
+    {"Dist Tone", DIST_DS_TONE, DIST_POSITION},
+    {"Dist Level", DIST_DS_LVL, DIST_POSITION},
+    {"Dist Gain", DIST_GRUNGE_GRUNGE, DIST_POSITION},
+    {"Dist Face", DIST_GRUNGE_FACE, DIST_POSITION},
+    {"Dist Loud", DIST_GRUNGE_LOUD, DIST_POSITION},
+    {"Dist Butt", DIST_GRUNGE_BUTT, DIST_POSITION},
+    {"Dist Gain", DIST_ZONE_GAIN, DIST_POSITION},
+    {"Dist Mid Level", DIST_ZONE_MID_LVL, DIST_POSITION},
+    {"Dist Level", DIST_ZONE_LEVEL, DIST_POSITION},
+    {"Dist Low", DIST_ZONE_LOW, DIST_POSITION},
+    {"Dist Mid Freq", DIST_ZONE_MID_FREQ, DIST_POSITION},
+    {"Dist High", DIST_ZONE_HIGH, DIST_POSITION},
+    {"Dist Low", DIST_DEATH_LOW, DIST_POSITION},
+    {"Dist Mid", DIST_DEATH_MID, DIST_POSITION},
+    {"Dist Level", DIST_DEATH_LVL, DIST_POSITION},
+    {"Dist High", DIST_DEATH_HIGH, DIST_POSITION},
+    {"Dist Gunk", DIST_GONK_GONK, DIST_POSITION},
+    {"Dist Smear", DIST_GONK_SMEAR, DIST_POSITION},
+    {"Dist Suck", DIST_GONK_SUCK, DIST_POSITION},
+    {"Dist Heave", DIST_GONK_HEAVE, DIST_POSITION},
+    {"Dist Fuzz", DIST_FUZZY_FUZZ, DIST_POSITION},
+    {"Dist Volume", DIST_FUZZY_VOLUME, DIST_POSITION},
+    {"Dist Sustain", DIST_MP_SUSTAIN, DIST_POSITION},
+    {"Dist Tone", DIST_MP_TONE, DIST_POSITION},
+    {"Dist Volume", DIST_MP_VOLUME, DIST_POSITION},
+    {"Amp Channel Enable", AMP_ON_OFF, AMP_POSITION},
+    {"Amp Gain", AMP_GAIN, AMP_POSITION},
+    {"Amp Level", AMP_LEVEL, AMP_POSITION},
+    {"EQ Enable", EQ_ON_OFF, EQ_POSITION},
+    {"EQ Bass", EQ_BASS, EQ_POSITION},
+    {"EQ Mid", EQ_MID, EQ_POSITION},
+    {"EQ Treb", EQ_TREBLE, EQ_POSITION},
+    {"Gate Enable", NOISEGATE_ON_OFF, NOISEGATE_POSITION},
+    {"Gate Pluck Sens", NOISEGATE_SWELL_SENS, NOISEGATE_POSITION},
+    {"Gate Threshold", NOISEGATE_GATE_TRESHOLD, NOISEGATE_POSITION},
+    {"Gate Attack", NOISEGATE_ATTACK, NOISEGATE_POSITION},
+    {"Gate Release", NOISEGATE_RELEASE, NOISEGATE_POSITION},
+    {"Gate Attenuation", NOISEGATE_ATTN, NOISEGATE_POSITION},
+    {"Chorus/FX Enable", CHORUSFX_ON_OFF, CHORUSFX_POSITION},
+    {"Phaser Speed", PHASER_SPEED, CHORUSFX_POSITION},
+    {"Phaser Depth", PHASER_DEPTH, CHORUSFX_POSITION},
+    {"Phaser Regen", PHASER_REGEN, CHORUSFX_POSITION},
+    {"Phaser Waveform", PHASER_WAVE, CHORUSFX_POSITION},
+    {"Phaser Level", PHASER_LEVEL, CHORUSFX_POSITION},
+    {"Chorus Speed", CE_CHORUS_SPEED, CHORUSFX_POSITION},
+    {"Chorus Depth", CE_CHORUS_DEPTH, CHORUSFX_POSITION},
+    {"Chorus Level", DUAL_CHORUS_LEVEL, CHORUSFX_POSITION},
+    {"Chorus Waveform", DUAL_CHORUS_WAVE, CHORUSFX_POSITION},
+    {"Flanger Speed", FLANGER_SPEED, CHORUSFX_POSITION},
+    {"Flanger Depth", FLANGER_DEPTH, CHORUSFX_POSITION},
+    {"Flanger Regen", FLANGER_REGEN, CHORUSFX_POSITION},
+    {"Flanger Waveform", FLANGER_WAVE, CHORUSFX_POSITION},
+    {"Flanger Level", FLANGER_LEVEL, CHORUSFX_POSITION},
+    {"Flanger Width", MXR_FLANGER_WIDTH, CHORUSFX_POSITION},
+    {"Flanger Manual", MXR_FLANGER_MANUAL, CHORUSFX_POSITION},
+    {"Vibrato Speed", VIBRATO_SPEED, CHORUSFX_POSITION},
+    {"Vibrato Depth", VIBRATO_DEPTH, CHORUSFX_POSITION},
+    {"Rotary Speed", ROTARY_SPEED, CHORUSFX_POSITION},
+    {"Rotary Intensity", ROTARY_INTENSITY, CHORUSFX_POSITION},
+    {"Rotary Doppler", ROTARY_DOPPLER, CHORUSFX_POSITION},
+    {"Rotary Crossover", ROTARY_CROSSOVER, CHORUSFX_POSITION},
+    {"VibroPan Speed", VIBROPAN_SPEED, CHORUSFX_POSITION},
+    {"VibroPan Depth", VIBROPAN_DEPTH, CHORUSFX_POSITION},
+    {"VibroPan VibratoPan", VIBROPAN_VIBRA, CHORUSFX_POSITION},
+    {"VibroPan Waveform", VIBROPAN_WAVE, CHORUSFX_POSITION},
+    {"Tremolo Speed", TREMOLO_SPEED, CHORUSFX_POSITION},
+    {"Tremolo Depth", TREMOLO_DEPTH, CHORUSFX_POSITION},
+    {"Tremolo Waveform", TREMOLO_WAVE, CHORUSFX_POSITION},
+    {"Panner Speed", PANNER_SPEED, CHORUSFX_POSITION},
+    {"Panner Depth", PANNER_DEPTH, CHORUSFX_POSITION},
+    {"Panner Waveform", PANNER_WAVE, CHORUSFX_POSITION},
+    {"Envelope Sens.", ENVELOPE_SENSITIVITY, CHORUSFX_POSITION},
+    {"Envelope Range", ENVELOPE_RANGE, CHORUSFX_POSITION},
+    {"AutoYa Speed", AUTOYA_SPEED, CHORUSFX_POSITION},
+    {"AutoYa Intensity", AUTOYA_INTENSITY, CHORUSFX_POSITION},
+    {"AutoYa Range", AUTOYA_RANGE, CHORUSFX_POSITION},
+    {"YaYa Pedal", YAYA_PEDAL, CHORUSFX_POSITION},
+    {"YaYa Intensity", YAYA_INTENSITY, CHORUSFX_POSITION},
+    {"YaYa Range", YAYA_RANGE, CHORUSFX_POSITION},
+    {"Step Filter Speed", STEP_FILTER_SPEED, CHORUSFX_POSITION},
+    {"Step Filter Intensity", STEP_FILTER_INTENSITY, CHORUSFX_POSITION},
+    {"Whammy Amount", WHAMMY_AMOUNT, CHORUSFX_POSITION},
+    {"Whammy Pedal", WHAMMY_PEDAL, CHORUSFX_POSITION},
+    {"Whammy Mix", WHAMMY_MIX, CHORUSFX_POSITION},
+    {"Pitch Shift Amount", PITCH_AMOUNT, CHORUSFX_POSITION},
+    {"Pitch Shift Mix", PITCH_MIX, CHORUSFX_POSITION},
+    {"Detune Amount", DETUNE_AMOUNT, CHORUSFX_POSITION},
+    {"Detune Level", DETUNE_LEVEL, CHORUSFX_POSITION},
+    {"IPS Amount", IPS_SHIFT_AMOUNT, CHORUSFX_POSITION},
+    {"IPS Key", IPS_KEY, CHORUSFX_POSITION},
+    {"IPS Scale", IPS_SCALE, CHORUSFX_POSITION},
+    {"IPS Level", IPS_LEVEL, CHORUSFX_POSITION},
+    {"Delay Enable", DELAY_ON_OFF, DELAY_POSITION},
+    {"Delay Time", DELAY_TIME, DELAY_POSITION},
+    {"Delay Repeats", ANALOG_REPEATS, DELAY_POSITION},
+    {"Delay Level", ANALOG_LEVEL, DELAY_POSITION},
+    {"Delay Duck Thresh", DIGITAL_DUCKER_THRESH, DELAY_POSITION},
+    {"Delay Duck Level", DIGITAL_DUCKER_LEVEL, DELAY_POSITION},
+    {"Delay Mod Depth", MODULATED_DEPTH, DELAY_POSITION},
+    {"Delay Tape Wow", TAPE_WOW, DELAY_POSITION},
+    {"Delay Tape Flut", TAPE_FLUTTER, DELAY_POSITION},
+    {"Reverb Enable", REVERB_ON_OFF, REVERB_POSITION},
+    {"Reverb Decay", LEX_AMBIENCE_DECAY, REVERB_POSITION},
+    {"Reverb Liveliness", LEX_STUDIO_LIVELINESS, REVERB_POSITION},
+    {"Reverb Level", LEX_STUDIO_LEVEL, REVERB_POSITION},
+    {"Reverb Predelay", LEX_STUDIO_PREDELAY, REVERB_POSITION},
+    {"Volume Pre FX", 2626, 13},
+    {"Volume Post FX", 2626, 17},
+};
+
+int n_modifiers = G_N_ELEMENTS(modifiers);
+
+/*
+    returned value must not be freed
+*/
+static const gchar *get_modifier_label(guint id, guint position)
+{
+    gint x;
+
+    for (x=0; x<n_modifiers; x++)
+        if ((modifiers[x].id == id) && (modifiers[x].position == position))
+            return modifiers[x].label;
+
+    return NULL;
+}
+
+void modifier_linkable_list()
+{
+    guint group_id;
+    guint count;
+    guint i;
+
+    send_message(REQUEST_MODIFIER_LINKABLE_LIST, "\x00\x01", 2);
+
+    GString *data = get_message_by_id(RECEIVE_MODIFIER_LINKABLE_LIST);
+
+    unsigned char *str = (unsigned char*)data->str;
+
+    group_id = (str[8] << 8) | str[9];
+    count = (str[10] << 8) | str[11];
+
+    g_message("Group %d count %d", group_id, count);
+    for (i=0; i<count; i++) {
+        guint id = (str[12 + (i*3)] << 8) | str[13 + (i*3)];
+        guint position = str[14 + (i*3)];
+
+        g_message("ID: %d Position: %d Label: %s", id, position, get_modifier_label(id, position));
+    }
+}
