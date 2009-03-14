@@ -210,9 +210,6 @@ void test_presets()
 
     for (x=0; x<=60; x++)
         switch_preset(PRESETS_SYSTEM, x);
-
-    for (x=0; x<=99; x++)
-        set_preset_level(x);
 }
 
 void test_pickups()

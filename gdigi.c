@@ -51,10 +51,13 @@ static char calculate_checksum(gchar *array, gint length)
     return checksum;
 }
 
-/*
-   opens MIDI device
-   Returns TRUE on error
-*/
+/**
+ *  open_device:
+ *
+ *  Opens MIDI device. This function modifies global input and output variables.
+ *
+ *  Return value: FALSE on success, TRUE on error.
+ **/
 gboolean open_device()
 {
     int err;
@@ -76,14 +79,27 @@ gboolean open_device()
     return FALSE;
 }
 
+/**
+ *  send_data:
+ *  @data: data to be sent
+ *  @length: data length
+ *
+ *  Sends data to device. This function uses global output variable.
+ **/
 void send_data(char *data, int length)
 {
-    if (output == NULL)
-        open_device();
-
     snd_rawmidi_write(output, data, length);
 }
 
+/**
+ *  pack_data:
+ *  @data: data to be packed
+ *  @len: data length
+ *
+ *  Packs data using method used on all newer DigiTech products.
+ *
+ *  Return value: GString containing packed data
+ **/
 GString *pack_data(gchar *data, gint len)
 {
     GString *packed;
@@ -114,6 +130,12 @@ GString *pack_data(gchar *data, gint len)
     return packed;
 }
 
+/**
+ *  unpack_message:
+ *  @msg: message to unpack
+ *
+ *  Unpacks message data. This function modifies given GString.
+ **/
 static void unpack_message(GString *msg)
 {
     int offset;
@@ -152,11 +174,13 @@ static void unpack_message(GString *msg)
     g_string_truncate(msg, i);
 }
 
-/*
-   reads data from MIDI IN
-   returns GString containing data
-   if no data was read it returns NULL
-*/
+/**
+ *  read_data:
+ *
+ *  Reads data from MIDI IN. This function uses global input variable.
+ *
+ *  Return value: GString containing data, or NULL when no data was read.
+ **/
 GString* read_data()
 {
     /* This is mostly taken straight from alsa-utils-1.0.19 amidi/amidi.c
@@ -220,19 +244,14 @@ GString* read_data()
     return string;
 }
 
-static void clear_midi_in_buffer()
-{
-    GString *str;
-
-    do {
-        str = read_data();
-    } while (str != NULL);
-}
-
-/*
-   data - unpacked data to send
-   len  - data length
-*/
+/**
+ *  send_message:
+ *  @procedure: procedure ID
+ *  @data: unpacked message data
+ *  @len: data length
+ *
+ *  Creates SysEx message then sends it. This function uses folowing global variables: device_id, family_id and product_id.
+ **/
 void send_message(gint procedure, gchar *data, gint len)
 {
     GString *msg = g_string_new_len("\xF0"          /* SysEx status byte */
@@ -258,8 +277,17 @@ void send_message(gint procedure, gchar *data, gint len)
     g_string_free(msg, TRUE);
 }
 
-static gint get_message_id(GString *msg)
+/**
+ *  get_message_id:
+ *  @msg: SysEx message
+ *
+ *  Checks message ID.
+ *
+ *  Return value: MessageID, or -1 on error.
+ **/
+static MessageID get_message_id(GString *msg)
 {
+    /* TODO: sanity checks */
     g_return_val_if_fail(msg != NULL, -1);
 
     if (msg->len > 7) {
@@ -268,6 +296,14 @@ static gint get_message_id(GString *msg)
     return -1;
 }
 
+/**
+ *  get_message_by_id:
+ *  @id: MessageID of requested message
+ *
+ *  Reads data from MIDI IN until message with matching id is found.
+ *
+ *  Return value: GString containing unpacked message.
+ **/
 GString *get_message_by_id(MessageID id)
 {
     GString *data = NULL;
@@ -283,6 +319,13 @@ GString *get_message_by_id(MessageID id)
     return data;
 }
 
+/**
+ *  append_value:
+ *  @msg: message to append value
+ *  @value: value to append
+ *
+ *  Packs value using scheme used on all newer DigiTech products.
+ **/
 void append_value(GString *msg, guint value)
 {
     /* check how many bytes long the value is */
@@ -310,11 +353,14 @@ void append_value(GString *msg, guint value)
     }
 }
 
-/*
-   id - ID as found in preset file
-   position - Position as found in preset file
-   value - Value as found in preset file
-*/
+/**
+ *  set_option:
+ *  @id: Parameter ID
+ *  @position: Parameter position
+ *  @value: Parameter value
+ *
+ *  Forms SysEx message to set parameter then sends it to device.
+ **/
 void set_option(guint id, guint position, guint value)
 {
     GString *msg = g_string_sized_new(9);
@@ -326,7 +372,13 @@ void set_option(guint id, guint position, guint value)
     g_string_free(msg, TRUE);
 }
 
-/* x = 0 to 60 */
+/**
+ *  switch_preset:
+ *  @bank: preset bank
+ *  @x: preset index
+ *
+ *  Switches to selected preset.
+ **/
 void switch_preset(guint bank, guint x)
 {
     GString *msg = g_string_sized_new(6);
@@ -339,12 +391,13 @@ void switch_preset(guint bank, guint x)
     g_string_free(msg, TRUE);
 }
 
-/* level = 0 to 99 */
-void set_preset_level(int level)
-{
-    set_option(PRESET_LEVEL, PRESET_POSITION, level);
-}
-
+/**
+ *  store_preset_name:
+ *  @x: preset index
+ *  @name: preset name
+ *
+ *  Stores current edit buffer in user presets bank.
+ **/
 void store_preset_name(int x, const gchar *name)
 {
     GString *msg = g_string_sized_new(6);
@@ -357,7 +410,13 @@ void store_preset_name(int x, const gchar *name)
     g_string_free(msg, TRUE);
 }
 
-/* x = 0 to 59 (preset number) */
+/**
+ *  set_preset_name:
+ *  @x: preset index
+ *  @name: preset name
+ *
+ *  Sets preset name.
+ **/
 void set_preset_name(int x, gchar *name)
 {
     GString *msg = g_string_sized_new(12);
@@ -369,12 +428,14 @@ void set_preset_name(int x, gchar *name)
     g_string_free(msg, TRUE);
 }
 
-/*
-    Queries user preset names
-    Valid bank values are PRESETS_SYSTEM and PRESETS_USER
-    Returns GStrv which must be freed with g_strfreev
-    Returns NULL on error
-*/
+/**
+ *  query_preset_names:
+ *  @bank: preset bank
+ *
+ *  Queries preset names.
+ *
+ *  Return value: GStrv which must be freed with g_strfreev, or NULL on error.
+ **/
 GStrv query_preset_names(gchar bank)
 {
     GString *data = NULL;
@@ -382,9 +443,6 @@ GStrv query_preset_names(gchar bank)
     int n = 0;                /* current preset number */
     int n_total;              /* total number of presets */
     gchar **str_array = NULL;
-
-    /* clear MIDI IN buffer */
-    clear_midi_in_buffer();
 
     /* query user preset names */
     send_message(REQUEST_PRESET_NAMES, &bank, 1);
@@ -412,12 +470,16 @@ GStrv query_preset_names(gchar bank)
     return str_array;
 }
 
+/**
+ *  get_current_preset:
+ *
+ *  Queries current edit buffer.
+ *
+ *  Return value: GString containing RECEIVE_PRESET_PARAMETERS SysEx message.
+ **/
 GString *get_current_preset()
 {
     GString *data = NULL;
-
-    /* clear MIDI IN buffer */
-    clear_midi_in_buffer();
 
     send_message(REQUEST_PRESET, "\x04\x00", 3);
 
@@ -427,6 +489,16 @@ GString *get_current_preset()
     return data;
 }
 
+/**
+ *  request_who_am_i:
+ *  @device_id: Variable to hold device ID
+ *  @family_id: Variable to hold family ID
+ *  @product_id: Variable to hold product ID
+ *
+ *  Requests device information.
+ *
+ *  Return value: TRUE on success, FALSE on error.
+ **/
 static gboolean request_who_am_i(unsigned char *device_id, unsigned char *family_id,
                                  unsigned char *product_id)
 {

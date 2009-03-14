@@ -735,7 +735,7 @@ EffectList effects[] = {
 int n_effects = G_N_ELEMENTS(effects);
 
 typedef struct {
-    const gchar *label;
+    gchar *label;
     guint id;
     guint position;
     EffectValues *values;
@@ -879,8 +879,14 @@ static Modifier modifiers[] = {
 
 int n_modifiers = G_N_ELEMENTS(modifiers);
 
-/*
-    returned value must not be freed
+/**
+ *  get_modifier:
+ *  @id: modifier ID
+ *  @position: modifier position
+ *
+ *  Gets modifier info.
+ *
+ *  Return value: Modifier which must not be freed, or NULL if no matching Modifier has been found.
 */
 static Modifier *get_modifier(guint id, guint position)
 {
@@ -893,6 +899,14 @@ static Modifier *get_modifier(guint id, guint position)
     return NULL;
 }
 
+/**
+ *  get_modifier_settings:
+ *  @values: possible setting values
+ *
+ *  Creates EffectSettings containing expression pedal min and max settings.
+ *
+ *  Return value: EffectSettings which must be freed using effect_settings_free.
+ **/
 static EffectSettings *get_modifier_settings(EffectValues *values)
 {
     if (values == NULL)
@@ -913,6 +927,24 @@ static EffectSettings *get_modifier_settings(EffectValues *values)
     return settings;
 }
 
+/**
+ *  effect_settings_free:
+ *  @settings: settings to be freed
+ *
+ *  Frees all memory used by EffectSettings.
+ **/
+static void effect_settings_free(EffectSettings *settings)
+{
+    g_slice_free1(2 * sizeof(EffectSettings), settings);
+}
+
+/**
+ *  modifier_linkable_list:
+ *
+ *  Retrieves modifier linkable gruop from device.
+ *
+ *  Return value: ModifierGroup which must be freed using modifier_group_free.
+ **/
 ModifierGroup *modifier_linkable_list()
 {
     guint group_id;
@@ -963,6 +995,12 @@ ModifierGroup *modifier_linkable_list()
     return modifier_group;
 }
 
+/**
+ *  modifier_group_free:
+ *  @modifier_group: group to be freed
+ *
+ *  Frees all memory used by ModifierGroup.
+ **/
 void modifier_group_free(ModifierGroup *modifier_group)
 {
     g_return_if_fail(modifier_group != NULL);
@@ -970,8 +1008,7 @@ void modifier_group_free(ModifierGroup *modifier_group)
     int x;
     for (x=0; x<modifier_group->group_amt; x++) {
         if (modifier_group->group[x].settings)
-            g_slice_free1(2 * sizeof(EffectSettings),
-                          modifier_group->group[x].settings);
+            effect_settings_free(modifier_group->group[x].settings);
     }
     g_slice_free1(modifier_group->group_amt * sizeof(EffectGroup),
                   modifier_group->group);

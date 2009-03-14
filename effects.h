@@ -26,7 +26,7 @@ typedef struct {
 } EffectValues;
 
 typedef struct {
-    char *label;          /* Parameter name */
+    gchar *label;         /* Parameter name */
     guint id;             /* ID (to set parameter) */
     guint position;       /* position */
     EffectValues *values; /* valid parameter values */
@@ -42,7 +42,7 @@ typedef struct {
 } EffectGroup;
 
 typedef struct {
-    char *label;        /* Base effect name */
+    gchar *label;       /* Base effect name */
     guint id;           /* ID (to set effect on/off) */
     guint position;     /* position */
     EffectGroup *group; /* possible effect types */

@@ -539,7 +539,7 @@ enum {
 #define USB_AUDIO_PLAYBACK_MIX 12297
 #define USB_AUDIO_LEVEL 12307
 
-enum {
+typedef enum {
     PRESETS_SYSTEM = 0,
     PRESETS_USER = 1,
     PRESETS_ARTIST = 2,
@@ -551,7 +551,7 @@ enum {
 
     /* Version 2 and later */
     PRESETS_EXTERNAL = 6
-};
+} PresetBank;
 
 typedef enum {
     REQUEST_WHO_AM_I = 0x01,
