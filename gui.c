@@ -123,7 +123,7 @@ static void widget_list_add(GtkObject *widget, gint id, gint position, gint valu
 {
     WidgetListElem *el;
 
-    el = g_malloc(sizeof(WidgetListElem));
+    el = g_slice_new(WidgetListElem);
     el->widget = widget;
     el->id = id;
     el->position = position;
@@ -276,7 +276,7 @@ void effect_settings_group_free(EffectSettingsGroup *group)
         gtk_widget_destroy(group->child);
 
     g_object_unref(group->child);
-    g_free(group);
+    g_slice_free(EffectSettingsGroup, group);
 }
 
 /**
@@ -350,7 +350,7 @@ GtkWidget *create_widget_container(EffectGroup *group, gint amt)
             widget = create_table(group[x].settings, group[x].settings_amt);
             g_object_ref_sink(widget);
 
-            settings = g_malloc(sizeof(EffectSettingsGroup));
+            settings = g_slice_new(EffectSettingsGroup);
             settings->id = group[x].id;
             settings->type = group[x].type;
             settings->position = group[x].position;
@@ -715,7 +715,7 @@ static void widget_list_free(GList *list)
 {
     GList *iter;
     for (iter = list; iter; iter = iter->next) {
-        g_free(iter->data);
+        g_slice_free(WidgetListElem, iter->data);
     }
     g_list_free(list);
 }

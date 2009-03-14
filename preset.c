@@ -51,7 +51,7 @@ static void XMLCALL start(void *data, const char *el, const char **attr) {
         if (ad->preset->params != NULL)
             g_message("Params aleady exists!");
     } else if (g_strcmp0(el, "Param") == 0) {
-        SettingParam *param = (SettingParam *)g_malloc(sizeof(SettingParam));
+        SettingParam *param = g_slice_new(SettingParam);
         param->id = -1;
         param->position = -1;
         param->value = -1;
@@ -134,9 +134,9 @@ Preset *create_preset_from_xml_file(gchar *filename)
         return NULL;
     }
 
-    AppData *ad = (AppData *) g_malloc(sizeof(AppData));
+    AppData *ad = g_slice_new(AppData);
     ad->depth = 0;
-    ad->preset = g_malloc(sizeof(Preset));
+    ad->preset = g_slice_new(Preset);
     ad->preset->name = NULL;
     ad->preset->params = NULL;
     ad->id = PARSER_TYPE_NOT_SET;
@@ -152,7 +152,7 @@ Preset *create_preset_from_xml_file(gchar *filename)
                   (int)XML_GetCurrentLineNumber(p),
                   XML_ErrorString(XML_GetErrorCode(p)));
         preset_free(ad->preset);
-        g_free(ad);
+        g_slice_free(AppData, ad);
         g_free(contents);
         g_object_unref(file);
         return NULL;
@@ -162,7 +162,7 @@ Preset *create_preset_from_xml_file(gchar *filename)
     preset->params = g_list_reverse(preset->params);
 
     XML_ParserFree(p);
-    g_free(ad);
+    g_slice_free(AppData, ad);
 
     g_free(contents);
     g_object_unref(file);
@@ -192,7 +192,7 @@ Preset *create_preset_from_data(GString *data)
     total = (unsigned char)data->str[x];
     x++;
 
-    Preset *preset = g_malloc(sizeof(Preset));
+    Preset *preset = g_slice_new(Preset);
     preset->name = NULL; /* TODO */
     preset->params = NULL;
 
@@ -212,7 +212,7 @@ Preset *create_preset_from_data(GString *data)
             x+=tmp;
         }
         n++;
-        SettingParam *param = (SettingParam *)g_malloc(sizeof(SettingParam));
+        SettingParam *param = g_slice_new(SettingParam);
         param->id = id;
         param->position = position;
         param->value = value;
@@ -236,12 +236,15 @@ void preset_free(Preset *preset)
     g_return_if_fail(preset != NULL);
 
     if (preset->params != NULL) {
-        g_list_foreach(preset->params, (GFunc)g_free, NULL);
+        GList *iter;
+        for (iter = preset->params; iter; iter = iter->next) {
+            g_slice_free(SettingParam, iter->data);
+        }
         g_list_free(preset->params);
     }
 
     if (preset->name != NULL)
         g_free(preset->name);
 
-    g_free(preset);
+    g_slice_free(Preset, preset);
 }
