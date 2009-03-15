@@ -686,51 +686,52 @@ static EffectGroup effects_lib_group[] = {
 };
 
 static Effect wah_effect[] = {
-    {"Wah", WAH_ON_OFF, WAH_POSITION, wah_group, G_N_ELEMENTS(wah_group)},
+    {NULL, WAH_ON_OFF, WAH_POSITION, wah_group, G_N_ELEMENTS(wah_group)},
 };
 
 static Effect comp_effect[] = {
-    {"Compressor", COMP_ON_OFF, COMP_POSITION, comp_group, G_N_ELEMENTS(comp_group)},
+    {NULL, COMP_ON_OFF, COMP_POSITION, comp_group, G_N_ELEMENTS(comp_group)},
 };
 
 static Effect dist_effect[] = {
-    {"Distortion", DIST_ON_OFF, DIST_POSITION, dist_group, G_N_ELEMENTS(dist_group)},
+    {NULL, DIST_ON_OFF, DIST_POSITION, dist_group, G_N_ELEMENTS(dist_group)},
 };
 
 static Effect noisegate_effect[] = {
-    {"Noisegate", NOISEGATE_ON_OFF, NOISEGATE_POSITION, noisegate_group, G_N_ELEMENTS(noisegate_group)},
+    {NULL, NOISEGATE_ON_OFF, NOISEGATE_POSITION, noisegate_group, G_N_ELEMENTS(noisegate_group)},
 };
 
 static Effect chorusfx_effect[] = {
-    {"Chorus/FX", CHORUSFX_ON_OFF, CHORUSFX_POSITION, chorusfx_group, G_N_ELEMENTS(chorusfx_group)},
+    {NULL, CHORUSFX_ON_OFF, CHORUSFX_POSITION, chorusfx_group, G_N_ELEMENTS(chorusfx_group)},
 };
 
 static Effect delay_effect[] = {
-    {"Delay", DELAY_ON_OFF, DELAY_POSITION, delay_group, G_N_ELEMENTS(delay_group)},
+    {NULL, DELAY_ON_OFF, DELAY_POSITION, delay_group, G_N_ELEMENTS(delay_group)},
 };
 
 static Effect reverb_effect[] = {
-    {"Reverb", REVERB_ON_OFF, REVERB_POSITION, reverb_group, G_N_ELEMENTS(reverb_group)},
+    {NULL, REVERB_ON_OFF, REVERB_POSITION, reverb_group, G_N_ELEMENTS(reverb_group)},
 };
 
 static Effect amp_effect[] = {
-    {"Amp", AMP_ON_OFF, AMP_POSITION, amp_group, G_N_ELEMENTS(amp_group)},
+    {NULL, AMP_ON_OFF, AMP_POSITION, amp_group, G_N_ELEMENTS(amp_group)},
+    {"Cabinet", -1, -1, amp_cab_group, G_N_ELEMENTS(amp_cab_group)},
 };
 
 static Effect eq_effect[] = {
-    {"EQ", EQ_ON_OFF, EQ_POSITION, eq_group, G_N_ELEMENTS(eq_group)},
+    {NULL, EQ_ON_OFF, EQ_POSITION, eq_group, G_N_ELEMENTS(eq_group)},
 };
 
 EffectList effects[] = {
-    {wah_effect, G_N_ELEMENTS(wah_effect)},
-    {amp_effect, G_N_ELEMENTS(amp_effect)},
-    {eq_effect, G_N_ELEMENTS(eq_effect)},
-    {comp_effect, G_N_ELEMENTS(comp_effect)},
-    {dist_effect, G_N_ELEMENTS(dist_effect)},
-    {noisegate_effect, G_N_ELEMENTS(noisegate_effect)},
-    {chorusfx_effect, G_N_ELEMENTS(chorusfx_effect)},
-    {delay_effect, G_N_ELEMENTS(delay_effect)},
-    {reverb_effect, G_N_ELEMENTS(reverb_effect)},
+    {"Wah", wah_effect, G_N_ELEMENTS(wah_effect)},
+    {"Amplifier", amp_effect, G_N_ELEMENTS(amp_effect)},
+    {"Equalizer", eq_effect, G_N_ELEMENTS(eq_effect)},
+    {"Compressor", comp_effect, G_N_ELEMENTS(comp_effect)},
+    {"Distortion", dist_effect, G_N_ELEMENTS(dist_effect)},
+    {"Noisegate", noisegate_effect, G_N_ELEMENTS(noisegate_effect)},
+    {"Chorus/FX", chorusfx_effect, G_N_ELEMENTS(chorusfx_effect)},
+    {"Delay", delay_effect, G_N_ELEMENTS(delay_effect)},
+    {"Reverb", reverb_effect, G_N_ELEMENTS(reverb_effect)},
 };
 
 int n_effects = G_N_ELEMENTS(effects);

@@ -42,14 +42,15 @@ typedef struct {
 } EffectGroup;
 
 typedef struct {
-    gchar *label;       /**< Base effect name */
-    guint id;           /**< ID (to set effect on/off) */
+    gchar *label;       /**< Group label */
+    guint id;           /**< ID to set effect on/off, or if it isn't on/off group then -1 */
     guint position;     /**< position */
     EffectGroup *group; /**< possible effect types */
     gint group_amt;     /**< possible effect types length */
 } Effect;
 
 typedef struct {
+    gchar *label;   /**< base effect name */
     Effect *effect; /**< list of supported effects */
     gint amt;       /**< list of supported effects length */
 } EffectList;
