@@ -468,12 +468,16 @@ static void fill_store_with_presets(GtkTreeStore *model, guint bank, gchar *name
                        -1);
 
     for (x=0; x<g_strv_length(presets); x++) {
+        gchar *tmp = g_strdup_printf("%d - %s", x+1, presets[x]);
+
         gtk_tree_store_append(model, &child_iter, &iter);
         gtk_tree_store_set(model, &child_iter,
-                           PRESET_NAME_COLUMN, presets[x],
+                           PRESET_NAME_COLUMN, tmp,
                            PRESET_NUMBER_COLUMN, x,
                            PRESET_BANK_COLUMN, bank,
                            -1);
+
+        g_free(tmp);
     }
     g_strfreev(presets);
 }
