@@ -175,293 +175,292 @@ static EffectValues values_pickup_type = {
 };
 
 static EffectSettings wah_settings[] = {
-    {"Wah min", WAH_MIN, WAH_POSITION_MIN_MAX, &values_0_to_99},
-    {"Wah max", WAH_MAX, WAH_POSITION_MIN_MAX, &values_0_to_99},
-    {"Wah level", WAH_LEVEL, WAH_POSITION, &values_0_to_12},
+    {"Min", WAH_MIN, WAH_POSITION_MIN_MAX, &values_0_to_99},
+    {"Max", WAH_MAX, WAH_POSITION_MIN_MAX, &values_0_to_99},
+    {"Level", WAH_LEVEL, WAH_POSITION, &values_0_to_12},
 };
 
 static EffectSettings comp_digi_settings[] = {
-    {"Compressor sustain", COMP_SUSTAIN, COMP_POSITION, &values_0_to_99},
-    {"Compressor tone", COMP_TONE, COMP_POSITION, &values_0_to_99},
-    {"Compressor attack", COMP_ATTACK, COMP_POSITION, &values_0_to_99},
-    {"Compressor level", COMP_LEVEL, COMP_POSITION, &values_0_to_99},
+    {"Sustain", COMP_SUSTAIN, COMP_POSITION, &values_0_to_99},
+    {"Tone", COMP_TONE, COMP_POSITION, &values_0_to_99},
+    {"Attack", COMP_ATTACK, COMP_POSITION, &values_0_to_99},
+    {"Level", COMP_LEVEL, COMP_POSITION, &values_0_to_99},
 };
 
 static EffectSettings comp_cs_settings[] = {
-    {"Compressor sustain", COMP_SUSTAIN, COMP_POSITION, &values_0_to_99},
-    {"Compressor attack", COMP_ATTACK, COMP_POSITION, &values_0_to_99},
-    {"Compressor level", COMP_LEVEL, COMP_POSITION, &values_0_to_99},
+    {"Sustain", COMP_SUSTAIN, COMP_POSITION, &values_0_to_99},
+    {"Attack", COMP_ATTACK, COMP_POSITION, &values_0_to_99},
+    {"Level", COMP_LEVEL, COMP_POSITION, &values_0_to_99},
 };
 
 static EffectSettings dist_screamer_settings[] = {
-    {"Screamer drive", DIST_SCREAMER_DRIVE, DIST_POSITION, &values_0_to_99},
-    {"Screamer tone", DIST_SCREAMER_TONE, DIST_POSITION, &values_0_to_99},
-    {"Screamer level", DIST_SCREAMER_LVL, DIST_POSITION, &values_0_to_99},
+    {"Drive", DIST_SCREAMER_DRIVE, DIST_POSITION, &values_0_to_99},
+    {"Tone", DIST_SCREAMER_TONE, DIST_POSITION, &values_0_to_99},
+    {"Level", DIST_SCREAMER_LVL, DIST_POSITION, &values_0_to_99},
 };
 
 static EffectSettings dist_808_settings[] = {
-    {"808 overdrive", DIST_808_OVERDRIVE, DIST_POSITION, &values_0_to_99},
-    {"808 tone", DIST_808_TONE, DIST_POSITION, &values_0_to_99},
-    {"808 level", DIST_808_LVL, DIST_POSITION, &values_0_to_99},
+    {"Overdrive", DIST_808_OVERDRIVE, DIST_POSITION, &values_0_to_99},
+    {"Tone", DIST_808_TONE, DIST_POSITION, &values_0_to_99},
+    {"Level", DIST_808_LVL, DIST_POSITION, &values_0_to_99},
 };
 
 static EffectSettings dist_guyod_settings[] = {
-    {"GuyOD drive", DIST_GUYOD_DRIVE, DIST_POSITION, &values_0_to_99},
-    {"GuyOD level", DIST_GUYOD_LVL, DIST_POSITION, &values_0_to_99},
+    {"Drive", DIST_GUYOD_DRIVE, DIST_POSITION, &values_0_to_99},
+    {"Level", DIST_GUYOD_LVL, DIST_POSITION, &values_0_to_99},
 };
 
 static EffectSettings dist_dod250_settings[] = {
-    {"DOD250 gain", DIST_DOD250_GAIN, DIST_POSITION, &values_0_to_99},
-    {"DOD250 level", DIST_DOD250_LVL, DIST_POSITION, &values_0_to_99},
+    {"Gain", DIST_DOD250_GAIN, DIST_POSITION, &values_0_to_99},
+    {"Level", DIST_DOD250_LVL, DIST_POSITION, &values_0_to_99},
 };
 
 static EffectSettings dist_rodent_settings[] = {
-    {"Rodent dist", DIST_RODENT_DIST, DIST_POSITION, &values_0_to_99},
-    {"Rodent filter", DIST_RODENT_FILTER, DIST_POSITION, &values_0_to_99},
-    {"Rodent level", DIST_RODENT_LVL, DIST_POSITION, &values_0_to_99},
+    {"Dist", DIST_RODENT_DIST, DIST_POSITION, &values_0_to_99},
+    {"Filter", DIST_RODENT_FILTER, DIST_POSITION, &values_0_to_99},
+    {"Level", DIST_RODENT_LVL, DIST_POSITION, &values_0_to_99},
 };
 
 static EffectSettings dist_mx_settings[] = {
-    {"MX dist", DIST_MX_DIST, DIST_POSITION, &values_0_to_99},
-    {"MX output", DIST_MX_OUTPUT, DIST_POSITION, &values_0_to_99},
+    {"Dist", DIST_MX_DIST, DIST_POSITION, &values_0_to_99},
+    {"Output", DIST_MX_OUTPUT, DIST_POSITION, &values_0_to_99},
 };
 
 static EffectSettings dist_ds_settings[] = {
-    {"DS gain", DIST_DS_GAIN, DIST_POSITION, &values_0_to_99},
-    {"DS tone", DIST_DS_TONE, DIST_POSITION, &values_0_to_99},
-    {"DS level", DIST_DS_LVL, DIST_POSITION, &values_0_to_99},
+    {"Gain", DIST_DS_GAIN, DIST_POSITION, &values_0_to_99},
+    {"Tone", DIST_DS_TONE, DIST_POSITION, &values_0_to_99},
+    {"Level", DIST_DS_LVL, DIST_POSITION, &values_0_to_99},
 };
 
 static EffectSettings dist_grunge_settings[] = {
     {"Grunge", DIST_GRUNGE_GRUNGE, DIST_POSITION, &values_0_to_99},
-    {"Grunge face", DIST_GRUNGE_FACE, DIST_POSITION, &values_0_to_99},
-    {"Grunge loud", DIST_GRUNGE_LOUD, DIST_POSITION, &values_0_to_99},
-    {"Grunge butt", DIST_GRUNGE_BUTT, DIST_POSITION, &values_0_to_99},
+    {"Face", DIST_GRUNGE_FACE, DIST_POSITION, &values_0_to_99},
+    {"Loud", DIST_GRUNGE_LOUD, DIST_POSITION, &values_0_to_99},
+    {"Butt", DIST_GRUNGE_BUTT, DIST_POSITION, &values_0_to_99},
 };
 
 static EffectSettings dist_zone_settings[] = {
-    {"Zone gain", DIST_ZONE_GAIN, DIST_POSITION, &values_0_to_99},
-    {"Zone low", DIST_ZONE_LOW, DIST_POSITION, &values_0_to_99},
-    {"Zone mid level", DIST_ZONE_MID_LVL, DIST_POSITION, &values_0_to_99},
-    {"Zone mid freq", DIST_ZONE_MID_FREQ, DIST_POSITION, &values_0_to_99},
-    {"Zone high", DIST_ZONE_HIGH, DIST_POSITION, &values_0_to_99},
-    {"Zone level", DIST_ZONE_LEVEL, DIST_POSITION, &values_0_to_99},
+    {"Gain", DIST_ZONE_GAIN, DIST_POSITION, &values_0_to_99},
+    {"Low", DIST_ZONE_LOW, DIST_POSITION, &values_0_to_99},
+    {"Mid level", DIST_ZONE_MID_LVL, DIST_POSITION, &values_0_to_99},
+    {"Mid freq", DIST_ZONE_MID_FREQ, DIST_POSITION, &values_0_to_99},
+    {"High", DIST_ZONE_HIGH, DIST_POSITION, &values_0_to_99},
+    {"Level", DIST_ZONE_LEVEL, DIST_POSITION, &values_0_to_99},
 };
 
 static EffectSettings dist_death_settings[] = {
-    {"Death low", DIST_DEATH_LOW, DIST_POSITION, &values_0_to_99},
-    {"Death mid", DIST_DEATH_MID, DIST_POSITION, &values_0_to_99},
-    {"Death high", DIST_DEATH_HIGH, DIST_POSITION, &values_0_to_99},
-    {"Death level", DIST_DEATH_LVL, DIST_POSITION, &values_0_to_99},
+    {"Low", DIST_DEATH_LOW, DIST_POSITION, &values_0_to_99},
+    {"Mid", DIST_DEATH_MID, DIST_POSITION, &values_0_to_99},
+    {"High", DIST_DEATH_HIGH, DIST_POSITION, &values_0_to_99},
+    {"Level", DIST_DEATH_LVL, DIST_POSITION, &values_0_to_99},
 };
 
 static EffectSettings dist_gonk_settings[] = {
-    {"Gonk gonk", DIST_GONK_GONK, DIST_POSITION, &values_0_to_99},
-    {"Gonk smear", DIST_GONK_SMEAR, DIST_POSITION, &values_0_to_99},
-    {"Gonk suck", DIST_GONK_SUCK, DIST_POSITION, &values_0_to_99},
-    {"Gonk heave", DIST_GONK_HEAVE, DIST_POSITION, &values_0_to_99},
+    {"Gonk", DIST_GONK_GONK, DIST_POSITION, &values_0_to_99},
+    {"Smear", DIST_GONK_SMEAR, DIST_POSITION, &values_0_to_99},
+    {"Suck", DIST_GONK_SUCK, DIST_POSITION, &values_0_to_99},
+    {"Heave", DIST_GONK_HEAVE, DIST_POSITION, &values_0_to_99},
 };
 
 static EffectSettings dist_fuzzy_settings[] = {
-    {"Fuzzy fuzz", DIST_FUZZY_FUZZ, DIST_POSITION, &values_0_to_99},
-    {"Fuzzy volume", DIST_FUZZY_VOLUME, DIST_POSITION, &values_0_to_99},
+    {"Fuzz", DIST_FUZZY_FUZZ, DIST_POSITION, &values_0_to_99},
+    {"Volume", DIST_FUZZY_VOLUME, DIST_POSITION, &values_0_to_99},
 };
 
 static EffectSettings dist_mp_settings[] = {
-    {"MP sustain", DIST_MP_SUSTAIN, DIST_POSITION, &values_0_to_99},
-    {"MP tone", DIST_MP_TONE, DIST_POSITION, &values_0_to_99},
-    {"MP volume", DIST_MP_VOLUME, DIST_POSITION, &values_0_to_99},
+    {"Sustain", DIST_MP_SUSTAIN, DIST_POSITION, &values_0_to_99},
+    {"Tone", DIST_MP_TONE, DIST_POSITION, &values_0_to_99},
+    {"Volume", DIST_MP_VOLUME, DIST_POSITION, &values_0_to_99},
 };
 
 static EffectSettings amp_settings[] = {
-    {"AMP gain", AMP_GAIN, AMP_POSITION, &values_0_to_99},
-    {"AMP level", AMP_LEVEL, AMP_POSITION, &values_0_to_99},
+    {"Gain", AMP_GAIN, AMP_POSITION, &values_0_to_99},
+    {"Level", AMP_LEVEL, AMP_POSITION, &values_0_to_99},
 };
 
 static EffectSettings amp_settings2[] = {
-    {"AMP level", AMP_LEVEL, AMP_POSITION, &values_0_to_99},
+    {"Level", AMP_LEVEL, AMP_POSITION, &values_0_to_99},
 };
 
 static EffectSettings eq_settings[] = {
-    {"EQ bass", EQ_BASS, EQ_POSITION, &values_eq_db},
-    {"EQ mid", EQ_MID, EQ_POSITION, &values_eq_db},
-    {"EQ treble", EQ_TREBLE, EQ_POSITION, &values_eq_db},
-    {"EQ mid Hz", EQ_MID_HZ, EQ_POSITION, &values_eq_mid_hz},
-    {"EQ treb Hz", EQ_TREBLE_HZ, EQ_POSITION, &values_eq_treb_hz},
+    {"Bass", EQ_BASS, EQ_POSITION, &values_eq_db},
+    {"Mid", EQ_MID, EQ_POSITION, &values_eq_db},
+    {"Treble", EQ_TREBLE, EQ_POSITION, &values_eq_db},
+    {"Mid Hz", EQ_MID_HZ, EQ_POSITION, &values_eq_mid_hz},
+    {"Treb Hz", EQ_TREBLE_HZ, EQ_POSITION, &values_eq_treb_hz},
 };
 
 static EffectSettings noisegate_gate_settings[] = {
-    {"Gate treshold", NOISEGATE_GATE_TRESHOLD, NOISEGATE_POSITION, &values_0_to_99},
-    {"Gate attack", NOISEGATE_ATTACK, NOISEGATE_POSITION, &values_0_to_99},
-    {"Gate release", NOISEGATE_RELEASE, NOISEGATE_POSITION, &values_0_to_99},
-    {"Gate attn", NOISEGATE_ATTN, NOISEGATE_POSITION, &values_0_to_99},
+    {"Treshold", NOISEGATE_GATE_TRESHOLD, NOISEGATE_POSITION, &values_0_to_99},
+    {"Attack", NOISEGATE_ATTACK, NOISEGATE_POSITION, &values_0_to_99},
+    {"Release", NOISEGATE_RELEASE, NOISEGATE_POSITION, &values_0_to_99},
+    {"Attn", NOISEGATE_ATTN, NOISEGATE_POSITION, &values_0_to_99},
 };
 
 static EffectSettings noisegate_swell_settings[] = {
-    {"Swell sens", NOISEGATE_SWELL_SENS, NOISEGATE_POSITION, &values_0_to_99},
-    {"Swell attack", NOISEGATE_ATTACK, NOISEGATE_POSITION, &values_0_to_99},
-    {"Swell release", NOISEGATE_RELEASE, NOISEGATE_POSITION, &values_0_to_99},
-    {"Swell attn", NOISEGATE_ATTN, NOISEGATE_POSITION, &values_0_to_99},
+    {"Sens", NOISEGATE_SWELL_SENS, NOISEGATE_POSITION, &values_0_to_99},
+    {"Attack", NOISEGATE_ATTACK, NOISEGATE_POSITION, &values_0_to_99},
+    {"Release", NOISEGATE_RELEASE, NOISEGATE_POSITION, &values_0_to_99},
+    {"Attn", NOISEGATE_ATTN, NOISEGATE_POSITION, &values_0_to_99},
 };
 
 static EffectSettings chorusfx_ce_settings[] = {
-    {"CE chorus speed", CE_CHORUS_SPEED, CHORUSFX_POSITION, &values_0_to_99},
-    {"CE chorus depth", CE_CHORUS_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
+    {"Speed", CE_CHORUS_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Depth", CE_CHORUS_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
 };
 
 static EffectSettings chorusfx_dual_settings[] = {
-    {"Dual chorus speed", DUAL_CHORUS_SPEED, CHORUSFX_POSITION, &values_0_to_99},
-    {"Dual chorus depth", DUAL_CHORUS_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
-    {"Dual chorus level", DUAL_CHORUS_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
-    {"Dual chorus wave", DUAL_CHORUS_WAVE, CHORUSFX_POSITION, &values_waveform},
+    {"Speed", DUAL_CHORUS_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Depth", DUAL_CHORUS_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
+    {"Level", DUAL_CHORUS_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
+    {"Wave", DUAL_CHORUS_WAVE, CHORUSFX_POSITION, &values_waveform},
 };
 
 static EffectSettings chorusfx_multi_settings[] = {
-    {"Multi chorus speed", MULTI_CHORUS_SPEED, CHORUSFX_POSITION, &values_0_to_99},
-    {"Multi chorus depth", MULTI_CHORUS_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
-    {"Multi chorus level", MULTI_CHORUS_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
-    {"Multi chorus wave", MULTI_CHORUS_WAVE, CHORUSFX_POSITION, &values_waveform},
+    {"Speed", MULTI_CHORUS_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Depth", MULTI_CHORUS_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
+    {"Level", MULTI_CHORUS_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
+    {"Wave", MULTI_CHORUS_WAVE, CHORUSFX_POSITION, &values_waveform},
 };
 
 static EffectSettings chorusfx_flanger_settings[] = {
-    {"Flanger speed", FLANGER_SPEED, CHORUSFX_POSITION, &values_0_to_99},
-    {"Flanger depth", FLANGER_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
-    {"Flanger regen", FLANGER_REGEN, CHORUSFX_POSITION, &values_0_to_99},
-    {"Flanger level", FLANGER_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
-    {"Flanger wave", FLANGER_WAVE, CHORUSFX_POSITION, &values_waveform},
+    {"Speed", FLANGER_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Depth", FLANGER_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
+    {"Regen", FLANGER_REGEN, CHORUSFX_POSITION, &values_0_to_99},
+    {"Level", FLANGER_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
+    {"Wave", FLANGER_WAVE, CHORUSFX_POSITION, &values_waveform},
 };
 
 static EffectSettings chorusfx_mxr_flanger_settings[] = {
-    {"MXR flanger speed", MXR_FLANGER_SPEED, CHORUSFX_POSITION, &values_0_to_99},
-    {"MXR flanger width", MXR_FLANGER_WIDTH, CHORUSFX_POSITION, &values_0_to_99},
-    {"MXR flanger regen", MXR_FLANGER_REGEN, CHORUSFX_POSITION, &values_0_to_99},
-    {"MXR flanger manual", MXR_FLANGER_MANUAL, CHORUSFX_POSITION, &values_0_to_99},
+    {"Speed", MXR_FLANGER_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Width", MXR_FLANGER_WIDTH, CHORUSFX_POSITION, &values_0_to_99},
+    {"Regen", MXR_FLANGER_REGEN, CHORUSFX_POSITION, &values_0_to_99},
+    {"Manual", MXR_FLANGER_MANUAL, CHORUSFX_POSITION, &values_0_to_99},
 };
 
 static EffectSettings chorusfx_phaser_settings[] = {
-    {"Phaser speed", PHASER_SPEED, CHORUSFX_POSITION, &values_0_to_99},
-    {"Phaser depth", PHASER_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
-    {"Phaser regen", PHASER_REGEN, CHORUSFX_POSITION, &values_0_to_99},
-    {"Phaser level", PHASER_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
-    {"Phaser wave", PHASER_WAVE, CHORUSFX_POSITION, &values_waveform},
+    {"Speed", PHASER_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Depth", PHASER_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
+    {"Regen", PHASER_REGEN, CHORUSFX_POSITION, &values_0_to_99},
+    {"Level", PHASER_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
+    {"Wave", PHASER_WAVE, CHORUSFX_POSITION, &values_waveform},
 };
 
 static EffectSettings chorusfx_vibrato_settings[] = {
-    {"Vibrato speed", VIBRATO_SPEED, CHORUSFX_POSITION, &values_0_to_99},
-    {"Vibrato depth", VIBRATO_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
+    {"Speed", VIBRATO_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Depth", VIBRATO_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
 };
 
 static EffectSettings chorusfx_rotary_settings[] = {
-    {"Rotary speed", ROTARY_SPEED, CHORUSFX_POSITION, &values_0_to_99},
-    {"Rotary intensity", ROTARY_INTENSITY, CHORUSFX_POSITION, &values_0_to_99},
-    {"Rotary doppler", ROTARY_DOPPLER, CHORUSFX_POSITION, &values_0_to_99},
-    {"Rotary crossover", ROTARY_CROSSOVER, CHORUSFX_POSITION, &values_0_to_99},
+    {"Speed", ROTARY_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Intensity", ROTARY_INTENSITY, CHORUSFX_POSITION, &values_0_to_99},
+    {"Doppler", ROTARY_DOPPLER, CHORUSFX_POSITION, &values_0_to_99},
+    {"Crossover", ROTARY_CROSSOVER, CHORUSFX_POSITION, &values_0_to_99},
 };
 
 static EffectSettings chorusfx_vibropan_settings[] = {
-    {"Vibropan speed", VIBROPAN_SPEED, CHORUSFX_POSITION, &values_0_to_99},
-    {"Vibropan depth", VIBROPAN_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
-    {"Vibropan vibra", VIBROPAN_VIBRA, CHORUSFX_POSITION, &values_0_to_99},
-    {"Vibropan wave", VIBROPAN_WAVE, CHORUSFX_POSITION, &values_waveform},
+    {"Speed", VIBROPAN_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Depth", VIBROPAN_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
+    {"Vibra", VIBROPAN_VIBRA, CHORUSFX_POSITION, &values_0_to_99},
+    {"Wave", VIBROPAN_WAVE, CHORUSFX_POSITION, &values_waveform},
 };
 
 static EffectSettings chorusfx_tremolo_settings[] = {
-    {"Tremolo speed", TREMOLO_SPEED, CHORUSFX_POSITION, &values_0_to_99},
-    {"Tremolo depth", TREMOLO_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
-    {"Tremolo wave", TREMOLO_WAVE, CHORUSFX_POSITION, &values_waveform},
+    {"Speed", TREMOLO_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Depth", TREMOLO_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
+    {"Wave", TREMOLO_WAVE, CHORUSFX_POSITION, &values_waveform},
 };
 
 static EffectSettings chorusfx_panner_settings[] = {
-    {"Panner speed", PANNER_SPEED, CHORUSFX_POSITION, &values_0_to_99},
-    {"Panner depth", PANNER_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
-    {"Panner wave", PANNER_WAVE, CHORUSFX_POSITION, &values_waveform},
+    {"Speed", PANNER_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Depth", PANNER_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
+    {"Wave", PANNER_WAVE, CHORUSFX_POSITION, &values_waveform},
 };
 
 static EffectSettings chorusfx_envelope_settings[] = {
-    {"Envelope sensitivity", ENVELOPE_SENSITIVITY, CHORUSFX_POSITION, &values_0_to_99},
-    {"Envelope range", ENVELOPE_RANGE, CHORUSFX_POSITION, &values_0_to_99},
+    {"Sensitivity", ENVELOPE_SENSITIVITY, CHORUSFX_POSITION, &values_0_to_99},
+    {"Range", ENVELOPE_RANGE, CHORUSFX_POSITION, &values_0_to_99},
 };
 
 static EffectSettings chorusfx_autoya_settings[] = {
-    {"AutoYa speed", AUTOYA_SPEED, CHORUSFX_POSITION, &values_0_to_99},
-    {"AutoYa intensity", AUTOYA_INTENSITY, CHORUSFX_POSITION, &values_0_to_99},
-    {"AutoYa range", AUTOYA_RANGE, CHORUSFX_POSITION, &values_0_to_49},
+    {"Speed", AUTOYA_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Intensity", AUTOYA_INTENSITY, CHORUSFX_POSITION, &values_0_to_99},
+    {"Range", AUTOYA_RANGE, CHORUSFX_POSITION, &values_0_to_49},
 };
 
 static EffectSettings chorusfx_yaya_settings[] = {
-    {"YaYa pedal", YAYA_PEDAL, CHORUSFX_POSITION, &values_0_to_99},
-    {"YaYa intensity", YAYA_INTENSITY, CHORUSFX_POSITION, &values_0_to_99},
-    {"YaYa range", YAYA_RANGE, CHORUSFX_POSITION, &values_0_to_49},
+    {"Pedal", YAYA_PEDAL, CHORUSFX_POSITION, &values_0_to_99},
+    {"Intensity", YAYA_INTENSITY, CHORUSFX_POSITION, &values_0_to_99},
+    {"Range", YAYA_RANGE, CHORUSFX_POSITION, &values_0_to_49},
 };
 
 static EffectSettings chorusfx_step_filter_settings[] = {
-    {"Step filter speed", STEP_FILTER_SPEED, CHORUSFX_POSITION, &values_0_to_99},
-    {"Step filter intensity", STEP_FILTER_INTENSITY, CHORUSFX_POSITION, &values_0_to_99},
+    {"Speed", STEP_FILTER_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Intensity", STEP_FILTER_INTENSITY, CHORUSFX_POSITION, &values_0_to_99},
 };
 
 static EffectSettings chorusfx_whammy_settings[] = {
-    {"Whammy pedal", WHAMMY_PEDAL, CHORUSFX_POSITION, &values_0_to_99},
-    {"Whammy mix", WHAMMY_MIX, CHORUSFX_POSITION, &values_0_to_99},
-    {"Whammy amount", WHAMMY_AMOUNT, CHORUSFX_POSITION, &values_whammy_amount},
+    {"Pedal", WHAMMY_PEDAL, CHORUSFX_POSITION, &values_0_to_99},
+    {"Mix", WHAMMY_MIX, CHORUSFX_POSITION, &values_0_to_99},
+    {"Amount", WHAMMY_AMOUNT, CHORUSFX_POSITION, &values_whammy_amount},
 };
 
 static EffectSettings chorusfx_pitch_shift_settings[] = {
-    /* TODO: make this display propertly (display range -24 to 24) */
-    {"Pitch amount", PITCH_AMOUNT, CHORUSFX_POSITION, &values_m24_to_24},
-    {"Pitch mix", PITCH_MIX, CHORUSFX_POSITION, &values_0_to_99},
+    {"Amount", PITCH_AMOUNT, CHORUSFX_POSITION, &values_m24_to_24},
+    {"Mix", PITCH_MIX, CHORUSFX_POSITION, &values_0_to_99},
 };
 
 static EffectSettings chorusfx_detune_settings[] = {
-    {"Detune amount", DETUNE_AMOUNT, CHORUSFX_POSITION, &values_m24_to_24},
-    {"Detune level", DETUNE_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
+    {"Amount", DETUNE_AMOUNT, CHORUSFX_POSITION, &values_m24_to_24},
+    {"Level", DETUNE_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
 };
 
 static EffectSettings chorusfx_ips_settings[] = {
-    {"IPS shift", IPS_SHIFT_AMOUNT, CHORUSFX_POSITION, &values_ips_shift},
-    {"IPS key", IPS_KEY, CHORUSFX_POSITION, &values_ips_key},
-    {"IPS scale", IPS_SCALE, CHORUSFX_POSITION, &values_ips_scale},
-    {"IPS level", IPS_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
+    {"Shift", IPS_SHIFT_AMOUNT, CHORUSFX_POSITION, &values_ips_shift},
+    {"Key", IPS_KEY, CHORUSFX_POSITION, &values_ips_key},
+    {"Scale", IPS_SCALE, CHORUSFX_POSITION, &values_ips_scale},
+    {"Level", IPS_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
 };
 
 static EffectSettings delay_analog_settings[] = {
-    {"Delay time", DELAY_TIME, DELAY_POSITION, &values_delay_time},
-    {"Delay analog level", ANALOG_LEVEL, DELAY_POSITION, &values_0_to_99},
-    {"Delay analog repeats", ANALOG_REPEATS, DELAY_POSITION, &values_delay_repeats},
+    {"Time", DELAY_TIME, DELAY_POSITION, &values_delay_time},
+    {"Level", ANALOG_LEVEL, DELAY_POSITION, &values_0_to_99},
+    {"Repeats", ANALOG_REPEATS, DELAY_POSITION, &values_delay_repeats},
 };
 
 static EffectSettings delay_digital_settings[] = {
-    {"Delay time", DELAY_TIME, DELAY_POSITION, &values_delay_time},
-    {"Delay digital level", DIGITAL_LEVEL, DELAY_POSITION, &values_0_to_99},
-    {"Delay digital repeats", DIGITAL_REPEATS, DELAY_POSITION, &values_delay_repeats},
-    {"Delay digital ducker thresh", DIGITAL_DUCKER_THRESH, DELAY_POSITION, &values_0_to_99},
-    {"Delay digital ducker level", DIGITAL_DUCKER_LEVEL, DELAY_POSITION, &values_0_to_99},
+    {"Time", DELAY_TIME, DELAY_POSITION, &values_delay_time},
+    {"Level", DIGITAL_LEVEL, DELAY_POSITION, &values_0_to_99},
+    {"Repeats", DIGITAL_REPEATS, DELAY_POSITION, &values_delay_repeats},
+    {"Ducker thresh", DIGITAL_DUCKER_THRESH, DELAY_POSITION, &values_0_to_99},
+    {"Ducker level", DIGITAL_DUCKER_LEVEL, DELAY_POSITION, &values_0_to_99},
 };
 
 static EffectSettings delay_modulated_settings[] = {
-    {"Delay time", DELAY_TIME, DELAY_POSITION, &values_delay_time},
-    {"Delay modulated level", MODULATED_LEVEL, DELAY_POSITION, &values_0_to_99},
-    {"Delay modulated repeats", MODULATED_REPEATS, DELAY_POSITION, &values_delay_repeats},
-    {"Delay modulated depth", MODULATED_DEPTH, DELAY_POSITION, &values_0_to_99},
+    {"Time", DELAY_TIME, DELAY_POSITION, &values_delay_time},
+    {"Level", MODULATED_LEVEL, DELAY_POSITION, &values_0_to_99},
+    {"Repeats", MODULATED_REPEATS, DELAY_POSITION, &values_delay_repeats},
+    {"Depth", MODULATED_DEPTH, DELAY_POSITION, &values_0_to_99},
 };
 
 static EffectSettings delay_pong_settings[] = {
-    {"Delay time", DELAY_TIME, DELAY_POSITION, &values_delay_time},
-    {"Delay pong level", PONG_LEVEL, DELAY_POSITION, &values_0_to_99},
-    {"Delay pong repeats", PONG_REPEATS, DELAY_POSITION, &values_delay_repeats},
-    {"Delay pong ducker thresh", PONG_DUCKER_THRESH, DELAY_POSITION, &values_0_to_99},
-    {"Delay pong ducker level", PONG_DUCKER_LEVEL, DELAY_POSITION, &values_0_to_99},
+    {"Time", DELAY_TIME, DELAY_POSITION, &values_delay_time},
+    {"Level", PONG_LEVEL, DELAY_POSITION, &values_0_to_99},
+    {"Repeats", PONG_REPEATS, DELAY_POSITION, &values_delay_repeats},
+    {"Ducker thresh", PONG_DUCKER_THRESH, DELAY_POSITION, &values_0_to_99},
+    {"Ducker level", PONG_DUCKER_LEVEL, DELAY_POSITION, &values_0_to_99},
 };
 
 static EffectSettings delay_tape_settings[] = {
-    {"Delay time", DELAY_TIME, DELAY_POSITION, &values_delay_time},
-    {"Delay tape level", TAPE_LEVEL, DELAY_POSITION, &values_0_to_99},
-    {"Delay tape repeats", TAPE_REPEATS, DELAY_POSITION, &values_delay_repeats},
-    {"Delay tape wow", TAPE_WOW, DELAY_POSITION, &values_0_to_99},
-    {"Delay tape flutter", TAPE_FLUTTER, DELAY_POSITION, &values_0_to_99},
+    {"Time", DELAY_TIME, DELAY_POSITION, &values_delay_time},
+    {"Level", TAPE_LEVEL, DELAY_POSITION, &values_0_to_99},
+    {"Repeats", TAPE_REPEATS, DELAY_POSITION, &values_delay_repeats},
+    {"Wow", TAPE_WOW, DELAY_POSITION, &values_0_to_99},
+    {"Flutter", TAPE_FLUTTER, DELAY_POSITION, &values_0_to_99},
 };
 
 static EffectSettings reverb_twin_settings[] = {
-    {"Twin reverb", TWIN_REVERB, REVERB_POSITION, &values_0_to_99},
+    {"Reverb", TWIN_REVERB, REVERB_POSITION, &values_0_to_99},
 };
 
 static EffectSettings reverb_lex_ambience_settings[] = {
