@@ -118,21 +118,23 @@ static void XMLCALL text_cb(void *data, const char* text, int len)
 
 /**
  *  \param filename valid path to file
+ *  \param error return location for an error
  *
  *  Tries to open file pointed by path, then parses it.
  *
  *  \return Preset which must be freed using preset_free, or NULL on error.
  **/
-Preset *create_preset_from_xml_file(gchar *filename)
+Preset *create_preset_from_xml_file(gchar *filename, GError **error)
 {
     GFile *file;
-    GError *error = NULL;
+    GError *err = NULL;
     gchar *contents;
 
     file = g_file_new_for_path(filename);
-    if (g_file_get_contents(filename, &contents, NULL, &error) == FALSE) {
-        g_message("Failed to get %s contents: %s", filename, error->message);
-        g_error_free(error);
+    if (g_file_get_contents(filename, &contents, NULL, &err) == FALSE) {
+        g_message("Failed to get %s contents: %s", filename, err->message);
+        *error = g_error_copy(err);
+        g_error_free(err);
         g_object_unref(file);
         return NULL;
     }
@@ -151,9 +153,9 @@ Preset *create_preset_from_xml_file(gchar *filename)
     XML_SetCharacterDataHandler(p, text_cb);
 
     if (XML_Parse(p, contents, strlen(contents), XML_TRUE) != XML_STATUS_OK) {
-        g_warning("Parse error at line %d:\n%s",
-                  (int)XML_GetCurrentLineNumber(p),
-                  XML_ErrorString(XML_GetErrorCode(p)));
+        g_set_error(error, 0, 0, "Parse error at line %d:\n%s",
+                    (int)XML_GetCurrentLineNumber(p),
+                    XML_ErrorString(XML_GetErrorCode(p)));
         preset_free(ad->preset);
         g_slice_free(AppData, ad);
         g_free(contents);

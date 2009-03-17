@@ -30,7 +30,7 @@ typedef struct {
     GList *params;
 } Preset;
 
-Preset *create_preset_from_xml_file(gchar *filename);
+Preset *create_preset_from_xml_file(gchar *filename, GError **error);
 Preset *create_preset_from_data(GString *data);
 void preset_free(Preset *preset);
 

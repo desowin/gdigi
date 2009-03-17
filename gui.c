@@ -665,9 +665,14 @@ static void action_open_preset_cb(GtkAction *action)
 
     gboolean loaded = FALSE;
     while (!loaded && gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
+        GError *error = NULL;
         gchar *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-        Preset *preset = create_preset_from_xml_file(filename);
-        if (preset != NULL) {
+        Preset *preset = create_preset_from_xml_file(filename, &error);
+        if (error) {
+            show_error_message(window, error->message);
+            g_error_free(error);
+            error = NULL;
+        } else if (preset != NULL) {
             apply_preset_to_gui(preset);
 
             gtk_widget_hide(dialog);
