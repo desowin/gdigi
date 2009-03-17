@@ -564,7 +564,7 @@ int main(int argc, char *argv[]) {
         show_error_message(NULL, "Failed to open MIDI device");
     } else {
         if (request_who_am_i(&device_id, &family_id, &product_id) == FALSE) {
-            show_error_message(NULL, "No suitable reply from device - is it connected?");
+            show_error_message(NULL, "No suitable reply from device");
         } else {
             gui_create();
             gtk_main();
