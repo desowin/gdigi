@@ -74,22 +74,23 @@ static GtkWidgetClass *parent_class = NULL;
  * gtk_knob_get_type()
  *
  *****************************************************************************/
-guint
+GType
 gtk_knob_get_type(void) {
-    static guint knob_type = 0;
+    static GType knob_type = 0;
 
     if (!knob_type) {
-	GtkTypeInfo knob_info = {
-	    "GtkKnob",
-	    sizeof (GtkKnob),
+	static const GTypeInfo knob_info = {
 	    sizeof (GtkKnobClass),
-	    (GtkClassInitFunc) gtk_knob_class_init,
-	    (GtkObjectInitFunc) gtk_knob_init,
+            NULL,
+	    NULL,
+	    (GClassInitFunc) gtk_knob_class_init,
 	    NULL,
 	    NULL,
+	    sizeof (GtkKnob),
+	    0,
+	    (GInstanceInitFunc) gtk_knob_init,
 	};
-
-	knob_type = gtk_type_unique (gtk_widget_get_type (), &knob_info);
+	knob_type = g_type_register_static (GTK_TYPE_WIDGET, "GtkKnob", &knob_info, 0);
     }
 
     return knob_type;
@@ -109,7 +110,7 @@ gtk_knob_class_init (GtkKnobClass *class) {
     object_class = (GtkObjectClass*) class;
     widget_class = (GtkWidgetClass*) class;
 
-    parent_class = gtk_type_class (gtk_widget_get_type ());
+    parent_class = g_type_class_ref (GTK_TYPE_WIDGET);
 
     object_class->destroy = gtk_knob_destroy;
 
@@ -160,7 +161,7 @@ gtk_knob_new(GtkAdjustment *adjustment, GtkKnobAnim *anim) {
     g_return_val_if_fail (anim != NULL, NULL);
     g_return_val_if_fail (GDK_IS_PIXBUF (anim->pixbuf), NULL);
 
-    knob = gtk_type_new (gtk_knob_get_type ());
+    knob = g_object_new (gtk_knob_get_type (), NULL);
 
     gtk_knob_set_animation (knob, anim);
 
@@ -190,7 +191,7 @@ gtk_knob_destroy(GtkObject *object) {
     knob = GTK_KNOB (object);
 
     if (knob->adjustment) {
-	gtk_object_unref (GTK_OBJECT (knob->adjustment));
+	g_object_unref (knob->adjustment);
 	knob->adjustment = NULL;
     }
     /* FIXME: needs ref counting for automatic GtkKnobAnim cleanup
@@ -201,16 +202,16 @@ gtk_knob_destroy(GtkObject *object) {
     */
 
     if (knob->mask) {
-	gdk_bitmap_unref (knob->mask);
+	g_object_unref (knob->mask);
 	knob->mask = NULL;
     }
 
     if (knob->mask_gc) {
-	gdk_gc_unref (knob->mask_gc);
+	g_object_unref (knob->mask_gc);
 	knob->mask_gc = NULL;
     }
     if (knob->red_gc) {
-	gdk_gc_unref (knob->red_gc);
+	g_object_unref (knob->red_gc);
 	knob->red_gc = NULL;
     }
 
@@ -262,21 +263,23 @@ gtk_knob_set_adjustment(GtkKnob *knob, GtkAdjustment *adjustment) {
     g_return_if_fail (GTK_IS_KNOB (knob));
 
     if (knob->adjustment) {
-	gtk_signal_disconnect_by_data (GTK_OBJECT (knob->adjustment),
-				       (gpointer)knob);
-	gtk_object_unref (GTK_OBJECT (knob->adjustment));
+	g_signal_handlers_disconnect_matched(knob->adjustment,
+					     G_SIGNAL_MATCH_DATA,
+					     0, 0, NULL, NULL,
+					     knob);
+	g_object_unref (knob->adjustment);
     }
 
     knob->adjustment = adjustment;
-    gtk_object_ref (GTK_OBJECT (knob->adjustment));
-    gtk_object_sink (GTK_OBJECT (knob->adjustment));
+    g_object_ref (GTK_OBJECT (knob->adjustment));
+    g_object_ref_sink (GTK_OBJECT (knob->adjustment));
 
-    gtk_signal_connect (GTK_OBJECT (adjustment), "changed",
-			GTK_SIGNAL_FUNC (gtk_knob_adjustment_changed),
-			(gpointer)knob);
-    gtk_signal_connect (GTK_OBJECT (adjustment), "value_changed",
-			GTK_SIGNAL_FUNC (gtk_knob_adjustment_value_changed),
-			(gpointer)knob);
+    g_signal_connect (adjustment, "changed",
+		      (GCallback) gtk_knob_adjustment_changed,
+		      knob);
+    g_signal_connect (adjustment, "value_changed",
+		      (GCallback) gtk_knob_adjustment_value_changed,
+		      knob);
 
     knob->old_value = adjustment->value;
     knob->old_lower = adjustment->lower;
@@ -439,13 +442,11 @@ gtk_knob_scroll(GtkWidget *widget, GdkEventScroll *event) {
     switch (event->direction) {
     case GDK_SCROLL_UP:
 	knob->adjustment->value += knob->adjustment->step_increment;
-	gtk_signal_emit_by_name (GTK_OBJECT (knob->adjustment),
-				 "value_changed");
+	g_signal_emit_by_name (knob->adjustment, "value_changed");
 	break;
     case GDK_SCROLL_DOWN:
 	knob->adjustment->value -= knob->adjustment->step_increment;
-	gtk_signal_emit_by_name (GTK_OBJECT (knob->adjustment),
-				 "value_changed");
+	g_signal_emit_by_name (knob->adjustment, "value_changed");
 	break;
     default:
         break;
@@ -485,8 +486,7 @@ gtk_knob_button_press(GtkWidget *widget, GdkEventButton *event) {
 	    knob->adjustment->value = floor ((knob->adjustment->lower +
 					      knob->adjustment->upper + 1.0)
 					     * 0.5);
-	    gtk_signal_emit_by_name (GTK_OBJECT (knob->adjustment),
-	    				 "value_changed");
+	    g_signal_emit_by_name (knob->adjustment, "value_changed");
 	    break;
 	}
 	break;
@@ -526,8 +526,7 @@ gtk_knob_button_release(GtkWidget *widget, GdkEventButton *event) {
 	    if (knob->policy != GTK_UPDATE_CONTINUOUS
 		&& knob->old_value != knob->adjustment->value)
 	    {
-		gtk_signal_emit_by_name (GTK_OBJECT (knob->adjustment),
-					 "value_changed");
+		g_signal_emit_by_name (knob->adjustment, "value_changed");
 	    }
 	    break;
 	}
@@ -632,8 +631,7 @@ gtk_knob_timer(GtkKnob *knob) {
     g_return_val_if_fail (GTK_IS_KNOB (knob), FALSE);
 
     if (knob->policy == GTK_UPDATE_DELAYED) {
-	gtk_signal_emit_by_name (GTK_OBJECT (knob->adjustment),
-				 "value_changed");
+	g_signal_emit_by_name (knob->adjustment, "value_changed");
     }
 
     /* don't keep running this timer */
@@ -650,19 +648,18 @@ static void
 gtk_knob_update_mouse_update(GtkKnob *knob) {
 
     if (knob->policy == GTK_UPDATE_CONTINUOUS) {
-	gtk_signal_emit_by_name (GTK_OBJECT (knob->adjustment),
-				 "value_changed");
+	g_signal_emit_by_name (knob->adjustment, "value_changed");
     }
     else {
-	gtk_widget_draw (GTK_WIDGET (knob), NULL);
+	gtk_widget_queue_draw (GTK_WIDGET (knob));
 
 	if (knob->policy == GTK_UPDATE_DELAYED) {
 	    if (knob->timer) {
-		gtk_timeout_remove (knob->timer);
+		g_source_remove (knob->timer);
 	    }
-	    knob->timer = gtk_timeout_add (SCROLL_DELAY_LENGTH,
-					   (GtkFunction) gtk_knob_timer,
-					   (gpointer) knob);
+	    knob->timer = g_timeout_add (SCROLL_DELAY_LENGTH,
+					 (GSourceFunc) gtk_knob_timer,
+					 (gpointer) knob);
 	}
     }
 }
@@ -743,11 +740,10 @@ gtk_knob_update(GtkKnob *knob) {
 
     if (new_value != knob->adjustment->value) {
 	knob->adjustment->value = new_value;
-	gtk_signal_emit_by_name (GTK_OBJECT (knob->adjustment),
-				 "value_changed");
+	g_signal_emit_by_name (knob->adjustment, "value_changed");
     }
 
-    gtk_widget_draw (GTK_WIDGET (knob), NULL);
+    gtk_widget_queue_draw (GTK_WIDGET (knob));
 }
 
 

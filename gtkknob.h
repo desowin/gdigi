@@ -30,9 +30,9 @@
 extern "C" {
 #endif
 
-#define GTK_KNOB(obj)		GTK_CHECK_CAST(obj, gtk_knob_get_type(), GtkKnob)
-#define GTK_KNOB_CLASS(klass)	GTK_CHECK_CLASS_CAST(klass, gtk_knob_get_type(), GtkKnobClass)
-#define GTK_IS_KNOB(obj)	GTK_CHECK_TYPE(obj, gtk_knob_get_type())
+#define GTK_KNOB(obj)		G_TYPE_CHECK_INSTANCE_CAST(obj, gtk_knob_get_type(), GtkKnob)
+#define GTK_KNOB_CLASS(klass)	G_TYPE_CHECK_CLASS_CAST(klass, gtk_knob_get_type(), GtkKnobClass)
+#define GTK_IS_KNOB(obj)	G_TYPE_CHECK_INSTANCE_TYPE(obj, gtk_knob_get_type())
 
 typedef struct _GtkKnob		GtkKnob;
 typedef struct _GtkKnobClass	GtkKnobClass;
@@ -82,7 +82,7 @@ typedef struct _GtkKnobAnim	GtkKnobAnim;
 
 
     extern GtkWidget *gtk_knob_new(GtkAdjustment *adjustment, GtkKnobAnim *anim);
-    extern guint gtk_knob_get_type(void);
+    extern GType gtk_knob_get_type(void);
     extern GtkAdjustment *gtk_knob_get_adjustment(GtkKnob *knob);
     extern void gtk_knob_set_update_policy(GtkKnob *knob, GtkUpdateType  policy);
     extern void gtk_knob_set_adjustment(GtkKnob *knob, GtkAdjustment *adjustment);
