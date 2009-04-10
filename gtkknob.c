@@ -103,14 +103,14 @@ gtk_knob_get_type(void) {
  *
  *****************************************************************************/
 static void
-gtk_knob_class_init (GtkKnobClass *class) {
+gtk_knob_class_init (GtkKnobClass *klass) {
     GtkObjectClass *object_class;
     GtkWidgetClass *widget_class;
 
-    object_class = (GtkObjectClass*) class;
-    widget_class = (GtkWidgetClass*) class;
+    object_class = (GtkObjectClass*) klass;
+    widget_class = (GtkWidgetClass*) klass;
 
-    parent_class = g_type_class_ref (GTK_TYPE_WIDGET);
+    parent_class = g_type_class_peek_parent(klass);
 
     object_class->destroy = gtk_knob_destroy;
 
