@@ -190,10 +190,7 @@ gtk_knob_destroy(GtkObject *object) {
 
     knob = GTK_KNOB (object);
 
-    if (knob->adjustment) {
-	g_object_unref (knob->adjustment);
-	knob->adjustment = NULL;
-    }
+    gtk_knob_set_adjustment (knob, NULL);
     /* FIXME: needs ref counting for automatic GtkKnobAnim cleanup
        if (knob->anim) {
 	   gtk_knob_anim_unref (knob->anim);
@@ -271,21 +268,22 @@ gtk_knob_set_adjustment(GtkKnob *knob, GtkAdjustment *adjustment) {
     }
 
     knob->adjustment = adjustment;
-    g_object_ref (GTK_OBJECT (knob->adjustment));
-    g_object_ref_sink (GTK_OBJECT (knob->adjustment));
+    if (adjustment) {
+        g_object_ref_sink (adjustment);
 
-    g_signal_connect (adjustment, "changed",
-		      (GCallback) gtk_knob_adjustment_changed,
-		      knob);
-    g_signal_connect (adjustment, "value_changed",
-		      (GCallback) gtk_knob_adjustment_value_changed,
-		      knob);
+        g_signal_connect (adjustment, "changed",
+    			G_CALLBACK(gtk_knob_adjustment_changed),
+			knob);
+	g_signal_connect (adjustment, "value_changed",
+			G_CALLBACK(gtk_knob_adjustment_value_changed),
+			knob);
 
-    knob->old_value = adjustment->value;
-    knob->old_lower = adjustment->lower;
-    knob->old_upper = adjustment->upper;
+	knob->old_value = adjustment->value;
+	knob->old_lower = adjustment->lower;
+	knob->old_upper = adjustment->upper;
 
-    gtk_knob_update (knob);
+	gtk_knob_update (knob);
+    }
 }
 
 
@@ -398,6 +396,7 @@ gtk_knob_expose(GtkWidget *widget, GdkEventExpose *event) {
     g_return_val_if_fail (widget != NULL, FALSE);
     g_return_val_if_fail (GTK_IS_KNOB (widget), FALSE);
     g_return_val_if_fail (event != NULL, FALSE);
+    g_return_val_if_fail (GTK_IS_ADJUSTMENT (GTK_KNOB (widget)->adjustment), FALSE);
 
     if (event->count > 0)
 	return FALSE;
@@ -436,6 +435,7 @@ gtk_knob_scroll(GtkWidget *widget, GdkEventScroll *event) {
     g_return_val_if_fail (widget != NULL, FALSE);
     g_return_val_if_fail (GTK_IS_KNOB (widget), FALSE);
     g_return_val_if_fail (event != NULL, FALSE);
+    g_return_val_if_fail (GTK_IS_ADJUSTMENT (GTK_KNOB (widget)->adjustment), FALSE);
 
     knob = GTK_KNOB (widget);
 
@@ -468,6 +468,7 @@ gtk_knob_button_press(GtkWidget *widget, GdkEventButton *event) {
     g_return_val_if_fail (widget != NULL, FALSE);
     g_return_val_if_fail (GTK_IS_KNOB (widget), FALSE);
     g_return_val_if_fail (event != NULL, FALSE);
+    g_return_val_if_fail (GTK_IS_ADJUSTMENT (GTK_KNOB (widget)->adjustment), FALSE);
 
     knob = GTK_KNOB (widget);
 
@@ -508,6 +509,7 @@ gtk_knob_button_release(GtkWidget *widget, GdkEventButton *event) {
     g_return_val_if_fail (widget != NULL, FALSE);
     g_return_val_if_fail (GTK_IS_KNOB (widget), FALSE);
     g_return_val_if_fail (event != NULL, FALSE);
+    g_return_val_if_fail (GTK_IS_ADJUSTMENT (GTK_KNOB (widget)->adjustment), FALSE);
 
     knob = GTK_KNOB (widget);
 
@@ -544,6 +546,7 @@ static gint gtk_knob_key_press(GtkWidget *widget, GdkEventKey *event)
     g_return_val_if_fail (widget != NULL, FALSE);
     g_return_val_if_fail (GTK_IS_KNOB (widget), FALSE);
     g_return_val_if_fail (event != NULL, FALSE);
+    g_return_val_if_fail (GTK_IS_ADJUSTMENT (GTK_KNOB (widget)->adjustment), FALSE);
 
     knob = GTK_KNOB (widget);
 
@@ -629,6 +632,7 @@ gtk_knob_timer(GtkKnob *knob) {
 
     g_return_val_if_fail (knob != NULL, FALSE);
     g_return_val_if_fail (GTK_IS_KNOB (knob), FALSE);
+    g_return_val_if_fail (GTK_IS_ADJUSTMENT (knob->adjustment), FALSE);
 
     if (knob->policy == GTK_UPDATE_DELAYED) {
 	g_signal_emit_by_name (knob->adjustment, "value_changed");
@@ -646,6 +650,7 @@ gtk_knob_timer(GtkKnob *knob) {
  *****************************************************************************/
 static void
 gtk_knob_update_mouse_update(GtkKnob *knob) {
+    g_return_if_fail(GTK_IS_ADJUSTMENT (knob->adjustment));
 
     if (knob->policy == GTK_UPDATE_CONTINUOUS) {
 	g_signal_emit_by_name (knob->adjustment, "value_changed");
@@ -677,6 +682,7 @@ gtk_knob_update_mouse(GtkKnob *knob, gint x, gint y, gboolean step) {
 
     g_return_if_fail (knob != NULL);
     g_return_if_fail (GTK_IS_KNOB (knob));
+    g_return_if_fail (GTK_IS_ADJUSTMENT (knob->adjustment));
 
     old_value = knob->adjustment->value;
 
@@ -722,6 +728,7 @@ gtk_knob_update(GtkKnob *knob) {
 
     g_return_if_fail (knob != NULL);
     g_return_if_fail (GTK_IS_KNOB (knob));
+    g_return_if_fail (GTK_IS_ADJUSTMENT (knob->adjustment));
 
     if (knob->adjustment->step_increment == 1) {
 	new_value = floor (knob->adjustment->value + 0.5);
