@@ -3,7 +3,7 @@
  * Most of this code comes from gAlan 0.2.0, copyright (C) 1999
  * Tony Garnock-Jones, with modifications by Sean Bolton,
  * copyright (C) 2004, and minor modifications by William Weston,
- * copyright (C) 2007.
+ * copyright (C) 2007, Tomasz Moń, copyright (C) 2009
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,9 +22,7 @@
 #ifndef __GTK_KNOB_H__
 #define __GTK_KNOB_H__
 
-#include <gdk/gdk.h>
-#include <gtk/gtkadjustment.h>
-#include <gtk/gtkwidget.h>
+#include <gtk/gtk.h>
 
 #ifdef __cplusplus
 extern "C" {

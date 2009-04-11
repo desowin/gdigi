@@ -17,7 +17,7 @@
 #ifndef GDIGI_EFFECTS_H
 #define GDIGI_EFFECTS_H
 
-#include <glib/gtypes.h>
+#include <glib.h>
 
 typedef struct {
     gdouble min;    /**< Minumum value */
