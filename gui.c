@@ -245,7 +245,11 @@ GtkWidget *create_table(EffectSettings *settings, gint amt)
  **/
 GtkWidget *create_on_off_button(Effect *effect)
 {
-    GtkWidget *button = gtk_check_button_new();
+    GtkWidget *button;
+    if (effect->label == NULL)
+        button = gtk_check_button_new();
+    else
+        button = gtk_check_button_new_with_label(effect->label);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), FALSE);
     g_signal_connect(G_OBJECT(button), "toggled", G_CALLBACK(toggled_cb), effect);
     widget_list_add(GTK_OBJECT(button), effect->id, effect->position, -1, -1);
@@ -389,6 +393,7 @@ GtkWidget *create_vbox(Effect *widgets, gint amt, gchar *label)
     GtkWidget *container;
     GtkWidget *frame;
     int x;
+    int y;
 
     frame = gtk_frame_new(label);
 
@@ -401,13 +406,19 @@ GtkWidget *create_vbox(Effect *widgets, gint amt, gchar *label)
         if ((widgets[x].id != -1) && (widgets[x].position != -1)) {
             widget = create_on_off_button(&widgets[x]);
             gtk_table_attach_defaults(GTK_TABLE(table), widget, 0, 1, x, x+1);
+
+            if (widgets[x].label)
+                y = 1;
+            else
+                y = 0;
+
         } else if (widgets[x].label) {
             widget = gtk_label_new(widgets[x].label);
             gtk_table_attach_defaults(GTK_TABLE(table), widget, 0, 1, x, x+1);
         }
 
         container = create_widget_container(widgets[x].group, widgets[x].group_amt);
-        gtk_table_attach_defaults(GTK_TABLE(table), container, 1, 2, x, x+1);
+        gtk_table_attach_defaults(GTK_TABLE(table), container, 1-y, 2-y, x+y, x+y+1);
     }
     gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 2);
 

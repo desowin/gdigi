@@ -100,6 +100,130 @@ static gchar *pickup_type_labels[] = {
     "HB>SC",
 };
 
+static gchar *eq_bandwidth_labels[] = {
+    "Wide",
+    "Medium",
+    "Narrow",
+};
+
+static gchar *eq_low_freq_labels[] = {
+    "60Hz",
+    "63Hz",
+    "67Hz",
+    "71Hz",
+    "75Hz",
+    "80Hz",
+    "85Hz",
+    "90Hz",
+    "95Hz",
+    "100Hz",
+    "106Hz",
+    "112Hz",
+    "118Hz",
+    "125Hz",
+    "132Hz",
+    "140Hz",
+    "150Hz",
+    "160Hz",
+    "170Hz",
+    "180Hz",
+    "190Hz",
+    "200Hz",
+    "212Hz",
+    "224Hz",
+    "236Hz",
+    "250Hz",
+    "265Hz",
+    "280Hz",
+    "300Hz",
+    "315Hz",
+    "335Hz",
+    "355Hz",
+    "375Hz",
+    "400Hz",
+    "425Hz",
+    "450Hz",
+    "475Hz",
+    "500Hz",
+};
+
+static gchar *eq_mid_freq_labels[] = {
+    "300Hz",
+    "315Hz",
+    "335Hz",
+    "355Hz",
+    "375Hz",
+    "400Hz",
+    "425Hz",
+    "450Hz",
+    "475Hz",
+    "500Hz",
+    "530Hz",
+    "560Hz",
+    "600Hz",
+    "630Hz",
+    "670Hz",
+    "710Hz",
+    "750Hz",
+    "800Hz",
+    "850Hz",
+    "900Hz",
+    "950Hz",
+    "1kHz",
+    "1.06kHz",
+    "1.12kHz",
+    "1.18kHz",
+    "1.25kHz",
+    "1.32kHz",
+    "1.4kHz",
+    "1.5kHz",
+    "1.6kHz",
+    "1.7kHz",
+    "1.8kHz",
+    "1.9kHz",
+    "2kHz",
+    "2.12kHz",
+    "2.24kHz",
+    "2.36kHz",
+    "2.5kHz",
+    "2.65kHz",
+    "2.8kHz",
+    "3kHz",
+    "3.15kHz",
+    "3.35kHz",
+    "3.55kHz",
+    "3.75kHz",
+    "4kHz",
+};
+
+static gchar *eq_high_freq_labels[] = {
+    "2kHz",
+    "2.12kHz",
+    "2.24kHz",
+    "2.36kHz",
+    "2.5kHz",
+    "2.65kHz",
+    "2.8kHz",
+    "3kHz",
+    "3.15kHz",
+    "3.35kHz",
+    "3.55kHz",
+    "3.75kHz",
+    "4kHz",
+    "4.25kHz",
+    "4.5kHz",
+    "4.75kHz",
+    "5kHz",
+    "5.3kHz",
+    "5.6kHz",
+    "6kHz",
+    "6.3kHz",
+    "6.7kHz",
+    "7.1kHz",
+    "7.5kHz",
+    "8kHz",
+};
+
 static EffectValues values_0_to_99 = {
     0.0, 99.0, NULL,
 };
@@ -134,6 +258,22 @@ static EffectValues values_eq_mid_hz = {
 static EffectValues values_eq_treb_hz = {
     /** \todo make this display propertly (display range 500 to 8000) */
     0.0, 7500.0, NULL,
+};
+
+static EffectValues values_eq_bandwidth = {
+    0.0, 2.0, eq_bandwidth_labels,
+};
+
+static EffectValues values_eq_low_freq = {
+    0.0, 37.0, eq_low_freq_labels,
+};
+
+static EffectValues values_eq_mid_freq = {
+    0.0, 45.0, eq_mid_freq_labels,
+};
+
+static EffectValues values_eq_high_freq = {
+    0.0, 24.0, eq_high_freq_labels,
 };
 
 static EffectValues values_waveform = {
@@ -311,12 +451,24 @@ static EffectSettings rp500_amp_settings3[] = {
     {"Level", AMP_LEVEL, AMP_POSITION, &values_0_to_99},
 };
 
-static EffectSettings eq_settings[] = {
+static EffectSettings rp250_eq_settings[] = {
     {"Bass", EQ_BASS, EQ_POSITION, &values_eq_db},
     {"Mid", EQ_MID, EQ_POSITION, &values_eq_db},
     {"Treble", EQ_TREBLE, EQ_POSITION, &values_eq_db},
     {"Mid Hz", EQ_MID_HZ, EQ_POSITION, &values_eq_mid_hz},
     {"Treb Hz", EQ_TREBLE_HZ, EQ_POSITION, &values_eq_treb_hz},
+};
+
+static EffectSettings rp500_eq_settings[] = {
+    {"Low Level", EQ_LOW_LEVEL, EQ_POSITION, &values_eq_db},
+    {"Mid Level", EQ_MID_LEVEL, EQ_POSITION, &values_eq_db},
+    {"High Level", EQ_HIGH_LEVEL, EQ_POSITION, &values_eq_db},
+    {"Low Freq", EQ_LOW_FREQ, EQ_POSITION, &values_eq_low_freq},
+    {"Mid Freq", EQ_MID_FREQ, EQ_POSITION, &values_eq_mid_freq},
+    {"High Freq", EQ_HIGH_FREQ, EQ_POSITION, &values_eq_high_freq},
+    {"Low Bandwidth", EQ_LOW_BANDWIDTH, EQ_POSITION, &values_eq_bandwidth},
+    {"Mid Bandwidth", EQ_MID_BANDWIDTH, EQ_POSITION, &values_eq_bandwidth},
+    {"High Bandwidth", EQ_HIGH_BANDWIDTH, EQ_POSITION, &values_eq_bandwidth},
 };
 
 static EffectSettings noisegate_gate_settings[] = {
@@ -685,11 +837,15 @@ static EffectGroup rp500_amp_group[] = {
     {AMP_TYPE_DIRECT, "Direct", AMP_TYPE, AMP_POSITION, rp500_amp_settings3, G_N_ELEMENTS(rp500_amp_settings3)},
 };
 
-static EffectGroup eq_group[] = {
-    {EQ_TYPE_BRIGHT, "Bright", EQ_TYPE, EQ_POSITION, eq_settings, G_N_ELEMENTS(eq_settings)},
-    {EQ_TYPE_MIDBOOST, "Mid Boost", EQ_TYPE, EQ_POSITION, eq_settings, G_N_ELEMENTS(eq_settings)},
-    {EQ_TYPE_SCOOP, "Scoop", EQ_TYPE, EQ_POSITION, eq_settings, G_N_ELEMENTS(eq_settings)},
-    {EQ_TYPE_WARM, "Warm", EQ_TYPE, EQ_POSITION, eq_settings, G_N_ELEMENTS(eq_settings)},
+static EffectGroup rp250_eq_group[] = {
+    {EQ_TYPE_BRIGHT, "Bright", EQ_TYPE, EQ_POSITION, rp250_eq_settings, G_N_ELEMENTS(rp250_eq_settings)},
+    {EQ_TYPE_MIDBOOST, "Mid Boost", EQ_TYPE, EQ_POSITION, rp250_eq_settings, G_N_ELEMENTS(rp250_eq_settings)},
+    {EQ_TYPE_SCOOP, "Scoop", EQ_TYPE, EQ_POSITION, rp250_eq_settings, G_N_ELEMENTS(rp250_eq_settings)},
+    {EQ_TYPE_WARM, "Warm", EQ_TYPE, EQ_POSITION, rp250_eq_settings, G_N_ELEMENTS(rp250_eq_settings)},
+};
+
+static EffectGroup rp500_eq_group[] = {
+    {-1, NULL, -1, -1, rp500_eq_settings, G_N_ELEMENTS(rp500_eq_settings)},
 };
 
 static EffectGroup rp250_amp_cab_group[] = {
@@ -847,14 +1003,18 @@ static Effect rp500_amp_effect[] = {
     {"Cabinet", -1, -1, rp500_amp_cab_group, G_N_ELEMENTS(rp500_amp_cab_group)},
 };
 
-static Effect eq_effect[] = {
-    {NULL, EQ_ON_OFF, EQ_POSITION, eq_group, G_N_ELEMENTS(eq_group)},
+static Effect rp250_eq_effect[] = {
+    {NULL, EQ_ON_OFF, EQ_POSITION, rp250_eq_group, G_N_ELEMENTS(rp250_eq_group)},
+};
+
+static Effect rp500_eq_effect[] = {
+    {"Enable Equalizer", EQ_ON_OFF, EQ_POSITION, rp500_eq_group, G_N_ELEMENTS(rp500_eq_group)},
 };
 
 EffectList rp250_effects[] = {
     {"Wah", wah_effect, G_N_ELEMENTS(wah_effect)},
     {"Amplifier", rp250_amp_effect, G_N_ELEMENTS(rp250_amp_effect)},
-    {"Equalizer", eq_effect, G_N_ELEMENTS(eq_effect)},
+    {"Equalizer", rp250_eq_effect, G_N_ELEMENTS(rp250_eq_effect)},
     {"Compressor", rp250_comp_effect, G_N_ELEMENTS(rp250_comp_effect)},
     {"Distortion", dist_effect, G_N_ELEMENTS(dist_effect)},
     {"Noisegate", noisegate_effect, G_N_ELEMENTS(noisegate_effect)},
@@ -868,7 +1028,7 @@ int n_rp250_effects = G_N_ELEMENTS(rp250_effects);
 EffectList rp500_effects[] = {
     {"Wah", wah_effect, G_N_ELEMENTS(wah_effect)},
     {"Amplifier", rp500_amp_effect, G_N_ELEMENTS(rp500_amp_effect)},
-    {"Equalizer", eq_effect, G_N_ELEMENTS(eq_effect)},
+    {"Equalizer", rp500_eq_effect, G_N_ELEMENTS(rp500_eq_effect)},
     {"Compressor", rp500_comp_effect, G_N_ELEMENTS(rp500_comp_effect)},
     {"Distortion", dist_effect, G_N_ELEMENTS(dist_effect)},
     {"Noisegate", noisegate_effect, G_N_ELEMENTS(noisegate_effect)},
