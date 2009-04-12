@@ -17,8 +17,10 @@
 #ifndef GDIGI_GUI_H
 #define GDIGI_GUI_H
 
+#include "effects.h"
+
 void show_error_message(GtkWidget *parent, gchar *message);
-void gui_create();
+void gui_create(EffectList *list, int n_list);
 void gui_free();
 
 #endif /* GDIGI_GUI_H */

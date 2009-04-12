@@ -620,6 +620,7 @@ typedef struct {
 
 static SupportedFileTypes file_types[] = {
     {"RP250Preset", "*.rp250p"},
+    {"RP500Preset", "*.rp500p"},
 };
 
 static guint n_file_types = G_N_ELEMENTS(file_types);
@@ -838,7 +839,7 @@ static void add_menubar(GtkWidget *window, GtkWidget *vbox)
 /**
  *  Creates main window.
  **/
-void gui_create()
+void gui_create(EffectList *effects, int n_effects)
 {
     GtkWidget *window;
     GtkWidget *vbox;

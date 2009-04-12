@@ -191,6 +191,8 @@ Preset *create_preset_from_data(GString *data)
     gint x;
     gint tmp;
 
+    g_return_val_if_fail(data != NULL, NULL);
+
     x = 0x09;
     n = 0;
     total = (unsigned char)data->str[x];

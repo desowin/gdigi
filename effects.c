@@ -174,6 +174,11 @@ static EffectValues values_pickup_type = {
     0.0, 1.0, pickup_type_labels,
 };
 
+static EffectValues values_1_to_10_step_0p1 = {
+    /** \todo make this display propertly (1.0, 1.1, ...., 10.0) */
+    0.0, 90.0, NULL,
+};
+
 static EffectSettings wah_settings[] = {
     {"Min", WAH_MIN, WAH_POSITION_MIN_MAX, &values_0_to_99},
     {"Max", WAH_MAX, WAH_POSITION_MIN_MAX, &values_0_to_99},
@@ -191,6 +196,11 @@ static EffectSettings comp_cs_settings[] = {
     {"Sustain", COMP_SUSTAIN, COMP_POSITION, &values_0_to_99},
     {"Attack", COMP_ATTACK, COMP_POSITION, &values_0_to_99},
     {"Level", COMP_LEVEL, COMP_POSITION, &values_0_to_99},
+};
+
+static EffectSettings comp_dyna_settings[] = {
+    {"Sensitivity", COMP_SENSITIVITY, COMP_POSITION, &values_0_to_99},
+    {"Output", COMP_OUTPUT, COMP_POSITION, &values_0_to_99},
 };
 
 static EffectSettings dist_screamer_settings[] = {
@@ -273,12 +283,31 @@ static EffectSettings dist_mp_settings[] = {
     {"Volume", DIST_MP_VOLUME, DIST_POSITION, &values_0_to_99},
 };
 
-static EffectSettings amp_settings[] = {
+static EffectSettings rp250_amp_settings[] = {
     {"Gain", AMP_GAIN, AMP_POSITION, &values_0_to_99},
     {"Level", AMP_LEVEL, AMP_POSITION, &values_0_to_99},
 };
 
-static EffectSettings amp_settings2[] = {
+static EffectSettings rp250_amp_settings2[] = {
+    {"Level", AMP_LEVEL, AMP_POSITION, &values_0_to_99},
+};
+
+static EffectSettings rp500_amp_settings[] = {
+    {"Gain", AMP_GAIN, AMP_POSITION, &values_0_to_99},
+    {"Level", AMP_LEVEL, AMP_POSITION, &values_0_to_99},
+    {"Bass", AMP_BASS, AMP_POSITION, &values_1_to_10_step_0p1},
+    {"Mid", AMP_MID, AMP_POSITION, &values_1_to_10_step_0p1},
+    {"Treble", AMP_TREBLE, AMP_POSITION, &values_1_to_10_step_0p1},
+};
+
+static EffectSettings rp500_amp_settings2[] = {
+    {"Level", AMP_LEVEL, AMP_POSITION, &values_0_to_99},
+    {"Bass", AMP_BASS, AMP_POSITION, &values_1_to_10_step_0p1},
+    {"Mid", AMP_MID, AMP_POSITION, &values_1_to_10_step_0p1},
+    {"Treble", AMP_TREBLE, AMP_POSITION, &values_1_to_10_step_0p1},
+};
+
+static EffectSettings rp500_amp_settings3[] = {
     {"Level", AMP_LEVEL, AMP_POSITION, &values_0_to_99},
 };
 
@@ -504,9 +533,15 @@ static EffectGroup wah_group[] = {
     {WAH_TYPE_CLYDE, "Clyde wah", WAH_TYPE, WAH_POSITION, wah_settings, G_N_ELEMENTS(wah_settings)},
 };
 
-static EffectGroup comp_group[] = {
+static EffectGroup rp250_comp_group[] = {
     {COMP_TYPE_DIGI, "Digital compressor", COMP_TYPE, COMP_POSITION, comp_digi_settings, G_N_ELEMENTS(comp_digi_settings)},
     {COMP_TYPE_CS, "CS compressor", COMP_TYPE, COMP_POSITION, comp_cs_settings, G_N_ELEMENTS(comp_cs_settings)},
+};
+
+static EffectGroup rp500_comp_group[] = {
+    {COMP_TYPE_DIGI, "Digital compressor", COMP_TYPE, COMP_POSITION, comp_digi_settings, G_N_ELEMENTS(comp_digi_settings)},
+    {COMP_TYPE_CS, "CS compressor", COMP_TYPE, COMP_POSITION, comp_cs_settings, G_N_ELEMENTS(comp_cs_settings)},
+    {COMP_TYPE_DYNA, "Dyna comp", COMP_TYPE, COMP_POSITION, comp_dyna_settings, G_N_ELEMENTS(comp_dyna_settings)},
 };
 
 static EffectGroup dist_group[] = {
@@ -569,29 +604,85 @@ static EffectGroup reverb_group[] = {
     {REVERB_TYPE_EMT240_PLATE, "EMT240 Plate", REVERB_TYPE, REVERB_POSITION, reverb_emt240_plate_settings, G_N_ELEMENTS(reverb_emt240_plate_settings)},
 };
 
-static EffectGroup amp_group[] = {
-    {AMP_TYPE_TWEED_CHAMP, "Tweed Champ", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
-    {AMP_TYPE_TWEED_DELUXE, "Tweed Deluxe", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
-    {AMP_TYPE_TWEED_BASSMAN, "Tweed Bassman", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
-    {AMP_TYPE_BLACKFACE_TWIN, "Blackface Twin", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
-    {AMP_TYPE_BLACKFACE_DELUXE, "Blackface Deluxe", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
-    {AMP_TYPE_SUPER_LEAD_PLEXI, "Super Lead Plexi", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
-    {AMP_TYPE_MASTER_VOLUME, "Master Volume", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
-    {AMP_TYPE_JCM800, "JCM800", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
-    {AMP_TYPE_JCM900, "JCM900", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
-    {AMP_TYPE_AC15, "AC15", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
-    {AMP_TYPE_AC30TB, "AC30TB", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
-    {AMP_TYPE_HIWATT_100, "Hiwatt 100", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
-    {AMP_TYPE_BOOGIE_MARK_II, "Boogie Mark II", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
-    {AMP_TYPE_DUAL_RECTIFIER, "Dual Rectifier", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
-    {AMP_TYPE_MATCHLESS_HC30, "Matchless HC30", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
-    {AMP_TYPE_SOLO, "Solo", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
-    {AMP_TYPE_METAL, "Metal", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
-    {AMP_TYPE_BRIGHT, "Bright", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
-    {AMP_TYPE_CLEAN, "Clean", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
-    {AMP_TYPE_HIGH_GAIN, "High Gain", AMP_TYPE, AMP_POSITION, amp_settings, G_N_ELEMENTS(amp_settings)},
-    {AMP_TYPE_ACOUSTIC, "Acoustic", AMP_TYPE, AMP_POSITION, amp_settings2, G_N_ELEMENTS(amp_settings2)},
-    {AMP_TYPE_DIRECT, "Direct", AMP_TYPE, AMP_POSITION, amp_settings2, G_N_ELEMENTS(amp_settings2)},
+static EffectGroup rp250_amp_group[] = {
+    {AMP_TYPE_TWEED_CHAMP, "Tweed Champ", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_TWEED_DELUXE, "Tweed Deluxe", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_TWEED_BASSMAN, "Tweed Bassman", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_BLACKFACE_TWIN, "Blackface Twin", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_BLACKFACE_DELUXE, "Blackface Deluxe", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_SUPER_LEAD_PLEXI, "Super Lead Plexi", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_MASTER_VOLUME, "Master Volume", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_JCM800, "JCM800", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_JCM900, "JCM900", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_AC15, "AC15", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_AC30TB, "AC30TB", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_HIWATT_100, "Hiwatt 100", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_BOOGIE_MARK_II, "Boogie Mark II", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_DUAL_RECTIFIER, "Dual Rectifier", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_MATCHLESS_HC30, "Matchless HC30", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_SOLO, "Solo", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_METAL, "Metal", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_BRIGHT, "Bright", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_CLEAN, "Clean", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_HIGH_GAIN, "High Gain", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_ACOUSTIC, "Acoustic", AMP_TYPE, AMP_POSITION, rp250_amp_settings2, G_N_ELEMENTS(rp250_amp_settings2)},
+    {AMP_TYPE_DIRECT, "Direct", AMP_TYPE, AMP_POSITION, rp250_amp_settings2, G_N_ELEMENTS(rp250_amp_settings2)},
+};
+
+static EffectGroup rp500_amp_group[] = {
+    {AMP_TYPE_TWEED_CHAMP, "Tweed Champ", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_TWEED_DELUXE, "Tweed Deluxe", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_TWEED_BASSMAN, "Tweed Bassman", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_BROWN_BASSMAN, "Brown Bassman", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_BLACKFACE_TWIN, "Blackface Twin", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_BLACKFACE_DELUXE, "Blackface Deluxe", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_PLEXI_JTM_45, "Plexi JTM-45", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_SUPER_LEAD_PLEXI, "Plexi Lead", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_PLEXI_JUMP_PANEL, "Plexi Jump Panel", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_MASTER_VOLUME, "Master Volume", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_JCM800, "JCM800", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_JCM900, "JCM900", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_JCM2000, "JCM2000", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_AC15, "AC-15", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_AC30TB, "AC-30 TB", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_HIWATT_100, "Hiwatt 100", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_BOOGIE_MARK_II, "Boogie Mark IIC", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_BOOGIE_MARK_IV, "Boogie Mark IV", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_DUAL_RECTIFIER, "Dual Rectifier", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_TRIPLE_RECTIFIER, "Triple Rectifier", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_LEGACY_VL100, "Legacy VL-100", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_MATCHLESS_HC30, "Matchless HC30", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_SOLDANO_100, "Soldano 100", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_SUPERGROUP, "Supergroup", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_GA40, "GA-40", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_OR120, "OR-120", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_PV5150II, "PV 5150II", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_RG100, "RG100", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_JC120_JAZZ, "JC-120 Jazz", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_SOLAR100, "Solar 100", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_SOLO, "Solo", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_METAL, "Metal", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_BRIGHT, "Bright Clean", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_CHUNK, "Chunk", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_CLEAN, "Clean Tube", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_HIGH_GAIN, "High Gain", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_BLUES, "Blues", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_FUZZ, "Fuzz", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_SPANK, "Spank", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_GSP2101_CLEAN_TUBE, "GSP2101 Clean Tube", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_GSP2101_SAT_TUBE, "GSP2101 Sat Tube", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_CRUNCH, "Crunch", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_MONSTER, "Monster", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_TWEEDFACE, "Tweedface", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_BLACKBASS, "Blackbass", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_STONER_ROCK, "Stoner Rock", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_DARK_METAL, "Dark Metal", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_TRANSISTOR, "Transistor", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_BROWN_SOUND, "Brown Sound", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_MOSH, "Mosh", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_ACOUSTIC, "Dread Acoustic", AMP_TYPE, AMP_POSITION, rp500_amp_settings2, G_N_ELEMENTS(rp500_amp_settings2)},
+    {AMP_TYPE_JUMBO_ACOUSTIC, "Jumbo Acoustic", AMP_TYPE, AMP_POSITION, rp500_amp_settings2, G_N_ELEMENTS(rp500_amp_settings2)},
+    {AMP_TYPE_DIRECT, "Direct", AMP_TYPE, AMP_POSITION, rp500_amp_settings3, G_N_ELEMENTS(rp500_amp_settings3)},
 };
 
 static EffectGroup eq_group[] = {
@@ -601,7 +692,7 @@ static EffectGroup eq_group[] = {
     {EQ_TYPE_WARM, "Warm", EQ_TYPE, EQ_POSITION, eq_settings, G_N_ELEMENTS(eq_settings)},
 };
 
-static EffectGroup amp_cab_group[] = {
+static EffectGroup rp250_amp_cab_group[] = {
     {AMP_CAB_DIRECT, "Direct", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
     {AMP_CAB_CHAMP, "Champ 1x8", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
     {AMP_CAB_DELUXE, "Deluxe 1x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
@@ -617,6 +708,35 @@ static EffectGroup amp_cab_group[] = {
     {AMP_CAB_DIGI_ROCK, "DigiTech Rock 4x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
     {AMP_CAB_DIGI_ALT, "DigiTech Alt 4x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
     {AMP_CAB_DIGI_VNTG, "DigiTech Vntg 4x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
+};
+
+static EffectGroup rp500_amp_cab_group[] = {
+    {AMP_CAB_DIRECT, "Direct", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
+    {AMP_CAB_CHAMP, "Champ", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
+    {AMP_CAB_DELUXE, "Deluxe", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
+    {AMP_CAB_DELUXE_REVERB, "Deluxe Reverb 1x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
+    {AMP_CAB_BRITISH1_12, "British 1x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
+    {AMP_CAB_GA1_12, "GA 1x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
+    {AMP_CAB_BLONDE2_12, "Blonde 2x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
+    {AMP_CAB_TWIN, "Twin 2x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
+    {AMP_CAB_BRITISH2_12, "British 2x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
+    {AMP_CAB_JAZZ2_12, "Jazz 2x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
+    {AMP_CAB_BASSMAN, "Bassman 4x10", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
+    {AMP_CAB_BRITISH4_12, "British 4x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
+    {AMP_CAB_BRITISH_GREEN, "Greenback 4x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
+    {AMP_CAB_FANE4_12, "Fane 4x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
+    {AMP_CAB_BOUTIQUE4_12, "Boutique 4x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
+    {AMP_CAB_VINTAGE, "Vintage 4x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
+    {AMP_CAB_RECTO4_12, "Recto 4x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
+    {AMP_CAB_DIGI_SOLO, "DigiTech Solo 4x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
+    {AMP_CAB_DIGI_BRIGHT, "DigiTech Bright 2x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
+    {AMP_CAB_DIGI_METAL, "DigiTech Metal 4x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
+    {AMP_CAB_DIGI_ROCK, "DigiTech Rock 4x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
+    {AMP_CAB_DIGI_ALT, "DigiTech Alt 4x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
+    {AMP_CAB_DIGI_VNTG, "DigiTech Vintage 4x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
+    {AMP_CAB_DIGI_CHUNK, "DigiTech Chunk 4x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
+    {AMP_CAB_DIGI_SPANK2_12, "DigiTech Spank 2x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
+    {AMP_CAB_DIGI_SPKR_COMP, "DigiTech Spkr Comp", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
 };
 
 static EffectGroup tone_lib_group[] = {
@@ -689,8 +809,12 @@ static Effect wah_effect[] = {
     {NULL, WAH_ON_OFF, WAH_POSITION, wah_group, G_N_ELEMENTS(wah_group)},
 };
 
-static Effect comp_effect[] = {
-    {NULL, COMP_ON_OFF, COMP_POSITION, comp_group, G_N_ELEMENTS(comp_group)},
+static Effect rp250_comp_effect[] = {
+    {NULL, COMP_ON_OFF, COMP_POSITION, rp250_comp_group, G_N_ELEMENTS(rp250_comp_group)},
+};
+
+static Effect rp500_comp_effect[] = {
+    {NULL, COMP_ON_OFF, COMP_POSITION, rp500_comp_group, G_N_ELEMENTS(rp500_comp_group)},
 };
 
 static Effect dist_effect[] = {
@@ -713,20 +837,25 @@ static Effect reverb_effect[] = {
     {NULL, REVERB_ON_OFF, REVERB_POSITION, reverb_group, G_N_ELEMENTS(reverb_group)},
 };
 
-static Effect amp_effect[] = {
-    {NULL, AMP_ON_OFF, AMP_POSITION, amp_group, G_N_ELEMENTS(amp_group)},
-    {"Cabinet", -1, -1, amp_cab_group, G_N_ELEMENTS(amp_cab_group)},
+static Effect rp250_amp_effect[] = {
+    {NULL, AMP_ON_OFF, AMP_POSITION, rp250_amp_group, G_N_ELEMENTS(rp250_amp_group)},
+    {"Cabinet", -1, -1, rp250_amp_cab_group, G_N_ELEMENTS(rp250_amp_cab_group)},
+};
+
+static Effect rp500_amp_effect[] = {
+    {NULL, AMP_ON_OFF, AMP_POSITION, rp500_amp_group, G_N_ELEMENTS(rp500_amp_group)},
+    {"Cabinet", -1, -1, rp500_amp_cab_group, G_N_ELEMENTS(rp500_amp_cab_group)},
 };
 
 static Effect eq_effect[] = {
     {NULL, EQ_ON_OFF, EQ_POSITION, eq_group, G_N_ELEMENTS(eq_group)},
 };
 
-EffectList effects[] = {
+EffectList rp250_effects[] = {
     {"Wah", wah_effect, G_N_ELEMENTS(wah_effect)},
-    {"Amplifier", amp_effect, G_N_ELEMENTS(amp_effect)},
+    {"Amplifier", rp250_amp_effect, G_N_ELEMENTS(rp250_amp_effect)},
     {"Equalizer", eq_effect, G_N_ELEMENTS(eq_effect)},
-    {"Compressor", comp_effect, G_N_ELEMENTS(comp_effect)},
+    {"Compressor", rp250_comp_effect, G_N_ELEMENTS(rp250_comp_effect)},
     {"Distortion", dist_effect, G_N_ELEMENTS(dist_effect)},
     {"Noisegate", noisegate_effect, G_N_ELEMENTS(noisegate_effect)},
     {"Chorus/FX", chorusfx_effect, G_N_ELEMENTS(chorusfx_effect)},
@@ -734,7 +863,21 @@ EffectList effects[] = {
     {"Reverb", reverb_effect, G_N_ELEMENTS(reverb_effect)},
 };
 
-int n_effects = G_N_ELEMENTS(effects);
+int n_rp250_effects = G_N_ELEMENTS(rp250_effects);
+
+EffectList rp500_effects[] = {
+    {"Wah", wah_effect, G_N_ELEMENTS(wah_effect)},
+    {"Amplifier", rp500_amp_effect, G_N_ELEMENTS(rp500_amp_effect)},
+    {"Equalizer", eq_effect, G_N_ELEMENTS(eq_effect)},
+    {"Compressor", rp500_comp_effect, G_N_ELEMENTS(rp500_comp_effect)},
+    {"Distortion", dist_effect, G_N_ELEMENTS(dist_effect)},
+    {"Noisegate", noisegate_effect, G_N_ELEMENTS(noisegate_effect)},
+    {"Chorus/FX", chorusfx_effect, G_N_ELEMENTS(chorusfx_effect)},
+    {"Delay", delay_effect, G_N_ELEMENTS(delay_effect)},
+    {"Reverb", reverb_effect, G_N_ELEMENTS(reverb_effect)},
+};
+
+int n_rp500_effects = G_N_ELEMENTS(rp500_effects);
 
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
@@ -1016,3 +1159,42 @@ void modifier_group_free(ModifierGroup *modifier_group)
                   modifier_group->group);
     g_slice_free(ModifierGroup, modifier_group);
 }
+
+/**
+ *  \param device_id Device ID
+ *  \param family_id Family ID
+ *  \param product_id Product ID
+ *  \param list Variable to hold effect list
+ *  \param n_list Variable to hold length of effect list
+ *
+ *  Gets appropiate effect list basing on device, family and product IDs.
+ *
+ *  \return TRUE if list and n_list were set, FALSE otherwise.
+ **/
+gboolean get_effect_list(unsigned char device_id, unsigned char family_id,
+                         unsigned char product_id,
+                         EffectList **list, int *n_list)
+{
+    switch (family_id) {
+        case 0x5E: /* RP series */
+            switch (product_id) {
+                case 0x02: /* RP250 */
+                    *list = rp250_effects;
+                    *n_list = n_rp250_effects;
+                    return TRUE;
+                case 0x05: /* RP500 */
+                    *list = rp500_effects;
+                    *n_list = n_rp500_effects;
+                    return TRUE;
+                default:
+                    g_warning("Unsupported RP model. Using RP250-compability mode!");
+                    *list = rp250_effects;
+                    *n_list = n_rp250_effects;
+                    return TRUE;
+            }
+        default:
+            g_error("Unsupported device family!");
+            return FALSE;
+    }
+}
+

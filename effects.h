@@ -62,5 +62,8 @@ typedef struct {
 
 ModifierGroup *modifier_linkable_list();
 void modifier_group_free(ModifierGroup *modifier_group);
+gboolean get_effect_list(unsigned char device_id, unsigned char family_id,
+                         unsigned char product_id,
+                         EffectList **list, int *n_list);
 
 #endif /* GDIGI_EFFECTS_H */
