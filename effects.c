@@ -301,9 +301,34 @@ static EffectValues values_delay_time = {
     0.0, 139.0, NULL,
 };
 
+static EffectValues values_delay_time_0_760 = {
+    /** \todo make this display propertly */
+    0.0, 760.0, NULL,
+};
+
+static EffectValues values_delay_time_0_4650 = {
+    /** \todo make this display propertly */
+    0.0, 4650.0, NULL,
+};
+
+static EffectValues values_delay_time_0_4990 = {
+    /** \todo make this display propertly */
+    0.0, 4990.0, NULL,
+};
+
+static EffectValues values_delay_time_0_5000 = {
+    /** \todo make this display propertly */
+    0.0, 5000.0, NULL,
+};
+
 static EffectValues values_delay_repeats = {
     /** \todo make last value display propertly */
     0.0, 100.0, NULL,
+};
+
+static EffectValues values_delay_repeat_rate_0_286 = {
+    /** \todo make this display propertly */
+    0.0, 286.0, NULL,
 };
 
 static EffectValues values_on_off = {
@@ -640,6 +665,61 @@ static EffectSettings delay_tape_settings[] = {
     {"Flutter", TAPE_FLUTTER, DELAY_POSITION, &values_0_to_99},
 };
 
+static EffectSettings rp500_delay_digital_settings[] = {
+    {"Tap Time", DELAY_TAP_TIME, DELAY_POSITION, &values_delay_time_0_5000},
+    {"Repeats", DELAY_REPEATS, DELAY_POSITION, &values_delay_repeats},
+    {"Duck Thresh", DELAY_DUCK_THRESH, DELAY_POSITION, &values_0_to_99},
+    {"Duck Level", DELAY_DUCK_LEVEL, DELAY_POSITION, &values_0_to_99},
+    {"Level", DELAY_LEVEL, DELAY_POSITION, &values_0_to_99},
+};
+
+static EffectSettings rp500_delay_analog_settings[] = {
+    {"Tap Time", DELAY_TAP_TIME, DELAY_POSITION, &values_delay_time_0_5000},
+    {"Repeats", DELAY_REPEATS, DELAY_POSITION, &values_delay_repeats},
+    {"Level", DELAY_LEVEL, DELAY_POSITION, &values_0_to_99},
+};
+
+static EffectSettings rp500_delay_dm_settings[] = {
+    {"Repeat Rate", DELAY_REPEAT_RATE, DELAY_POSITION, &values_delay_repeat_rate_0_286},
+    {"Echo", DELAY_ECHO, DELAY_POSITION, &values_0_to_99},
+    {"Intensity", DELAY_INTENSITY, DELAY_POSITION, &values_0_to_99},
+};
+
+static EffectSettings rp500_delay_echoplex_settings[] = {
+    {"Time", DELAY_TIME_0_760, DELAY_POSITION, &values_delay_time_0_760},
+    {"Volume", DELAY_VOLUME, DELAY_POSITION, &values_0_to_99},
+    {"Repeats", DELAY_REPEATS_0_99, DELAY_POSITION, &values_0_to_99},
+};
+
+static EffectSettings rp500_delay_modulated_settings[] = {
+    {"Tap Time", DELAY_TAP_TIME_0_4990, DELAY_POSITION, &values_delay_time_0_4990},
+    {"Repeats", DELAY_REPEATS, DELAY_POSITION, &values_delay_repeats},
+    {"Level", DELAY_LEVEL, DELAY_POSITION, &values_0_to_99},
+    {"Depth", DELAY_DEPTH, DELAY_POSITION, &values_0_to_99},
+};
+
+static EffectSettings rp500_delay_pong_settings[] = {
+    {"Tap Time", DELAY_TAP_TIME, DELAY_POSITION, &values_delay_time_0_5000},
+    {"Repeats", DELAY_REPEATS, DELAY_POSITION, &values_delay_repeats},
+    {"Duck Thresh", DELAY_DUCK_THRESH, DELAY_POSITION, &values_0_to_99},
+    {"Duck Level", DELAY_DUCK_LEVEL, DELAY_POSITION, &values_0_to_99},
+    {"Level", DELAY_LEVEL, DELAY_POSITION, &values_0_to_99},
+};
+
+static EffectSettings rp500_delay_reverse_settings[] = {
+    {"Time", DELAY_TIME_0_4650, DELAY_POSITION, &values_delay_time_0_4650},
+    {"Repeats", DELAY_REPEATS, DELAY_POSITION, &values_delay_repeats},
+    {"Mix", DELAY_MIX, DELAY_POSITION, &values_0_to_99},
+};
+
+static EffectSettings rp500_delay_tape_settings[] = {
+    {"Tap Time", DELAY_TAP_TIME_0_4990, DELAY_POSITION, &values_delay_time_0_4990},
+    {"Repeats", DELAY_REPEATS, DELAY_POSITION, &values_delay_repeats},
+    {"Level", DELAY_LEVEL, DELAY_POSITION, &values_0_to_99},
+    {"Tape Wow", TAPE_WOW, DELAY_POSITION, &values_0_to_99},
+    {"Tape Flutter", TAPE_FLUTTER, DELAY_POSITION, &values_0_to_99},
+};
+
 static EffectSettings reverb_twin_settings[] = {
     {"Reverb", TWIN_REVERB, REVERB_POSITION, &values_0_to_99},
 };
@@ -739,12 +819,23 @@ static EffectGroup chorusfx_group[] = {
     {CHORUS_TYPE_IPS, "IPS", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_ips_settings, G_N_ELEMENTS(chorusfx_ips_settings)},
 };
 
-static EffectGroup delay_group[] = {
+static EffectGroup rp250_delay_group[] = {
     {DELAY_TYPE_ANALOG, "Analog", DELAY_TYPE, DELAY_POSITION, delay_analog_settings, G_N_ELEMENTS(delay_analog_settings)},
     {DELAY_TYPE_DIGITAL, "Digital", DELAY_TYPE, DELAY_POSITION, delay_digital_settings, G_N_ELEMENTS(delay_digital_settings)},
     {DELAY_TYPE_MODULATED, "Modulated", DELAY_TYPE, DELAY_POSITION, delay_modulated_settings, G_N_ELEMENTS(delay_modulated_settings)},
     {DELAY_TYPE_PONG, "Pong", DELAY_TYPE, DELAY_POSITION, delay_pong_settings, G_N_ELEMENTS(delay_pong_settings)},
     {DELAY_TYPE_TAPE, "Tape", DELAY_TYPE, DELAY_POSITION, delay_tape_settings, G_N_ELEMENTS(delay_tape_settings)},
+};
+
+static EffectGroup rp500_delay_group[] = {
+    {DELAY_RP500_TYPE_DIGITAL, "Digital", DELAY_TYPE, DELAY_POSITION, rp500_delay_digital_settings, G_N_ELEMENTS(rp500_delay_digital_settings)},
+    {DELAY_RP500_TYPE_ANALOG, "Analog", DELAY_TYPE, DELAY_POSITION, rp500_delay_analog_settings, G_N_ELEMENTS(rp500_delay_analog_settings)},
+    {DELAY_RP500_TYPE_DM, "DM Delay", DELAY_TYPE, DELAY_POSITION, rp500_delay_dm_settings, G_N_ELEMENTS(rp500_delay_dm_settings)},
+    {DELAY_RP500_TYPE_ECHOPLEX, "Echo Plex", DELAY_TYPE, DELAY_POSITION, rp500_delay_echoplex_settings, G_N_ELEMENTS(rp500_delay_echoplex_settings)},
+    {DELAY_RP500_TYPE_MODULATED, "Modulated", DELAY_TYPE, DELAY_POSITION, rp500_delay_modulated_settings, G_N_ELEMENTS(rp500_delay_modulated_settings)},
+    {DELAY_RP500_TYPE_PONG, "Pong", DELAY_TYPE, DELAY_POSITION, rp500_delay_pong_settings, G_N_ELEMENTS(rp500_delay_pong_settings)},
+    {DELAY_RP500_TYPE_REVERSE, "Reverse", DELAY_TYPE, DELAY_POSITION, rp500_delay_reverse_settings, G_N_ELEMENTS(rp500_delay_reverse_settings)},
+    {DELAY_RP500_TYPE_TAPE, "Tape", DELAY_TYPE, DELAY_POSITION, rp500_delay_tape_settings, G_N_ELEMENTS(rp500_delay_tape_settings)},
 };
 
 static EffectGroup reverb_group[] = {
@@ -985,8 +1076,12 @@ static Effect chorusfx_effect[] = {
     {NULL, CHORUSFX_ON_OFF, CHORUSFX_POSITION, chorusfx_group, G_N_ELEMENTS(chorusfx_group)},
 };
 
-static Effect delay_effect[] = {
-    {NULL, DELAY_ON_OFF, DELAY_POSITION, delay_group, G_N_ELEMENTS(delay_group)},
+static Effect rp250_delay_effect[] = {
+    {NULL, DELAY_ON_OFF, DELAY_POSITION, rp250_delay_group, G_N_ELEMENTS(rp250_delay_group)},
+};
+
+static Effect rp500_delay_effect[] = {
+    {NULL, DELAY_ON_OFF, DELAY_POSITION, rp500_delay_group, G_N_ELEMENTS(rp500_delay_group)},
 };
 
 static Effect reverb_effect[] = {
@@ -1019,7 +1114,7 @@ EffectList rp250_effects[] = {
     {"Distortion", dist_effect, G_N_ELEMENTS(dist_effect)},
     {"Noisegate", noisegate_effect, G_N_ELEMENTS(noisegate_effect)},
     {"Chorus/FX", chorusfx_effect, G_N_ELEMENTS(chorusfx_effect)},
-    {"Delay", delay_effect, G_N_ELEMENTS(delay_effect)},
+    {"Delay", rp250_delay_effect, G_N_ELEMENTS(rp250_delay_effect)},
     {"Reverb", reverb_effect, G_N_ELEMENTS(reverb_effect)},
 };
 
@@ -1033,7 +1128,7 @@ EffectList rp500_effects[] = {
     {"Distortion", dist_effect, G_N_ELEMENTS(dist_effect)},
     {"Noisegate", noisegate_effect, G_N_ELEMENTS(noisegate_effect)},
     {"Chorus/FX", chorusfx_effect, G_N_ELEMENTS(chorusfx_effect)},
-    {"Delay", delay_effect, G_N_ELEMENTS(delay_effect)},
+    {"Delay", rp500_delay_effect, G_N_ELEMENTS(rp500_delay_effect)},
     {"Reverb", reverb_effect, G_N_ELEMENTS(reverb_effect)},
 };
 
