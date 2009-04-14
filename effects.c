@@ -105,6 +105,11 @@ static gchar *chorus_vibrato_labels[] = {
     "Vibrato",
 };
 
+static gchar *loose_tight_labels[] = {
+    "Loose",
+    "Tight",
+};
+
 static gchar *pickup_type_labels[] = {
     "SC>HB",
     "HB>SC",
@@ -362,6 +367,10 @@ static EffectValues values_chorus_vibrato = {
     0.0, 1.0, chorus_vibrato_labels,
 };
 
+static EffectValues values_loose_tight = {
+    0.0, 1.0, loose_tight_labels,
+};
+
 static EffectValues values_pickup_type = {
     0.0, 1.0, pickup_type_labels,
 };
@@ -407,6 +416,13 @@ static EffectSettings dist_808_settings[] = {
     {"Level", DIST_808_LVL, DIST_POSITION, &values_0_to_99},
 };
 
+static EffectSettings dist_sparkdrive_settings[] = {
+    {"Gain", DIST_SPARKDRIVE_GAIN, DIST_POSITION, &values_0_to_99},
+    {"Tone", DIST_SPARKDRIVE_TONE, DIST_POSITION, &values_0_to_99},
+    {"Clean", DIST_SPARKDRIVE_CLEAN, DIST_POSITION, &values_0_to_99},
+    {"Volume", DIST_SPARKDRIVE_VOLUME, DIST_POSITION, &values_0_to_99},
+};
+
 static EffectSettings dist_guyod_settings[] = {
     {"Drive", DIST_GUYOD_DRIVE, DIST_POSITION, &values_0_to_99},
     {"Level", DIST_GUYOD_LVL, DIST_POSITION, &values_0_to_99},
@@ -415,6 +431,13 @@ static EffectSettings dist_guyod_settings[] = {
 static EffectSettings dist_dod250_settings[] = {
     {"Gain", DIST_DOD250_GAIN, DIST_POSITION, &values_0_to_99},
     {"Level", DIST_DOD250_LVL, DIST_POSITION, &values_0_to_99},
+};
+
+static EffectSettings dist_redline_settings[] = {
+    {"Gain", DIST_REDLINE_GAIN, DIST_POSITION, &values_0_to_99},
+    {"Low", DIST_REDLINE_LOW, DIST_POSITION, &values_0_to_99},
+    {"High", DIST_REDLINE_HIGH, DIST_POSITION, &values_0_to_99},
+    {"Level", DIST_REDLINE_LEVEL, DIST_POSITION, &values_0_to_99},
 };
 
 static EffectSettings dist_rodent_settings[] = {
@@ -462,6 +485,24 @@ static EffectSettings dist_gonk_settings[] = {
     {"Smear", DIST_GONK_SMEAR, DIST_POSITION, &values_0_to_99},
     {"Suck", DIST_GONK_SUCK, DIST_POSITION, &values_0_to_99},
     {"Heave", DIST_GONK_HEAVE, DIST_POSITION, &values_0_to_99},
+};
+
+static EffectSettings dist_8tavia_settings[] = {
+    {"Drive", DIST_8TAVIA_DRIVE, DIST_POSITION, &values_0_to_99},
+    {"Volume", DIST_8TAVIA_VOLUME, DIST_POSITION, &values_0_to_99},
+};
+
+static EffectSettings dist_fuzzlator_settings[] = {
+    {"Fuzz", DIST_FUZZLATOR_FUZZ, DIST_POSITION, &values_0_to_99},
+    {"Tone", DIST_FUZZLATOR_TONE, DIST_POSITION, &values_0_to_99},
+    {"LooseTight", DIST_FUZZLATOR_LOOSETIGHT, DIST_POSITION, &values_loose_tight},
+    {"Volume", DIST_FUZZLATOR_VOLUME, DIST_POSITION, &values_0_to_99},
+};
+
+static EffectSettings dist_classic_fuzz_settings[] = {
+    {"Fuzz", DIST_CLASSIC_FUZZ_FUZZ, DIST_POSITION, &values_0_to_99},
+    {"Tone", DIST_CLASSIC_FUZZ_TONE, DIST_POSITION, &values_0_to_99},
+    {"Volume", DIST_CLASSIC_FUZZ_VOLUME, DIST_POSITION, &values_0_to_99},
 };
 
 static EffectSettings dist_fuzzy_settings[] = {
@@ -890,7 +931,7 @@ static EffectGroup rp500_comp_group[] = {
     {COMP_TYPE_DYNA, "Dyna comp", COMP_TYPE, COMP_POSITION, comp_dyna_settings, G_N_ELEMENTS(comp_dyna_settings)},
 };
 
-static EffectGroup dist_group[] = {
+static EffectGroup rp250_dist_group[] = {
     {DIST_TYPE_SCREAMER, "Screamer", DIST_TYPE, DIST_POSITION, dist_screamer_settings, G_N_ELEMENTS(dist_screamer_settings)},
     {DIST_TYPE_808, "808", DIST_TYPE, DIST_POSITION, dist_808_settings, G_N_ELEMENTS(dist_808_settings)},
     {DIST_TYPE_GUYOD, "GuyOD", DIST_TYPE, DIST_POSITION, dist_guyod_settings, G_N_ELEMENTS(dist_guyod_settings)},
@@ -903,7 +944,28 @@ static EffectGroup dist_group[] = {
     {DIST_TYPE_DEATH, "Death", DIST_TYPE, DIST_POSITION, dist_death_settings, G_N_ELEMENTS(dist_death_settings)},
     {DIST_TYPE_GONK, "Gonk", DIST_TYPE, DIST_POSITION, dist_gonk_settings, G_N_ELEMENTS(dist_gonk_settings)},
     {DIST_TYPE_FUZZY, "Fuzzy", DIST_TYPE, DIST_POSITION, dist_fuzzy_settings, G_N_ELEMENTS(dist_fuzzy_settings)},
-    {DIST_TYPE_MP, "MP", DIST_TYPE, DIST_POSITION, dist_mp_settings, G_N_ELEMENTS(dist_mp_settings)},
+    {DIST_TYPE_MP, "Big MP", DIST_TYPE, DIST_POSITION, dist_mp_settings, G_N_ELEMENTS(dist_mp_settings)},
+};
+
+static EffectGroup rp500_dist_group[] = {
+    {DIST_TYPE_SCREAMER, "Screamer", DIST_TYPE, DIST_POSITION, dist_screamer_settings, G_N_ELEMENTS(dist_screamer_settings)},
+    {DIST_TYPE_808, "808", DIST_TYPE, DIST_POSITION, dist_808_settings, G_N_ELEMENTS(dist_808_settings)},
+    {DIST_TYPE_SPARKDRIVE, "Sparkdrive", DIST_TYPE, DIST_POSITION, dist_sparkdrive_settings, G_N_ELEMENTS(dist_sparkdrive_settings)},
+    {DIST_TYPE_GUYOD, "OD Overdrive", DIST_TYPE, DIST_POSITION, dist_guyod_settings, G_N_ELEMENTS(dist_guyod_settings)},
+    {DIST_TYPE_DOD250, "DOD250", DIST_TYPE, DIST_POSITION, dist_dod250_settings, G_N_ELEMENTS(dist_dod250_settings)},
+    {DIST_TYPE_REDLINE, "Redline", DIST_TYPE, DIST_POSITION, dist_redline_settings, G_N_ELEMENTS(dist_redline_settings)},
+    {DIST_TYPE_RODENT, "Rodent", DIST_TYPE, DIST_POSITION, dist_rodent_settings, G_N_ELEMENTS(dist_rodent_settings)},
+    {DIST_TYPE_MX, "MX", DIST_TYPE, DIST_POSITION, dist_mx_settings, G_N_ELEMENTS(dist_mx_settings)},
+    {DIST_TYPE_DS, "DS", DIST_TYPE, DIST_POSITION, dist_ds_settings, G_N_ELEMENTS(dist_ds_settings)},
+    {DIST_TYPE_GRUNGE, "Grunge", DIST_TYPE, DIST_POSITION, dist_grunge_settings, G_N_ELEMENTS(dist_grunge_settings)},
+    {DIST_TYPE_ZONE, "Zone", DIST_TYPE, DIST_POSITION, dist_zone_settings, G_N_ELEMENTS(dist_zone_settings)},
+    {DIST_TYPE_DEATH, "Death", DIST_TYPE, DIST_POSITION, dist_death_settings, G_N_ELEMENTS(dist_death_settings)},
+    {DIST_TYPE_GONK, "Gonk", DIST_TYPE, DIST_POSITION, dist_gonk_settings, G_N_ELEMENTS(dist_gonk_settings)},
+    {DIST_TYPE_8TAVIA, "8tavia", DIST_TYPE, DIST_POSITION, dist_8tavia_settings, G_N_ELEMENTS(dist_8tavia_settings)},
+    {DIST_TYPE_FUZZLATOR, "Fuzzlator", DIST_TYPE, DIST_POSITION, dist_fuzzlator_settings, G_N_ELEMENTS(dist_fuzzlator_settings)},
+    {DIST_TYPE_CLASSIC_FUZZ, "Classic Fuzz", DIST_TYPE, DIST_POSITION, dist_classic_fuzz_settings, G_N_ELEMENTS(dist_classic_fuzz_settings)},
+    {DIST_TYPE_FUZZY, "Fuzzy", DIST_TYPE, DIST_POSITION, dist_fuzzy_settings, G_N_ELEMENTS(dist_fuzzy_settings)},
+    {DIST_TYPE_MP, "Big MP", DIST_TYPE, DIST_POSITION, dist_mp_settings, G_N_ELEMENTS(dist_mp_settings)},
 };
 
 static EffectGroup noisegate_group[] = {
@@ -1216,8 +1278,12 @@ static Effect rp500_comp_effect[] = {
     {NULL, COMP_ON_OFF, COMP_POSITION, rp500_comp_group, G_N_ELEMENTS(rp500_comp_group)},
 };
 
-static Effect dist_effect[] = {
-    {NULL, DIST_ON_OFF, DIST_POSITION, dist_group, G_N_ELEMENTS(dist_group)},
+static Effect rp250_dist_effect[] = {
+    {NULL, DIST_ON_OFF, DIST_POSITION, rp250_dist_group, G_N_ELEMENTS(rp250_dist_group)},
+};
+
+static Effect rp500_dist_effect[] = {
+    {NULL, DIST_ON_OFF, DIST_POSITION, rp500_dist_group, G_N_ELEMENTS(rp500_dist_group)},
 };
 
 static Effect noisegate_effect[] = {
@@ -1267,7 +1333,7 @@ static EffectList rp250_effects[] = {
     {"Amplifier", rp250_amp_effect, G_N_ELEMENTS(rp250_amp_effect)},
     {"Equalizer", rp250_eq_effect, G_N_ELEMENTS(rp250_eq_effect)},
     {"Compressor", rp250_comp_effect, G_N_ELEMENTS(rp250_comp_effect)},
-    {"Distortion", dist_effect, G_N_ELEMENTS(dist_effect)},
+    {"Distortion", rp250_dist_effect, G_N_ELEMENTS(rp250_dist_effect)},
     {"Noisegate", noisegate_effect, G_N_ELEMENTS(noisegate_effect)},
     {"Chorus/FX", rp250_chorusfx_effect, G_N_ELEMENTS(rp250_chorusfx_effect)},
     {"Delay", rp250_delay_effect, G_N_ELEMENTS(rp250_delay_effect)},
@@ -1281,7 +1347,7 @@ static EffectList rp500_effects[] = {
     {"Amplifier", rp500_amp_effect, G_N_ELEMENTS(rp500_amp_effect)},
     {"Equalizer", rp500_eq_effect, G_N_ELEMENTS(rp500_eq_effect)},
     {"Compressor", rp500_comp_effect, G_N_ELEMENTS(rp500_comp_effect)},
-    {"Distortion", dist_effect, G_N_ELEMENTS(dist_effect)},
+    {"Distortion", rp500_dist_effect, G_N_ELEMENTS(rp500_dist_effect)},
     {"Noisegate", noisegate_effect, G_N_ELEMENTS(noisegate_effect)},
     {"Chorus/FX", rp500_chorusfx_effect, G_N_ELEMENTS(rp500_chorusfx_effect)},
     {"Delay", rp500_delay_effect, G_N_ELEMENTS(rp500_delay_effect)},
