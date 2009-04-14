@@ -60,6 +60,12 @@ typedef struct {
     gint group_amt;
 } ModifierGroup;
 
+typedef struct {
+    gchar *name;
+    EffectList *list;
+    int n_list;
+} SupportedDevices;
+
 ModifierGroup *modifier_linkable_list();
 void modifier_group_free(ModifierGroup *modifier_group);
 gboolean get_effect_list(unsigned char device_id, unsigned char family_id,

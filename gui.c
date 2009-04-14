@@ -22,13 +22,6 @@
 #include "gtkknob.h"
 #include "knob.h"
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
-extern EffectList effects[];
-extern int n_effects;
-
-#endif /* DOXYGEN_SHOULD_SKIP_THIS */
-
 typedef struct {
     GtkObject *widget;
     gint id;
@@ -907,4 +900,58 @@ void gui_free()
 
     gtk_knob_animation_free(knob_anim);
     knob_anim = NULL;
+}
+
+/**
+ *  \param list Variable to hold effect list
+ *  \param n_list Variable to hold length of effect list
+ *
+ *  Displays dialogbox stating that device is unsupported.
+ *
+ *  \return TRUE if user selects "compability mode", otherwise FALSE.
+ **/
+gboolean unsupported_device_dialog(EffectList **list, int *n_list)
+{
+    extern SupportedDevices supported_devices[];
+    extern int n_supported_devices;
+
+    GtkWidget *dialog;
+    GtkWidget *label;
+    GtkWidget *combo_box;
+    int x;
+
+    dialog = gtk_dialog_new_with_buttons("Unsupported device",
+                                         NULL, GTK_DIALOG_MODAL,
+                                         GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                                         GTK_STOCK_OK, GTK_RESPONSE_ACCEPT,
+                                         NULL);
+
+
+    label = gtk_label_new("Your device appears to be unsupported by gdigi.\n"
+                          "As some of the settings may be common between different devices,\n"
+                          "you can now select compability mode with one of the supported devices.\n"
+                          "Please take a look at gdigi's HACKING file.");
+    gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), label);
+
+    combo_box = gtk_combo_box_new_text();
+    for (x=0; x<n_supported_devices; x++) {
+        gtk_combo_box_append_text(GTK_COMBO_BOX(combo_box), supported_devices[x].name);
+    }
+
+    gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), combo_box);
+
+    gtk_widget_show_all(GTK_DIALOG(dialog)->vbox);
+    if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
+        gint number = gtk_combo_box_get_active(GTK_COMBO_BOX(combo_box));
+        if (number != -1 && number <n_supported_devices) {
+            g_message("Starting %s compability mode", supported_devices[number].name);
+            *list = supported_devices[number].list;
+            *n_list = supported_devices[number].n_list;
+            gtk_widget_destroy(dialog);
+            return TRUE;
+        }
+    }
+
+    gtk_widget_destroy(dialog);
+    return FALSE;
 }

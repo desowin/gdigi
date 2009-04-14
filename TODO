@@ -4,3 +4,4 @@
 -buildsystem (install knob.png to share dir, don't use inline knob pixbuf)
 -add expression pedal settings to gui
 -read asynchronously from MIDI IN
+-guess device port when user doesn't explicitly provide it (don't use hardcoded "hw:1,0,0")

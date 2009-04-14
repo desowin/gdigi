@@ -566,11 +566,16 @@ int main(int argc, char *argv[]) {
         if (request_who_am_i(&device_id, &family_id, &product_id) == FALSE) {
             show_error_message(NULL, "No suitable reply from device");
         } else {
-            EffectList *list;
-            int n_list;
+            EffectList *list = NULL;
+            int n_list = -1;
+
             if (get_effect_list(device_id, family_id, product_id, &list, &n_list) == FALSE) {
-                show_error_message(NULL, "Unsupported hardware. Please check HACKING file.");
-            } else {
+                if (unsupported_device_dialog(&list, &n_list) == FALSE) {
+                    g_message("Shutting down");
+                }
+            }
+
+            if (list != NULL && n_list != -1) {
                 gui_create(list, n_list);
                 gtk_main();
                 gui_free();

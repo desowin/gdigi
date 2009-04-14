@@ -17,10 +17,12 @@
 #ifndef GDIGI_GUI_H
 #define GDIGI_GUI_H
 
+#include <glib.h>
 #include "effects.h"
 
 void show_error_message(GtkWidget *parent, gchar *message);
 void gui_create(EffectList *list, int n_list);
 void gui_free();
+gboolean unsupported_device_dialog(EffectList **list, int *n_list);
 
 #endif /* GDIGI_GUI_H */

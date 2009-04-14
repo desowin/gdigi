@@ -1262,7 +1262,7 @@ static Effect rp500_eq_effect[] = {
     {"Enable Equalizer", EQ_ON_OFF, EQ_POSITION, rp500_eq_group, G_N_ELEMENTS(rp500_eq_group)},
 };
 
-EffectList rp250_effects[] = {
+static EffectList rp250_effects[] = {
     {"Wah", wah_effect, G_N_ELEMENTS(wah_effect)},
     {"Amplifier", rp250_amp_effect, G_N_ELEMENTS(rp250_amp_effect)},
     {"Equalizer", rp250_eq_effect, G_N_ELEMENTS(rp250_eq_effect)},
@@ -1274,9 +1274,9 @@ EffectList rp250_effects[] = {
     {"Reverb", reverb_effect, G_N_ELEMENTS(reverb_effect)},
 };
 
-int n_rp250_effects = G_N_ELEMENTS(rp250_effects);
+static int n_rp250_effects = G_N_ELEMENTS(rp250_effects);
 
-EffectList rp500_effects[] = {
+static EffectList rp500_effects[] = {
     {"Wah", wah_effect, G_N_ELEMENTS(wah_effect)},
     {"Amplifier", rp500_amp_effect, G_N_ELEMENTS(rp500_amp_effect)},
     {"Equalizer", rp500_eq_effect, G_N_ELEMENTS(rp500_eq_effect)},
@@ -1288,7 +1288,14 @@ EffectList rp500_effects[] = {
     {"Reverb", reverb_effect, G_N_ELEMENTS(reverb_effect)},
 };
 
-int n_rp500_effects = G_N_ELEMENTS(rp500_effects);
+static int n_rp500_effects = G_N_ELEMENTS(rp500_effects);
+
+SupportedDevices supported_devices[] = {
+    {"DigiTech RP250", rp250_effects, G_N_ELEMENTS(rp250_effects)},
+    {"DigiTech RP500", rp500_effects, G_N_ELEMENTS(rp500_effects)},
+};
+
+int n_supported_devices = G_N_ELEMENTS(supported_devices);
 
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
@@ -1598,13 +1605,11 @@ gboolean get_effect_list(unsigned char device_id, unsigned char family_id,
                     *n_list = n_rp500_effects;
                     return TRUE;
                 default:
-                    g_warning("Unsupported RP model. Using RP250-compability mode!");
-                    *list = rp250_effects;
-                    *n_list = n_rp250_effects;
-                    return TRUE;
+                    g_message("Unsupported RP model!");
+                    return FALSE;
             }
         default:
-            g_error("Unsupported device family!");
+            g_message("Unsupported device family!");
             return FALSE;
     }
 }
