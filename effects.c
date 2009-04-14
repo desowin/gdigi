@@ -95,6 +95,16 @@ static gchar *on_off_labels[] = {
     "On",
 };
 
+static gchar *odd_even_labels[] = {
+    "Odd",
+    "Even",
+};
+
+static gchar *chorus_vibrato_labels[] = {
+    "Chorus",
+    "Vibrato",
+};
+
 static gchar *pickup_type_labels[] = {
     "SC>HB",
     "HB>SC",
@@ -228,6 +238,10 @@ static EffectValues values_0_to_99 = {
     0.0, 99.0, NULL,
 };
 
+static EffectValues values_1_to_4 = {
+    0.0, 3.0, NULL,
+};
+
 static EffectValues values_0_to_49 = {
     0.0, 49.0, NULL,
 };
@@ -278,6 +292,11 @@ static EffectValues values_eq_high_freq = {
 
 static EffectValues values_waveform = {
     0.0, 2.0, wave_labels,
+};
+
+static EffectValues values_synth_talk_balance = {
+    /** \todo make this display propertly */
+    0.0, 198.0, NULL,
 };
 
 static EffectValues values_whammy_amount = {
@@ -333,6 +352,14 @@ static EffectValues values_delay_repeat_rate_0_286 = {
 
 static EffectValues values_on_off = {
     0.0, 1.0, on_off_labels,
+};
+
+static EffectValues values_odd_even = {
+    0.0, 1.0, odd_even_labels,
+};
+
+static EffectValues values_chorus_vibrato = {
+    0.0, 1.0, chorus_vibrato_labels,
 };
 
 static EffectValues values_pickup_type = {
@@ -515,11 +542,23 @@ static EffectSettings chorusfx_ce_settings[] = {
     {"Depth", CE_CHORUS_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
 };
 
+static EffectSettings chorusfx_tc_settings[] = {
+    {"Speed", CE_CHORUS_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Width", CHORUS_WIDTH, CHORUSFX_POSITION, &values_0_to_99},
+    {"Intensity", CHORUS_INTENSITY, CHORUSFX_POSITION, &values_0_to_99},
+};
+
 static EffectSettings chorusfx_dual_settings[] = {
     {"Speed", DUAL_CHORUS_SPEED, CHORUSFX_POSITION, &values_0_to_99},
     {"Depth", DUAL_CHORUS_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
     {"Level", DUAL_CHORUS_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
     {"Wave", DUAL_CHORUS_WAVE, CHORUSFX_POSITION, &values_waveform},
+};
+
+static EffectSettings chorusfx_glisten_settings[] = {
+    {"Speed", CE_CHORUS_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Depth", DUAL_CHORUS_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
+    {"Level", DUAL_CHORUS_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
 };
 
 static EffectSettings chorusfx_multi_settings[] = {
@@ -537,10 +576,31 @@ static EffectSettings chorusfx_flanger_settings[] = {
     {"Wave", FLANGER_WAVE, CHORUSFX_POSITION, &values_waveform},
 };
 
+static EffectSettings chorusfx_trig_flanger_settings[] = {
+    {"Speed", TRIG_FLANGER_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Sens", TRIG_FLANGER_SENS, CHORUSFX_POSITION, &values_0_to_99},
+    {"Lfo Start", TRIG_FLANGER_LFO_START, CHORUSFX_POSITION, &values_0_to_99},
+    {"Level", TRIG_FLANGER_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
+};
+
 static EffectSettings chorusfx_mxr_flanger_settings[] = {
     {"Speed", MXR_FLANGER_SPEED, CHORUSFX_POSITION, &values_0_to_99},
     {"Width", MXR_FLANGER_WIDTH, CHORUSFX_POSITION, &values_0_to_99},
     {"Regen", MXR_FLANGER_REGEN, CHORUSFX_POSITION, &values_0_to_99},
+    {"Manual", MXR_FLANGER_MANUAL, CHORUSFX_POSITION, &values_0_to_99},
+};
+
+static EffectSettings chorusfx_eh_flanger_settings[] = {
+    {"Rate", EH_FLANGER_RATE, CHORUSFX_POSITION, &values_0_to_99},
+    {"Range", EH_FLANGER_RANGE, CHORUSFX_POSITION, &values_0_to_99},
+    {"Color", EH_FLANGER_COLOR, CHORUSFX_POSITION, &values_0_to_99},
+};
+
+static EffectSettings chorusfx_ad_flanger_settings[] = {
+    {"Speed", MXR_FLANGER_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Enhance", AD_FLANGER_ENHANCE, CHORUSFX_POSITION, &values_0_to_99},
+    {"Range", EH_FLANGER_RANGE, CHORUSFX_POSITION, &values_0_to_99},
+    {"Harmonics", AD_FLANGER_HARMONICS, CHORUSFX_POSITION, &values_odd_even},
     {"Manual", MXR_FLANGER_MANUAL, CHORUSFX_POSITION, &values_0_to_99},
 };
 
@@ -550,6 +610,23 @@ static EffectSettings chorusfx_phaser_settings[] = {
     {"Regen", PHASER_REGEN, CHORUSFX_POSITION, &values_0_to_99},
     {"Level", PHASER_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
     {"Wave", PHASER_WAVE, CHORUSFX_POSITION, &values_waveform},
+};
+
+static EffectSettings chorusfx_trig_phaser_settings[] = {
+    {"Speed", TRIG_PHASER_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Sens", TRIG_PHASER_SENS, CHORUSFX_POSITION, &values_0_to_99},
+    {"Lfo Start", TRIG_PHASER_LFO_START, CHORUSFX_POSITION, &values_0_to_99},
+    {"Level", TRIG_PHASER_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
+};
+
+static EffectSettings chorusfx_mx_phaser_settings[] = {
+    {"Speed", PHASER_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Intensity", MX_PHASER_INTENSITY, CHORUSFX_POSITION, &values_1_to_4},
+};
+
+static EffectSettings chorusfx_eh_phaser_settings[] = {
+    {"Rate", EH_PHASER_RATE, CHORUSFX_POSITION, &values_0_to_99},
+    {"Color", EH_PHASER_COLOR, CHORUSFX_POSITION, &values_on_off},
 };
 
 static EffectSettings chorusfx_vibrato_settings[] = {
@@ -571,10 +648,22 @@ static EffectSettings chorusfx_vibropan_settings[] = {
     {"Wave", VIBROPAN_WAVE, CHORUSFX_POSITION, &values_waveform},
 };
 
+static EffectSettings chorusfx_unovibe_settings[] = {
+    {"Pedal Speed", UNOVIBE_PEDAL_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Intensity", UNOVIBE_INTENSITY, CHORUSFX_POSITION, &values_0_to_99},
+    {"Chorus/Vibrato", UNOVIBE_CHORUS_VIBRATO, CHORUSFX_POSITION, &values_chorus_vibrato},
+    {"Volume", UNOVIBE_VOLUME, CHORUSFX_POSITION, &values_0_to_99},
+};
+
 static EffectSettings chorusfx_tremolo_settings[] = {
     {"Speed", TREMOLO_SPEED, CHORUSFX_POSITION, &values_0_to_99},
     {"Depth", TREMOLO_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
     {"Wave", TREMOLO_WAVE, CHORUSFX_POSITION, &values_waveform},
+};
+
+static EffectSettings chorusfx_trem_settings[] = {
+    {"Speed", TREMOLO_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Depth", TREMOLO_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
 };
 
 static EffectSettings chorusfx_panner_settings[] = {
@@ -586,6 +675,12 @@ static EffectSettings chorusfx_panner_settings[] = {
 static EffectSettings chorusfx_envelope_settings[] = {
     {"Sensitivity", ENVELOPE_SENSITIVITY, CHORUSFX_POSITION, &values_0_to_99},
     {"Range", ENVELOPE_RANGE, CHORUSFX_POSITION, &values_0_to_99},
+};
+
+static EffectSettings chorusfx_fx25_settings[] = {
+    {"Sensitivity", ENVELOPE_SENSITIVITY, CHORUSFX_POSITION, &values_0_to_99},
+    {"Range", ENVELOPE_RANGE, CHORUSFX_POSITION, &values_0_to_99},
+    {"Blend", ENVELOPE_BLEND, CHORUSFX_POSITION, &values_0_to_99},
 };
 
 static EffectSettings chorusfx_autoya_settings[] = {
@@ -600,9 +695,22 @@ static EffectSettings chorusfx_yaya_settings[] = {
     {"Range", YAYA_RANGE, CHORUSFX_POSITION, &values_0_to_49},
 };
 
+static EffectSettings chorusfx_synth_talk_settings[] = {
+    {"Attack", SYNTH_TALK_ATTACK, CHORUSFX_POSITION, &values_0_to_99},
+    {"Release", SYNTH_TALK_RELEASE, CHORUSFX_POSITION, &values_0_to_99},
+    {"Sens", SYNTH_TALK_SENS, CHORUSFX_POSITION, &values_0_to_99},
+    {"Vox", SYNTH_TALK_VOX, CHORUSFX_POSITION, &values_0_to_99},
+    {"Balance", SYNTH_TALK_BALANCE, CHORUSFX_POSITION, &values_synth_talk_balance},
+};
+
 static EffectSettings chorusfx_step_filter_settings[] = {
     {"Speed", STEP_FILTER_SPEED, CHORUSFX_POSITION, &values_0_to_99},
     {"Intensity", STEP_FILTER_INTENSITY, CHORUSFX_POSITION, &values_0_to_99},
+};
+
+static EffectSettings chorusfx_sample_hold_settings[] = {
+    {"Speed", SAMPLE_HOLD_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Intensity", SAMPLE_HOLD_INTENSITY, CHORUSFX_POSITION, &values_0_to_99},
 };
 
 static EffectSettings chorusfx_whammy_settings[] = {
@@ -626,6 +734,12 @@ static EffectSettings chorusfx_ips_settings[] = {
     {"Key", IPS_KEY, CHORUSFX_POSITION, &values_ips_key},
     {"Scale", IPS_SCALE, CHORUSFX_POSITION, &values_ips_scale},
     {"Level", IPS_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
+};
+
+static EffectSettings chorusfx_octaver_settings[] = {
+    {"Octave 1", OCTAVER_OCTAVE1, CHORUSFX_POSITION, &values_0_to_99},
+    {"Octave 2", OCTAVER_OCTAVE2, CHORUSFX_POSITION, &values_0_to_99},
+    {"Dry Level", OCTAVER_DRY_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
 };
 
 static EffectSettings delay_analog_settings[] = {
@@ -797,7 +911,7 @@ static EffectGroup noisegate_group[] = {
     {NOISEGATE_SWELL, "Swell", NOISEGATE_TYPE, NOISEGATE_POSITION, noisegate_swell_settings, G_N_ELEMENTS(noisegate_swell_settings)},
 };
 
-static EffectGroup chorusfx_group[] = {
+static EffectGroup rp250_chorusfx_group[] = {
     {CHORUS_TYPE_CE, "CE Chorus", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_ce_settings, G_N_ELEMENTS(chorusfx_ce_settings)},
     {CHORUS_TYPE_DUAL, "Dual Chorus", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_dual_settings, G_N_ELEMENTS(chorusfx_dual_settings)},
     {CHORUS_TYPE_MULTI, "Multi Chorus", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_multi_settings, G_N_ELEMENTS(chorusfx_multi_settings)},
@@ -817,6 +931,44 @@ static EffectGroup chorusfx_group[] = {
     {CHORUS_TYPE_PITCH_SHIFT, "Pitch Shift", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_pitch_shift_settings, G_N_ELEMENTS(chorusfx_pitch_shift_settings)},
     {CHORUS_TYPE_DETUNE, "Detune", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_detune_settings, G_N_ELEMENTS(chorusfx_detune_settings)},
     {CHORUS_TYPE_IPS, "IPS", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_ips_settings, G_N_ELEMENTS(chorusfx_ips_settings)},
+};
+
+static EffectGroup rp500_chorusfx_group[] = {
+    {CHORUS_TYPE_CE, "CE Chorus", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_ce_settings, G_N_ELEMENTS(chorusfx_ce_settings)},
+    {CHORUS_TYPE_TC, "TC Chorus", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_tc_settings, G_N_ELEMENTS(chorusfx_tc_settings)},
+    {CHORUS_TYPE_DUAL, "Dual Chorus", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_dual_settings, G_N_ELEMENTS(chorusfx_dual_settings)},
+    {CHORUS_TYPE_GLISTEN, "Glisten Chorus", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_glisten_settings, G_N_ELEMENTS(chorusfx_glisten_settings)},
+    {CHORUS_TYPE_MULTI, "Multi Chorus", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_multi_settings, G_N_ELEMENTS(chorusfx_multi_settings)},
+    {CHORUS_TYPE_FLANGER, "Flanger", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_flanger_settings, G_N_ELEMENTS(chorusfx_flanger_settings)},
+    {CHORUS_TYPE_TRIGGERED_FLANGER, "Triggered Flanger", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_trig_flanger_settings, G_N_ELEMENTS(chorusfx_trig_flanger_settings)},
+    {CHORUS_TYPE_MXR_FLANGER, "MXR FLANGER", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_mxr_flanger_settings, G_N_ELEMENTS(chorusfx_mxr_flanger_settings)},
+    {CHORUS_TYPE_EH_FLANGER, "EH Flanger", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_eh_flanger_settings, G_N_ELEMENTS(chorusfx_eh_flanger_settings)},
+    {CHORUS_TYPE_AD_FLANGER, "AD Flanger", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_ad_flanger_settings, G_N_ELEMENTS(chorusfx_ad_flanger_settings)},
+    {CHORUS_TYPE_PHASER, "Phaser", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_phaser_settings, G_N_ELEMENTS(chorusfx_phaser_settings)},
+    {CHORUS_TYPE_TRIGGERED_PHASER, "Triggered Phaser", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_trig_phaser_settings, G_N_ELEMENTS(chorusfx_trig_phaser_settings)},
+    {CHORUS_TYPE_MX_PHASER, "MX Phaser", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_mx_phaser_settings, G_N_ELEMENTS(chorusfx_mx_phaser_settings)},
+    {CHORUS_TYPE_EH_PHASER, "EH Phaser", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_eh_phaser_settings, G_N_ELEMENTS(chorusfx_eh_phaser_settings)},
+    {CHORUS_TYPE_VIBRATO, "Vibrato", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_vibrato_settings, G_N_ELEMENTS(chorusfx_vibrato_settings)},
+    {CHORUS_TYPE_ROTARY, "Rotary", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_rotary_settings, G_N_ELEMENTS(chorusfx_rotary_settings)},
+    {CHORUS_TYPE_VIBROPAN, "Vibropan", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_vibropan_settings, G_N_ELEMENTS(chorusfx_vibropan_settings)},
+    {CHORUS_TYPE_UNOVIBE, "Unovibe", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_unovibe_settings, G_N_ELEMENTS(chorusfx_unovibe_settings)},
+    {CHORUS_TYPE_TREMOLO, "Tremolo", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_tremolo_settings, G_N_ELEMENTS(chorusfx_tremolo_settings)},
+    {CHORUS_TYPE_SCATTER_TREM, "ScatterTrem", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_trem_settings, G_N_ELEMENTS(chorusfx_trem_settings)},
+    {CHORUS_TYPE_OPTO_TREMOLO, "Opto Tremolo", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_trem_settings, G_N_ELEMENTS(chorusfx_trem_settings)},
+    {CHORUS_TYPE_BIAS_TREMOLO, "Bias Tremolo", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_trem_settings, G_N_ELEMENTS(chorusfx_trem_settings)},
+    {CHORUS_TYPE_PANNER, "Panner", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_panner_settings, G_N_ELEMENTS(chorusfx_panner_settings)},
+    {CHORUS_TYPE_ENVELOPE, "Envelope", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_envelope_settings, G_N_ELEMENTS(chorusfx_envelope_settings)},
+    {CHORUS_TYPE_FX25, "FX25", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_fx25_settings, G_N_ELEMENTS(chorusfx_fx25_settings)},
+    {CHORUS_TYPE_AUTOYA, "AutoYa", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_autoya_settings, G_N_ELEMENTS(chorusfx_autoya_settings)},
+    {CHORUS_TYPE_YAYA, "YaYa", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_yaya_settings, G_N_ELEMENTS(chorusfx_yaya_settings)},
+    {CHORUS_TYPE_SYNTH_TALK, "Synth Talk", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_synth_talk_settings, G_N_ELEMENTS(chorusfx_synth_talk_settings)},
+    {CHORUS_TYPE_STEP_FILTER, "Step Filter", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_step_filter_settings, G_N_ELEMENTS(chorusfx_step_filter_settings)},
+    {CHORUS_TYPE_SAMPLE_HOLD, "Sample/Hold", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_sample_hold_settings, G_N_ELEMENTS(chorusfx_sample_hold_settings)},
+    {CHORUS_TYPE_WHAMMY, "Whammy", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_whammy_settings, G_N_ELEMENTS(chorusfx_whammy_settings)},
+    {CHORUS_TYPE_PITCH_SHIFT, "Pitch", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_pitch_shift_settings, G_N_ELEMENTS(chorusfx_pitch_shift_settings)},
+    {CHORUS_TYPE_DETUNE, "Detune", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_detune_settings, G_N_ELEMENTS(chorusfx_detune_settings)},
+    {CHORUS_TYPE_IPS, "Harmony Pitch", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_ips_settings, G_N_ELEMENTS(chorusfx_ips_settings)},
+    {CHORUS_TYPE_OCTAVER, "Octaver", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_octaver_settings, G_N_ELEMENTS(chorusfx_octaver_settings)},
 };
 
 static EffectGroup rp250_delay_group[] = {
@@ -1072,8 +1224,12 @@ static Effect noisegate_effect[] = {
     {NULL, NOISEGATE_ON_OFF, NOISEGATE_POSITION, noisegate_group, G_N_ELEMENTS(noisegate_group)},
 };
 
-static Effect chorusfx_effect[] = {
-    {NULL, CHORUSFX_ON_OFF, CHORUSFX_POSITION, chorusfx_group, G_N_ELEMENTS(chorusfx_group)},
+static Effect rp250_chorusfx_effect[] = {
+    {NULL, CHORUSFX_ON_OFF, CHORUSFX_POSITION, rp250_chorusfx_group, G_N_ELEMENTS(rp250_chorusfx_group)},
+};
+
+static Effect rp500_chorusfx_effect[] = {
+    {NULL, CHORUSFX_ON_OFF, CHORUSFX_POSITION, rp500_chorusfx_group, G_N_ELEMENTS(rp500_chorusfx_group)},
 };
 
 static Effect rp250_delay_effect[] = {
@@ -1113,7 +1269,7 @@ EffectList rp250_effects[] = {
     {"Compressor", rp250_comp_effect, G_N_ELEMENTS(rp250_comp_effect)},
     {"Distortion", dist_effect, G_N_ELEMENTS(dist_effect)},
     {"Noisegate", noisegate_effect, G_N_ELEMENTS(noisegate_effect)},
-    {"Chorus/FX", chorusfx_effect, G_N_ELEMENTS(chorusfx_effect)},
+    {"Chorus/FX", rp250_chorusfx_effect, G_N_ELEMENTS(rp250_chorusfx_effect)},
     {"Delay", rp250_delay_effect, G_N_ELEMENTS(rp250_delay_effect)},
     {"Reverb", reverb_effect, G_N_ELEMENTS(reverb_effect)},
 };
@@ -1127,7 +1283,7 @@ EffectList rp500_effects[] = {
     {"Compressor", rp500_comp_effect, G_N_ELEMENTS(rp500_comp_effect)},
     {"Distortion", dist_effect, G_N_ELEMENTS(dist_effect)},
     {"Noisegate", noisegate_effect, G_N_ELEMENTS(noisegate_effect)},
-    {"Chorus/FX", chorusfx_effect, G_N_ELEMENTS(chorusfx_effect)},
+    {"Chorus/FX", rp500_chorusfx_effect, G_N_ELEMENTS(rp500_chorusfx_effect)},
     {"Delay", rp500_delay_effect, G_N_ELEMENTS(rp500_delay_effect)},
     {"Reverb", reverb_effect, G_N_ELEMENTS(reverb_effect)},
 };
