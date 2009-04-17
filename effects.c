@@ -785,39 +785,39 @@ static EffectSettings chorusfx_octaver_settings[] = {
 
 static EffectSettings delay_analog_settings[] = {
     {"Time", DELAY_TIME, DELAY_POSITION, &values_delay_time},
-    {"Level", ANALOG_LEVEL, DELAY_POSITION, &values_0_to_99},
-    {"Repeats", ANALOG_REPEATS, DELAY_POSITION, &values_delay_repeats},
+    {"Level", DELAY_LEVEL, DELAY_POSITION, &values_0_to_99},
+    {"Repeats", DELAY_REPEATS, DELAY_POSITION, &values_delay_repeats},
 };
 
 static EffectSettings delay_digital_settings[] = {
     {"Time", DELAY_TIME, DELAY_POSITION, &values_delay_time},
-    {"Level", DIGITAL_LEVEL, DELAY_POSITION, &values_0_to_99},
-    {"Repeats", DIGITAL_REPEATS, DELAY_POSITION, &values_delay_repeats},
-    {"Ducker thresh", DIGITAL_DUCKER_THRESH, DELAY_POSITION, &values_0_to_99},
-    {"Ducker level", DIGITAL_DUCKER_LEVEL, DELAY_POSITION, &values_0_to_99},
+    {"Level", DELAY_LEVEL, DELAY_POSITION, &values_0_to_99},
+    {"Repeats", DELAY_REPEATS, DELAY_POSITION, &values_delay_repeats},
+    {"Ducker thresh", DELAY_DUCK_THRESH, DELAY_POSITION, &values_0_to_99},
+    {"Ducker level", DELAY_DUCK_LEVEL, DELAY_POSITION, &values_0_to_99},
 };
 
 static EffectSettings delay_modulated_settings[] = {
     {"Time", DELAY_TIME, DELAY_POSITION, &values_delay_time},
-    {"Level", MODULATED_LEVEL, DELAY_POSITION, &values_0_to_99},
-    {"Repeats", MODULATED_REPEATS, DELAY_POSITION, &values_delay_repeats},
-    {"Depth", MODULATED_DEPTH, DELAY_POSITION, &values_0_to_99},
+    {"Level", DELAY_LEVEL, DELAY_POSITION, &values_0_to_99},
+    {"Repeats", DELAY_REPEATS, DELAY_POSITION, &values_delay_repeats},
+    {"Depth", DELAY_DEPTH, DELAY_POSITION, &values_0_to_99},
 };
 
 static EffectSettings delay_pong_settings[] = {
     {"Time", DELAY_TIME, DELAY_POSITION, &values_delay_time},
-    {"Level", PONG_LEVEL, DELAY_POSITION, &values_0_to_99},
-    {"Repeats", PONG_REPEATS, DELAY_POSITION, &values_delay_repeats},
-    {"Ducker thresh", PONG_DUCKER_THRESH, DELAY_POSITION, &values_0_to_99},
-    {"Ducker level", PONG_DUCKER_LEVEL, DELAY_POSITION, &values_0_to_99},
+    {"Level", DELAY_LEVEL, DELAY_POSITION, &values_0_to_99},
+    {"Repeats", DELAY_REPEATS, DELAY_POSITION, &values_delay_repeats},
+    {"Ducker thresh", DELAY_DUCK_THRESH, DELAY_POSITION, &values_0_to_99},
+    {"Ducker level", DELAY_DUCK_LEVEL, DELAY_POSITION, &values_0_to_99},
 };
 
 static EffectSettings delay_tape_settings[] = {
     {"Time", DELAY_TIME, DELAY_POSITION, &values_delay_time},
-    {"Level", TAPE_LEVEL, DELAY_POSITION, &values_0_to_99},
-    {"Repeats", TAPE_REPEATS, DELAY_POSITION, &values_delay_repeats},
-    {"Wow", TAPE_WOW, DELAY_POSITION, &values_0_to_99},
-    {"Flutter", TAPE_FLUTTER, DELAY_POSITION, &values_0_to_99},
+    {"Level", DELAY_LEVEL, DELAY_POSITION, &values_0_to_99},
+    {"Repeats", DELAY_REPEATS, DELAY_POSITION, &values_delay_repeats},
+    {"Wow", DELAY_TAPE_WOW, DELAY_POSITION, &values_0_to_99},
+    {"Flutter", DELAY_TAPE_FLUTTER, DELAY_POSITION, &values_0_to_99},
 };
 
 static EffectSettings rp500_delay_digital_settings[] = {
@@ -871,8 +871,8 @@ static EffectSettings rp500_delay_tape_settings[] = {
     {"Tap Time", DELAY_TAP_TIME_0_4990, DELAY_POSITION, &values_delay_time_0_4990},
     {"Repeats", DELAY_REPEATS, DELAY_POSITION, &values_delay_repeats},
     {"Level", DELAY_LEVEL, DELAY_POSITION, &values_0_to_99},
-    {"Tape Wow", TAPE_WOW, DELAY_POSITION, &values_0_to_99},
-    {"Tape Flutter", TAPE_FLUTTER, DELAY_POSITION, &values_0_to_99},
+    {"Tape Wow", DELAY_TAPE_WOW, DELAY_POSITION, &values_0_to_99},
+    {"Tape Flutter", DELAY_TAPE_FLUTTER, DELAY_POSITION, &values_0_to_99},
 };
 
 static EffectSettings reverb_twin_settings[] = {
@@ -1504,13 +1504,13 @@ static Modifier modifiers[] = {
     {"IPS Level", IPS_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
     {"Delay Enable", DELAY_ON_OFF, DELAY_POSITION, &values_on_off},
     {"Delay Time", DELAY_TIME, DELAY_POSITION, &values_delay_time},
-    {"Delay Repeats", ANALOG_REPEATS, DELAY_POSITION, &values_delay_repeats},
-    {"Delay Level", ANALOG_LEVEL, DELAY_POSITION, &values_0_to_99},
-    {"Delay Duck Thresh", DIGITAL_DUCKER_THRESH, DELAY_POSITION, &values_0_to_99},
-    {"Delay Duck Level", DIGITAL_DUCKER_LEVEL, DELAY_POSITION, &values_0_to_99},
-    {"Delay Mod Depth", MODULATED_DEPTH, DELAY_POSITION, &values_0_to_99},
-    {"Delay Tape Wow", TAPE_WOW, DELAY_POSITION, &values_0_to_99},
-    {"Delay Tape Flut", TAPE_FLUTTER, DELAY_POSITION, &values_0_to_99},
+    {"Delay Repeats", DELAY_REPEATS, DELAY_POSITION, &values_delay_repeats},
+    {"Delay Level", DELAY_LEVEL, DELAY_POSITION, &values_0_to_99},
+    {"Delay Duck Thresh", DELAY_DUCK_THRESH, DELAY_POSITION, &values_0_to_99},
+    {"Delay Duck Level", DELAY_DUCK_LEVEL, DELAY_POSITION, &values_0_to_99},
+    {"Delay Mod Depth", DELAY_DEPTH, DELAY_POSITION, &values_0_to_99},
+    {"Delay Tape Wow", DELAY_TAPE_WOW, DELAY_POSITION, &values_0_to_99},
+    {"Delay Tape Flut", DELAY_TAPE_FLUTTER, DELAY_POSITION, &values_0_to_99},
     {"Reverb Enable", REVERB_ON_OFF, REVERB_POSITION, &values_on_off},
     {"Reverb Decay", LEX_AMBIENCE_DECAY, REVERB_POSITION, &values_0_to_99},
     {"Reverb Liveliness", LEX_STUDIO_LIVELINESS, REVERB_POSITION, &values_0_to_99},

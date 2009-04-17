@@ -475,68 +475,6 @@ enum {
 #define OCTAVER_OCTAVE2 1747
 #define OCTAVER_DRY_LEVEL 1748
 
-/* DUAL_CHORUS_WAVE, MULTI_CHORUS_WAVE, FLANGER_WAVE, PHASER_WAVE,
-   VIBROPAN_WAVE, TREMOLO_WAVE, PANNER_WAVE valid values */
-#define WAVE_TRI    0x00
-#define WAVE_SINE   0x01
-#define WAVE_SQUARE 0x02
-
-/* WHAMMY_AMOUNT valid values */
-#define WHAMMY_OCT_UP 0x00
-#define WHAMMY_2OCT_UP 0x01
-#define WHAMMY_2ND_DN 0x02
-#define WHAMMY_RV_2ND 0x03
-#define WHAMMY_4TH_DN 0x04
-#define WHAMMY_OCT_DN 0x05
-#define WHAMMY_2OCT_DN 0x06
-#define WHAMMY_DIV_BMB 0x07
-#define WHAMMY_M3_MA 0x08
-#define WHAMMY_2ND_MA3 0x09
-#define WHAMMY_3RD_4TH 0x0A
-#define WHAMMY_4TH_5TH 0x0B
-#define WHAMMY_5TH_OCT 0x0C
-#define WHAMMY_HOCT_UP 0x0D
-#define WHAMMY_HOCT_DN 0x0E
-#define WHAMMY_OCT_UD 0x0F
-
-/* IPS_SHIFT_AMOUNT valid values */
-#define IPS_OCT_D 0x00
-#define IPS_7TH_DN 0x01
-#define IPS_6TH_DN 0x02
-#define IPS_5TH_DN 0x03
-#define IPS_4TH_DN 0x04
-#define IPS_3RD_DN 0x05
-#define IPS_2ND_DN 0x06
-#define IPS_2ND_UP 0x07
-#define IPS_3RD_UP 0x08
-#define IPS_4TH_UP 0x09
-#define IPS_5TH_UP 0x0A
-#define IPS_6TH_UP 0x0B
-#define IPS_7TH_UP 0x0C
-#define IPS_OCT_U 0x0D
-
-/* IPS_KEY valid values */
-#define IPS_E 0x00
-#define IPS_F 0x01
-#define IPS_GB 0x02
-#define IPS_G 0x03
-#define IPS_AB 0x04
-#define IPS_A 0x05
-#define IPS_BB 0x06
-#define IPS_B 0x07
-#define IPS_C 0x08
-#define IPS_DB 0x09
-#define IPS_D 0x0A
-#define IPS_EB 0x0B
-
-/* IPS_SCALE valid values */
-#define IPS_MAJOR 0x00
-#define IPS_MINOR 0x01
-#define IPS_DORIA 0x02
-#define IPS_MIXLYD 0x03
-#define IPS_LYDIAN 0x04
-#define IPS_HMINO 0x05
-
 enum {
   DELAY_TYPE_ANALOG = 1046,
   DELAY_TYPE_DIGITAL = 1045,
@@ -560,27 +498,8 @@ enum {
 
 #define DELAY_TIME 1888
 
-#define ANALOG_LEVEL 1860
-#define ANALOG_REPEATS 1863
-
-#define DIGITAL_LEVEL 1860
-#define DIGITAL_REPEATS 1863
-#define DIGITAL_DUCKER_THRESH 1889
-#define DIGITAL_DUCKER_LEVEL 1890
-
-#define MODULATED_LEVEL 1860
-#define MODULATED_REPEATS 1863
-#define MODULATED_DEPTH 1873
-
-#define PONG_LEVEL 1860
-#define PONG_REPEATS 1863
-#define PONG_DUCKER_THRESH 1889
-#define PONG_DUCKER_LEVEL 1890
-
-#define TAPE_LEVEL 1860
-#define TAPE_REPEATS 1863
-#define TAPE_WOW 1891
-#define TAPE_FLUTTER 1892
+#define DELAY_TAPE_WOW 1891
+#define DELAY_TAPE_FLUTTER 1892
 
 #define DELAY_LEVEL 1860
 #define DELAY_REPEATS 1863
