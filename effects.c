@@ -1266,6 +1266,11 @@ static EffectGroup effects_lib_group[] = {
     {EFFECTS_LIB_ROTARY_TAPE, "Rotary + Tape Delay", LIBRARY_EFFECTS, LIBRARY_POSITION, NULL, -1},
 };
 
+static EffectGroup pickup_group[] = {
+    {PICKUP_TYPE_HB_SC, "HB>SC", PICKUP_TYPE, PICKUP_POSITION, NULL, -1},
+    {PICKUP_TYPE_SC_HB, "SC>HB", PICKUP_TYPE, PICKUP_POSITION, NULL, -1},
+};
+
 static Effect wah_effect[] = {
     {NULL, WAH_ON_OFF, WAH_POSITION, wah_group, G_N_ELEMENTS(wah_group)},
 };
@@ -1328,6 +1333,10 @@ static Effect rp500_eq_effect[] = {
     {"Enable Equalizer", EQ_ON_OFF, EQ_POSITION, rp500_eq_group, G_N_ELEMENTS(rp500_eq_group)},
 };
 
+static Effect pickup_effect[] = {
+    {NULL, PICKUP_ON_OFF, PICKUP_POSITION, pickup_group, G_N_ELEMENTS(pickup_group)},
+};
+
 static EffectList rp250_effects[] = {
     {"Wah", wah_effect, G_N_ELEMENTS(wah_effect)},
     {"Amplifier", rp250_amp_effect, G_N_ELEMENTS(rp250_amp_effect)},
@@ -1338,6 +1347,7 @@ static EffectList rp250_effects[] = {
     {"Chorus/FX", rp250_chorusfx_effect, G_N_ELEMENTS(rp250_chorusfx_effect)},
     {"Delay", rp250_delay_effect, G_N_ELEMENTS(rp250_delay_effect)},
     {"Reverb", reverb_effect, G_N_ELEMENTS(reverb_effect)},
+    {"Pickup", pickup_effect, G_N_ELEMENTS(pickup_effect)},
 };
 
 static int n_rp250_effects = G_N_ELEMENTS(rp250_effects);
