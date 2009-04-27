@@ -59,7 +59,7 @@ gboolean open_device()
 {
     int err;
 
-    err = snd_rawmidi_open(&input, &output, device, SND_RAWMIDI_NONBLOCK);
+    err = snd_rawmidi_open(&input, &output, device, SND_RAWMIDI_SYNC);
     if (err) {
         fprintf(stderr, "snd_rawmidi_open %s failed: %d\n", device, err);
         return TRUE;
@@ -462,7 +462,7 @@ GString *get_current_preset()
 {
     GString *data = NULL;
 
-    send_message(REQUEST_PRESET, "\x04\x00", 3);
+    send_message(REQUEST_PRESET, "\x04\x00", 2);
 
     /* read reply */
     data = get_message_by_id(RECEIVE_PRESET_PARAMETERS);
@@ -583,10 +583,15 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    if (output != NULL)
+    if (output != NULL) {
+        snd_rawmidi_drain(output);
         snd_rawmidi_close(output);
-    if (input != NULL)
+    }
+
+    if (input != NULL) {
+        snd_rawmidi_drain(input);
         snd_rawmidi_close(input);
+    }
 
     return EXIT_SUCCESS;
 }
