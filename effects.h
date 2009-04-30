@@ -62,14 +62,21 @@ typedef struct {
 
 typedef struct {
     gchar *name;
-    EffectList *list;
-    int n_list;
-} SupportedDevices;
+    PresetBank bank;
+} Banks;
+
+typedef struct {
+    gchar *name;
+    EffectList *effects;
+    gint n_effects;
+    Banks *banks;
+    gint n_banks;
+} Device;
 
 ModifierGroup *modifier_linkable_list();
 void modifier_group_free(ModifierGroup *modifier_group);
-gboolean get_effect_list(unsigned char device_id, unsigned char family_id,
+gboolean get_device_info(unsigned char device_id, unsigned char family_id,
                          unsigned char product_id,
-                         EffectList **list, int *n_list);
+                         Device **device);
 
 #endif /* GDIGI_EFFECTS_H */

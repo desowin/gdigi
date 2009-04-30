@@ -1350,8 +1350,6 @@ static EffectList rp250_effects[] = {
     {"Pickup", pickup_effect, G_N_ELEMENTS(pickup_effect)},
 };
 
-static int n_rp250_effects = G_N_ELEMENTS(rp250_effects);
-
 static EffectList rp500_effects[] = {
     {"Wah", wah_effect, G_N_ELEMENTS(wah_effect)},
     {"Amplifier", rp500_amp_effect, G_N_ELEMENTS(rp500_amp_effect)},
@@ -1364,11 +1362,30 @@ static EffectList rp500_effects[] = {
     {"Reverb", reverb_effect, G_N_ELEMENTS(reverb_effect)},
 };
 
-static int n_rp500_effects = G_N_ELEMENTS(rp500_effects);
+static Banks rp_banks[] = {
+    {"User Presets", PRESETS_USER},
+    {"System Presets", PRESETS_SYSTEM},
+};
 
-SupportedDevices supported_devices[] = {
-    {"DigiTech RP250", rp250_effects, G_N_ELEMENTS(rp250_effects)},
-    {"DigiTech RP500", rp500_effects, G_N_ELEMENTS(rp500_effects)},
+static Device rp250 = {
+    .name = "DigiTech RP250",
+    .effects = rp250_effects,
+    .n_effects = G_N_ELEMENTS(rp250_effects),
+    .banks = rp_banks,
+    .n_banks = G_N_ELEMENTS(rp_banks),
+};
+
+static Device rp500 = {
+    .name = "DigiTech RP500",
+    .effects = rp500_effects,
+    .n_effects = G_N_ELEMENTS(rp500_effects),
+    .banks = rp_banks,
+    .n_banks = G_N_ELEMENTS(rp_banks),
+};
+
+Device* supported_devices[] = {
+    &rp250,
+    &rp500,
 };
 
 int n_supported_devices = G_N_ELEMENTS(supported_devices);
@@ -1658,27 +1675,24 @@ void modifier_group_free(ModifierGroup *modifier_group)
  *  \param device_id Device ID
  *  \param family_id Family ID
  *  \param product_id Product ID
- *  \param list Variable to hold effect list
- *  \param n_list Variable to hold length of effect list
+ *  \param device Variable to hold device information
  *
  *  Gets appropiate effect list basing on device, family and product IDs.
  *
  *  \return TRUE if list and n_list were set, FALSE otherwise.
  **/
-gboolean get_effect_list(unsigned char device_id, unsigned char family_id,
+gboolean get_device_info(unsigned char device_id, unsigned char family_id,
                          unsigned char product_id,
-                         EffectList **list, int *n_list)
+                         Device **device)
 {
     switch (family_id) {
         case 0x5E: /* RP series */
             switch (product_id) {
                 case 0x02: /* RP250 */
-                    *list = rp250_effects;
-                    *n_list = n_rp250_effects;
+                    *device = &rp250;
                     return TRUE;
                 case 0x05: /* RP500 */
-                    *list = rp500_effects;
-                    *n_list = n_rp500_effects;
+                    *device = &rp500;
                     return TRUE;
                 default:
                     g_message("Unsupported RP model!");

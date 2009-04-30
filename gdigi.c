@@ -28,7 +28,7 @@ static unsigned char product_id = 0x7F;
 
 static snd_rawmidi_t *output = NULL;
 static snd_rawmidi_t *input = NULL;
-static char *device = "hw:1,0,0";
+static char *device_port = "hw:1,0,0";
 
 static GQueue *message_queue = NULL;
 static GMutex *message_queue_mutex = NULL;
@@ -62,9 +62,9 @@ gboolean open_device()
 {
     int err;
 
-    err = snd_rawmidi_open(&input, &output, device, SND_RAWMIDI_SYNC);
+    err = snd_rawmidi_open(&input, &output, device_port, SND_RAWMIDI_SYNC);
     if (err) {
-        fprintf(stderr, "snd_rawmidi_open %s failed: %d\n", device, err);
+        fprintf(stderr, "snd_rawmidi_open %s failed: %d\n", device_port, err);
         return TRUE;
     }
 
@@ -600,7 +600,7 @@ static void request_device_configuration()
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 static GOptionEntry options[] = {
-    {"device", 'd', G_OPTION_FLAG_IN_MAIN, G_OPTION_ARG_STRING, &device, "MIDI device port to use", NULL},
+    {"device", 'd', G_OPTION_FLAG_IN_MAIN, G_OPTION_ARG_STRING, &device_port, "MIDI device port to use", NULL},
     {NULL}
 };
 
@@ -644,17 +644,16 @@ int main(int argc, char *argv[]) {
         if (request_who_am_i(&device_id, &family_id, &product_id) == FALSE) {
             show_error_message(NULL, "No suitable reply from device");
         } else {
-            EffectList *list = NULL;
-            int n_list = -1;
+            Device *device = NULL;
 
-            if (get_effect_list(device_id, family_id, product_id, &list, &n_list) == FALSE) {
-                if (unsupported_device_dialog(&list, &n_list) == FALSE) {
+            if (get_device_info(device_id, family_id, product_id, &device) == FALSE) {
+                if (unsupported_device_dialog(&device) == FALSE) {
                     g_message("Shutting down");
                 }
             }
 
-            if (list != NULL && n_list != -1) {
-                gui_create(list, n_list);
+            if (device != NULL) {
+                gui_create(device);
                 gtk_main();
                 gui_free();
             }

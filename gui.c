@@ -494,22 +494,32 @@ static void fill_store_with_presets(GtkTreeStore *model, guint bank, gchar *name
  **/
 static void fill_store(GtkTreeStore *model)
 {
-    fill_store_with_presets(model, PRESETS_USER, "User Presets");
-    fill_store_with_presets(model, PRESETS_SYSTEM, "System Presets");
+    Device *device = g_object_get_data(G_OBJECT(model), "device");
+
+    g_return_if_fail(device != NULL);
+
+    gint i;
+    for (i=0; i<device->n_banks; i++)
+        fill_store_with_presets(model,
+                                device->banks[i].bank,
+                                device->banks[i].name);
 }
 
 /**
+ *  \param device device information
+ *
  *  Creates treeview showing list of presets available on device.
  *
  *  \return treeview containing all preset names found on device.
  **/
-GtkWidget *create_preset_tree()
+GtkWidget *create_preset_tree(Device *device)
 {
     GtkWidget *treeview;
     GtkTreeStore *store;
     GtkCellRenderer *renderer;
 
     store = gtk_tree_store_new(NUM_COLUMNS, G_TYPE_STRING, G_TYPE_INT, G_TYPE_INT);
+    g_object_set_data(G_OBJECT(store), "device", device);
     fill_store(store);
 
     treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
@@ -844,7 +854,7 @@ static void add_menubar(GtkWidget *window, GtkWidget *vbox)
 /**
  *  Creates main window.
  **/
-void gui_create(EffectList *effects, int n_effects)
+void gui_create(Device *device)
 {
     GtkWidget *window;
     GtkWidget *vbox;
@@ -868,7 +878,7 @@ void gui_create(EffectList *effects, int n_effects)
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
     gtk_box_pack_start(GTK_BOX(hbox), sw, FALSE, FALSE, 0);
 
-    widget = create_preset_tree();
+    widget = create_preset_tree(device);
     gtk_container_add(GTK_CONTAINER(sw), widget);
 
     vbox = gtk_vbox_new(FALSE, 0);
@@ -876,12 +886,12 @@ void gui_create(EffectList *effects, int n_effects)
 
     knob_anim = gtk_knob_animation_new_from_inline(knob_pixbuf);
 
-    for (x = 0; x<n_effects; x++) {
-        if ((x % ((n_effects+1)/2)) == 0) {
+    for (x = 0; x<device->n_effects; x++) {
+        if ((x % ((device->n_effects+1)/2)) == 0) {
             hbox = gtk_hbox_new(FALSE, 0);
             gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 2);
         }
-        widget = create_vbox(effects[x].effect, effects[x].amt, effects[x].label);
+        widget = create_vbox(device->effects[x].effect, device->effects[x].amt, device->effects[x].label);
         gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 2);
     }
 
@@ -904,16 +914,15 @@ void gui_free()
 }
 
 /**
- *  \param list Variable to hold effect list
- *  \param n_list Variable to hold length of effect list
+ *  \param device Variable to hold device information
  *
  *  Displays dialogbox stating that device is unsupported.
  *
  *  \return TRUE if user selects "compability mode", otherwise FALSE.
  **/
-gboolean unsupported_device_dialog(EffectList **list, int *n_list)
+gboolean unsupported_device_dialog(Device **device)
 {
-    extern SupportedDevices supported_devices[];
+    extern Device* supported_devices[];
     extern int n_supported_devices;
 
     GtkWidget *dialog;
@@ -936,7 +945,7 @@ gboolean unsupported_device_dialog(EffectList **list, int *n_list)
 
     combo_box = gtk_combo_box_new_text();
     for (x=0; x<n_supported_devices; x++) {
-        gtk_combo_box_append_text(GTK_COMBO_BOX(combo_box), supported_devices[x].name);
+        gtk_combo_box_append_text(GTK_COMBO_BOX(combo_box), supported_devices[x]->name);
     }
 
     gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), combo_box);
@@ -945,9 +954,8 @@ gboolean unsupported_device_dialog(EffectList **list, int *n_list)
     if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
         gint number = gtk_combo_box_get_active(GTK_COMBO_BOX(combo_box));
         if (number != -1 && number <n_supported_devices) {
-            g_message("Starting %s compability mode", supported_devices[number].name);
-            *list = supported_devices[number].list;
-            *n_list = supported_devices[number].n_list;
+            g_message("Starting %s compability mode", supported_devices[number]->name);
+            *device = supported_devices[number];
             gtk_widget_destroy(dialog);
             return TRUE;
         }

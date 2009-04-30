@@ -21,8 +21,8 @@
 #include "effects.h"
 
 void show_error_message(GtkWidget *parent, gchar *message);
-void gui_create(EffectList *list, int n_list);
+void gui_create(Device *device);
 void gui_free();
-gboolean unsupported_device_dialog(EffectList **list, int *n_list);
+gboolean unsupported_device_dialog(Device **device);
 
 #endif /* GDIGI_GUI_H */
