@@ -30,6 +30,9 @@ static snd_rawmidi_t *output = NULL;
 static snd_rawmidi_t *input = NULL;
 static char *device = "hw:1,0,0";
 
+static GQueue *message_queue = NULL;
+static GMutex *message_queue_mutex = NULL;
+
 /**
  *  \param array data to calculate checksum
  *  \param length data length
@@ -169,17 +172,59 @@ static void unpack_message(GString *msg)
 }
 
 /**
- *  Reads data from MIDI IN. This function uses global input variable.
+ *  \param msg SysEx message
  *
- *  \return GString containing data, or NULL when no data was read.
+ *  Checks message ID.
+ *
+ *  \return MessageID, or -1 on error.
  **/
-GString* read_data()
+static MessageID get_message_id(GString *msg)
+{
+    /** \todo check if msg is valid SysEx message */
+    g_return_val_if_fail(msg != NULL, -1);
+    g_return_val_if_fail(msg->str != NULL, -1);
+
+    if (msg->len > 7) {
+        return (unsigned char)msg->str[7];
+    }
+    return -1;
+}
+
+void push_message(GString *msg)
+{
+    if (((unsigned char)msg->str[0] == 0xF0) && ((unsigned char)msg->str[msg->len-1] == 0xF7))
+        g_message("Pushing correct message!");
+    else
+        g_warning("Pushing incorrect message!");
+
+    int x;
+    for (x = 0; x<msg->len; x++)
+        printf("%02x ", (unsigned char)msg->str[x]);
+    printf("\n");
+
+    if (get_message_id(msg) == ACK) {
+        g_message("Received ACK");
+        g_string_free(msg, TRUE);
+        return;
+    }
+
+    if (get_message_id(msg) == NACK) {
+        g_message("Received NACK");
+        g_string_free(msg, TRUE);
+        return;
+    }
+
+    g_mutex_lock(message_queue_mutex);
+    g_queue_push_tail(message_queue, msg);
+    g_mutex_unlock(message_queue_mutex);
+}
+
+gpointer read_data_thread(gboolean *stop)
 {
     /* This is mostly taken straight from alsa-utils-1.0.19 amidi/amidi.c
        by Clemens Ladisch <clemens@ladisch.de> */
     int err;
     int npfds;
-    gboolean stop = FALSE;
     struct pollfd *pfds;
     GString *string = NULL;
 
@@ -188,9 +233,13 @@ GString* read_data()
     snd_rawmidi_poll_descriptors(input, pfds, npfds);
 
     do {
-        char buf[20];
+        unsigned char buf[256];
         int i, length;
         unsigned short revents;
+
+        /* SysEx messages can't contain bytes with 8th bit set.
+           memset our buffer to 0xFF, so if for some reason we'll get out of reply bounds, we'll catch it */
+        memset(buf, sizeof(buf), 0xFF);
 
         err = poll(pfds, npfds, 200);
         if (err < 0 && errno == EINTR)
@@ -221,19 +270,39 @@ GString* read_data()
             if (buf[i] != 0xFE) /* ignore active sensing */
                 buf[length++] = buf[i];
 
-        if ((unsigned char)buf[length-1] == 0xF7)
-            stop = TRUE;
+        i = 0;
 
-        if (length != 0) {
-            if (string == NULL) {
-                string = g_string_new_len(buf, length);
-            } else {
-                string = g_string_append_len(string, buf, length);
+        while (i < length) {
+            int pos;
+            int bytes;
+
+            pos = i;
+
+            for (bytes = 0; (bytes<length-i) && (buf[i+bytes] != 0xF7); bytes++);
+
+            if (buf[i+bytes] == 0xF7) bytes++;
+
+            i += bytes;
+
+            if (string == NULL)
+                string = g_string_new_len((gchar*)&buf[pos], bytes);
+            else
+                g_string_append_len(string, (gchar*)&buf[pos], bytes);
+
+            if ((unsigned char)string->str[string->len-1] == 0xF7) {
+                /* push message on stack */
+                push_message(string);
+                string = NULL;
             }
         }
-    } while ((err != 0) && (stop == FALSE));
+    } while (*stop == FALSE);
 
-    return string;
+    if (string) {
+        g_string_free(string, TRUE);
+        string = NULL;
+    }
+
+    return NULL;
 }
 
 /**
@@ -269,39 +338,32 @@ void send_message(gint procedure, gchar *data, gint len)
 }
 
 /**
- *  \param msg SysEx message
- *
- *  Checks message ID.
- *
- *  \return MessageID, or -1 on error.
- **/
-static MessageID get_message_id(GString *msg)
-{
-    /** \todo check if msg is valid SysEx message */
-    g_return_val_if_fail(msg != NULL, -1);
-
-    if (msg->len > 7) {
-        return (unsigned char)msg->str[7];
-    }
-    return -1;
-}
-
-/**
  *  \param id MessageID of requested message
  *
- *  Reads data from MIDI IN until message with matching id is found.
+ *  Reads data from message queue until message with matching id is found.
  *
  *  \return GString containing unpacked message.
  **/
 GString *get_message_by_id(MessageID id)
 {
     GString *data = NULL;
+    guint x, len;
+    gboolean found = FALSE;
 
     do {
-        if (data)
-            g_string_free(data, TRUE);
-        data = read_data();
-    } while (get_message_id(data) != id);
+        g_mutex_lock(message_queue_mutex);
+
+        len = g_queue_get_length(message_queue);
+        for (x = 0; x<len; x++) {
+            data = g_queue_peek_nth(message_queue, x);
+            if (get_message_id(data) == id) {
+                found = TRUE;
+                g_queue_pop_nth(message_queue, x);
+                break;
+            }
+        }
+        g_mutex_unlock(message_queue_mutex);
+    } while (found == FALSE);
 
     unpack_message(data);
 
@@ -484,12 +546,12 @@ static gboolean request_who_am_i(unsigned char *device_id, unsigned char *family
 {
     send_message(REQUEST_WHO_AM_I, NULL, 0);
 
-    GString *data = read_data();
+    GString *data = get_message_by_id(RECEIVE_WHO_AM_I);
     if (data != NULL) {
-        if ((data->len == 15) && (data->str[7] == RECEIVE_WHO_AM_I)) {
-            *device_id = data->str[9];
-            *family_id = data->str[10];
-            *product_id = data->str[11];
+        if (data->len == 14) {
+            *device_id = data->str[8];
+            *family_id = data->str[9];
+            *product_id = data->str[10];
             g_string_free(data, TRUE);
             return TRUE;
         }
@@ -544,9 +606,19 @@ static GOptionEntry options[] = {
 
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
+static void message_queue_free_func(GString *msg, gpointer user_data)
+{
+    g_string_free(msg, TRUE);
+}
+
 int main(int argc, char *argv[]) {
     GError *error = NULL;
     GOptionContext *context;
+    static gboolean stop_read_thread = FALSE;
+    GThread *read_thread = NULL;
+
+    g_thread_init(NULL);
+
     context = g_option_context_new(NULL);
     g_option_context_add_main_entries(context, options, NULL);
     g_option_context_add_group(context, gtk_get_option_group(TRUE));
@@ -563,6 +635,12 @@ int main(int argc, char *argv[]) {
     if (open_device() == TRUE) {
         show_error_message(NULL, "Failed to open MIDI device");
     } else {
+        message_queue = g_queue_new();
+        message_queue_mutex = g_mutex_new();
+        read_thread = g_thread_create((GThreadFunc)read_data_thread,
+                                      &stop_read_thread,
+                                      TRUE, NULL);
+
         if (request_who_am_i(&device_id, &family_id, &product_id) == FALSE) {
             show_error_message(NULL, "No suitable reply from device");
         } else {
@@ -581,6 +659,22 @@ int main(int argc, char *argv[]) {
                 gui_free();
             }
         }
+    }
+
+    if (read_thread != NULL) {
+        stop_read_thread = TRUE;
+        g_thread_join(read_thread);
+    }
+
+    if (message_queue_mutex != NULL) {
+        g_mutex_free(message_queue_mutex);
+    }
+
+    if (message_queue != NULL) {
+        g_message("%d unread messages in queue",
+                  g_queue_get_length(message_queue));
+        g_queue_foreach(message_queue, (GFunc) message_queue_free_func, NULL);
+        g_queue_free(message_queue);
     }
 
     if (output != NULL) {
