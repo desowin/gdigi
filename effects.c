@@ -968,6 +968,20 @@ static EffectGroup rp500_dist_group[] = {
     {DIST_TYPE_MP, "Big MP", DIST_TYPE, DIST_POSITION, dist_mp_settings, G_N_ELEMENTS(dist_mp_settings)},
 };
 
+static EffectGroup gnx3000_dist_group[] = {
+    {DIST_TYPE_SCREAMER, "Screamer", DIST_TYPE, DIST_POSITION, dist_screamer_settings, G_N_ELEMENTS(dist_screamer_settings)},
+    {DIST_TYPE_RODENT, "Rodent", DIST_TYPE, DIST_POSITION, dist_rodent_settings, G_N_ELEMENTS(dist_rodent_settings)},
+    {DIST_TYPE_DS, "DS", DIST_TYPE, DIST_POSITION, dist_ds_settings, G_N_ELEMENTS(dist_ds_settings)},
+    {DIST_TYPE_DOD250, "DOD250", DIST_TYPE, DIST_POSITION, dist_dod250_settings, G_N_ELEMENTS(dist_dod250_settings)},
+    {DIST_TYPE_MP, "Big MP", DIST_TYPE, DIST_POSITION, dist_mp_settings, G_N_ELEMENTS(dist_mp_settings)},
+    {DIST_TYPE_GUYOD, "Guy OD", DIST_TYPE, DIST_POSITION, dist_guyod_settings, G_N_ELEMENTS(dist_guyod_settings)},
+    {DIST_TYPE_SPARKDRIVE, "Sparkdrive", DIST_TYPE, DIST_POSITION, dist_sparkdrive_settings, G_N_ELEMENTS(dist_sparkdrive_settings)},
+    {DIST_TYPE_GRUNGE, "Grunge", DIST_TYPE, DIST_POSITION, dist_grunge_settings, G_N_ELEMENTS(dist_grunge_settings)},
+    {DIST_TYPE_FUZZY, "Fuzzy", DIST_TYPE, DIST_POSITION, dist_fuzzy_settings, G_N_ELEMENTS(dist_fuzzy_settings)},
+    {DIST_TYPE_ZONE, "Zone", DIST_TYPE, DIST_POSITION, dist_zone_settings, G_N_ELEMENTS(dist_zone_settings)},
+    {DIST_TYPE_8TAVIA, "8tavia", DIST_TYPE, DIST_POSITION, dist_8tavia_settings, G_N_ELEMENTS(dist_8tavia_settings)},
+};
+
 static EffectGroup noisegate_group[] = {
     {NOISEGATE_GATE, "Gate", NOISEGATE_TYPE, NOISEGATE_POSITION, noisegate_gate_settings, G_N_ELEMENTS(noisegate_gate_settings)},
     {NOISEGATE_SWELL, "Swell", NOISEGATE_TYPE, NOISEGATE_POSITION, noisegate_swell_settings, G_N_ELEMENTS(noisegate_swell_settings)},
@@ -1291,6 +1305,10 @@ static Effect rp500_dist_effect[] = {
     {NULL, DIST_ON_OFF, DIST_POSITION, rp500_dist_group, G_N_ELEMENTS(rp500_dist_group)},
 };
 
+static Effect gnx3000_dist_effect[] = {
+    {NULL, DIST_ON_OFF, DIST_POSITION, gnx3000_dist_group, G_N_ELEMENTS(gnx3000_dist_group)},
+};
+
 static Effect noisegate_effect[] = {
     {NULL, NOISEGATE_ON_OFF, NOISEGATE_POSITION, noisegate_group, G_N_ELEMENTS(noisegate_group)},
 };
@@ -1362,9 +1380,19 @@ static EffectList rp500_effects[] = {
     {"Reverb", reverb_effect, G_N_ELEMENTS(reverb_effect)},
 };
 
+static EffectList gnx3000_effects[] = {
+    {"Distortion", gnx3000_dist_effect, G_N_ELEMENTS(gnx3000_dist_effect)},
+};
+
 static Banks rp_banks[] = {
     {"User Presets", PRESETS_USER},
     {"System Presets", PRESETS_SYSTEM},
+};
+
+static Banks gnx_banks[] = {
+    {"User Presets", PRESETS_USER},
+    {"Factory 1", PRESETS_SYSTEM},
+    {"Factory 2", PRESETS_FACTORY2},
 };
 
 static Device rp250 = {
@@ -1383,9 +1411,18 @@ static Device rp500 = {
     .n_banks = G_N_ELEMENTS(rp_banks),
 };
 
+static Device gnx3000 = {
+    .name = "DigiTech GNX3000",
+    .effects = gnx3000_effects,
+    .n_effects = G_N_ELEMENTS(gnx3000_effects),
+    .banks = gnx_banks,
+    .n_banks = G_N_ELEMENTS(gnx_banks),
+};
+
 Device* supported_devices[] = {
     &rp250,
     &rp500,
+    &gnx3000,
 };
 
 int n_supported_devices = G_N_ELEMENTS(supported_devices);
@@ -1696,6 +1733,15 @@ gboolean get_device_info(unsigned char device_id, unsigned char family_id,
                     return TRUE;
                 default:
                     g_message("Unsupported RP model!");
+                    return FALSE;
+            }
+        case 0x5C:
+            switch (product_id) {
+                case 0x04: /* GNX3000 */
+                    *device = &gnx3000;
+                    return TRUE;
+                default:
+                    g_message("Unsupported model!");
                     return FALSE;
             }
         default:
