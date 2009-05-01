@@ -876,42 +876,14 @@ static EffectSettings rp500_delay_tape_settings[] = {
 };
 
 static EffectSettings reverb_twin_settings[] = {
-    {"Reverb", TWIN_REVERB, REVERB_POSITION, &values_0_to_99},
+    {"Reverb", REVERB_LEVEL, REVERB_POSITION, &values_0_to_99},
 };
 
-static EffectSettings reverb_lex_ambience_settings[] = {
-    {"Predelay", LEX_AMBIENCE_PREDELAY, REVERB_POSITION, &values_0_to_15},
-    {"Decay", LEX_AMBIENCE_DECAY, REVERB_POSITION, &values_0_to_99},
-    {"Liveliness", LEX_AMBIENCE_LIVELINESS, REVERB_POSITION, &values_0_to_99},
-    {"Level", LEX_AMBIENCE_LEVEL, REVERB_POSITION, &values_0_to_99},
-};
-
-static EffectSettings reverb_lex_studio_settings[] = {
-    {"Predelay", LEX_STUDIO_PREDELAY, REVERB_POSITION, &values_0_to_15},
-    {"Decay", LEX_STUDIO_DECAY, REVERB_POSITION, &values_0_to_99},
-    {"Liveliness", LEX_STUDIO_LIVELINESS, REVERB_POSITION, &values_0_to_99},
-    {"Level", LEX_STUDIO_LEVEL, REVERB_POSITION, &values_0_to_99},
-};
-
-static EffectSettings reverb_lex_room_settings[] = {
-    {"Predelay", LEX_ROOM_PREDELAY, REVERB_POSITION, &values_0_to_15},
-    {"Decay", LEX_ROOM_DECAY, REVERB_POSITION, &values_0_to_99},
-    {"Liveliness", LEX_ROOM_LIVELINESS, REVERB_POSITION, &values_0_to_99},
-    {"Level", LEX_ROOM_LEVEL, REVERB_POSITION, &values_0_to_99},
-};
-
-static EffectSettings reverb_lex_hall_settings[] = {
-    {"Predelay", LEX_HALL_PREDELAY, REVERB_POSITION, &values_0_to_15},
-    {"Decay", LEX_HALL_DECAY, REVERB_POSITION, &values_0_to_99},
-    {"Liveliness", LEX_HALL_LIVELINESS, REVERB_POSITION, &values_0_to_99},
-    {"Level", LEX_HALL_LEVEL, REVERB_POSITION, &values_0_to_99},
-};
-
-static EffectSettings reverb_emt240_plate_settings[] = {
-    {"Predelay", EMT240_PLATE_PREDELAY, REVERB_POSITION, &values_0_to_15},
-    {"Decay", EMT240_PLATE_DECAY, REVERB_POSITION, &values_0_to_99},
-    {"Liveliness", EMT240_PLATE_LIVELINESS, REVERB_POSITION, &values_0_to_99},
-    {"Level", EMT240_PLATE_LEVEL, REVERB_POSITION, &values_0_to_99},
+static EffectSettings reverb_lex_settings[] = {
+    {"Predelay", REVERB_PREDELAY, REVERB_POSITION, &values_0_to_15},
+    {"Decay", REVERB_DECAY, REVERB_POSITION, &values_0_to_99},
+    {"Liveliness", REVERB_LIVELINESS, REVERB_POSITION, &values_0_to_99},
+    {"Level", REVERB_LEVEL, REVERB_POSITION, &values_0_to_99},
 };
 
 static EffectGroup wah_group[] = {
@@ -1068,11 +1040,11 @@ static EffectGroup rp500_delay_group[] = {
 
 static EffectGroup reverb_group[] = {
     {REVERB_TYPE_TWIN, "Twin", REVERB_TYPE, REVERB_POSITION, reverb_twin_settings, G_N_ELEMENTS(reverb_twin_settings)},
-    {REVERB_TYPE_LEX_AMBIENCE, "Lexicon ambience", REVERB_TYPE, REVERB_POSITION, reverb_lex_ambience_settings, G_N_ELEMENTS(reverb_lex_ambience_settings)},
-    {REVERB_TYPE_LEX_STUDIO, "Lexicon studio", REVERB_TYPE, REVERB_POSITION, reverb_lex_studio_settings, G_N_ELEMENTS(reverb_lex_studio_settings)},
-    {REVERB_TYPE_LEX_ROOM, "Lexicon room", REVERB_TYPE, REVERB_POSITION, reverb_lex_room_settings, G_N_ELEMENTS(reverb_lex_room_settings)},
-    {REVERB_TYPE_LEX_HALL, "Lexicon hall", REVERB_TYPE, REVERB_POSITION, reverb_lex_hall_settings, G_N_ELEMENTS(reverb_lex_hall_settings)},
-    {REVERB_TYPE_EMT240_PLATE, "EMT240 Plate", REVERB_TYPE, REVERB_POSITION, reverb_emt240_plate_settings, G_N_ELEMENTS(reverb_emt240_plate_settings)},
+    {REVERB_TYPE_LEX_AMBIENCE, "Lexicon ambience", REVERB_TYPE, REVERB_POSITION, reverb_lex_settings, G_N_ELEMENTS(reverb_lex_settings)},
+    {REVERB_TYPE_LEX_STUDIO, "Lexicon studio", REVERB_TYPE, REVERB_POSITION, reverb_lex_settings, G_N_ELEMENTS(reverb_lex_settings)},
+    {REVERB_TYPE_LEX_ROOM, "Lexicon room", REVERB_TYPE, REVERB_POSITION, reverb_lex_settings, G_N_ELEMENTS(reverb_lex_settings)},
+    {REVERB_TYPE_LEX_HALL, "Lexicon hall", REVERB_TYPE, REVERB_POSITION, reverb_lex_settings, G_N_ELEMENTS(reverb_lex_settings)},
+    {REVERB_TYPE_EMT240_PLATE, "EMT240 Plate", REVERB_TYPE, REVERB_POSITION, reverb_lex_settings, G_N_ELEMENTS(reverb_lex_settings)},
 };
 
 static EffectGroup rp250_amp_group[] = {
@@ -1566,10 +1538,10 @@ static Modifier modifiers[] = {
     {"Delay Tape Wow", DELAY_TAPE_WOW, DELAY_POSITION, &values_0_to_99},
     {"Delay Tape Flut", DELAY_TAPE_FLUTTER, DELAY_POSITION, &values_0_to_99},
     {"Reverb Enable", REVERB_ON_OFF, REVERB_POSITION, &values_on_off},
-    {"Reverb Decay", LEX_AMBIENCE_DECAY, REVERB_POSITION, &values_0_to_99},
-    {"Reverb Liveliness", LEX_STUDIO_LIVELINESS, REVERB_POSITION, &values_0_to_99},
-    {"Reverb Level", LEX_STUDIO_LEVEL, REVERB_POSITION, &values_0_to_99},
-    {"Reverb Predelay", LEX_STUDIO_PREDELAY, REVERB_POSITION, &values_0_to_15},
+    {"Reverb Decay", REVERB_DECAY, REVERB_POSITION, &values_0_to_99},
+    {"Reverb Liveliness", REVERB_LIVELINESS, REVERB_POSITION, &values_0_to_99},
+    {"Reverb Level", REVERB_LEVEL, REVERB_POSITION, &values_0_to_99},
+    {"Reverb Predelay", REVERB_PREDELAY, REVERB_POSITION, &values_0_to_15},
     {"Volume Pre FX", 2626, 13, &values_0_to_99},
     {"Volume Post FX", 2626, 17, &values_0_to_99},
 };
