@@ -579,34 +579,34 @@ static EffectSettings noisegate_swell_settings[] = {
 };
 
 static EffectSettings chorusfx_ce_settings[] = {
-    {"Speed", CE_CHORUS_SPEED, CHORUSFX_POSITION, &values_0_to_99},
-    {"Depth", CE_CHORUS_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
+    {"Speed", CHORUS_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Depth", CHORUS_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
 };
 
 static EffectSettings chorusfx_tc_settings[] = {
-    {"Speed", CE_CHORUS_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Speed", CHORUS_SPEED, CHORUSFX_POSITION, &values_0_to_99},
     {"Width", CHORUS_WIDTH, CHORUSFX_POSITION, &values_0_to_99},
     {"Intensity", CHORUS_INTENSITY, CHORUSFX_POSITION, &values_0_to_99},
 };
 
 static EffectSettings chorusfx_dual_settings[] = {
-    {"Speed", DUAL_CHORUS_SPEED, CHORUSFX_POSITION, &values_0_to_99},
-    {"Depth", DUAL_CHORUS_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
-    {"Level", DUAL_CHORUS_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
-    {"Wave", DUAL_CHORUS_WAVE, CHORUSFX_POSITION, &values_waveform},
+    {"Speed", CHORUS_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Depth", CHORUS_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
+    {"Level", CHORUS_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
+    {"Wave", CHORUS_WAVE, CHORUSFX_POSITION, &values_waveform},
 };
 
 static EffectSettings chorusfx_glisten_settings[] = {
-    {"Speed", CE_CHORUS_SPEED, CHORUSFX_POSITION, &values_0_to_99},
-    {"Depth", DUAL_CHORUS_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
-    {"Level", DUAL_CHORUS_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
+    {"Speed", CHORUS_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Depth", CHORUS_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
+    {"Level", CHORUS_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
 };
 
 static EffectSettings chorusfx_multi_settings[] = {
-    {"Speed", MULTI_CHORUS_SPEED, CHORUSFX_POSITION, &values_0_to_99},
-    {"Depth", MULTI_CHORUS_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
-    {"Level", MULTI_CHORUS_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
-    {"Wave", MULTI_CHORUS_WAVE, CHORUSFX_POSITION, &values_waveform},
+    {"Speed", CHORUS_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Depth", CHORUS_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
+    {"Level", CHORUS_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
+    {"Wave", CHORUS_WAVE, CHORUSFX_POSITION, &values_waveform},
 };
 
 static EffectSettings chorusfx_flanger_settings[] = {
@@ -625,9 +625,9 @@ static EffectSettings chorusfx_trig_flanger_settings[] = {
 };
 
 static EffectSettings chorusfx_mxr_flanger_settings[] = {
-    {"Speed", MXR_FLANGER_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Speed", FLANGER_SPEED, CHORUSFX_POSITION, &values_0_to_99},
     {"Width", MXR_FLANGER_WIDTH, CHORUSFX_POSITION, &values_0_to_99},
-    {"Regen", MXR_FLANGER_REGEN, CHORUSFX_POSITION, &values_0_to_99},
+    {"Regen", FLANGER_REGEN, CHORUSFX_POSITION, &values_0_to_99},
     {"Manual", MXR_FLANGER_MANUAL, CHORUSFX_POSITION, &values_0_to_99},
 };
 
@@ -638,7 +638,7 @@ static EffectSettings chorusfx_eh_flanger_settings[] = {
 };
 
 static EffectSettings chorusfx_ad_flanger_settings[] = {
-    {"Speed", MXR_FLANGER_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Speed", FLANGER_SPEED, CHORUSFX_POSITION, &values_0_to_99},
     {"Enhance", AD_FLANGER_ENHANCE, CHORUSFX_POSITION, &values_0_to_99},
     {"Range", EH_FLANGER_RANGE, CHORUSFX_POSITION, &values_0_to_99},
     {"Harmonics", AD_FLANGER_HARMONICS, CHORUSFX_POSITION, &values_odd_even},
@@ -1480,10 +1480,10 @@ static Modifier modifiers[] = {
     {"Phaser Regen", PHASER_REGEN, CHORUSFX_POSITION, &values_0_to_99},
     {"Phaser Waveform", PHASER_WAVE, CHORUSFX_POSITION, &values_waveform},
     {"Phaser Level", PHASER_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
-    {"Chorus Speed", CE_CHORUS_SPEED, CHORUSFX_POSITION, &values_0_to_99},
-    {"Chorus Depth", CE_CHORUS_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
-    {"Chorus Level", DUAL_CHORUS_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
-    {"Chorus Waveform", DUAL_CHORUS_WAVE, CHORUSFX_POSITION, &values_waveform},
+    {"Chorus Speed", CHORUS_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Chorus Depth", CHORUS_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
+    {"Chorus Level", CHORUS_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
+    {"Chorus Waveform", CHORUS_WAVE, CHORUSFX_POSITION, &values_waveform},
     {"Flanger Speed", FLANGER_SPEED, CHORUSFX_POSITION, &values_0_to_99},
     {"Flanger Depth", FLANGER_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
     {"Flanger Regen", FLANGER_REGEN, CHORUSFX_POSITION, &values_0_to_99},
