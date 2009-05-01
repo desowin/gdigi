@@ -188,16 +188,23 @@ static void apply_current_preset()
 /**
  *  \param settings effect parameters
  *  \param amt amount of effect parameters
+ *  \param widget_table hash table matching settings pointer with created table (may be NULL)
  *
  *  Creates knobs that allow user to set effect parameters.
  *
  *  \return GtkTable containing necessary widgets to set effect parameters.
  **/
-GtkWidget *create_table(EffectSettings *settings, gint amt)
+GtkWidget *create_table(EffectSettings *settings, gint amt, GHashTable *widget_table)
 {
     GtkWidget *table, *label, *widget, *knob;
     GtkObject *adj;
     int x;
+
+    if (widget_table != NULL) {
+        table = g_hash_table_lookup(widget_table, settings);
+        if (table != NULL)
+            return table;
+    }
 
     table = gtk_table_new(3, amt, FALSE);
 
@@ -224,6 +231,10 @@ GtkWidget *create_table(EffectSettings *settings, gint amt)
         gtk_table_attach(GTK_TABLE(table), widget, 2, 3, x, x+1, GTK_SHRINK, GTK_SHRINK, 2, 2);
 
         g_signal_connect(G_OBJECT(adj), "value-changed", G_CALLBACK(value_changed_option_cb), &settings[x]);
+
+        if (widget_table != NULL) {
+            g_hash_table_insert(widget_table, settings, table);
+        }
     }
 
     return table;
@@ -300,6 +311,10 @@ void combo_box_changed_cb(GtkComboBox *widget, gpointer data)
             set_option(settings->id, settings->position, settings->type);
 
         child = g_object_get_data(G_OBJECT(widget), "active_child");
+        if (child == settings->child) {
+            return;
+        }
+
         if (child != NULL) {
             gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(gtk_widget_get_parent(vbox))), child);
         }
@@ -325,12 +340,15 @@ GtkWidget *create_widget_container(EffectGroup *group, gint amt)
     GtkWidget *vbox;
     GtkWidget *widget;
     GtkWidget *combo_box = NULL;
+    GHashTable *widget_table;
     EffectSettingsGroup *settings = NULL;
     gchar *name = NULL;
     gint x;
     gint cmbox_no = -1;
 
     vbox = gtk_vbox_new(FALSE, 0);
+
+    widget_table = g_hash_table_new(g_direct_hash, g_direct_equal);
 
     for (x = 0; x<amt; x++) {
         if (group[x].label) {
@@ -344,7 +362,7 @@ GtkWidget *create_widget_container(EffectGroup *group, gint amt)
             cmbox_no++;
 
             if ((group[x].settings != NULL) && (group[x].settings > 0)) {
-                widget = create_table(group[x].settings, group[x].settings_amt);
+                widget = create_table(group[x].settings, group[x].settings_amt, widget_table);
                 g_object_ref_sink(widget);
             } else
                 widget = NULL;
@@ -361,10 +379,12 @@ GtkWidget *create_widget_container(EffectGroup *group, gint amt)
             g_object_set_data_full(G_OBJECT(combo_box), name, settings, ((GDestroyNotify)effect_settings_group_free));
             g_free(name);
         } else {
-            widget = create_table(group[x].settings, group[x].settings_amt);
+            widget = create_table(group[x].settings, group[x].settings_amt, widget_table);
             gtk_container_add(GTK_CONTAINER(vbox), widget);
         }
     }
+
+    g_hash_table_destroy(widget_table);
 
     return vbox;
 }
