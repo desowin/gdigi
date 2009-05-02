@@ -361,7 +361,7 @@ GtkWidget *create_widget_container(EffectGroup *group, gint amt)
             gtk_combo_box_append_text(GTK_COMBO_BOX(combo_box), group[x].label);
             cmbox_no++;
 
-            if ((group[x].settings != NULL) && (group[x].settings > 0)) {
+            if ((group[x].settings != NULL) && (group[x].settings_amt > 0)) {
                 widget = create_table(group[x].settings, group[x].settings_amt, widget_table);
                 g_object_ref_sink(widget);
             } else
@@ -379,8 +379,10 @@ GtkWidget *create_widget_container(EffectGroup *group, gint amt)
             g_object_set_data_full(G_OBJECT(combo_box), name, settings, ((GDestroyNotify)effect_settings_group_free));
             g_free(name);
         } else {
-            widget = create_table(group[x].settings, group[x].settings_amt, widget_table);
-            gtk_container_add(GTK_CONTAINER(vbox), widget);
+            if ((group[x].settings != NULL) && (group[x].settings_amt > 0)) {
+                widget = create_table(group[x].settings, group[x].settings_amt, widget_table);
+                gtk_container_add(GTK_CONTAINER(vbox), widget);
+            }
         }
     }
 
