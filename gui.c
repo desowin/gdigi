@@ -150,6 +150,20 @@ static void apply_widget_setting(WidgetListElem *el, SettingParam *param)
 }
 
 /**
+ *  \param param SettingParam to apply to GUI
+ *
+ *  Applies SettingParam to GUI
+ **/
+void apply_setting_param_to_gui(SettingParam *param)
+{
+    g_return_if_fail(param != NULL);
+
+    allow_send = FALSE;
+    g_list_foreach(widget_list, (GFunc)apply_widget_setting, param);
+    allow_send = TRUE;
+}
+
+/**
  *  \param preset preset to sync
  *
  *  Synces GUI with preset.

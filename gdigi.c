@@ -214,6 +214,20 @@ void push_message(GString *msg)
         return;
     }
 
+    if (get_message_id(msg) == RECEIVE_PARAMETER_VALUE) {
+        unpack_message(msg);
+        SettingParam *param = setting_param_new_from_data(&msg->str[8], NULL);
+        g_message("Received parameter change ID: %d Position: %d Value: %d", param->id, param->position, param->value);
+
+        GDK_THREADS_ENTER();
+        apply_setting_param_to_gui(param);
+        GDK_THREADS_LEAVE();
+
+        setting_param_free(param);
+        g_string_free(msg, TRUE);
+        return;
+    }
+
     g_mutex_lock(message_queue_mutex);
     g_queue_push_tail(message_queue, msg);
     g_mutex_unlock(message_queue_mutex);
@@ -417,7 +431,8 @@ guint unpack_value(gchar *str, int *len)
     gint tmp;
 
     value = (unsigned char)str[0];
-    *len += 1;
+    if (len != NULL)
+       *len += 1;
 
     if (value > 0x80) {
         tmp = value & 0x7F;
@@ -426,7 +441,9 @@ guint unpack_value(gchar *str, int *len)
         for (i = 0; i<tmp; i++) {
             value |= ((unsigned char)str[1+i] << (8*(tmp-i-1)));
         }
-        *len += tmp;
+
+        if (len != NULL)
+            *len += tmp;
     }
 
     return value;
@@ -467,7 +484,8 @@ SettingParam *setting_param_new_from_data(gchar *str, gint *len)
 
     id = ((unsigned char)str[0] << 8) | (unsigned char)str[1];
     position = (unsigned char)str[2];
-    *len += 3;
+    if (len != NULL)
+       *len += 3;
 
     value = unpack_value(&str[3], len);
 
@@ -704,6 +722,7 @@ int main(int argc, char *argv[]) {
     GThread *read_thread = NULL;
 
     g_thread_init(NULL);
+    gdk_threads_init();
 
     context = g_option_context_new(NULL);
     g_option_context_add_main_entries(context, options, NULL);
