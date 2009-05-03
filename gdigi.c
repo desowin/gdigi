@@ -653,9 +653,15 @@ int main(int argc, char *argv[]) {
             }
 
             if (device != NULL) {
+                /* enable GUI mode */
+                set_option(GUI_MODE_ON_OFF, USB_POSITION, 1);
+
                 gui_create(device);
                 gtk_main();
                 gui_free();
+
+                /* disable GUI mode */
+                set_option(GUI_MODE_ON_OFF, USB_POSITION, 0);
             }
         }
     }

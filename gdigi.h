@@ -610,6 +610,8 @@ enum {
 #define USB_AUDIO_PLAYBACK_MIX 12297
 #define USB_AUDIO_LEVEL 12307
 
+#define GUI_MODE_ON_OFF 12298
+
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
 typedef enum {
