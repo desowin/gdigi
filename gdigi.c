@@ -404,6 +404,92 @@ void append_value(GString *msg, guint value)
 }
 
 /**
+ *  \param str pointer to value to unpack
+ *  \param len return location for how many bytes value is encoded on (length is added to current value)
+ *
+ *  Unpacks value using scheme used on all newer DigiTech products.
+ *
+ *  \return unpacked value
+ **/
+guint unpack_value(gchar *str, int *len)
+{
+    guint value;
+    gint tmp;
+
+    value = (unsigned char)str[0];
+    *len += 1;
+
+    if (value > 0x80) {
+        tmp = value & 0x7F;
+        value = 0;
+        gint i;
+        for (i = 0; i<tmp; i++) {
+            value |= ((unsigned char)str[1+i] << (8*(tmp-i-1)));
+        }
+        *len += tmp;
+    }
+
+    return value;
+}
+
+/**
+ *  Allocates memory for SettingParam.
+ *
+ *  \return SettingParam which must be freed using setting_param_free.
+ **/
+SettingParam *setting_param_new()
+{
+    SettingParam *param = g_slice_new(SettingParam);
+    param->id = -1;
+    param->position = -1;
+    param->value = -1;
+
+    return param;
+}
+
+/**
+ *  \param str pointer to setting param in message
+ *  \param len return location for how many bytes value is encoded on (length is added to current value)
+ *
+ *  Creates SettingParam basing on data.
+ *  This function expects str to point on:
+ *    -Parameter ID - 2 bytes
+ *    -Parameter position - 1 byte
+ *    -Parameter value - var
+ *
+ *  \return newly created SettingParam which must be freed using setting_param_free.
+ **/
+SettingParam *setting_param_new_from_data(gchar *str, gint *len)
+{
+    gint id;
+    gint position;
+    guint value;
+
+    id = ((unsigned char)str[0] << 8) | (unsigned char)str[1];
+    position = (unsigned char)str[2];
+    *len += 3;
+
+    value = unpack_value(&str[3], len);
+
+    SettingParam *param = g_slice_new(SettingParam);
+    param->id = id;
+    param->position = position;
+    param->value = value;
+
+    return param;
+}
+
+/**
+ *  \param param SettingParam to be freed
+ *
+ *  Frees all memory used by SettingParam.
+ **/
+void setting_param_free(SettingParam *param)
+{
+    g_slice_free(SettingParam, param);
+}
+
+/**
  *  \param id Parameter ID
  *  \param position Parameter position
  *  \param value Parameter value

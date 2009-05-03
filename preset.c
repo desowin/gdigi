@@ -18,6 +18,7 @@
 #include <expat.h>
 #include <string.h>
 #include "preset.h"
+#include "gdigi.h"
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -53,10 +54,7 @@ static void XMLCALL start(void *data, const char *el, const char **attr) {
         if (ad->preset->params != NULL)
             g_message("Params aleady exists!");
     } else if (g_strcmp0(el, "Param") == 0) {
-        SettingParam *param = g_slice_new(SettingParam);
-        param->id = -1;
-        param->position = -1;
-        param->value = -1;
+        SettingParam *param = setting_param_new();
         ad->preset->params = g_list_prepend(ad->preset->params, param);
     } else if (g_strcmp0(el, "ID") == 0) {
         ad->id = PARSER_TYPE_PARAM_ID;
@@ -185,11 +183,7 @@ Preset *create_preset_from_data(GString *data)
 {
     gint total;
     gint n;
-    gint id;
-    gint position;
-    guint value;
     gint x;
-    gint tmp;
 
     g_return_val_if_fail(data != NULL, NULL);
 
@@ -203,27 +197,10 @@ Preset *create_preset_from_data(GString *data)
     preset->params = NULL;
 
     do {
-        id = ((unsigned char)data->str[x] << 8) | (unsigned char)data->str[x+1];
-        position = (unsigned char)data->str[x+2];
-        x+=3;
-        value = data->str[x];
-        x++;
-        if (value > 0x80) {
-            tmp = value & 0x7F;
-            value = 0;
-            gint i;
-            for (i=0; i<tmp; i++) {
-                value |= ((unsigned char)data->str[x+i] << (8*(tmp-i-1)));
-            }
-            x+=tmp;
-        }
+        SettingParam *param = setting_param_new_from_data(&data->str[x], &x);
         n++;
-        SettingParam *param = g_slice_new(SettingParam);
-        param->id = id;
-        param->position = position;
-        param->value = value;
         preset->params = g_list_prepend(preset->params, param);
-        g_message("%d ID %d Position %d Value %d", n, id, position, value);
+        g_message("%d ID %d Position %d Value %d", n, param->id, param->position, param->value);
     } while ((x < data->len) && n<total);
     g_message("TOTAL %d", total);
     preset->params = g_list_reverse(preset->params);
@@ -243,7 +220,7 @@ void preset_free(Preset *preset)
     if (preset->params != NULL) {
         GList *iter;
         for (iter = preset->params; iter; iter = iter->next) {
-            g_slice_free(SettingParam, iter->data);
+            setting_param_free((SettingParam*)iter->data);
         }
         g_list_free(preset->params);
     }

@@ -682,9 +682,18 @@ typedef enum {
     NACK = 0x7F
 } MessageID;
 
+typedef struct {
+    int id;
+    int position;
+    int value;
+} SettingParam;
+
 void send_message(gint procedure, gchar *data, gint len);
 void append_value(GString *msg, guint value);
 GString *get_message_by_id(MessageID id);
+SettingParam *setting_param_new();
+SettingParam *setting_param_new_from_data(gchar *str, gint *len);
+void setting_param_free(SettingParam *param);
 void set_option(guint id, guint position, guint value);
 void switch_preset(guint bank, guint x);
 void store_preset_name(int x, const gchar *name);

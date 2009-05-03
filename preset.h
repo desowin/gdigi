@@ -20,12 +20,6 @@
 #include <glib.h>
 
 typedef struct {
-    int id;
-    int position;
-    int value;
-} SettingParam;
-
-typedef struct {
     gchar *name;
     GList *params;
 } Preset;
