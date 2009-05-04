@@ -239,10 +239,11 @@ void push_message(GString *msg)
                         GDK_THREADS_LEAVE();
                     } else
                         g_message("%d %d moved to %d %d", str[9], str[10], str[11], str[12]);
-                    return;
                 default:
                     g_message("Received unhandled device notification");
             }
+            g_string_free(msg, TRUE);
+            return;
         default:
             g_mutex_lock(message_queue_mutex);
             g_queue_push_tail(message_queue, msg);
