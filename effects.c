@@ -115,6 +115,27 @@ static gchar *pickup_type_labels[] = {
     "HB>SC",
 };
 
+static gchar *fast_medium_slow_labels[] = {
+    "Fast",
+    "Medium",
+    "Slow",
+    NULL,
+};
+
+static gchar *comp_ratio_labels[] = {
+    "1.2:1",
+    "1.5:1",
+    "1.8:1",
+    "2.0:1",
+    "3:1",
+    "4:1",
+    "5:1",
+    "8:1",
+    "10:1",
+    "20:1",
+    "Inf:1",
+};
+
 static gchar *eq_bandwidth_labels[] = {
     "Wide",
     "Medium",
@@ -259,9 +280,21 @@ static EffectValues values_0_to_15 = {
     0.0, 15.0, NULL,
 };
 
+static EffectValues values_0_to_20 = {
+    0.0, 20.0, NULL,
+};
+
 static EffectValues values_m24_to_24 = {
     /** \todo make this display propertly (display range -24 to 24) */
     0.0, 48.0, NULL,
+};
+
+static EffectValues values_comp_ratio = {
+    0.0, 11.0, comp_ratio_labels,
+};
+
+static EffectValues values_fast_medium_slow = {
+    0.0, 2.0, fast_medium_slow_labels,
 };
 
 static EffectValues values_eq_db = {
@@ -380,10 +413,22 @@ static EffectValues values_1_to_10_step_0p1 = {
     0.0, 90.0, NULL,
 };
 
+static EffectSettings gnx3k_wah_settings[] = {
+    {"Min", WAH_MIN, WAH_POSITION_MIN_MAX, &values_0_to_99},
+    {"Max", WAH_MAX, WAH_POSITION_MIN_MAX, &values_0_to_99},
+};
+
 static EffectSettings wah_settings[] = {
     {"Min", WAH_MIN, WAH_POSITION_MIN_MAX, &values_0_to_99},
     {"Max", WAH_MAX, WAH_POSITION_MIN_MAX, &values_0_to_99},
     {"Level", WAH_LEVEL, WAH_POSITION, &values_0_to_12},
+};
+
+static EffectSettings gn3k_comp_settings[] = {
+    {"Attack", GN3K_COMP_ATTACK, COMP_POSITION, &values_fast_medium_slow},
+    {"Ratio", GN3K_COMP_RATIO, COMP_POSITION, &values_comp_ratio},
+    {"Threshold", GN3K_COMP_THRESHOLD, COMP_POSITION, &values_0_to_99},
+    {"Gain", GN3K_COMP_GAIN, COMP_POSITION, &values_0_to_20},
 };
 
 static EffectSettings comp_digi_settings[] = {
@@ -886,10 +931,20 @@ static EffectSettings reverb_lex_settings[] = {
     {"Level", REVERB_LEVEL, REVERB_POSITION, &values_0_to_99},
 };
 
+static EffectGroup gnx3k_wah_group[] = {
+    {GN3K_WAH_TYPE_CRY, "Cry", WAH_TYPE, WAH_POSITION, gnx3k_wah_settings, G_N_ELEMENTS(gnx3k_wah_settings)},
+    {GN3K_WAH_TYPE_BOUTIQUE, "Boutique", WAH_TYPE, WAH_POSITION, gnx3k_wah_settings, G_N_ELEMENTS(gnx3k_wah_settings)},
+    {GN3K_WAH_TYPE_FULLRANGE, "Full-Range", WAH_TYPE, WAH_POSITION, gnx3k_wah_settings, G_N_ELEMENTS(gnx3k_wah_settings)},
+};
+
 static EffectGroup wah_group[] = {
     {WAH_TYPE_CRY, "Cry wah", WAH_TYPE, WAH_POSITION, wah_settings, G_N_ELEMENTS(wah_settings)},
     {WAH_TYPE_FULLRANGE, "Fullrange wah", WAH_TYPE, WAH_POSITION, wah_settings, G_N_ELEMENTS(wah_settings)},
     {WAH_TYPE_CLYDE, "Clyde wah", WAH_TYPE, WAH_POSITION, wah_settings, G_N_ELEMENTS(wah_settings)},
+};
+
+static EffectGroup gn3k_comp_group[] = {
+    {-1, NULL, -1, -1, gn3k_comp_settings, G_N_ELEMENTS(gn3k_comp_settings)},
 };
 
 static EffectGroup rp250_comp_group[] = {
@@ -940,7 +995,7 @@ static EffectGroup rp500_dist_group[] = {
     {DIST_TYPE_MP, "Big MP", DIST_TYPE, DIST_POSITION, dist_mp_settings, G_N_ELEMENTS(dist_mp_settings)},
 };
 
-static EffectGroup gnx3000_dist_group[] = {
+static EffectGroup gnx3k_dist_group[] = {
     {DIST_TYPE_SCREAMER, "Screamer", DIST_TYPE, DIST_POSITION, dist_screamer_settings, G_N_ELEMENTS(dist_screamer_settings)},
     {DIST_TYPE_RODENT, "Rodent", DIST_TYPE, DIST_POSITION, dist_rodent_settings, G_N_ELEMENTS(dist_rodent_settings)},
     {DIST_TYPE_DS, "DS", DIST_TYPE, DIST_POSITION, dist_ds_settings, G_N_ELEMENTS(dist_ds_settings)},
@@ -1257,12 +1312,20 @@ static EffectGroup pickup_group[] = {
     {PICKUP_TYPE_SC_HB, "SC>HB", PICKUP_TYPE, PICKUP_POSITION, NULL, -1},
 };
 
+static Effect gnx3k_wah_effect[] = {
+    {NULL, WAH_ON_OFF, WAH_POSITION, gnx3k_wah_group, G_N_ELEMENTS(gnx3k_wah_group)},
+};
+
 static Effect wah_effect[] = {
     {NULL, WAH_ON_OFF, WAH_POSITION, wah_group, G_N_ELEMENTS(wah_group)},
 };
 
 static Effect rp250_comp_effect[] = {
     {NULL, COMP_ON_OFF, COMP_POSITION, rp250_comp_group, G_N_ELEMENTS(rp250_comp_group)},
+};
+
+static Effect gn3k_comp_effect[] = {
+    {"Compressor", COMP_ON_OFF, COMP_POSITION, gn3k_comp_group, G_N_ELEMENTS(gn3k_comp_group)},
 };
 
 static Effect rp500_comp_effect[] = {
@@ -1277,8 +1340,8 @@ static Effect rp500_dist_effect[] = {
     {NULL, DIST_ON_OFF, DIST_POSITION, rp500_dist_group, G_N_ELEMENTS(rp500_dist_group)},
 };
 
-static Effect gnx3000_dist_effect[] = {
-    {NULL, DIST_ON_OFF, DIST_POSITION, gnx3000_dist_group, G_N_ELEMENTS(gnx3000_dist_group)},
+static Effect gnx3k_dist_effect[] = {
+    {NULL, DIST_ON_OFF, DIST_POSITION, gnx3k_dist_group, G_N_ELEMENTS(gnx3k_dist_group)},
 };
 
 static Effect noisegate_effect[] = {
@@ -1353,7 +1416,10 @@ static EffectList rp500_effects[] = {
 };
 
 static EffectList gnx3000_effects[] = {
-    {"Distortion", gnx3000_dist_effect, G_N_ELEMENTS(gnx3000_dist_effect)},
+    {"Pickup", pickup_effect, G_N_ELEMENTS(pickup_effect)},
+    {"Wah", gnx3k_wah_effect, G_N_ELEMENTS(gnx3k_wah_effect)},
+    {"Compressor", gn3k_comp_effect, G_N_ELEMENTS(gn3k_comp_effect)},
+    {"Stompbox", gnx3k_dist_effect, G_N_ELEMENTS(gnx3k_dist_effect)},
 };
 
 static Banks rp_banks[] = {
