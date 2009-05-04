@@ -22,6 +22,7 @@
 
 void show_error_message(GtkWidget *parent, gchar *message);
 void apply_setting_param_to_gui(SettingParam *param);
+gboolean apply_current_preset_to_gui(gpointer data);
 void gui_create(Device *device);
 void gui_free();
 gboolean unsupported_device_dialog(Device **device);

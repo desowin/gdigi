@@ -638,6 +638,23 @@ typedef enum {
 } PresetBank;
 
 typedef enum {
+    /* Version 0 only */
+    NOTIFY_PRESET_LOADED = 0,
+    NOTIFY_PRESET_STORED = 1,
+
+    NOTIFY_MODIFIER_GROUP_CHANGED = 2,
+
+    /* Version 1 */
+    NOTIFY_PRESET_MOVED = 3,
+    NOTIFY_OBJECT_MOVED = 4,
+    NOTIFY_OBJECT_RENAMED = 5,
+    NOTIFY_MEDIA_CARD_PRESENT_CHANGED = 6,
+    NOTIFY_ALL_GLOBALS_CHANGED = 7,
+    NOTIFY_PRESET_INDEX_TABLE_CHANGED = 8,
+    NOTIFY_PRESET_RENAMED = 9
+} NotifyCode;
+
+typedef enum {
     REQUEST_WHO_AM_I = 0x01,
     RECEIVE_WHO_AM_I = 0x02,
 

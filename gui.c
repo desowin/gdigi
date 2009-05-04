@@ -199,6 +199,12 @@ static void apply_current_preset()
     preset_free(preset);
 }
 
+gboolean apply_current_preset_to_gui(gpointer data)
+{
+    apply_current_preset();
+    return FALSE;
+}
+
 /**
  *  \param settings effect parameters
  *  \param amt amount of effect parameters

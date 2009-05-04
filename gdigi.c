@@ -202,35 +202,52 @@ void push_message(GString *msg)
         printf("%02x ", (unsigned char)msg->str[x]);
     printf("\n");
 
-    if (get_message_id(msg) == ACK) {
-        g_message("Received ACK");
-        g_string_free(msg, TRUE);
-        return;
+    switch (get_message_id(msg)) {
+        case ACK:
+            g_message("Received ACK");
+            g_string_free(msg, TRUE);
+            return;
+
+        case NACK:
+            g_message("Received NACK");
+            g_string_free(msg, TRUE);
+            return;
+
+        case RECEIVE_PARAMETER_VALUE:
+            unpack_message(msg);
+            SettingParam *param = setting_param_new_from_data(&msg->str[8], NULL);
+            g_message("Received parameter change ID: %d Position: %d Value: %d", param->id, param->position, param->value);
+
+            GDK_THREADS_ENTER();
+            apply_setting_param_to_gui(param);
+            GDK_THREADS_LEAVE();
+
+            setting_param_free(param);
+            g_string_free(msg, TRUE);
+            return;
+
+        case RECEIVE_DEVICE_NOTIFICATION:
+            unpack_message(msg);
+            unsigned char *str = (unsigned char*)msg->str;
+            switch (str[8]) {
+                case NOTIFY_PRESET_MOVED:
+                    if (str[11] == PRESETS_EDIT_BUFFER && str[12] == 0) {
+                        g_message("Loaded preset %d from bank %d", str[10], str[9]);
+
+                        GDK_THREADS_ENTER();
+                        g_timeout_add(0, apply_current_preset_to_gui, NULL);
+                        GDK_THREADS_LEAVE();
+                    } else
+                        g_message("%d %d moved to %d %d", str[9], str[10], str[11], str[12]);
+                    return;
+                default:
+                    g_message("Received unhandled device notification");
+            }
+        default:
+            g_mutex_lock(message_queue_mutex);
+            g_queue_push_tail(message_queue, msg);
+            g_mutex_unlock(message_queue_mutex);
     }
-
-    if (get_message_id(msg) == NACK) {
-        g_message("Received NACK");
-        g_string_free(msg, TRUE);
-        return;
-    }
-
-    if (get_message_id(msg) == RECEIVE_PARAMETER_VALUE) {
-        unpack_message(msg);
-        SettingParam *param = setting_param_new_from_data(&msg->str[8], NULL);
-        g_message("Received parameter change ID: %d Position: %d Value: %d", param->id, param->position, param->value);
-
-        GDK_THREADS_ENTER();
-        apply_setting_param_to_gui(param);
-        GDK_THREADS_LEAVE();
-
-        setting_param_free(param);
-        g_string_free(msg, TRUE);
-        return;
-    }
-
-    g_mutex_lock(message_queue_mutex);
-    g_queue_push_tail(message_queue, msg);
-    g_mutex_unlock(message_queue_mutex);
 }
 
 gpointer read_data_thread(gboolean *stop)
