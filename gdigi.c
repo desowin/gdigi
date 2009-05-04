@@ -670,14 +670,11 @@ static gboolean request_who_am_i(unsigned char *device_id, unsigned char *family
 
     GString *data = get_message_by_id(RECEIVE_WHO_AM_I);
     if (data != NULL) {
-        if (data->len == 14) {
-            *device_id = data->str[8];
-            *family_id = data->str[9];
-            *product_id = data->str[10];
-            g_string_free(data, TRUE);
-            return TRUE;
-        }
+        *device_id = data->str[8];
+        *family_id = data->str[9];
+        *product_id = data->str[10];
         g_string_free(data, TRUE);
+        return TRUE;
     }
     return FALSE;
 }
