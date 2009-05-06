@@ -406,6 +406,10 @@ GString *get_message_by_id(MessageID id)
                 break;
             }
         }
+
+        if (found == FALSE)
+            g_cond_wait(message_queue_cond, message_queue_mutex);
+
         g_mutex_unlock(message_queue_mutex);
     } while (found == FALSE);
 
