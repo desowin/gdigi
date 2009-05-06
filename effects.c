@@ -268,6 +268,10 @@ static EffectValues values_1_to_4 = {
     0.0, 3.0, NULL,
 };
 
+static EffectValues values_0_to_9 = {
+    0.0, 9.0, NULL,
+};
+
 static EffectValues values_0_to_49 = {
     0.0, 49.0, NULL,
 };
@@ -424,7 +428,38 @@ static EffectSettings wah_settings[] = {
     {"Level", WAH_LEVEL, WAH_POSITION, &values_0_to_12},
 };
 
-static EffectSettings gn3k_comp_settings[] = {
+static EffectSettings gnx3k_whammy_settings[] = {
+    {"Shift Amount", WHAMMY_AMOUNT, GNX3K_WHAM_POSITION, &values_whammy_amount},
+    {"Pedal", WHAMMY_PEDAL, GNX3K_WHAM_POSITION, &values_0_to_99},
+    {"Mix", WHAMMY_MIX, GNX3K_WHAM_POSITION, &values_0_to_99},
+};
+
+static EffectSettings gnx3k_ips_settings[] = {
+    {"Shift Amount", IPS_SHIFT_AMOUNT, GNX3K_WHAM_POSITION, &values_ips_shift},
+    {"Scale", IPS_SCALE, GNX3K_WHAM_POSITION, &values_ips_scale},
+    {"Key", IPS_KEY, GNX3K_WHAM_POSITION, &values_ips_key},
+    {"Level", IPS_LEVEL, GNX3K_WHAM_POSITION, &values_0_to_99},
+};
+
+static EffectSettings gnx3k_detune_settings[] = {
+    {"Shift Amount", GNX3K_DETUNE_AMOUNT, GNX3K_WHAM_POSITION, &values_m24_to_24},
+    {"Level", DETUNE_LEVEL, GNX3K_WHAM_POSITION, &values_0_to_99},
+};
+
+static EffectSettings gnx3k_pitch_settings[] = {
+    {"Shift Amount", GNX3K_PITCH_AMOUNT, GNX3K_WHAM_POSITION, &values_m24_to_24},
+    {"Level", GNX3K_PITCH_LEVEL, GNX3K_WHAM_POSITION, &values_0_to_99},
+};
+
+static EffectSettings gnx3k_talk_settings[] = {
+    {"Mic Level", GNX3K_TALK_LEVEL, GNX3K_WHAM_POSITION, &values_0_to_99},
+};
+
+static EffectSettings gnx3k_preset_settings[] = {
+    {"Preset Level", PRESET_LEVEL, PRESET_POSITION, &values_0_to_99},
+};
+
+static EffectSettings gnx3k_comp_settings[] = {
     {"Attack", GN3K_COMP_ATTACK, COMP_POSITION, &values_fast_medium_slow},
     {"Ratio", GN3K_COMP_RATIO, COMP_POSITION, &values_comp_ratio},
     {"Threshold", GN3K_COMP_THRESHOLD, COMP_POSITION, &values_0_to_99},
@@ -607,6 +642,17 @@ static EffectSettings rp500_eq_settings[] = {
     {"Low Bandwidth", EQ_LOW_BANDWIDTH, EQ_POSITION, &values_eq_bandwidth},
     {"Mid Bandwidth", EQ_MID_BANDWIDTH, EQ_POSITION, &values_eq_bandwidth},
     {"High Bandwidth", EQ_HIGH_BANDWIDTH, EQ_POSITION, &values_eq_bandwidth},
+};
+
+static EffectSettings noisegate_silencer_settings[] = {
+    {"Threshold", NOISEGATE_GATE_TRESHOLD, NOISEGATE_POSITION, &values_0_to_99},
+    {"Attack", GNX3K_GATE_ATTACK, NOISEGATE_POSITION, &values_0_to_9},
+};
+
+static EffectSettings noisegate_pluck_settings[] = {
+    {"Threshold", NOISEGATE_GATE_TRESHOLD, NOISEGATE_POSITION, &values_0_to_99},
+    {"Attack", GNX3K_GATE_ATTACK, NOISEGATE_POSITION, &values_0_to_9},
+    {"Sens", NOISEGATE_SWELL_SENS, NOISEGATE_POSITION, &values_0_to_99},
 };
 
 static EffectSettings noisegate_gate_settings[] = {
@@ -943,8 +989,24 @@ static EffectGroup wah_group[] = {
     {WAH_TYPE_CLYDE, "Clyde wah", WAH_TYPE, WAH_POSITION, wah_settings, G_N_ELEMENTS(wah_settings)},
 };
 
-static EffectGroup gn3k_comp_group[] = {
-    {-1, NULL, -1, -1, gn3k_comp_settings, G_N_ELEMENTS(gn3k_comp_settings)},
+static EffectGroup gnx3k_whammy_group[] = {
+    {GNX3K_WHAM_TYPE_WHAMMY, "Whammy", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_whammy_settings, G_N_ELEMENTS(gnx3k_whammy_settings)},
+    {GNX3K_WHAM_TYPE_IPS, "IPS", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_ips_settings, G_N_ELEMENTS(gnx3k_ips_settings)},
+    {GNX3K_WHAM_TYPE_DETUNE, "Detune", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_detune_settings, G_N_ELEMENTS(gnx3k_detune_settings)},
+    {GNX3K_WHAM_TYPE_PITCH, "Pitch Shift", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_pitch_settings, G_N_ELEMENTS(gnx3k_pitch_settings)},
+    {GNX3K_WHAM_TYPE_TALK1, "Talker 1", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_talk_settings, G_N_ELEMENTS(gnx3k_talk_settings)},
+    {GNX3K_WHAM_TYPE_TALK2, "Talker 2", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_talk_settings, G_N_ELEMENTS(gnx3k_talk_settings)},
+    {GNX3K_WHAM_TYPE_TALK3, "Talker 3", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_talk_settings, G_N_ELEMENTS(gnx3k_talk_settings)},
+    {GNX3K_WHAM_TYPE_TALK4, "Talker 4", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_talk_settings, G_N_ELEMENTS(gnx3k_talk_settings)},
+    {GNX3K_WHAM_TYPE_TALK5, "Talker 5", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_talk_settings, G_N_ELEMENTS(gnx3k_talk_settings)},
+};
+
+static EffectGroup gnx3k_preset_group[] = {
+    {-1, NULL, -1, -1, gnx3k_preset_settings, G_N_ELEMENTS(gnx3k_preset_settings)},
+};
+
+static EffectGroup gnx3k_comp_group[] = {
+    {-1, NULL, -1, -1, gnx3k_comp_settings, G_N_ELEMENTS(gnx3k_comp_settings)},
 };
 
 static EffectGroup rp250_comp_group[] = {
@@ -1007,6 +1069,11 @@ static EffectGroup gnx3k_dist_group[] = {
     {DIST_TYPE_FUZZY, "Fuzzy", DIST_TYPE, DIST_POSITION, dist_fuzzy_settings, G_N_ELEMENTS(dist_fuzzy_settings)},
     {DIST_TYPE_ZONE, "Zone", DIST_TYPE, DIST_POSITION, dist_zone_settings, G_N_ELEMENTS(dist_zone_settings)},
     {DIST_TYPE_8TAVIA, "8tavia", DIST_TYPE, DIST_POSITION, dist_8tavia_settings, G_N_ELEMENTS(dist_8tavia_settings)},
+};
+
+static EffectGroup gnx3k_noisegate_group[] = {
+    {NOISEGATE_GATE, "Silencer", NOISEGATE_TYPE, NOISEGATE_POSITION, noisegate_silencer_settings, G_N_ELEMENTS(noisegate_silencer_settings)},
+    {NOISEGATE_SWELL, "Pluck", NOISEGATE_TYPE, NOISEGATE_POSITION, noisegate_pluck_settings, G_N_ELEMENTS(noisegate_pluck_settings)},
 };
 
 static EffectGroup noisegate_group[] = {
@@ -1320,12 +1387,20 @@ static Effect wah_effect[] = {
     {NULL, WAH_ON_OFF, WAH_POSITION, wah_group, G_N_ELEMENTS(wah_group)},
 };
 
+static Effect gnx3k_whammy_effect[] = {
+    {NULL, GNX3K_WHAM_ENABLE, GNX3K_WHAM_POSITION, gnx3k_whammy_group, G_N_ELEMENTS(gnx3k_whammy_group)},
+};
+
+static Effect gnx3k_preset_effect[] = {
+    {NULL, -1, -1, gnx3k_preset_group, G_N_ELEMENTS(gnx3k_preset_group)},
+};
+
 static Effect rp250_comp_effect[] = {
     {NULL, COMP_ON_OFF, COMP_POSITION, rp250_comp_group, G_N_ELEMENTS(rp250_comp_group)},
 };
 
-static Effect gn3k_comp_effect[] = {
-    {"Compressor", COMP_ON_OFF, COMP_POSITION, gn3k_comp_group, G_N_ELEMENTS(gn3k_comp_group)},
+static Effect gnx3k_comp_effect[] = {
+    {"Compressor", COMP_ON_OFF, COMP_POSITION, gnx3k_comp_group, G_N_ELEMENTS(gnx3k_comp_group)},
 };
 
 static Effect rp500_comp_effect[] = {
@@ -1342,6 +1417,10 @@ static Effect rp500_dist_effect[] = {
 
 static Effect gnx3k_dist_effect[] = {
     {NULL, DIST_ON_OFF, DIST_POSITION, gnx3k_dist_group, G_N_ELEMENTS(gnx3k_dist_group)},
+};
+
+static Effect gnx3k_noisegate_effect[] = {
+    {NULL, NOISEGATE_ON_OFF, NOISEGATE_POSITION, gnx3k_noisegate_group, G_N_ELEMENTS(gnx3k_noisegate_group)},
 };
 
 static Effect noisegate_effect[] = {
@@ -1418,8 +1497,11 @@ static EffectList rp500_effects[] = {
 static EffectList gnx3000_effects[] = {
     {"Pickup", pickup_effect, G_N_ELEMENTS(pickup_effect)},
     {"Wah", gnx3k_wah_effect, G_N_ELEMENTS(gnx3k_wah_effect)},
-    {"Compressor", gn3k_comp_effect, G_N_ELEMENTS(gn3k_comp_effect)},
+    {"Whammy/IPS", gnx3k_whammy_effect, G_N_ELEMENTS(gnx3k_whammy_effect)},
+    {"Preset Level", gnx3k_preset_effect, G_N_ELEMENTS(gnx3k_preset_effect)},
+    {"Compressor", gnx3k_comp_effect, G_N_ELEMENTS(gnx3k_comp_effect)},
     {"Stompbox", gnx3k_dist_effect, G_N_ELEMENTS(gnx3k_dist_effect)},
+    {"Noisegate", gnx3k_noisegate_effect, G_N_ELEMENTS(gnx3k_noisegate_effect)},
 };
 
 static Banks rp_banks[] = {
