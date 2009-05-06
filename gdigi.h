@@ -738,6 +738,7 @@ typedef struct {
 } SettingParam;
 
 void send_message(gint procedure, gchar *data, gint len);
+MessageID get_message_id(GString *msg);
 void append_value(GString *msg, guint value);
 GString *get_message_by_id(MessageID id);
 SettingParam *setting_param_new();
@@ -748,6 +749,7 @@ void switch_preset(guint bank, guint x);
 void store_preset_name(int x, const gchar *name);
 void set_preset_level(int level);
 GStrv query_preset_names(gchar bank);
-GString *get_current_preset();
+GList *get_current_preset();
+void preset_list_free(GList *list);
 
 #endif /* GDIGI_H */

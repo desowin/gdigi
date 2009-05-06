@@ -32,6 +32,7 @@ static char *device_port = "hw:1,0,0";
 
 static GQueue *message_queue = NULL;
 static GMutex *message_queue_mutex = NULL;
+static GCond *message_queue_cond = NULL;
 
 /**
  *  \param array data to calculate checksum
@@ -128,6 +129,11 @@ GString *pack_data(gchar *data, gint len)
     return packed;
 }
 
+static void message_free_func(GString *msg, gpointer user_data)
+{
+    g_string_free(msg, TRUE);
+}
+
 /**
  *  \param msg message to unpack
  *
@@ -178,7 +184,7 @@ static void unpack_message(GString *msg)
  *
  *  \return MessageID, or -1 on error.
  **/
-static MessageID get_message_id(GString *msg)
+MessageID get_message_id(GString *msg)
 {
     /** \todo check if msg is valid SysEx message */
     g_return_val_if_fail(msg != NULL, -1);
@@ -247,6 +253,7 @@ void push_message(GString *msg)
         default:
             g_mutex_lock(message_queue_mutex);
             g_queue_push_tail(message_queue, msg);
+            g_cond_signal(message_queue_cond);
             g_mutex_unlock(message_queue_mutex);
     }
 }
@@ -307,6 +314,11 @@ gpointer read_data_thread(gboolean *stop)
         while (i < length) {
             int pos;
             int bytes;
+
+            if (string == NULL) {
+                while (buf[i] != 0xF0 && i < length)
+                    i++;
+            }
 
             pos = i;
 
@@ -640,18 +652,68 @@ GStrv query_preset_names(gchar bank)
 /**
  *  Queries current edit buffer.
  *
- *  \return GString containing RECEIVE_PRESET_PARAMETERS SysEx message.
+ *  \return GList with preset SysEx messages, which must be freed using preset_list_free.
  **/
-GString *get_current_preset()
+GList *get_current_preset()
 {
     GString *data = NULL;
+    GList *list = NULL;
+    guint x, len;
+    gboolean found = FALSE;
+    gboolean done = FALSE;
 
     send_message(REQUEST_PRESET, "\x04\x00", 2);
 
-    /* read reply */
-    data = get_message_by_id(RECEIVE_PRESET_PARAMETERS);
+    do {
+        g_mutex_lock(message_queue_mutex);
 
-    return data;
+        len = g_queue_get_length(message_queue);
+
+        for (x = 0; x<len && (found == FALSE); x++) {
+            data = g_queue_peek_nth(message_queue, x);
+            if (get_message_id(data) == RECEIVE_PRESET_START) {
+                found = TRUE;
+                g_queue_pop_nth(message_queue, x);
+                unpack_message(data);
+                list = g_list_append(list, data);
+                break;
+            }
+        }
+
+        if (found == TRUE) {
+            int i;
+            int amt;
+
+            for (i = 10; (i < data->len) && data->str[i]; i++);
+
+            amt = (unsigned char)data->str[i+2];
+
+            while (amt) {
+                data = g_queue_pop_nth(message_queue, x);
+                if (data == NULL) {
+                    g_cond_wait(message_queue_cond, message_queue_mutex);
+                } else {
+                    unpack_message(data);
+                    list = g_list_append(list, data);
+                    amt--;
+                }
+            }
+
+            done = TRUE;
+        }
+
+        g_mutex_unlock(message_queue_mutex);
+    } while (done == FALSE);
+
+    return list;
+}
+
+void preset_list_free(GList *list)
+{
+    g_return_if_fail(list != NULL);
+
+    g_list_foreach(list, (GFunc) message_free_func, NULL);
+    g_list_free(list);
 }
 
 /**
@@ -725,11 +787,6 @@ static GOptionEntry options[] = {
 
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
-static void message_queue_free_func(GString *msg, gpointer user_data)
-{
-    g_string_free(msg, TRUE);
-}
-
 int main(int argc, char *argv[]) {
     GError *error = NULL;
     GOptionContext *context;
@@ -757,6 +814,7 @@ int main(int argc, char *argv[]) {
     } else {
         message_queue = g_queue_new();
         message_queue_mutex = g_mutex_new();
+        message_queue_cond = g_cond_new();
         read_thread = g_thread_create((GThreadFunc)read_data_thread,
                                       &stop_read_thread,
                                       TRUE, NULL);
@@ -798,7 +856,7 @@ int main(int argc, char *argv[]) {
     if (message_queue != NULL) {
         g_message("%d unread messages in queue",
                   g_queue_get_length(message_queue));
-        g_queue_foreach(message_queue, (GFunc) message_queue_free_func, NULL);
+        g_queue_foreach(message_queue, (GFunc) message_free_func, NULL);
         g_queue_free(message_queue);
     }
 

@@ -173,19 +173,27 @@ Preset *create_preset_from_xml_file(gchar *filename, GError **error)
 }
 
 /**
- *  \param data unpacked RECEIVE_PRESET_PARAMETERS message
+ *  \param list list containing unpacked preset SysEx messages.
  *
  *  Parses message
  *
  *  \return Preset which must be freed using preset_free, or NULL on error.
  **/
-Preset *create_preset_from_data(GString *data)
+Preset *create_preset_from_data(GList *list)
 {
+    GString *data;
+    GList *iter;
     gint total;
     gint n;
     gint x;
 
-    g_return_val_if_fail(data != NULL, NULL);
+    g_return_val_if_fail(list != NULL, NULL);
+
+    iter = list;
+    do {
+        data = (GString*) iter->data;
+        iter = g_list_next(iter);
+    } while (get_message_id(data) != RECEIVE_PRESET_PARAMETERS);
 
     x = 0x09;
     n = 0;

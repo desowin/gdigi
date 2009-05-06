@@ -192,9 +192,9 @@ static void apply_preset_to_gui(Preset *preset)
  **/
 static void apply_current_preset()
 {
-    GString *msg = get_current_preset();
-    Preset *preset = create_preset_from_data(msg);
-    g_string_free(msg, TRUE);
+    GList *list = get_current_preset();
+    Preset *preset = create_preset_from_data(list);
+    preset_list_free(list);
     apply_preset_to_gui(preset);
     preset_free(preset);
 }

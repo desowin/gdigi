@@ -25,7 +25,7 @@ typedef struct {
 } Preset;
 
 Preset *create_preset_from_xml_file(gchar *filename, GError **error);
-Preset *create_preset_from_data(GString *data);
+Preset *create_preset_from_data(GList *list);
 void preset_free(Preset *preset);
 
 #endif /* GDIGI_PRESET_H */
