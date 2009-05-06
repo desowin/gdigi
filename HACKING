@@ -3,7 +3,7 @@ In general everything brings down to figure out:
 -Position
 -Possible value range
 
-There seems to be two possible ways to figure that out.
+There seems to be three possible ways to figure that out.
 1) Use USB sniffer together with X-Edit
    Once you set up X-Edit and usb sniffer, set some option.
    USB sniffer should report something like this being sent to device:
@@ -66,3 +66,13 @@ There seems to be two possible ways to figure that out.
        save new patch
        check patch file and note the change
      while you don't have all possible values
+3) Use gdigi
+   After starting gdigi turn the knobs on your device.
+   Check out console output, you should notice something like this:
+      ** Message: Received parameter change ID: 210 Position: 4 Value: 0
+   ID is ID, Position is Position and Value is one of possible values.
+   To get all possible values keep turning knobs and watch the output.
+   If you change effect type usually there's more messages - where,
+   usually the first one is type change, and rest are default values.
+   This way you *CANNOT* gather all information (there're X-Edit only
+   controlled values, check device manual for more information).
