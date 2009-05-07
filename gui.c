@@ -588,7 +588,7 @@ GtkWidget *create_preset_tree(Device *device)
  **/
 static void show_store_preset_window(GtkWidget *window, gchar *default_name)
 {
-    GtkWidget *dialog, *cmbox, *entry, *table, *label;
+    GtkWidget *dialog, *cmbox, *entry, *table, *label, *vbox;
     GStrv names;
     int x;
 
@@ -599,8 +599,10 @@ static void show_store_preset_window(GtkWidget *window, gchar *default_name)
                                          GTK_STOCK_OK, GTK_RESPONSE_ACCEPT,
                                          NULL);
 
+    vbox = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+
     table = gtk_table_new(2, 2, FALSE);
-    gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), table);
+    gtk_container_add(GTK_CONTAINER(vbox), table);
 
     cmbox = gtk_combo_box_new_text();
     names = query_preset_names(PRESETS_USER);
@@ -623,7 +625,7 @@ static void show_store_preset_window(GtkWidget *window, gchar *default_name)
     label = gtk_label_new("Preset name:");
     gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 1, 2);
 
-    gtk_widget_show_all(GTK_DIALOG(dialog)->vbox);
+    gtk_widget_show_all(vbox);
     if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
         gint number = gtk_combo_box_get_active(GTK_COMBO_BOX(cmbox));
         if (number != -1) {
@@ -970,6 +972,7 @@ gboolean unsupported_device_dialog(Device **device)
     GtkWidget *dialog;
     GtkWidget *label;
     GtkWidget *combo_box;
+    GtkWidget *vbox;
     int x;
 
     dialog = gtk_dialog_new_with_buttons("Unsupported device",
@@ -978,21 +981,22 @@ gboolean unsupported_device_dialog(Device **device)
                                          GTK_STOCK_OK, GTK_RESPONSE_ACCEPT,
                                          NULL);
 
+    vbox = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
 
     label = gtk_label_new("Your device appears to be unsupported by gdigi.\n"
                           "As some of the settings may be common between different devices,\n"
                           "you can now select compability mode with one of the supported devices.\n"
                           "Please take a look at gdigi's HACKING file.");
-    gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), label);
+    gtk_container_add(GTK_CONTAINER(vbox), label);
 
     combo_box = gtk_combo_box_new_text();
     for (x=0; x<n_supported_devices; x++) {
         gtk_combo_box_append_text(GTK_COMBO_BOX(combo_box), supported_devices[x]->name);
     }
 
-    gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), combo_box);
+    gtk_container_add(GTK_CONTAINER(vbox), combo_box);
 
-    gtk_widget_show_all(GTK_DIALOG(dialog)->vbox);
+    gtk_widget_show_all(vbox);
     if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
         gint number = gtk_combo_box_get_active(GTK_COMBO_BOX(combo_box));
         if (number != -1 && number <n_supported_devices) {
