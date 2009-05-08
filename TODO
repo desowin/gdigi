@@ -1,8 +1,6 @@
--make complete gui
--effects level
+-make complete gui (expression pedal settings, usb settings, effect level, preset level)
 -handling presets (saving, exporting to xml patches)
 -buildsystem (install knob.png to share dir, don't use inline knob pixbuf)
--add expression pedal settings to gui
 -various fixes to MIDI IN messages handling
 -guess device port when user doesn't explicitly provide it (don't use hardcoded "hw:1,0,0")
 -optimizations
