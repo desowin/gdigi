@@ -293,6 +293,11 @@ static EffectValues values_m24_to_24 = {
     0.0, 48.0, NULL,
 };
 
+static EffectValues values_m12_to_24 = {
+    /** \todo make this display properly (display range -12 to 24) */
+    0.0, 36.0, NULL,
+};
+
 static EffectValues values_comp_ratio = {
     0.0, 11.0, comp_ratio_labels,
 };
@@ -332,6 +337,11 @@ static EffectValues values_eq_high_freq = {
     0.0, 24.0, eq_high_freq_labels,
 };
 
+static EffectValues values_200hz_to_1_5khz = {
+    /** \todo make this display propertly (display range 200 Hz to 1.5 kHz) */
+    0.0, 130.0, NULL,
+};
+
 static EffectValues values_waveform = {
     0.0, 2.0, wave_labels,
 };
@@ -339,6 +349,11 @@ static EffectValues values_waveform = {
 static EffectValues values_synth_talk_balance = {
     /** \todo make this display propertly */
     0.0, 198.0, NULL,
+};
+
+static EffectValues values_synth_talk_release = {
+    /** \todo make last value display propertly */
+    0.0, 100.0, NULL,
 };
 
 static EffectValues values_whammy_amount = {
@@ -355,6 +370,11 @@ static EffectValues values_ips_key = {
 
 static EffectValues values_ips_scale = {
     0.0, 5.0, ips_scale_labels,
+};
+
+static EffectValues values_predelay_time = {
+    /** \todo make this display propertly (1ms to 20ms) */
+    0.0, 19.0, NULL,
 };
 
 static EffectValues values_delay_time = {
@@ -667,6 +687,111 @@ static EffectSettings noisegate_swell_settings[] = {
     {"Attack", NOISEGATE_ATTACK, NOISEGATE_POSITION, &values_0_to_99},
     {"Release", NOISEGATE_RELEASE, NOISEGATE_POSITION, &values_0_to_99},
     {"Attn", NOISEGATE_ATTN, NOISEGATE_POSITION, &values_0_to_99},
+};
+
+static EffectSettings gnx3k_chorus_settings[] = {
+    {"Speed", CHORUS_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Depth", CHORUS_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
+    {"Predelay", CHORUS_PREDELAY, CHORUSFX_POSITION, &values_predelay_time},
+    {"Wave", CHORUS_WAVE, CHORUSFX_POSITION, &values_waveform},
+    {"Balance", CHORUS_BALANCE, CHORUSFX_POSITION, &values_synth_talk_balance},
+    {"Level", CHORUS_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
+};
+
+static EffectSettings gnx3k_flanger_settings[] = {
+    {"Speed", FLANGER_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Depth", FLANGER_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
+    {"Regen", FLANGER_REGEN, CHORUSFX_POSITION, &values_0_to_99},
+    {"Waveform", FLANGER_WAVE, CHORUSFX_POSITION, &values_waveform},
+    {"Balance", FLANGER_BALANCE, CHORUSFX_POSITION, &values_synth_talk_balance},
+    {"Mix", FLANGER_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
+};
+
+static EffectSettings gnx3k_phaser_settings[] = {
+    {"Speed", PHASER_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Depth", PHASER_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
+    {"Regen", PHASER_REGEN, CHORUSFX_POSITION, &values_0_to_99},
+    {"Waveform", PHASER_WAVE, CHORUSFX_POSITION, &values_waveform},
+    {"Balance", PHASER_BALANCE, CHORUSFX_POSITION, &values_synth_talk_balance},
+    {"Level", PHASER_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
+};
+
+static EffectSettings gnx3k_trigflanger_settings[] = {
+    {"Speed", TRIG_FLANGER_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Sens", TRIG_FLANGER_SENS, CHORUSFX_POSITION, &values_0_to_99},
+    {"Lfo Start", TRIG_FLANGER_LFO_START, CHORUSFX_POSITION, &values_0_to_99},
+    {"Mix", TRIG_FLANGER_MIX, CHORUSFX_POSITION, &values_0_to_99},
+};
+
+static EffectSettings gnx3k_trigphaser_settings[] = {
+    {"Speed", TRIG_PHASER_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Sens", TRIG_PHASER_SENS, CHORUSFX_POSITION, &values_0_to_99},
+    {"Lfo Start", TRIG_PHASER_LFO_START, CHORUSFX_POSITION, &values_0_to_99},
+    {"Mix", TRIG_FLANGER_MIX, CHORUSFX_POSITION, &values_0_to_99},
+};
+
+static EffectSettings gnx3k_unovibe_settings[] = {
+    {"Chorus/Vibrato", UNOVIBE_CHORUS_VIBRATO, CHORUSFX_POSITION, &values_chorus_vibrato},
+    {"Intensity", UNOVIBE_INTENSITY, CHORUSFX_POSITION, &values_0_to_99},
+    {"Pedal Speed", UNOVIBE_PEDAL_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+};
+
+static EffectSettings gnx3k_vibrato_settings[] = {
+    {"Speed", VIBRATO_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Depth", VIBRATO_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
+    {"Waveform", VIBRATO_WAVEFORM, CHORUSFX_POSITION, &values_waveform},
+};
+
+static EffectSettings gnx3k_rotary_settings[] = {
+    {"Speed", ROTARY_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Depth", ROTARY_INTENSITY, CHORUSFX_POSITION, &values_0_to_99},
+    {"Doppler", ROTARY_DOPPLER, CHORUSFX_POSITION, &values_0_to_99},
+    {"X-Over", ROTARY_CROSSOVER, CHORUSFX_POSITION, &values_200hz_to_1_5khz},
+    {"Balance", ROTARY_BALANCE, CHORUSFX_POSITION, &values_synth_talk_balance},
+    {"Mix", ROTARY_MIX, CHORUSFX_POSITION, &values_0_to_99},
+};
+
+static EffectSettings gnx3k_autoya_settings[] = {
+    {"Speed", AUTOYA_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Depth", AUTOYA_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
+    {"Range", GNX3K_AUTOYA_RANGE, CHORUSFX_POSITION, &values_0_to_49},
+    {"Balance", AUTOYA_BALANCE, CHORUSFX_POSITION, &values_synth_talk_balance},
+    {"Mix", AUTOYA_MIX, CHORUSFX_POSITION, &values_0_to_99},
+};
+
+static EffectSettings gnx3k_yaya_settings[] = {
+    {"Pedal", YAYA_PEDAL, CHORUSFX_POSITION, &values_0_to_99},
+    {"Depth", YAYA_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
+    {"Range", GNX3K_YAYA_RANGE, CHORUSFX_POSITION, &values_0_to_49},
+    {"Balance", YAYA_BALANCE, CHORUSFX_POSITION, &values_synth_talk_balance},
+    {"Mix", YAYA_MIX, CHORUSFX_POSITION, &values_0_to_99},
+};
+
+static EffectSettings gnx3k_synthtalk_settings[] = {
+    {"Attack", SYNTH_TALK_ATTACK, CHORUSFX_POSITION, &values_0_to_99},
+    {"Release", GNX3K_SYNTH_TALK_RELEASE, CHORUSFX_POSITION, &values_synth_talk_release},
+    {"Sens", SYNTH_TALK_SENS, CHORUSFX_POSITION, &values_0_to_99},
+    {"Vox", SYNTH_TALK_VOX, CHORUSFX_POSITION, &values_0_to_99},
+    {"Balance", SYNTH_TALK_BALANCE, CHORUSFX_POSITION, &values_synth_talk_balance},
+};
+
+static EffectSettings gnx3k_envelope_settings[] = {
+    {"Sensitivity", ENVELOPE_SENSITIVITY, CHORUSFX_POSITION, &values_0_to_99},
+    {"Range", ENVELOPE_RANGE, CHORUSFX_POSITION, &values_0_to_99},
+    {"Balance", ENVELOPE_BALANCE, CHORUSFX_POSITION, &values_synth_talk_balance},
+    {"Mix", ENVELOPE_MIX, CHORUSFX_POSITION, &values_0_to_99},
+};
+
+static EffectSettings gnx3k_mod_detune_settings[] = {
+    {"Shift Amount", DETUNE_AMOUNT, CHORUSFX_POSITION, &values_m24_to_24},
+    {"Balance", DETUNE_BALANCE, CHORUSFX_POSITION, &values_synth_talk_balance},
+    {"Level", DETUNE_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
+};
+
+static EffectSettings gnx3k_mod_pitch_settings[] = {
+    {"Shift Amount", PITCH_AMOUNT, CHORUSFX_POSITION, &values_m12_to_24},
+    {"Balance", PITCH_BALANCE, CHORUSFX_POSITION, &values_synth_talk_balance},
+    {"Level", GNX3K_PITCH_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
 };
 
 static EffectSettings chorusfx_ce_settings[] = {
@@ -1081,6 +1206,25 @@ static EffectGroup noisegate_group[] = {
     {NOISEGATE_SWELL, "Swell", NOISEGATE_TYPE, NOISEGATE_POSITION, noisegate_swell_settings, G_N_ELEMENTS(noisegate_swell_settings)},
 };
 
+static EffectGroup gnx3k_chorusfx_group[] = {
+    {GNX3K_MOD_TYPE_CHORUS, "Chorus", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_chorus_settings, G_N_ELEMENTS(gnx3k_chorus_settings)},
+    {GNX3K_MOD_TYPE_FLANGER, "Flanger", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_flanger_settings, G_N_ELEMENTS(gnx3k_flanger_settings)},
+    {GNX3K_MOD_TYPE_PHASER, "Phaser", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_phaser_settings, G_N_ELEMENTS(gnx3k_phaser_settings)},
+    {GNX3K_MOD_TYPE_TRIGFLANGER, "Triggered Flanger", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_trigflanger_settings, G_N_ELEMENTS(gnx3k_trigflanger_settings)},
+    {GNX3K_MOD_TYPE_TRIGPHASER, "Triggered Phaser", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_trigphaser_settings, G_N_ELEMENTS(gnx3k_trigphaser_settings)},
+    {GNX3K_MOD_TYPE_UNOVIBE, "Unovibe", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_unovibe_settings, G_N_ELEMENTS(gnx3k_unovibe_settings)},
+    {GNX3K_MOD_TYPE_TREMOLO, "Tremolo", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_tremolo_settings, G_N_ELEMENTS(chorusfx_tremolo_settings)},
+    {GNX3K_MOD_TYPE_PANNER, "Panner", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_panner_settings, G_N_ELEMENTS(chorusfx_panner_settings)},
+    {GNX3K_MOD_TYPE_VIBRATO, "Vibrato", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_vibrato_settings, G_N_ELEMENTS(gnx3k_vibrato_settings)},
+    {GNX3K_MOD_TYPE_ROTARY, "Rotary", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_rotary_settings, G_N_ELEMENTS(gnx3k_rotary_settings)},
+    {GNX3K_MOD_TYPE_AUTOYA, "Auto Ya", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_autoya_settings, G_N_ELEMENTS(gnx3k_autoya_settings)},
+    {GNX3K_MOD_TYPE_YAYA, "Ya Ya", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_yaya_settings, G_N_ELEMENTS(gnx3k_yaya_settings)},
+    {GNX3K_MOD_TYPE_SYNTHTALK, "Synthtalk", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_synthtalk_settings, G_N_ELEMENTS(gnx3k_synthtalk_settings)},
+    {GNX3K_MOD_TYPE_ENVELOPE, "Envelope", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_envelope_settings, G_N_ELEMENTS(gnx3k_envelope_settings)},
+    {GNX3K_MOD_TYPE_DETUNE, "Detune", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_mod_detune_settings, G_N_ELEMENTS(gnx3k_mod_detune_settings)},
+    {GNX3K_MOD_TYPE_PITCH, "Pitch", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_mod_pitch_settings, G_N_ELEMENTS(gnx3k_mod_pitch_settings)},
+};
+
 static EffectGroup rp250_chorusfx_group[] = {
     {CHORUS_TYPE_CE, "CE Chorus", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_ce_settings, G_N_ELEMENTS(chorusfx_ce_settings)},
     {CHORUS_TYPE_DUAL, "Dual Chorus", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_dual_settings, G_N_ELEMENTS(chorusfx_dual_settings)},
@@ -1427,6 +1571,10 @@ static Effect noisegate_effect[] = {
     {NULL, NOISEGATE_ON_OFF, NOISEGATE_POSITION, noisegate_group, G_N_ELEMENTS(noisegate_group)},
 };
 
+static Effect gnx3k_chorusfx_effect[] = {
+    {NULL, CHORUSFX_ON_OFF, CHORUSFX_POSITION, gnx3k_chorusfx_group, G_N_ELEMENTS(gnx3k_chorusfx_group)},
+};
+
 static Effect rp250_chorusfx_effect[] = {
     {NULL, CHORUSFX_ON_OFF, CHORUSFX_POSITION, rp250_chorusfx_group, G_N_ELEMENTS(rp250_chorusfx_group)},
 };
@@ -1502,6 +1650,7 @@ static EffectList gnx3000_effects[] = {
     {"Compressor", gnx3k_comp_effect, G_N_ELEMENTS(gnx3k_comp_effect)},
     {"Stompbox", gnx3k_dist_effect, G_N_ELEMENTS(gnx3k_dist_effect)},
     {"Noisegate", gnx3k_noisegate_effect, G_N_ELEMENTS(gnx3k_noisegate_effect)},
+    {"Chorus/Mod", gnx3k_chorusfx_effect, G_N_ELEMENTS(gnx3k_chorusfx_effect)},
 };
 
 static Banks rp_banks[] = {
