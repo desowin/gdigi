@@ -387,6 +387,11 @@ static EffectValues values_delay_time_0_760 = {
     0.0, 760.0, NULL,
 };
 
+static EffectValues values_delay_time_0_2000 = {
+    /** \todo make this display propertly */
+    0.0, 2000.0, NULL,
+};
+
 static EffectValues values_delay_time_0_4650 = {
     /** \todo make this display propertly */
     0.0, 4650.0, NULL,
@@ -407,9 +412,19 @@ static EffectValues values_delay_repeats = {
     0.0, 100.0, NULL,
 };
 
+static EffectValues values_delay_thresh = {
+    /** \todo make last value display propertly */
+    0.0, 100.0, NULL,
+};
+
 static EffectValues values_delay_repeat_rate_0_286 = {
     /** \todo make this display propertly */
     0.0, 286.0, NULL,
+};
+
+static EffectValues values_delay_spread_0_49 = {
+    /** \todo make this display propertly */
+    0.0, 49.0, NULL,
 };
 
 static EffectValues values_on_off = {
@@ -480,10 +495,10 @@ static EffectSettings gnx3k_preset_settings[] = {
 };
 
 static EffectSettings gnx3k_comp_settings[] = {
-    {"Attack", GN3K_COMP_ATTACK, COMP_POSITION, &values_fast_medium_slow},
-    {"Ratio", GN3K_COMP_RATIO, COMP_POSITION, &values_comp_ratio},
-    {"Threshold", GN3K_COMP_THRESHOLD, COMP_POSITION, &values_0_to_99},
-    {"Gain", GN3K_COMP_GAIN, COMP_POSITION, &values_0_to_20},
+    {"Attack", GNX3K_COMP_ATTACK, COMP_POSITION, &values_fast_medium_slow},
+    {"Ratio", GNX3K_COMP_RATIO, COMP_POSITION, &values_comp_ratio},
+    {"Threshold", GNX3K_COMP_THRESHOLD, COMP_POSITION, &values_0_to_99},
+    {"Gain", GNX3K_COMP_GAIN, COMP_POSITION, &values_0_to_20},
 };
 
 static EffectSettings comp_digi_settings[] = {
@@ -999,6 +1014,51 @@ static EffectSettings chorusfx_octaver_settings[] = {
     {"Dry Level", OCTAVER_DRY_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
 };
 
+static EffectSettings gnx3k_delay_mono_settings[] = {
+    {"Time", GNX3K_DELAY_TIME, DELAY_POSITION, &values_delay_time_0_2000},
+    {"Feedback", GNX3K_DELAY_FEEDBACK, DELAY_POSITION, &values_delay_repeats},
+    {"Thresh", GNX3K_DELAY_DUCK_THRESH, DELAY_POSITION, &values_delay_thresh},
+    {"Atten", GNX3K_DELAY_DUCK_ATTEN, DELAY_POSITION, &values_0_to_99},
+    {"Balance", GNX3K_DELAY_BALANCE, DELAY_POSITION, &values_synth_talk_balance},
+    {"Level", DELAY_LEVEL, DELAY_POSITION, &values_0_to_99},
+};
+
+static EffectSettings gnx3k_delay_pingpong_settings[] = {
+    {"Time", GNX3K_DELAY_TIME, DELAY_POSITION, &values_delay_time_0_2000},
+    {"Feedback", GNX3K_DELAY_FEEDBACK, DELAY_POSITION, &values_delay_repeats},
+    {"Thresh", GNX3K_DELAY_DUCK_THRESH, DELAY_POSITION, &values_delay_thresh},
+    {"Atten", GNX3K_DELAY_DUCK_ATTEN, DELAY_POSITION, &values_0_to_99},
+    {"Balance", GNX3K_DELAY_BALANCE, DELAY_POSITION, &values_synth_talk_balance},
+    {"Level", DELAY_LEVEL, DELAY_POSITION, &values_0_to_99},
+};
+
+static EffectSettings gnx3k_delay_analog_settings[] = {
+    {"Time", GNX3K_DELAY_TIME, DELAY_POSITION, &values_delay_time_0_2000},
+    {"Feedback", GNX3K_DELAY_FEEDBACK, DELAY_POSITION, &values_delay_repeats},
+    {"Thresh", GNX3K_DELAY_DUCK_THRESH, DELAY_POSITION, &values_delay_thresh},
+    {"Atten", GNX3K_DELAY_DUCK_ATTEN, DELAY_POSITION, &values_0_to_99},
+    {"Balance", GNX3K_DELAY_BALANCE, DELAY_POSITION, &values_synth_talk_balance},
+    {"Level", DELAY_LEVEL, DELAY_POSITION, &values_0_to_99},
+};
+
+static EffectSettings gnx3k_delay_anapong_settings[] = {
+    {"Time", GNX3K_DELAY_TIME, DELAY_POSITION, &values_delay_time_0_2000},
+    {"Feedback", GNX3K_DELAY_FEEDBACK, DELAY_POSITION, &values_delay_repeats},
+    {"Thresh", GNX3K_DELAY_DUCK_THRESH, DELAY_POSITION, &values_delay_thresh},
+    {"Atten", GNX3K_DELAY_DUCK_ATTEN, DELAY_POSITION, &values_0_to_99},
+    {"Balance", GNX3K_DELAY_BALANCE, DELAY_POSITION, &values_synth_talk_balance},
+    {"Level", DELAY_LEVEL, DELAY_POSITION, &values_0_to_99},
+};
+
+static EffectSettings gnx3k_delay_spread_settings[] = {
+    {"Time", GNX3K_DELAY_TIME, DELAY_POSITION, &values_delay_time_0_2000},
+    {"Feedback", GNX3K_DELAY_FEEDBACK, DELAY_POSITION, &values_delay_repeats},
+    {"Thresh", GNX3K_DELAY_DUCK_THRESH, DELAY_POSITION, &values_delay_thresh},
+    {"Atten", GNX3K_DELAY_DUCK_ATTEN, DELAY_POSITION, &values_0_to_99},
+    {"Spread", GNX3K_DELAY_SPREAD, DELAY_POSITION, &values_delay_spread_0_49},
+    {"Level", DELAY_LEVEL, DELAY_POSITION, &values_0_to_99},
+};
+
 static EffectSettings delay_analog_settings[] = {
     {"Time", DELAY_TIME, DELAY_POSITION, &values_delay_time},
     {"Level", DELAY_LEVEL, DELAY_POSITION, &values_0_to_99},
@@ -1103,9 +1163,9 @@ static EffectSettings reverb_lex_settings[] = {
 };
 
 static EffectGroup gnx3k_wah_group[] = {
-    {GN3K_WAH_TYPE_CRY, "Cry", WAH_TYPE, WAH_POSITION, gnx3k_wah_settings, G_N_ELEMENTS(gnx3k_wah_settings)},
-    {GN3K_WAH_TYPE_BOUTIQUE, "Boutique", WAH_TYPE, WAH_POSITION, gnx3k_wah_settings, G_N_ELEMENTS(gnx3k_wah_settings)},
-    {GN3K_WAH_TYPE_FULLRANGE, "Full-Range", WAH_TYPE, WAH_POSITION, gnx3k_wah_settings, G_N_ELEMENTS(gnx3k_wah_settings)},
+    {GNX3K_WAH_TYPE_CRY, "Cry", WAH_TYPE, WAH_POSITION, gnx3k_wah_settings, G_N_ELEMENTS(gnx3k_wah_settings)},
+    {GNX3K_WAH_TYPE_BOUTIQUE, "Boutique", WAH_TYPE, WAH_POSITION, gnx3k_wah_settings, G_N_ELEMENTS(gnx3k_wah_settings)},
+    {GNX3K_WAH_TYPE_FULLRANGE, "Full-Range", WAH_TYPE, WAH_POSITION, gnx3k_wah_settings, G_N_ELEMENTS(gnx3k_wah_settings)},
 };
 
 static EffectGroup wah_group[] = {
@@ -1283,6 +1343,14 @@ static EffectGroup rp500_chorusfx_group[] = {
     {CHORUS_TYPE_DETUNE, "Detune", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_detune_settings, G_N_ELEMENTS(chorusfx_detune_settings)},
     {CHORUS_TYPE_IPS, "Harmony Pitch", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_ips_settings, G_N_ELEMENTS(chorusfx_ips_settings)},
     {CHORUS_TYPE_OCTAVER, "Octaver", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_octaver_settings, G_N_ELEMENTS(chorusfx_octaver_settings)},
+};
+
+static EffectGroup gnx3k_delay_group[] = {
+    {DELAY_GNX3K_TYPE_MONO, "Mono", DELAY_TYPE, DELAY_POSITION, gnx3k_delay_mono_settings, G_N_ELEMENTS(gnx3k_delay_mono_settings)},
+    {DELAY_GNX3K_TYPE_PINGPONG, "Ping-Pong", DELAY_TYPE, DELAY_POSITION, gnx3k_delay_pingpong_settings, G_N_ELEMENTS(gnx3k_delay_pingpong_settings)},
+    {DELAY_GNX3K_TYPE_ANALOG, "Analog", DELAY_TYPE, DELAY_POSITION, gnx3k_delay_analog_settings, G_N_ELEMENTS(gnx3k_delay_analog_settings)},
+    {DELAY_GNX3K_TYPE_ANAPONG, "Analog-Pong", DELAY_TYPE, DELAY_POSITION, gnx3k_delay_anapong_settings, G_N_ELEMENTS(gnx3k_delay_anapong_settings)},
+    {DELAY_GNX3K_TYPE_SPREAD, "Spread", DELAY_TYPE, DELAY_POSITION, gnx3k_delay_spread_settings, G_N_ELEMENTS(gnx3k_delay_spread_settings)},
 };
 
 static EffectGroup rp250_delay_group[] = {
@@ -1583,6 +1651,10 @@ static Effect rp500_chorusfx_effect[] = {
     {NULL, CHORUSFX_ON_OFF, CHORUSFX_POSITION, rp500_chorusfx_group, G_N_ELEMENTS(rp500_chorusfx_group)},
 };
 
+static Effect gnx3k_delay_effect[] = {
+    {NULL, DELAY_ON_OFF, DELAY_POSITION, gnx3k_delay_group, G_N_ELEMENTS(gnx3k_delay_group)},
+};
+
 static Effect rp250_delay_effect[] = {
     {NULL, DELAY_ON_OFF, DELAY_POSITION, rp250_delay_group, G_N_ELEMENTS(rp250_delay_group)},
 };
@@ -1651,6 +1723,7 @@ static EffectList gnx3000_effects[] = {
     {"Stompbox", gnx3k_dist_effect, G_N_ELEMENTS(gnx3k_dist_effect)},
     {"Noisegate", gnx3k_noisegate_effect, G_N_ELEMENTS(gnx3k_noisegate_effect)},
     {"Chorus/Mod", gnx3k_chorusfx_effect, G_N_ELEMENTS(gnx3k_chorusfx_effect)},
+    {"Delay", gnx3k_delay_effect, G_N_ELEMENTS(gnx3k_delay_effect)},
 };
 
 static Banks rp_banks[] = {
