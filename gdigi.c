@@ -394,9 +394,8 @@ GString *get_message_by_id(MessageID id)
     guint x, len;
     gboolean found = FALSE;
 
+    g_mutex_lock(message_queue_mutex);
     do {
-        g_mutex_lock(message_queue_mutex);
-
         len = g_queue_get_length(message_queue);
         for (x = 0; x<len; x++) {
             data = g_queue_peek_nth(message_queue, x);
@@ -410,8 +409,8 @@ GString *get_message_by_id(MessageID id)
         if (found == FALSE)
             g_cond_wait(message_queue_cond, message_queue_mutex);
 
-        g_mutex_unlock(message_queue_mutex);
     } while (found == FALSE);
+    g_mutex_unlock(message_queue_mutex);
 
     unpack_message(data);
 
@@ -668,9 +667,8 @@ GList *get_current_preset()
 
     send_message(REQUEST_PRESET, "\x04\x00", 2);
 
+    g_mutex_lock(message_queue_mutex);
     do {
-        g_mutex_lock(message_queue_mutex);
-
         len = g_queue_get_length(message_queue);
 
         for (x = 0; x<len && (found == FALSE); x++) {
@@ -704,10 +702,12 @@ GList *get_current_preset()
             }
 
             done = TRUE;
+        } else {
+            /* Receive Preset Start not found in message queue */
+            g_cond_wait(message_queue_cond, message_queue_mutex);
         }
-
-        g_mutex_unlock(message_queue_mutex);
     } while (done == FALSE);
+    g_mutex_unlock(message_queue_mutex);
 
     return list;
 }
