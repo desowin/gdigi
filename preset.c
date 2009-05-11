@@ -183,35 +183,56 @@ Preset *create_preset_from_data(GList *list)
 {
     GString *data;
     GList *iter;
-    gint total;
-    gint n;
-    gint x;
+    gint total, n, x;
+    gint bank, number, modified;
+    gchar *name;
 
     g_return_val_if_fail(list != NULL, NULL);
 
-    iter = list;
-    do {
-        data = (GString*) iter->data;
-        iter = g_list_next(iter);
-    } while (get_message_id(data) != RECEIVE_PRESET_PARAMETERS);
-
-    x = 0x09;
-    n = 0;
-    total = (unsigned char)data->str[x];
-    x++;
-
     Preset *preset = g_slice_new(Preset);
-    preset->name = NULL; /* TODO */
+    preset->name = NULL;
     preset->params = NULL;
 
-    do {
-        SettingParam *param = setting_param_new_from_data(&data->str[x], &x);
-        n++;
-        preset->params = g_list_prepend(preset->params, param);
-        g_message("%d ID %d Position %d Value %d", n, param->id, param->position, param->value);
-    } while ((x < data->len) && n<total);
-    g_message("TOTAL %d", total);
-    preset->params = g_list_reverse(preset->params);
+    iter = list;
+    for (iter = list; iter; iter = g_list_next(iter)) {
+        data = (GString*) iter->data;
+        switch (get_message_id(data)) {
+            case RECEIVE_PRESET_START:
+                bank = (unsigned char)data->str[8];
+                number = (unsigned char)data->str[9];
+                name = g_strdup(&data->str[10]);
+                modified = (unsigned char)data->str[11+strlen(name)];
+
+                if ((bank == PRESETS_EDIT_BUFFER) && (number == 0)) {
+                    g_message("Received current edit buffer");
+                } else {
+                    g_message("Received preset %d from bank %d", number, bank);
+                }
+
+                g_message("Modified flag: %d Name: %s", modified, name);
+                preset->name = name;
+                break;
+            case RECEIVE_PRESET_PARAMETERS:
+                x = 0x09;
+                n = 0;
+                total = (unsigned char)data->str[x];
+                x++;
+
+                do {
+                    SettingParam *param = setting_param_new_from_data(&data->str[x], &x);
+                    n++;
+                    preset->params = g_list_prepend(preset->params, param);
+                    g_message("%d ID %d Position %d Value %d", n, param->id, param->position, param->value);
+                } while ((x < data->len) && n<total);
+                g_message("TOTAL %d", total);
+                preset->params = g_list_reverse(preset->params);
+                break;
+            case RECEIVE_PRESET_END:
+                break;
+            default:
+                g_message("Unhandled message in preset messages list");
+        }
+    }
 
     return preset;
 }
