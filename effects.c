@@ -1128,6 +1128,14 @@ static EffectSettings reverb_twin_settings[] = {
     {"Reverb", REVERB_LEVEL, REVERB_POSITION, &values_0_to_99},
 };
 
+static EffectSettings gnx3k_reverb_settings[] = {
+    {"Predelay", REVERB_PREDELAY, REVERB_POSITION, &values_0_to_15},
+    {"Decay", REVERB_DECAY, REVERB_POSITION, &values_0_to_99},
+    {"Damping", REVERB_DAMPING, REVERB_POSITION, &values_0_to_99},
+    {"Balance", REVERB_BALANCE, REVERB_POSITION, &values_synth_talk_balance},
+    {"Level", REVERB_LEVEL, REVERB_POSITION, &values_0_to_99},
+};
+
 static EffectSettings reverb_lex_settings[] = {
     {"Predelay", REVERB_PREDELAY, REVERB_POSITION, &values_0_to_15},
     {"Decay", REVERB_DECAY, REVERB_POSITION, &values_0_to_99},
@@ -1343,6 +1351,19 @@ static EffectGroup rp500_delay_group[] = {
     {DELAY_RP500_TYPE_PONG, "Pong", DELAY_TYPE, DELAY_POSITION, rp500_delay_pong_settings, G_N_ELEMENTS(rp500_delay_pong_settings)},
     {DELAY_RP500_TYPE_REVERSE, "Reverse", DELAY_TYPE, DELAY_POSITION, rp500_delay_reverse_settings, G_N_ELEMENTS(rp500_delay_reverse_settings)},
     {DELAY_RP500_TYPE_TAPE, "Tape", DELAY_TYPE, DELAY_POSITION, rp500_delay_tape_settings, G_N_ELEMENTS(rp500_delay_tape_settings)},
+};
+
+static EffectGroup gnx3k_reverb_group[] = {
+    {GNX3K_REVERB_TYPE_STUDIO, "Studio", REVERB_TYPE, REVERB_POSITION, gnx3k_reverb_settings, G_N_ELEMENTS(gnx3k_reverb_settings)},
+    {GNX3K_REVERB_TYPE_ROOM, "Room", REVERB_TYPE, REVERB_POSITION, gnx3k_reverb_settings, G_N_ELEMENTS(gnx3k_reverb_settings)},
+    {GNX3K_REVERB_TYPE_CLUB, "Club", REVERB_TYPE, REVERB_POSITION, gnx3k_reverb_settings, G_N_ELEMENTS(gnx3k_reverb_settings)},
+    {GNX3K_REVERB_TYPE_PLATE, "Plate", REVERB_TYPE, REVERB_POSITION, gnx3k_reverb_settings, G_N_ELEMENTS(gnx3k_reverb_settings)},
+    {GNX3K_REVERB_TYPE_HALL, "Hall", REVERB_TYPE, REVERB_POSITION, gnx3k_reverb_settings, G_N_ELEMENTS(gnx3k_reverb_settings)},
+    {GNX3K_REVERB_TYPE_AMPHITHEATER, "Amphitheater", REVERB_TYPE, REVERB_POSITION, gnx3k_reverb_settings, G_N_ELEMENTS(gnx3k_reverb_settings)},
+    {GNX3K_REVERB_TYPE_CHURCH, "Church", REVERB_TYPE, REVERB_POSITION, gnx3k_reverb_settings, G_N_ELEMENTS(gnx3k_reverb_settings)},
+    {GNX3K_REVERB_TYPE_GARAGE, "Garage", REVERB_TYPE, REVERB_POSITION, gnx3k_reverb_settings, G_N_ELEMENTS(gnx3k_reverb_settings)},
+    {GNX3K_REVERB_TYPE_ARENA, "Arena", REVERB_TYPE, REVERB_POSITION, gnx3k_reverb_settings, G_N_ELEMENTS(gnx3k_reverb_settings)},
+    {GNX3K_REVERB_TYPE_SPRING, "Spring", REVERB_TYPE, REVERB_POSITION, gnx3k_reverb_settings, G_N_ELEMENTS(gnx3k_reverb_settings)},
 };
 
 static EffectGroup reverb_group[] = {
@@ -1636,6 +1657,10 @@ static Effect rp500_delay_effect[] = {
     {NULL, DELAY_ON_OFF, DELAY_POSITION, rp500_delay_group, G_N_ELEMENTS(rp500_delay_group)},
 };
 
+static Effect gnx3k_reverb_effect[] = {
+    {NULL, REVERB_ON_OFF, REVERB_POSITION, gnx3k_reverb_group, G_N_ELEMENTS(gnx3k_reverb_group)},
+};
+
 static Effect reverb_effect[] = {
     {NULL, REVERB_ON_OFF, REVERB_POSITION, reverb_group, G_N_ELEMENTS(reverb_group)},
 };
@@ -1697,6 +1722,7 @@ static EffectList gnx3000_effects[] = {
     {"Noisegate", gnx3k_noisegate_effect, G_N_ELEMENTS(gnx3k_noisegate_effect)},
     {"Chorus/Mod", gnx3k_chorusfx_effect, G_N_ELEMENTS(gnx3k_chorusfx_effect)},
     {"Delay", gnx3k_delay_effect, G_N_ELEMENTS(gnx3k_delay_effect)},
+    {"Reverb", gnx3k_reverb_effect, G_N_ELEMENTS(gnx3k_reverb_effect)},
 };
 
 static Banks rp_banks[] = {
