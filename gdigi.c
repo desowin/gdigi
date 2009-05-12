@@ -732,7 +732,7 @@ void preset_list_free(GList *list)
 static gboolean request_who_am_i(unsigned char *device_id, unsigned char *family_id,
                                  unsigned char *product_id)
 {
-    send_message(REQUEST_WHO_AM_I, NULL, 0);
+    send_message(REQUEST_WHO_AM_I, "\x7F\x7F\x7F", 3);
 
     GString *data = get_message_by_id(RECEIVE_WHO_AM_I);
     if (data != NULL) {
