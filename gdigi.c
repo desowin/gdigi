@@ -735,7 +735,7 @@ static gboolean request_who_am_i(unsigned char *device_id, unsigned char *family
     send_message(REQUEST_WHO_AM_I, "\x7F\x7F\x7F", 3);
 
     GString *data = get_message_by_id(RECEIVE_WHO_AM_I);
-    if (data != NULL) {
+    if ((data != NULL) && (data->len > 11)) {
         *device_id = data->str[8];
         *family_id = data->str[9];
         *product_id = data->str[10];
