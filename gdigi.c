@@ -306,7 +306,7 @@ gpointer read_data_thread(gboolean *stop)
 
         length = 0;
         for (i = 0; i < err; ++i)
-            if (buf[i] != 0xFE) /* ignore active sensing */
+            if ((unsigned char)buf[i] != 0xFE) /* ignore active sensing */
                 buf[length++] = buf[i];
 
         i = 0;
@@ -640,7 +640,7 @@ GStrv query_preset_names(gchar bank)
         }
 
         for (x=10; ((x<data->len) && (n<n_total)); x++) {
-            if (data->str[x] == 0xF7) /* every message ends with 0xF7 */
+            if ((unsigned char)data->str[x] == 0xF7) /* every message ends with 0xF7 */
                 break;
 
             str_array[n] = g_strdup(&data->str[x]);
