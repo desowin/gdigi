@@ -127,25 +127,11 @@ static gchar *comp_ratio_labels[] = {
     "1.5:1",
     "1.8:1",
     "2.0:1",
+    "2.5:1",
     "3:1",
     "4:1",
     "5:1",
     "8:1",
-    "10:1",
-    "20:1",
-    "Inf:1",
-};
-
-static gchar *gnx4_comp_ratio_labels[] = {
-    "1.2:1",
-    "1.5:1",
-    "1.8:1",
-    "2.0:1",
-    "2.5:1",
-    "3.0:1",
-    "4.0:1",
-    "5.0:1",
-    "8.0:1",
     "10:1",
     "20:1",
     "Inf:1",
@@ -333,11 +319,7 @@ static EffectValues values_m12_to_24 = {
 };
 
 static EffectValues values_comp_ratio = {
-    0.0, 11.0, comp_ratio_labels,
-};
-
-static EffectValues gnx4_values_comp_ratio = {
-    0.0, 12.0, gnx4_comp_ratio_labels,
+    0.0, 12.0, comp_ratio_labels,
 };
 
 static EffectValues values_fast_medium_slow = {
@@ -539,14 +521,7 @@ static EffectSettings gnx3k_preset_settings[] = {
     {"Preset Level", PRESET_LEVEL, PRESET_POSITION, &values_0_to_99},
 };
 
-static EffectSettings gnx4_comp_settings[] = {
-    {"Attack", GNX3K_COMP_ATTACK, COMP_POSITION, &values_fast_medium_slow},
-    {"Ratio", GNX3K_COMP_RATIO, COMP_POSITION, &gnx4_values_comp_ratio},
-    {"Threshold", GNX3K_COMP_THRESHOLD, COMP_POSITION, &values_0_to_99},
-    {"Gain", GNX3K_COMP_GAIN, COMP_POSITION, &values_0_to_20},
-};
-
-static EffectSettings gnx3k_comp_settings[] = {
+static EffectSettings gnx_comp_settings[] = {
     {"Attack", GNX3K_COMP_ATTACK, COMP_POSITION, &values_fast_medium_slow},
     {"Ratio", GNX3K_COMP_RATIO, COMP_POSITION, &values_comp_ratio},
     {"Threshold", GNX3K_COMP_THRESHOLD, COMP_POSITION, &values_0_to_99},
@@ -1227,12 +1202,8 @@ static EffectGroup gnx3k_preset_group[] = {
     {-1, NULL, -1, -1, gnx3k_preset_settings, G_N_ELEMENTS(gnx3k_preset_settings)},
 };
 
-static EffectGroup gnx4_comp_group[] = {
-    {-1, NULL, -1, -1, gnx4_comp_settings, G_N_ELEMENTS(gnx4_comp_settings)},
-};
-
-static EffectGroup gnx3k_comp_group[] = {
-    {-1, NULL, -1, -1, gnx3k_comp_settings, G_N_ELEMENTS(gnx3k_comp_settings)},
+static EffectGroup gnx_comp_group[] = {
+    {-1, NULL, -1, -1, gnx_comp_settings, G_N_ELEMENTS(gnx_comp_settings)},
 };
 
 static EffectGroup rp250_comp_group[] = {
@@ -1665,12 +1636,8 @@ static Effect rp250_comp_effect[] = {
     {NULL, COMP_ON_OFF, COMP_POSITION, rp250_comp_group, G_N_ELEMENTS(rp250_comp_group)},
 };
 
-static Effect gnx4_comp_effect[] = {
-    {"Compressor", COMP_ON_OFF, COMP_POSITION, gnx4_comp_group, G_N_ELEMENTS(gnx4_comp_group)},
-};
-
-static Effect gnx3k_comp_effect[] = {
-    {"Compressor", COMP_ON_OFF, COMP_POSITION, gnx3k_comp_group, G_N_ELEMENTS(gnx3k_comp_group)},
+static Effect gnx_comp_effect[] = {
+    {"Compressor", COMP_ON_OFF, COMP_POSITION, gnx_comp_group, G_N_ELEMENTS(gnx_comp_group)},
 };
 
 static Effect rp500_comp_effect[] = {
@@ -1783,7 +1750,7 @@ static EffectList rp500_effects[] = {
 static EffectList gnx4_effects[] = {
     {"Pickup", pickup_effect, G_N_ELEMENTS(pickup_effect)},
     {"Wah", gnx3k_wah_effect, G_N_ELEMENTS(gnx3k_wah_effect)},
-    {"Compressor", gnx4_comp_effect, G_N_ELEMENTS(gnx4_comp_effect)},
+    {"Compressor", gnx_comp_effect, G_N_ELEMENTS(gnx_comp_effect)},
     {"Whammy/IPS", gnx3k_whammy_effect, G_N_ELEMENTS(gnx3k_whammy_effect)},
 };
 
@@ -1793,7 +1760,7 @@ static EffectList gnx3000_effects[] = {
     {"Wah", gnx3k_wah_effect, G_N_ELEMENTS(gnx3k_wah_effect)},
     {"Whammy/IPS", gnx3k_whammy_effect, G_N_ELEMENTS(gnx3k_whammy_effect)},
     {"Preset Level", gnx3k_preset_effect, G_N_ELEMENTS(gnx3k_preset_effect)},
-    {"Compressor", gnx3k_comp_effect, G_N_ELEMENTS(gnx3k_comp_effect)},
+    {"Compressor", gnx_comp_effect, G_N_ELEMENTS(gnx_comp_effect)},
     {"Stompbox", gnx3k_dist_effect, G_N_ELEMENTS(gnx3k_dist_effect)},
     {"Noisegate", gnx3k_noisegate_effect, G_N_ELEMENTS(gnx3k_noisegate_effect)},
     {"Chorus/Mod", gnx3k_chorusfx_effect, G_N_ELEMENTS(gnx3k_chorusfx_effect)},
