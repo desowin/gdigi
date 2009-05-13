@@ -514,13 +514,8 @@ static EffectSettings gnx3k_ips_settings[] = {
     {"Level", IPS_LEVEL, GNX3K_WHAM_POSITION, &values_0_to_99},
 };
 
-static EffectSettings gnx4_detune_settings[] = {
-    {"Shift Amount", GNX3K_DETUNE_AMOUNT, GNX3K_WHAM_POSITION, &values_m24_to_24_step2},
-    {"Level", DETUNE_LEVEL, GNX3K_WHAM_POSITION, &values_0_to_99},
-};
-
 static EffectSettings gnx3k_detune_settings[] = {
-    {"Shift Amount", GNX3K_DETUNE_AMOUNT, GNX3K_WHAM_POSITION, &values_m24_to_24},
+    {"Shift Amount", GNX3K_DETUNE_AMOUNT, GNX3K_WHAM_POSITION, &values_m24_to_24_step2},
     {"Level", DETUNE_LEVEL, GNX3K_WHAM_POSITION, &values_0_to_99},
 };
 
@@ -1212,18 +1207,6 @@ static EffectGroup wah_group[] = {
     {WAH_TYPE_CLYDE, "Clyde wah", WAH_TYPE, WAH_POSITION, wah_settings, G_N_ELEMENTS(wah_settings)},
 };
 
-static EffectGroup gnx4_whammy_group[] = {
-    {GNX3K_WHAM_TYPE_WHAMMY, "Whammy", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_whammy_settings, G_N_ELEMENTS(gnx3k_whammy_settings)},
-    {GNX3K_WHAM_TYPE_IPS, "IPS", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_ips_settings, G_N_ELEMENTS(gnx3k_ips_settings)},
-    {GNX3K_WHAM_TYPE_DETUNE, "Detune", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx4_detune_settings, G_N_ELEMENTS(gnx4_detune_settings)},
-    {GNX3K_WHAM_TYPE_PITCH, "Pitch Shift", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_pitch_settings, G_N_ELEMENTS(gnx3k_pitch_settings)},
-    {GNX3K_WHAM_TYPE_TALK1, "Talker 1", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_talk_settings, G_N_ELEMENTS(gnx3k_talk_settings)},
-    {GNX3K_WHAM_TYPE_TALK2, "Talker 2", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_talk_settings, G_N_ELEMENTS(gnx3k_talk_settings)},
-    {GNX3K_WHAM_TYPE_TALK3, "Talker 3", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_talk_settings, G_N_ELEMENTS(gnx3k_talk_settings)},
-    {GNX3K_WHAM_TYPE_TALK4, "Talker 4", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_talk_settings, G_N_ELEMENTS(gnx3k_talk_settings)},
-    {GNX3K_WHAM_TYPE_TALK5, "Talker 5", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_talk_settings, G_N_ELEMENTS(gnx3k_talk_settings)},
-};
-
 static EffectGroup gnx3k_whammy_group[] = {
     {GNX3K_WHAM_TYPE_WHAMMY, "Whammy", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_whammy_settings, G_N_ELEMENTS(gnx3k_whammy_settings)},
     {GNX3K_WHAM_TYPE_IPS, "IPS", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_ips_settings, G_N_ELEMENTS(gnx3k_ips_settings)},
@@ -1670,10 +1653,6 @@ static Effect wah_effect[] = {
     {NULL, WAH_ON_OFF, WAH_POSITION, wah_group, G_N_ELEMENTS(wah_group)},
 };
 
-static Effect gnx4_whammy_effect[] = {
-    {NULL, GNX3K_WHAM_ENABLE, GNX3K_WHAM_POSITION, gnx4_whammy_group, G_N_ELEMENTS(gnx4_whammy_group)},
-};
-
 static Effect gnx3k_whammy_effect[] = {
     {NULL, GNX3K_WHAM_ENABLE, GNX3K_WHAM_POSITION, gnx3k_whammy_group, G_N_ELEMENTS(gnx3k_whammy_group)},
 };
@@ -1805,7 +1784,7 @@ static EffectList gnx4_effects[] = {
     {"Pickup", pickup_effect, G_N_ELEMENTS(pickup_effect)},
     {"Wah", gnx3k_wah_effect, G_N_ELEMENTS(gnx3k_wah_effect)},
     {"Compressor", gnx4_comp_effect, G_N_ELEMENTS(gnx4_comp_effect)},
-    {"Whammy/IPS/Talk", gnx4_whammy_effect, G_N_ELEMENTS(gnx4_whammy_effect)},
+    {"Whammy/IPS", gnx3k_whammy_effect, G_N_ELEMENTS(gnx3k_whammy_effect)},
 };
 
 static EffectList gnx3000_effects[] = {
