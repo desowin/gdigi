@@ -275,12 +275,27 @@ static gchar *eq_high_freq_labels[] = {
     "8kHz",
 };
 
+static gchar *amp_channel_labels[] = {
+    "1",
+    "2",
+    "Warped",
+};
+
+static EffectValues values_1_2_warp = {
+    0.0, 2.0, amp_channel_labels,
+};
+
 static EffectValues values_0_to_99 = {
     0.0, 99.0, NULL,
 };
 
 static EffectValues values_1_to_4 = {
     0.0, 3.0, NULL,
+};
+
+static EffectValues values_warp_0_to_98 = {
+    /** \todo make this display propertly (display text is value + 1) */
+    0.0, 98.0, NULL,
 };
 
 static EffectValues values_0_to_9 = {
@@ -516,6 +531,13 @@ static EffectSettings gnx3k_pitch_settings[] = {
 
 static EffectSettings gnx3k_talk_settings[] = {
     {"Mic Level", GNX3K_TALK_LEVEL, GNX3K_WHAM_POSITION, &values_0_to_99},
+};
+
+static EffectSettings gnx3k_amp_channel_settings[] = {
+    {"Amp Channel", GNX_CHANNEL_AMP, GNX_CHANNEL_POSITION, &values_1_2_warp},
+    {"Warp", GNX_WARP, GNX_CHANNEL_POSITION, &values_warp_0_to_98},
+    {"Amp Warp", GNX_AMP_WARP, GNX_CHANNEL_POSITION, &values_warp_0_to_98},
+    {"Cabinet Warp", GNX_CABINET_WARP, GNX_CHANNEL_POSITION, &values_warp_0_to_98},
 };
 
 static EffectSettings gnx3k_preset_settings[] = {
@@ -1214,6 +1236,10 @@ static EffectGroup gnx3k_whammy_group[] = {
     {GNX3K_WHAM_TYPE_TALK5, "Talker 5", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_talk_settings, G_N_ELEMENTS(gnx3k_talk_settings)},
 };
 
+static EffectGroup gnx3k_amp_channel_group[] = {
+    {-1, NULL, -1, -1, gnx3k_amp_channel_settings, G_N_ELEMENTS(gnx3k_amp_channel_settings)},
+};
+
 static EffectGroup gnx3k_preset_group[] = {
     {-1, NULL, -1, -1, gnx3k_preset_settings, G_N_ELEMENTS(gnx3k_preset_settings)},
 };
@@ -1746,6 +1772,10 @@ static Effect pickup_effect[] = {
     {NULL, PICKUP_ON_OFF, PICKUP_POSITION, pickup_group, G_N_ELEMENTS(pickup_group)},
 };
 
+static Effect gnx3k_amp_channel_effect[] = {
+    {NULL, -1, -1, gnx3k_amp_channel_group, G_N_ELEMENTS(gnx3k_amp_channel_group)},
+};
+
 static EffectList rp250_effects[] = {
     {"Wah", wah_effect, G_N_ELEMENTS(wah_effect)},
     {"Amplifier", rp250_amp_effect, G_N_ELEMENTS(rp250_amp_effect)},
@@ -1779,6 +1809,7 @@ static EffectList gnx4_effects[] = {
 };
 
 static EffectList gnx3000_effects[] = {
+    {"Amp Channel", gnx3k_amp_channel_effect, G_N_ELEMENTS(gnx3k_amp_channel_effect)},
     {"Pickup", pickup_effect, G_N_ELEMENTS(pickup_effect)},
     {"Wah", gnx3k_wah_effect, G_N_ELEMENTS(gnx3k_wah_effect)},
     {"Whammy/IPS", gnx3k_whammy_effect, G_N_ELEMENTS(gnx3k_whammy_effect)},
