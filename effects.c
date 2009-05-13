@@ -136,6 +136,21 @@ static gchar *comp_ratio_labels[] = {
     "Inf:1",
 };
 
+static gchar *gnx4_comp_ratio_labels[] = {
+    "1.2:1",
+    "1.5:1",
+    "1.8:1",
+    "2.0:1",
+    "2.5:1",
+    "3.0:1",
+    "4.0:1",
+    "5.0:1",
+    "8.0:1",
+    "10:1",
+    "20:1",
+    "Inf:1",
+};
+
 static gchar *eq_bandwidth_labels[] = {
     "Wide",
     "Medium",
@@ -288,6 +303,10 @@ static EffectValues values_0_to_20 = {
     0.0, 20.0, NULL,
 };
 
+static EffectValues values_m24_to_24_step2 = {
+    /** \todo make this display propertly (display range -24 to 24) */
+    0.0, 24.0, NULL,
+};
 static EffectValues values_m24_to_24 = {
     /** \todo make this display propertly (display range -24 to 24) */
     0.0, 48.0, NULL,
@@ -300,6 +319,10 @@ static EffectValues values_m12_to_24 = {
 
 static EffectValues values_comp_ratio = {
     0.0, 11.0, comp_ratio_labels,
+};
+
+static EffectValues gnx4_values_comp_ratio = {
+    0.0, 12.0, gnx4_comp_ratio_labels,
 };
 
 static EffectValues values_fast_medium_slow = {
@@ -476,6 +499,11 @@ static EffectSettings gnx3k_ips_settings[] = {
     {"Level", IPS_LEVEL, GNX3K_WHAM_POSITION, &values_0_to_99},
 };
 
+static EffectSettings gnx4_detune_settings[] = {
+    {"Shift Amount", GNX3K_DETUNE_AMOUNT, GNX3K_WHAM_POSITION, &values_m24_to_24_step2},
+    {"Level", DETUNE_LEVEL, GNX3K_WHAM_POSITION, &values_0_to_99},
+};
+
 static EffectSettings gnx3k_detune_settings[] = {
     {"Shift Amount", GNX3K_DETUNE_AMOUNT, GNX3K_WHAM_POSITION, &values_m24_to_24},
     {"Level", DETUNE_LEVEL, GNX3K_WHAM_POSITION, &values_0_to_99},
@@ -492,6 +520,13 @@ static EffectSettings gnx3k_talk_settings[] = {
 
 static EffectSettings gnx3k_preset_settings[] = {
     {"Preset Level", PRESET_LEVEL, PRESET_POSITION, &values_0_to_99},
+};
+
+static EffectSettings gnx4_comp_settings[] = {
+    {"Attack", GNX3K_COMP_ATTACK, COMP_POSITION, &values_fast_medium_slow},
+    {"Ratio", GNX3K_COMP_RATIO, COMP_POSITION, &gnx4_values_comp_ratio},
+    {"Threshold", GNX3K_COMP_THRESHOLD, COMP_POSITION, &values_0_to_99},
+    {"Gain", GNX3K_COMP_GAIN, COMP_POSITION, &values_0_to_20},
 };
 
 static EffectSettings gnx3k_comp_settings[] = {
@@ -1155,6 +1190,18 @@ static EffectGroup wah_group[] = {
     {WAH_TYPE_CLYDE, "Clyde wah", WAH_TYPE, WAH_POSITION, wah_settings, G_N_ELEMENTS(wah_settings)},
 };
 
+static EffectGroup gnx4_whammy_group[] = {
+    {GNX3K_WHAM_TYPE_WHAMMY, "Whammy", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_whammy_settings, G_N_ELEMENTS(gnx3k_whammy_settings)},
+    {GNX3K_WHAM_TYPE_IPS, "IPS", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_ips_settings, G_N_ELEMENTS(gnx3k_ips_settings)},
+    {GNX3K_WHAM_TYPE_DETUNE, "Detune", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx4_detune_settings, G_N_ELEMENTS(gnx4_detune_settings)},
+    {GNX3K_WHAM_TYPE_PITCH, "Pitch Shift", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_pitch_settings, G_N_ELEMENTS(gnx3k_pitch_settings)},
+    {GNX3K_WHAM_TYPE_TALK1, "Talker 1", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_talk_settings, G_N_ELEMENTS(gnx3k_talk_settings)},
+    {GNX3K_WHAM_TYPE_TALK2, "Talker 2", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_talk_settings, G_N_ELEMENTS(gnx3k_talk_settings)},
+    {GNX3K_WHAM_TYPE_TALK3, "Talker 3", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_talk_settings, G_N_ELEMENTS(gnx3k_talk_settings)},
+    {GNX3K_WHAM_TYPE_TALK4, "Talker 4", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_talk_settings, G_N_ELEMENTS(gnx3k_talk_settings)},
+    {GNX3K_WHAM_TYPE_TALK5, "Talker 5", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_talk_settings, G_N_ELEMENTS(gnx3k_talk_settings)},
+};
+
 static EffectGroup gnx3k_whammy_group[] = {
     {GNX3K_WHAM_TYPE_WHAMMY, "Whammy", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_whammy_settings, G_N_ELEMENTS(gnx3k_whammy_settings)},
     {GNX3K_WHAM_TYPE_IPS, "IPS", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_ips_settings, G_N_ELEMENTS(gnx3k_ips_settings)},
@@ -1169,6 +1216,10 @@ static EffectGroup gnx3k_whammy_group[] = {
 
 static EffectGroup gnx3k_preset_group[] = {
     {-1, NULL, -1, -1, gnx3k_preset_settings, G_N_ELEMENTS(gnx3k_preset_settings)},
+};
+
+static EffectGroup gnx4_comp_group[] = {
+    {-1, NULL, -1, -1, gnx4_comp_settings, G_N_ELEMENTS(gnx4_comp_settings)},
 };
 
 static EffectGroup gnx3k_comp_group[] = {
@@ -1593,6 +1644,10 @@ static Effect wah_effect[] = {
     {NULL, WAH_ON_OFF, WAH_POSITION, wah_group, G_N_ELEMENTS(wah_group)},
 };
 
+static Effect gnx4_whammy_effect[] = {
+    {NULL, GNX3K_WHAM_ENABLE, GNX3K_WHAM_POSITION, gnx4_whammy_group, G_N_ELEMENTS(gnx4_whammy_group)},
+};
+
 static Effect gnx3k_whammy_effect[] = {
     {NULL, GNX3K_WHAM_ENABLE, GNX3K_WHAM_POSITION, gnx3k_whammy_group, G_N_ELEMENTS(gnx3k_whammy_group)},
 };
@@ -1603,6 +1658,10 @@ static Effect gnx3k_preset_effect[] = {
 
 static Effect rp250_comp_effect[] = {
     {NULL, COMP_ON_OFF, COMP_POSITION, rp250_comp_group, G_N_ELEMENTS(rp250_comp_group)},
+};
+
+static Effect gnx4_comp_effect[] = {
+    {"Compressor", COMP_ON_OFF, COMP_POSITION, gnx4_comp_group, G_N_ELEMENTS(gnx4_comp_group)},
 };
 
 static Effect gnx3k_comp_effect[] = {
@@ -1712,6 +1771,13 @@ static EffectList rp500_effects[] = {
     {"Reverb", reverb_effect, G_N_ELEMENTS(reverb_effect)},
 };
 
+static EffectList gnx4_effects[] = {
+    {"Pickup", pickup_effect, G_N_ELEMENTS(pickup_effect)},
+    {"Wah", gnx3k_wah_effect, G_N_ELEMENTS(gnx3k_wah_effect)},
+    {"Compressor", gnx4_comp_effect, G_N_ELEMENTS(gnx4_comp_effect)},
+    {"Whammy/IPS/Talk", gnx4_whammy_effect, G_N_ELEMENTS(gnx4_whammy_effect)},
+};
+
 static EffectList gnx3000_effects[] = {
     {"Pickup", pickup_effect, G_N_ELEMENTS(pickup_effect)},
     {"Wah", gnx3k_wah_effect, G_N_ELEMENTS(gnx3k_wah_effect)},
@@ -1730,7 +1796,13 @@ static Banks rp_banks[] = {
     {"System Presets", PRESETS_SYSTEM},
 };
 
-static Banks gnx_banks[] = {
+static Banks gnx4_banks[] = {
+    {"Factory", PRESETS_SYSTEM},
+    {"User Presets", PRESETS_USER},
+    {"Flash Card", PRESETS_MEDIA_CARD},
+};
+
+static Banks gnx3k_banks[] = {
     {"User Presets", PRESETS_USER},
     {"Factory 1", PRESETS_SYSTEM},
     {"Factory 2", PRESETS_FACTORY2},
@@ -1756,19 +1828,30 @@ static Device rp500 = {
     .n_banks = G_N_ELEMENTS(rp_banks),
 };
 
+static Device gnx4 = {
+    .name = "DigiTech GNX4",
+    .family_id = 0x5C,
+    .product_id = 0x03,
+    .effects = gnx4_effects,
+    .n_effects = G_N_ELEMENTS(gnx4_effects),
+    .banks = gnx4_banks,
+    .n_banks = G_N_ELEMENTS(gnx4_banks),
+};
+
 static Device gnx3000 = {
     .name = "DigiTech GNX3000",
     .family_id = 0x5C,
     .product_id = 0x04,
     .effects = gnx3000_effects,
     .n_effects = G_N_ELEMENTS(gnx3000_effects),
-    .banks = gnx_banks,
-    .n_banks = G_N_ELEMENTS(gnx_banks),
+    .banks = gnx3k_banks,
+    .n_banks = G_N_ELEMENTS(gnx3k_banks),
 };
 
 Device* supported_devices[] = {
     &rp250,
     &rp500,
+    &gnx4,
     &gnx3000,
 };
 
