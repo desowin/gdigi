@@ -384,7 +384,7 @@ static EffectValues values_waveform = {
     0.0, 2.0, wave_labels,
 };
 
-static EffectValues values_synth_talk_balance = {
+static EffectValues values_balance = {
     /** \todo make this display propertly */
     0.0, 198.0, NULL,
 };
@@ -761,7 +761,7 @@ static EffectSettings gnx3k_chorus_settings[] = {
     {"Depth", CHORUS_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
     {"Predelay", CHORUS_PREDELAY, CHORUSFX_POSITION, &values_predelay_time},
     {"Wave", CHORUS_WAVE, CHORUSFX_POSITION, &values_waveform},
-    {"Balance", CHORUS_BALANCE, CHORUSFX_POSITION, &values_synth_talk_balance},
+    {"Balance", CHORUS_BALANCE, CHORUSFX_POSITION, &values_balance},
     {"Level", CHORUS_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
 };
 
@@ -770,7 +770,7 @@ static EffectSettings gnx3k_flanger_settings[] = {
     {"Depth", FLANGER_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
     {"Regen", FLANGER_REGEN, CHORUSFX_POSITION, &values_0_to_99},
     {"Waveform", FLANGER_WAVE, CHORUSFX_POSITION, &values_waveform},
-    {"Balance", FLANGER_BALANCE, CHORUSFX_POSITION, &values_synth_talk_balance},
+    {"Balance", FLANGER_BALANCE, CHORUSFX_POSITION, &values_balance},
     {"Mix", FLANGER_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
 };
 
@@ -779,7 +779,7 @@ static EffectSettings gnx3k_phaser_settings[] = {
     {"Depth", PHASER_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
     {"Regen", PHASER_REGEN, CHORUSFX_POSITION, &values_0_to_99},
     {"Waveform", PHASER_WAVE, CHORUSFX_POSITION, &values_waveform},
-    {"Balance", PHASER_BALANCE, CHORUSFX_POSITION, &values_synth_talk_balance},
+    {"Balance", PHASER_BALANCE, CHORUSFX_POSITION, &values_balance},
     {"Level", PHASER_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
 };
 
@@ -814,7 +814,7 @@ static EffectSettings gnx3k_rotary_settings[] = {
     {"Depth", ROTARY_INTENSITY, CHORUSFX_POSITION, &values_0_to_99},
     {"Doppler", ROTARY_DOPPLER, CHORUSFX_POSITION, &values_0_to_99},
     {"X-Over", ROTARY_CROSSOVER, CHORUSFX_POSITION, &values_200hz_to_1_5khz},
-    {"Balance", ROTARY_BALANCE, CHORUSFX_POSITION, &values_synth_talk_balance},
+    {"Balance", ROTARY_BALANCE, CHORUSFX_POSITION, &values_balance},
     {"Mix", ROTARY_MIX, CHORUSFX_POSITION, &values_0_to_99},
 };
 
@@ -822,7 +822,7 @@ static EffectSettings gnx3k_autoya_settings[] = {
     {"Speed", AUTOYA_SPEED, CHORUSFX_POSITION, &values_0_to_99},
     {"Depth", AUTOYA_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
     {"Range", GNX3K_AUTOYA_RANGE, CHORUSFX_POSITION, &values_0_to_49},
-    {"Balance", AUTOYA_BALANCE, CHORUSFX_POSITION, &values_synth_talk_balance},
+    {"Balance", AUTOYA_BALANCE, CHORUSFX_POSITION, &values_balance},
     {"Mix", AUTOYA_MIX, CHORUSFX_POSITION, &values_0_to_99},
 };
 
@@ -830,7 +830,7 @@ static EffectSettings gnx3k_yaya_settings[] = {
     {"Pedal", YAYA_PEDAL, CHORUSFX_POSITION, &values_0_to_99},
     {"Depth", YAYA_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
     {"Range", GNX3K_YAYA_RANGE, CHORUSFX_POSITION, &values_0_to_49},
-    {"Balance", YAYA_BALANCE, CHORUSFX_POSITION, &values_synth_talk_balance},
+    {"Balance", YAYA_BALANCE, CHORUSFX_POSITION, &values_balance},
     {"Mix", YAYA_MIX, CHORUSFX_POSITION, &values_0_to_99},
 };
 
@@ -839,25 +839,25 @@ static EffectSettings gnx3k_synthtalk_settings[] = {
     {"Release", GNX3K_SYNTH_TALK_RELEASE, CHORUSFX_POSITION, &values_synth_talk_release},
     {"Sens", SYNTH_TALK_SENS, CHORUSFX_POSITION, &values_0_to_99},
     {"Vox", SYNTH_TALK_VOX, CHORUSFX_POSITION, &values_0_to_99},
-    {"Balance", SYNTH_TALK_BALANCE, CHORUSFX_POSITION, &values_synth_talk_balance},
+    {"Balance", SYNTH_TALK_BALANCE, CHORUSFX_POSITION, &values_balance},
 };
 
 static EffectSettings gnx3k_envelope_settings[] = {
     {"Sensitivity", ENVELOPE_SENSITIVITY, CHORUSFX_POSITION, &values_0_to_99},
     {"Range", ENVELOPE_RANGE, CHORUSFX_POSITION, &values_0_to_99},
-    {"Balance", ENVELOPE_BALANCE, CHORUSFX_POSITION, &values_synth_talk_balance},
+    {"Balance", ENVELOPE_BALANCE, CHORUSFX_POSITION, &values_balance},
     {"Mix", ENVELOPE_MIX, CHORUSFX_POSITION, &values_0_to_99},
 };
 
 static EffectSettings gnx3k_mod_detune_settings[] = {
     {"Shift Amount", DETUNE_AMOUNT, CHORUSFX_POSITION, &values_m24_to_24},
-    {"Balance", DETUNE_BALANCE, CHORUSFX_POSITION, &values_synth_talk_balance},
+    {"Balance", DETUNE_BALANCE, CHORUSFX_POSITION, &values_balance},
     {"Level", DETUNE_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
 };
 
 static EffectSettings gnx3k_mod_pitch_settings[] = {
     {"Shift Amount", PITCH_AMOUNT, CHORUSFX_POSITION, &values_m12_to_24},
-    {"Balance", PITCH_BALANCE, CHORUSFX_POSITION, &values_synth_talk_balance},
+    {"Balance", PITCH_BALANCE, CHORUSFX_POSITION, &values_balance},
     {"Level", GNX3K_PITCH_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
 };
 
@@ -1024,7 +1024,7 @@ static EffectSettings chorusfx_synth_talk_settings[] = {
     {"Release", SYNTH_TALK_RELEASE, CHORUSFX_POSITION, &values_0_to_99},
     {"Sens", SYNTH_TALK_SENS, CHORUSFX_POSITION, &values_0_to_99},
     {"Vox", SYNTH_TALK_VOX, CHORUSFX_POSITION, &values_0_to_99},
-    {"Balance", SYNTH_TALK_BALANCE, CHORUSFX_POSITION, &values_synth_talk_balance},
+    {"Balance", SYNTH_TALK_BALANCE, CHORUSFX_POSITION, &values_balance},
 };
 
 static EffectSettings chorusfx_step_filter_settings[] = {
@@ -1071,7 +1071,7 @@ static EffectSettings gnx3k_delay_settings[] = {
     {"Feedback", GNX3K_DELAY_FEEDBACK, DELAY_POSITION, &values_delay_repeats},
     {"Thresh", GNX3K_DELAY_DUCK_THRESH, DELAY_POSITION, &values_delay_thresh},
     {"Atten", GNX3K_DELAY_DUCK_ATTEN, DELAY_POSITION, &values_0_to_99},
-    {"Balance", GNX3K_DELAY_BALANCE, DELAY_POSITION, &values_synth_talk_balance},
+    {"Balance", GNX3K_DELAY_BALANCE, DELAY_POSITION, &values_balance},
     {"Level", DELAY_LEVEL, DELAY_POSITION, &values_0_to_99},
 };
 
@@ -1184,7 +1184,7 @@ static EffectSettings gnx3k_reverb_settings[] = {
     {"Predelay", REVERB_PREDELAY, REVERB_POSITION, &values_0_to_15},
     {"Decay", REVERB_DECAY, REVERB_POSITION, &values_0_to_99},
     {"Damping", REVERB_DAMPING, REVERB_POSITION, &values_0_to_99},
-    {"Balance", REVERB_BALANCE, REVERB_POSITION, &values_synth_talk_balance},
+    {"Balance", REVERB_BALANCE, REVERB_POSITION, &values_balance},
     {"Level", REVERB_LEVEL, REVERB_POSITION, &values_0_to_99},
 };
 
