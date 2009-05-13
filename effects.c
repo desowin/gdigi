@@ -1738,6 +1738,8 @@ static Banks gnx_banks[] = {
 
 static Device rp250 = {
     .name = "DigiTech RP250",
+    .family_id = 0x5E,
+    .product_id = 0x02,
     .effects = rp250_effects,
     .n_effects = G_N_ELEMENTS(rp250_effects),
     .banks = rp_banks,
@@ -1746,6 +1748,8 @@ static Device rp250 = {
 
 static Device rp500 = {
     .name = "DigiTech RP500",
+    .family_id = 0x5E,
+    .product_id = 0x05,
     .effects = rp500_effects,
     .n_effects = G_N_ELEMENTS(rp500_effects),
     .banks = rp_banks,
@@ -1754,6 +1758,8 @@ static Device rp500 = {
 
 static Device gnx3000 = {
     .name = "DigiTech GNX3000",
+    .family_id = 0x5C,
+    .product_id = 0x04,
     .effects = gnx3000_effects,
     .n_effects = G_N_ELEMENTS(gnx3000_effects),
     .banks = gnx_banks,
@@ -2063,31 +2069,13 @@ gboolean get_device_info(unsigned char device_id, unsigned char family_id,
                          unsigned char product_id,
                          Device **device)
 {
-    switch (family_id) {
-        case 0x5E: /* RP series */
-            switch (product_id) {
-                case 0x02: /* RP250 */
-                    *device = &rp250;
-                    return TRUE;
-                case 0x05: /* RP500 */
-                    *device = &rp500;
-                    return TRUE;
-                default:
-                    g_message("Unsupported RP model!");
-                    return FALSE;
-            }
-        case 0x5C:
-            switch (product_id) {
-                case 0x04: /* GNX3000 */
-                    *device = &gnx3000;
-                    return TRUE;
-                default:
-                    g_message("Unsupported model!");
-                    return FALSE;
-            }
-        default:
-            g_message("Unsupported device family!");
-            return FALSE;
+    int x;
+    for (x = 0; x < G_N_ELEMENTS(supported_devices); x++) {
+        if (supported_devices[x]->product_id == product_id && supported_devices[x]->family_id == family_id) {
+            *device = supported_devices[x];
+            return TRUE;
+        }
     }
+    return FALSE;
 }
 

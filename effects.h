@@ -67,6 +67,8 @@ typedef struct {
 
 typedef struct {
     gchar *name;
+    unsigned char family_id;
+    unsigned char product_id;
     EffectList *effects;
     gint n_effects;
     Banks *banks;
