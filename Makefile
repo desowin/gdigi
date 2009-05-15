@@ -1,33 +1,32 @@
 CC = gcc
-CFLAGS = `pkg-config --cflags glib-2.0 gio-2.0 gtk+-2.0` -Wall -g -ansi -std=c99
-OFLAG = -o
-LIBS = `pkg-config --libs glib-2.0 gio-2.0 gtk+-2.0 gthread-2.0 alsa` -lexpat
+EXTRA_CFLAGS ?=
+EXTRA_LDFLAGS ?=
+CFLAGS := $(shell pkg-config --cflags glib-2.0 gio-2.0 gtk+-2.0) -Wall -g -ansi -std=c99 $(EXTRA_CFLAGS)
+LDFLAGS := $(shell pkg-config --libs glib-2.0 gio-2.0 gtk+-2.0 gthread-2.0 alsa) -lexpat $(EXTRA_LDFLAGS)
+OBJECTS = gdigi.o gui.o effects.o preset.o gtkknob.o
+DEPFILES = $(foreach m,$(OBJECTS:.o=),.$(m).m)
 
-.SUFFIXES : .o .c
-.c.o :
+.PHONY : clean distclean all
+%.o : %.c
 	$(CC) $(CFLAGS) -c $<
+
+.%.m : %.c
+	$(CC) $(CFLAGS) -M -MF $@ -MG $<
 
 all: gdigi
 
-gdigi: knob.h gdigi.o gui.o effects.o preset.o gtkknob.o
-	$(CC) $(LIBS) $(OFLAG) gdigi gdigi.o gui.o effects.o preset.o gtkknob.o
+gdigi: $(OBJECTS) 
+	$(CC) $(LDFLAGS) -o $@ $+
 
-gdigi.o: gdigi.c
-
-gui.o: gui.c
-
-effects.o: effects.c
-
-preset.o: preset.c
-
-gtkknob.o: gtkknob.c
-
-gtkknob.o: gtkknob.c
-
-knob.h:
+knob.h: knob.png
 	gdk-pixbuf-csource --name=knob_pixbuf knob.png > $@
 
 clean:
-	rm *.o
+	rm -f *.o
+	rm -f knob.h
 
+distclean : clean
+	rm -f .*.m
+	rm -f gdigi
 
+-include $(DEPFILES)
