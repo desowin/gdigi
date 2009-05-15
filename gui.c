@@ -24,18 +24,16 @@
 
 typedef struct {
     GtkObject *widget;
-    gint id;
-    gint position;
 
     /* used for combo boxes, if widget isn't combo box, then both value and x are -1 */
     gint value;           /**< effect type value */
     gint x;               /**< combo box item number */
-} WidgetListElem;
+} WidgetTreeElem;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 static GtkKnobAnim *knob_anim = NULL; /* animation used by knobs */
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
-static GList *widget_list = NULL;     /**< this list contains WidgetListElem data elements */
+static GTree *widget_tree = NULL;     /**< this tree contains lists containing WidgetTreeElem data elements */
 static gboolean allow_send = FALSE;   /**< if FALSE GUI parameter changes won't be sent to device */
 
 /**
@@ -106,46 +104,59 @@ void toggled_cb(GtkToggleButton *button, Effect *effect)
 }
 
 /**
- *  \param widget GtkObject to add to widget list
+ *  \param widget GtkObject to add to widget tree
  *  \param id object controlled ID
  *  \param position object controlled position
  *  \param value effect value type (if widget is GtkComboBox, otherwise -1)
  *  \param x combo box item number (if widget is GtkComboBox, otherwise -1)
  *
- *  Adds widget to widget list.
+ *  Adds widget to widget tree.
  **/
-static void widget_list_add(GtkObject *widget, gint id, gint position, gint value, gint x)
+static WidgetTreeElem *widget_tree_add(GtkObject *widget, gint id, gint position, gint value, gint x)
 {
-    WidgetListElem *el;
+    GList *list;
+    WidgetTreeElem *el;
+    gpointer key;
 
-    el = g_slice_new(WidgetListElem);
+    el = g_slice_new(WidgetTreeElem);
     el->widget = widget;
-    el->id = id;
-    el->position = position;
     el->value = value;
     el->x = x;
 
-    widget_list = g_list_prepend(widget_list, el);
+    key = GINT_TO_POINTER((position << 16) | id);
+
+    list = g_tree_lookup(widget_tree, key);
+
+    if (list == NULL) {
+        list = g_list_append(list, el);
+        g_tree_insert(widget_tree, key, list);
+    } else {
+        list = g_list_append(list, el);
+
+        /* replace the list pointer */
+        g_tree_steal(widget_tree, key);
+        g_tree_insert(widget_tree, key, list);
+    }
+
+    return el;
 }
 
 /**
- *  \param el widget list element
+ *  \param el widget tree element
  *  \param param parameter to set
  *
- *  Sets widget list element value to param value.
+ *  Sets widget tree element value to param value.
  **/
-static void apply_widget_setting(WidgetListElem *el, SettingParam *param)
+static void apply_widget_setting(WidgetTreeElem *el, SettingParam *param)
 {
-    if ((el->id == param->id) && (el->position == param->position)) {
-        if (el->value == -1) {
-            if (GTK_IS_TOGGLE_BUTTON(el->widget))
-                gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(el->widget), (param->value == 0) ? FALSE : TRUE);
-            else if (GTK_IS_ADJUSTMENT(el->widget))
-                gtk_adjustment_set_value(GTK_ADJUSTMENT(el->widget), (gdouble)param->value);
-        } else { /* combo box */
-            if (el->value == param->value)
-                gtk_combo_box_set_active(GTK_COMBO_BOX(el->widget), el->x);
-        }
+    if (el->value == -1) {
+        if (GTK_IS_TOGGLE_BUTTON(el->widget))
+            gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(el->widget), (param->value == 0) ? FALSE : TRUE);
+        else if (GTK_IS_ADJUSTMENT(el->widget))
+            gtk_adjustment_set_value(GTK_ADJUSTMENT(el->widget), (gdouble)param->value);
+    } else { /* combo box */
+        if (el->value == param->value)
+            gtk_combo_box_set_active(GTK_COMBO_BOX(el->widget), el->x);
     }
 }
 
@@ -156,10 +167,13 @@ static void apply_widget_setting(WidgetListElem *el, SettingParam *param)
  **/
 void apply_setting_param_to_gui(SettingParam *param)
 {
+    gpointer key;
     g_return_if_fail(param != NULL);
 
     allow_send = FALSE;
-    g_list_foreach(widget_list, (GFunc)apply_widget_setting, param);
+    key = GINT_TO_POINTER((param->position << 16) | param->id);
+    GList *list = g_tree_lookup(widget_tree, key);
+    g_list_foreach(list, (GFunc)apply_widget_setting, param);
     allow_send = TRUE;
 }
 
@@ -171,17 +185,22 @@ void apply_setting_param_to_gui(SettingParam *param)
 static void apply_preset_to_gui(Preset *preset)
 {
     g_return_if_fail(preset != NULL);
-    g_return_if_fail(widget_list != NULL);
+    g_return_if_fail(widget_tree != NULL);
 
     allow_send = FALSE;
 
     GList *iter = preset->params;
     while (iter) {
+        gpointer key;
+
         SettingParam *param = iter->data;
         iter = iter->next;
 
-        if (param != NULL)
-            g_list_foreach(widget_list, (GFunc)apply_widget_setting, param);
+        if (param != NULL) {
+            key = GINT_TO_POINTER((param->position << 16) | param->id);
+            GList *list = g_tree_lookup(widget_tree, key);
+            g_list_foreach(list, (GFunc)apply_widget_setting, param);
+        }
     }
 
     allow_send = TRUE;
@@ -245,7 +264,7 @@ GtkWidget *create_table(EffectSettings *settings, gint amt, GHashTable *widget_t
             g_object_set_data(G_OBJECT(adj), "label", widget);
         }
 
-        widget_list_add(adj, settings[x].id, settings[x].position, -1, -1);
+        widget_tree_add(adj, settings[x].id, settings[x].position, -1, -1);
         gtk_table_attach(GTK_TABLE(table), label, 0, 1, x, x+1, GTK_SHRINK, GTK_SHRINK, 2, 2);
         gtk_table_attach(GTK_TABLE(table), knob, 1, 2, x, x+1, GTK_SHRINK, GTK_SHRINK, 2, 2);
         gtk_table_attach(GTK_TABLE(table), widget, 2, 3, x, x+1, GTK_SHRINK, GTK_SHRINK, 2, 2);
@@ -276,7 +295,7 @@ GtkWidget *create_on_off_button(Effect *effect)
         button = gtk_check_button_new_with_label(effect->label);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), FALSE);
     g_signal_connect(G_OBJECT(button), "toggled", G_CALLBACK(toggled_cb), effect);
-    widget_list_add(GTK_OBJECT(button), effect->id, effect->position, -1, -1);
+    widget_tree_add(GTK_OBJECT(button), effect->id, effect->position, -1, -1);
     return button;
 }
 
@@ -395,7 +414,7 @@ GtkWidget *create_widget_container(EffectGroup *group, gint amt, gint id, gint p
             settings->position = position;
             settings->child = widget;
 
-            widget_list_add(GTK_OBJECT(combo_box), id, position, group[x].type, x);
+            widget_tree_add(GTK_OBJECT(combo_box), id, position, group[x].type, x);
 
             name = g_strdup_printf("SettingsGroup%d", cmbox_no);
             g_object_set_data_full(G_OBJECT(combo_box), name, settings, ((GDestroyNotify)effect_settings_group_free));
@@ -785,15 +804,15 @@ static void action_open_preset_cb(GtkAction *action)
 }
 
 /**
- *  \param list widget list to be freed
+ *  \param list widget tree list to be freed
  *
- *  Frees all memory used by widget list.
+ *  Frees all memory used by widget tree list.
  */
-static void widget_list_free(GList *list)
+static void widget_tree_elem_free(GList *list)
 {
     GList *iter;
     for (iter = list; iter; iter = iter->next) {
-        g_slice_free(WidgetListElem, iter->data);
+        g_slice_free(WidgetTreeElem, iter->data);
     }
     g_list_free(list);
 }
@@ -897,6 +916,21 @@ static void add_menubar(GtkWidget *window, GtkWidget *vbox)
     g_object_unref(ui);
 }
 
+static gint widget_tree_key_compare_func(gconstpointer a, gconstpointer b, gpointer data)
+{
+    gint position_a = GPOINTER_TO_INT(a) & 0xFF0000;
+    gint position_b = GPOINTER_TO_INT(b) & 0xFF0000;
+
+    if (position_a > position_b) {
+        return 1;
+    } else if (position_a == position_b) {
+        gint val_a = GPOINTER_TO_INT(a) & 0xFFFF;
+        gint val_b = GPOINTER_TO_INT(b) & 0xFFFF;
+        return val_a - val_b;
+    } else
+        return -1;
+}
+
 /**
  *  Creates main window.
  **/
@@ -932,6 +966,11 @@ void gui_create(Device *device)
 
     knob_anim = gtk_knob_animation_new_from_inline(knob_pixbuf);
 
+    widget_tree = g_tree_new_full(widget_tree_key_compare_func,
+                                  NULL, /* key compare data */
+                                  NULL, /* key destroy func */
+                                  (GDestroyNotify) widget_tree_elem_free);
+
     for (x = 0; x<device->n_effects; x++) {
         if ((x % ((device->n_effects+1)/2)) == 0) {
             hbox = gtk_hbox_new(FALSE, 0);
@@ -952,8 +991,8 @@ void gui_create(Device *device)
  **/
 void gui_free()
 {
-    widget_list_free(widget_list);
-    widget_list = NULL;
+    g_tree_destroy(widget_tree);
+    widget_tree = NULL;
 
     gtk_knob_animation_free(knob_anim);
     knob_anim = NULL;
