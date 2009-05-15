@@ -6,3 +6,7 @@ syntax: glob
 *.o
 *.patch
 *.diff
+*.m
+*.orig
+knob.h
+gdigi
