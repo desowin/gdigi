@@ -1254,6 +1254,19 @@ static EffectGroup rp500_dist_group[] = {
     {DIST_TYPE_MP, "Big MP", DIST_TYPE, DIST_POSITION, dist_mp_settings, G_N_ELEMENTS(dist_mp_settings)},
 };
 
+static EffectGroup gnx4_dist_group[] = {
+    {DIST_TYPE_SCREAMER, "Screamer", DIST_TYPE, DIST_POSITION, dist_screamer_settings, G_N_ELEMENTS(dist_screamer_settings)},
+    {DIST_TYPE_RODENT, "Rodent", DIST_TYPE, DIST_POSITION, dist_rodent_settings, G_N_ELEMENTS(dist_rodent_settings)},
+    {DIST_TYPE_DS, "DS Dist", DIST_TYPE, DIST_POSITION, dist_ds_settings, G_N_ELEMENTS(dist_ds_settings)},
+    {DIST_TYPE_DOD250, "DOD250", DIST_TYPE, DIST_POSITION, dist_dod250_settings, G_N_ELEMENTS(dist_dod250_settings)},
+    {DIST_TYPE_MP, "Big MP", DIST_TYPE, DIST_POSITION, dist_mp_settings, G_N_ELEMENTS(dist_mp_settings)},
+    {DIST_TYPE_GUYOD, "Guy OD", DIST_TYPE, DIST_POSITION, dist_guyod_settings, G_N_ELEMENTS(dist_guyod_settings)},
+    {DIST_TYPE_SPARKDRIVE, "Sparkdrive", DIST_TYPE, DIST_POSITION, dist_sparkdrive_settings, G_N_ELEMENTS(dist_sparkdrive_settings)},
+    {DIST_TYPE_GRUNGE, "Grunge", DIST_TYPE, DIST_POSITION, dist_grunge_settings, G_N_ELEMENTS(dist_grunge_settings)},
+    {DIST_TYPE_FUZZY, "Fuzzy", DIST_TYPE, DIST_POSITION, dist_fuzzy_settings, G_N_ELEMENTS(dist_fuzzy_settings)},
+    {DIST_TYPE_ZONE, "Zone", DIST_TYPE, DIST_POSITION, dist_zone_settings, G_N_ELEMENTS(dist_zone_settings)},
+};
+
 static EffectGroup gnx3k_dist_group[] = {
     {DIST_TYPE_SCREAMER, "Screamer", DIST_TYPE, DIST_POSITION, dist_screamer_settings, G_N_ELEMENTS(dist_screamer_settings)},
     {DIST_TYPE_RODENT, "Rodent", DIST_TYPE, DIST_POSITION, dist_rodent_settings, G_N_ELEMENTS(dist_rodent_settings)},
@@ -1276,6 +1289,24 @@ static EffectGroup gnx3k_noisegate_group[] = {
 static EffectGroup noisegate_group[] = {
     {NOISEGATE_GATE, "Gate", NOISEGATE_TYPE, NOISEGATE_POSITION, noisegate_gate_settings, G_N_ELEMENTS(noisegate_gate_settings)},
     {NOISEGATE_SWELL, "Swell", NOISEGATE_TYPE, NOISEGATE_POSITION, noisegate_swell_settings, G_N_ELEMENTS(noisegate_swell_settings)},
+};
+
+static EffectGroup gnx4_chorusfx_group[] = {
+    {GNX3K_MOD_TYPE_CHORUS, "Chorus", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_chorus_settings, G_N_ELEMENTS(gnx3k_chorus_settings)},
+    {GNX3K_MOD_TYPE_FLANGER, "Flanger", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_flanger_settings, G_N_ELEMENTS(gnx3k_flanger_settings)},
+    {GNX3K_MOD_TYPE_PHASER, "Phaser", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_phaser_settings, G_N_ELEMENTS(gnx3k_phaser_settings)},
+    {GNX3K_MOD_TYPE_TRIGFLANGER, "Triggered Flanger", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_trigflanger_settings, G_N_ELEMENTS(gnx3k_trigflanger_settings)},
+    {GNX3K_MOD_TYPE_TRIGPHASER, "Triggered Phaser", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_trigphaser_settings, G_N_ELEMENTS(gnx3k_trigphaser_settings)},
+    {GNX3K_MOD_TYPE_TREMOLO, "Tremolo", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_tremolo_settings, G_N_ELEMENTS(chorusfx_tremolo_settings)},
+    {GNX3K_MOD_TYPE_PANNER, "Panner", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_panner_settings, G_N_ELEMENTS(chorusfx_panner_settings)},
+    {GNX3K_MOD_TYPE_VIBRATO, "Vibrato", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_vibrato_settings, G_N_ELEMENTS(gnx3k_vibrato_settings)},
+    {GNX3K_MOD_TYPE_ROTARY, "Rotary", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_rotary_settings, G_N_ELEMENTS(gnx3k_rotary_settings)},
+    {GNX3K_MOD_TYPE_AUTOYA, "Auto Ya", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_autoya_settings, G_N_ELEMENTS(gnx3k_autoya_settings)},
+    {GNX3K_MOD_TYPE_YAYA, "Ya Ya", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_yaya_settings, G_N_ELEMENTS(gnx3k_yaya_settings)},
+    {GNX3K_MOD_TYPE_SYNTHTALK, "Synthtalk", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_synthtalk_settings, G_N_ELEMENTS(gnx3k_synthtalk_settings)},
+    {GNX3K_MOD_TYPE_ENVELOPE, "Envelope", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_envelope_settings, G_N_ELEMENTS(gnx3k_envelope_settings)},
+    {GNX3K_MOD_TYPE_DETUNE, "Detune", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_mod_detune_settings, G_N_ELEMENTS(gnx3k_mod_detune_settings)},
+    {GNX3K_MOD_TYPE_PITCH, "Pitch", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_mod_pitch_settings, G_N_ELEMENTS(gnx3k_mod_pitch_settings)},
 };
 
 static EffectGroup gnx3k_chorusfx_group[] = {
@@ -1652,6 +1683,10 @@ static Effect rp500_dist_effect[] = {
     {NULL, DIST_ON_OFF, DIST_POSITION, rp500_dist_group, G_N_ELEMENTS(rp500_dist_group)},
 };
 
+static Effect gnx4_dist_effect[] = {
+    {NULL, DIST_ON_OFF, DIST_POSITION, gnx4_dist_group, G_N_ELEMENTS(gnx4_dist_group)},
+};
+
 static Effect gnx3k_dist_effect[] = {
     {NULL, DIST_ON_OFF, DIST_POSITION, gnx3k_dist_group, G_N_ELEMENTS(gnx3k_dist_group)},
 };
@@ -1662,6 +1697,10 @@ static Effect gnx3k_noisegate_effect[] = {
 
 static Effect noisegate_effect[] = {
     {NULL, NOISEGATE_ON_OFF, NOISEGATE_POSITION, noisegate_group, G_N_ELEMENTS(noisegate_group)},
+};
+
+static Effect gnx4_chorusfx_effect[] = {
+    {NULL, CHORUSFX_ON_OFF, CHORUSFX_POSITION, gnx4_chorusfx_group, G_N_ELEMENTS(gnx4_chorusfx_group)},
 };
 
 static Effect gnx3k_chorusfx_effect[] = {
@@ -1752,6 +1791,11 @@ static EffectList gnx4_effects[] = {
     {"Wah", gnx3k_wah_effect, G_N_ELEMENTS(gnx3k_wah_effect)},
     {"Compressor", gnx_comp_effect, G_N_ELEMENTS(gnx_comp_effect)},
     {"Whammy/IPS", gnx3k_whammy_effect, G_N_ELEMENTS(gnx3k_whammy_effect)},
+    {"Stompbox", gnx4_dist_effect, G_N_ELEMENTS(gnx4_dist_effect)},
+    {"Noisegate", gnx3k_noisegate_effect, G_N_ELEMENTS(gnx3k_noisegate_effect)},
+    {"Chorus/Mod", gnx4_chorusfx_effect, G_N_ELEMENTS(gnx4_chorusfx_effect)},
+    {"Delay", gnx3k_delay_effect, G_N_ELEMENTS(gnx3k_delay_effect)},
+    {"Reverb", gnx3k_reverb_effect, G_N_ELEMENTS(gnx3k_reverb_effect)},
 };
 
 static EffectList gnx3000_effects[] = {
