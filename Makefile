@@ -29,4 +29,15 @@ distclean : clean
 	rm -f .*.m
 	rm -f gdigi
 
+NODEP_TARGETS := clean distclean
+depinc := 1
+ifneq (,$(filter $(NODEP_TARGETS),$(MAKECMDGOALS)))
+depinc := 0
+endif
+ifneq (,$(fitler-out $(NODEP_TARGETS),$(MAKECMDGOALS)))
+depinc := 1
+endif
+
+ifeq ($(depinc),1)
 -include $(DEPFILES)
+endif
