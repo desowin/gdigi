@@ -35,8 +35,6 @@ typedef struct {
 typedef struct {
     guint type;                /**< value (type) */
     gchar *label;              /**< Effect name */
-    guint id;                  /**< ID (to set effect type) */
-    guint position;            /**< position */
     EffectSettings *settings;  /**< possible parameters */
     gint settings_amt;         /**< possible parameters length */
 } EffectGroup;
@@ -44,6 +42,7 @@ typedef struct {
 typedef struct {
     gchar *label;       /**< Group label */
     guint id;           /**< ID to set effect on/off, or if it isn't on/off group then -1 */
+    guint type;         /**< ID to set effect type */
     guint position;     /**< position */
     EffectGroup *group; /**< possible effect types */
     gint group_amt;     /**< possible effect types length */
@@ -56,6 +55,8 @@ typedef struct {
 } EffectList;
 
 typedef struct {
+    guint type;         /**< ID to set effect type */
+    guint position;
     EffectGroup *group;
     gint group_amt;
 } ModifierGroup;

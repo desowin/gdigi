@@ -1171,594 +1171,596 @@ static EffectSettings reverb_lex_settings[] = {
 };
 
 static EffectGroup gnx3k_wah_group[] = {
-    {GNX3K_WAH_TYPE_CRY, "Cry", WAH_TYPE, WAH_POSITION, gnx3k_wah_settings, G_N_ELEMENTS(gnx3k_wah_settings)},
-    {GNX3K_WAH_TYPE_BOUTIQUE, "Boutique", WAH_TYPE, WAH_POSITION, gnx3k_wah_settings, G_N_ELEMENTS(gnx3k_wah_settings)},
-    {GNX3K_WAH_TYPE_FULLRANGE, "Full-Range", WAH_TYPE, WAH_POSITION, gnx3k_wah_settings, G_N_ELEMENTS(gnx3k_wah_settings)},
+    {GNX3K_WAH_TYPE_CRY, "Cry", gnx3k_wah_settings, G_N_ELEMENTS(gnx3k_wah_settings)},
+    {GNX3K_WAH_TYPE_BOUTIQUE, "Boutique", gnx3k_wah_settings, G_N_ELEMENTS(gnx3k_wah_settings)},
+    {GNX3K_WAH_TYPE_FULLRANGE, "Full-Range", gnx3k_wah_settings, G_N_ELEMENTS(gnx3k_wah_settings)},
 };
 
 static EffectGroup wah_group[] = {
-    {WAH_TYPE_CRY, "Cry wah", WAH_TYPE, WAH_POSITION, wah_settings, G_N_ELEMENTS(wah_settings)},
-    {WAH_TYPE_FULLRANGE, "Fullrange wah", WAH_TYPE, WAH_POSITION, wah_settings, G_N_ELEMENTS(wah_settings)},
-    {WAH_TYPE_CLYDE, "Clyde wah", WAH_TYPE, WAH_POSITION, wah_settings, G_N_ELEMENTS(wah_settings)},
+    {WAH_TYPE_CRY, "Cry wah", wah_settings, G_N_ELEMENTS(wah_settings)},
+    {WAH_TYPE_FULLRANGE, "Fullrange wah", wah_settings, G_N_ELEMENTS(wah_settings)},
+    {WAH_TYPE_CLYDE, "Clyde wah", wah_settings, G_N_ELEMENTS(wah_settings)},
 };
 
 static EffectGroup gnx3k_whammy_group[] = {
-    {GNX3K_WHAM_TYPE_WHAMMY, "Whammy", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_whammy_settings, G_N_ELEMENTS(gnx3k_whammy_settings)},
-    {GNX3K_WHAM_TYPE_IPS, "IPS", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_ips_settings, G_N_ELEMENTS(gnx3k_ips_settings)},
-    {GNX3K_WHAM_TYPE_DETUNE, "Detune", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_detune_settings, G_N_ELEMENTS(gnx3k_detune_settings)},
-    {GNX3K_WHAM_TYPE_PITCH, "Pitch Shift", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_pitch_settings, G_N_ELEMENTS(gnx3k_pitch_settings)},
-    {GNX3K_WHAM_TYPE_TALK1, "Talker 1", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_talk_settings, G_N_ELEMENTS(gnx3k_talk_settings)},
-    {GNX3K_WHAM_TYPE_TALK2, "Talker 2", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_talk_settings, G_N_ELEMENTS(gnx3k_talk_settings)},
-    {GNX3K_WHAM_TYPE_TALK3, "Talker 3", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_talk_settings, G_N_ELEMENTS(gnx3k_talk_settings)},
-    {GNX3K_WHAM_TYPE_TALK4, "Talker 4", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_talk_settings, G_N_ELEMENTS(gnx3k_talk_settings)},
-    {GNX3K_WHAM_TYPE_TALK5, "Talker 5", GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_talk_settings, G_N_ELEMENTS(gnx3k_talk_settings)},
+    {GNX3K_WHAM_TYPE_WHAMMY, "Whammy", gnx3k_whammy_settings, G_N_ELEMENTS(gnx3k_whammy_settings)},
+    {GNX3K_WHAM_TYPE_IPS, "IPS", gnx3k_ips_settings, G_N_ELEMENTS(gnx3k_ips_settings)},
+    {GNX3K_WHAM_TYPE_DETUNE, "Detune", gnx3k_detune_settings, G_N_ELEMENTS(gnx3k_detune_settings)},
+    {GNX3K_WHAM_TYPE_PITCH, "Pitch Shift", gnx3k_pitch_settings, G_N_ELEMENTS(gnx3k_pitch_settings)},
+    {GNX3K_WHAM_TYPE_TALK1, "Talker 1", gnx3k_talk_settings, G_N_ELEMENTS(gnx3k_talk_settings)},
+    {GNX3K_WHAM_TYPE_TALK2, "Talker 2", gnx3k_talk_settings, G_N_ELEMENTS(gnx3k_talk_settings)},
+    {GNX3K_WHAM_TYPE_TALK3, "Talker 3", gnx3k_talk_settings, G_N_ELEMENTS(gnx3k_talk_settings)},
+    {GNX3K_WHAM_TYPE_TALK4, "Talker 4", gnx3k_talk_settings, G_N_ELEMENTS(gnx3k_talk_settings)},
+    {GNX3K_WHAM_TYPE_TALK5, "Talker 5", gnx3k_talk_settings, G_N_ELEMENTS(gnx3k_talk_settings)},
 };
 
 static EffectGroup gnx3k_amp_channel_group[] = {
-    {-1, NULL, -1, -1, gnx3k_amp_channel_settings, G_N_ELEMENTS(gnx3k_amp_channel_settings)},
+    {-1, NULL, gnx3k_amp_channel_settings, G_N_ELEMENTS(gnx3k_amp_channel_settings)},
 };
 
 static EffectGroup gnx3k_preset_group[] = {
-    {-1, NULL, -1, -1, gnx3k_preset_settings, G_N_ELEMENTS(gnx3k_preset_settings)},
+    {-1, NULL, gnx3k_preset_settings, G_N_ELEMENTS(gnx3k_preset_settings)},
 };
 
 static EffectGroup gnx_comp_group[] = {
-    {-1, NULL, -1, -1, gnx_comp_settings, G_N_ELEMENTS(gnx_comp_settings)},
+    {-1, NULL, gnx_comp_settings, G_N_ELEMENTS(gnx_comp_settings)},
 };
 
 static EffectGroup rp250_comp_group[] = {
-    {COMP_TYPE_DIGI, "Digital compressor", COMP_TYPE, COMP_POSITION, comp_digi_settings, G_N_ELEMENTS(comp_digi_settings)},
-    {COMP_TYPE_CS, "CS compressor", COMP_TYPE, COMP_POSITION, comp_cs_settings, G_N_ELEMENTS(comp_cs_settings)},
+    {COMP_TYPE_DIGI, "Digital compressor", comp_digi_settings, G_N_ELEMENTS(comp_digi_settings)},
+    {COMP_TYPE_CS, "CS compressor", comp_cs_settings, G_N_ELEMENTS(comp_cs_settings)},
 };
 
 static EffectGroup rp500_comp_group[] = {
-    {COMP_TYPE_DIGI, "Digital compressor", COMP_TYPE, COMP_POSITION, comp_digi_settings, G_N_ELEMENTS(comp_digi_settings)},
-    {COMP_TYPE_CS, "CS compressor", COMP_TYPE, COMP_POSITION, comp_cs_settings, G_N_ELEMENTS(comp_cs_settings)},
-    {COMP_TYPE_DYNA, "Dyna comp", COMP_TYPE, COMP_POSITION, comp_dyna_settings, G_N_ELEMENTS(comp_dyna_settings)},
+    {COMP_TYPE_DIGI, "Digital compressor", comp_digi_settings, G_N_ELEMENTS(comp_digi_settings)},
+    {COMP_TYPE_CS, "CS compressor", comp_cs_settings, G_N_ELEMENTS(comp_cs_settings)},
+    {COMP_TYPE_DYNA, "Dyna comp", comp_dyna_settings, G_N_ELEMENTS(comp_dyna_settings)},
 };
 
 static EffectGroup rp250_dist_group[] = {
-    {DIST_TYPE_SCREAMER, "Screamer", DIST_TYPE, DIST_POSITION, dist_screamer_settings, G_N_ELEMENTS(dist_screamer_settings)},
-    {DIST_TYPE_808, "808", DIST_TYPE, DIST_POSITION, dist_808_settings, G_N_ELEMENTS(dist_808_settings)},
-    {DIST_TYPE_GUYOD, "GuyOD", DIST_TYPE, DIST_POSITION, dist_guyod_settings, G_N_ELEMENTS(dist_guyod_settings)},
-    {DIST_TYPE_DOD250, "DOD250", DIST_TYPE, DIST_POSITION, dist_dod250_settings, G_N_ELEMENTS(dist_dod250_settings)},
-    {DIST_TYPE_RODENT, "Rodent", DIST_TYPE, DIST_POSITION, dist_rodent_settings, G_N_ELEMENTS(dist_rodent_settings)},
-    {DIST_TYPE_MX, "MX", DIST_TYPE, DIST_POSITION, dist_mx_settings, G_N_ELEMENTS(dist_mx_settings)},
-    {DIST_TYPE_DS, "DS", DIST_TYPE, DIST_POSITION, dist_ds_settings, G_N_ELEMENTS(dist_ds_settings)},
-    {DIST_TYPE_GRUNGE, "Grunge", DIST_TYPE, DIST_POSITION, dist_grunge_settings, G_N_ELEMENTS(dist_grunge_settings)},
-    {DIST_TYPE_ZONE, "Zone", DIST_TYPE, DIST_POSITION, dist_zone_settings, G_N_ELEMENTS(dist_zone_settings)},
-    {DIST_TYPE_DEATH, "Death", DIST_TYPE, DIST_POSITION, dist_death_settings, G_N_ELEMENTS(dist_death_settings)},
-    {DIST_TYPE_GONK, "Gonk", DIST_TYPE, DIST_POSITION, dist_gonk_settings, G_N_ELEMENTS(dist_gonk_settings)},
-    {DIST_TYPE_FUZZY, "Fuzzy", DIST_TYPE, DIST_POSITION, dist_fuzzy_settings, G_N_ELEMENTS(dist_fuzzy_settings)},
-    {DIST_TYPE_MP, "Big MP", DIST_TYPE, DIST_POSITION, dist_mp_settings, G_N_ELEMENTS(dist_mp_settings)},
+    {DIST_TYPE_SCREAMER, "Screamer", dist_screamer_settings, G_N_ELEMENTS(dist_screamer_settings)},
+    {DIST_TYPE_808, "808", dist_808_settings, G_N_ELEMENTS(dist_808_settings)},
+    {DIST_TYPE_GUYOD, "GuyOD", dist_guyod_settings, G_N_ELEMENTS(dist_guyod_settings)},
+    {DIST_TYPE_DOD250, "DOD250", dist_dod250_settings, G_N_ELEMENTS(dist_dod250_settings)},
+    {DIST_TYPE_RODENT, "Rodent", dist_rodent_settings, G_N_ELEMENTS(dist_rodent_settings)},
+    {DIST_TYPE_MX, "MX", dist_mx_settings, G_N_ELEMENTS(dist_mx_settings)},
+    {DIST_TYPE_DS, "DS", dist_ds_settings, G_N_ELEMENTS(dist_ds_settings)},
+    {DIST_TYPE_GRUNGE, "Grunge", dist_grunge_settings, G_N_ELEMENTS(dist_grunge_settings)},
+    {DIST_TYPE_ZONE, "Zone", dist_zone_settings, G_N_ELEMENTS(dist_zone_settings)},
+    {DIST_TYPE_DEATH, "Death", dist_death_settings, G_N_ELEMENTS(dist_death_settings)},
+    {DIST_TYPE_GONK, "Gonk", dist_gonk_settings, G_N_ELEMENTS(dist_gonk_settings)},
+    {DIST_TYPE_FUZZY, "Fuzzy", dist_fuzzy_settings, G_N_ELEMENTS(dist_fuzzy_settings)},
+    {DIST_TYPE_MP, "Big MP", dist_mp_settings, G_N_ELEMENTS(dist_mp_settings)},
 };
 
 static EffectGroup rp500_dist_group[] = {
-    {DIST_TYPE_SCREAMER, "Screamer", DIST_TYPE, DIST_POSITION, dist_screamer_settings, G_N_ELEMENTS(dist_screamer_settings)},
-    {DIST_TYPE_808, "808", DIST_TYPE, DIST_POSITION, dist_808_settings, G_N_ELEMENTS(dist_808_settings)},
-    {DIST_TYPE_SPARKDRIVE, "Sparkdrive", DIST_TYPE, DIST_POSITION, dist_sparkdrive_settings, G_N_ELEMENTS(dist_sparkdrive_settings)},
-    {DIST_TYPE_GUYOD, "OD Overdrive", DIST_TYPE, DIST_POSITION, dist_guyod_settings, G_N_ELEMENTS(dist_guyod_settings)},
-    {DIST_TYPE_DOD250, "DOD250", DIST_TYPE, DIST_POSITION, dist_dod250_settings, G_N_ELEMENTS(dist_dod250_settings)},
-    {DIST_TYPE_REDLINE, "Redline", DIST_TYPE, DIST_POSITION, dist_redline_settings, G_N_ELEMENTS(dist_redline_settings)},
-    {DIST_TYPE_RODENT, "Rodent", DIST_TYPE, DIST_POSITION, dist_rodent_settings, G_N_ELEMENTS(dist_rodent_settings)},
-    {DIST_TYPE_MX, "MX", DIST_TYPE, DIST_POSITION, dist_mx_settings, G_N_ELEMENTS(dist_mx_settings)},
-    {DIST_TYPE_DS, "DS", DIST_TYPE, DIST_POSITION, dist_ds_settings, G_N_ELEMENTS(dist_ds_settings)},
-    {DIST_TYPE_GRUNGE, "Grunge", DIST_TYPE, DIST_POSITION, dist_grunge_settings, G_N_ELEMENTS(dist_grunge_settings)},
-    {DIST_TYPE_ZONE, "Zone", DIST_TYPE, DIST_POSITION, dist_zone_settings, G_N_ELEMENTS(dist_zone_settings)},
-    {DIST_TYPE_DEATH, "Death", DIST_TYPE, DIST_POSITION, dist_death_settings, G_N_ELEMENTS(dist_death_settings)},
-    {DIST_TYPE_GONK, "Gonk", DIST_TYPE, DIST_POSITION, dist_gonk_settings, G_N_ELEMENTS(dist_gonk_settings)},
-    {DIST_TYPE_8TAVIA, "8tavia", DIST_TYPE, DIST_POSITION, dist_8tavia_settings, G_N_ELEMENTS(dist_8tavia_settings)},
-    {DIST_TYPE_FUZZLATOR, "Fuzzlator", DIST_TYPE, DIST_POSITION, dist_fuzzlator_settings, G_N_ELEMENTS(dist_fuzzlator_settings)},
-    {DIST_TYPE_CLASSIC_FUZZ, "Classic Fuzz", DIST_TYPE, DIST_POSITION, dist_classic_fuzz_settings, G_N_ELEMENTS(dist_classic_fuzz_settings)},
-    {DIST_TYPE_FUZZY, "Fuzzy", DIST_TYPE, DIST_POSITION, dist_fuzzy_settings, G_N_ELEMENTS(dist_fuzzy_settings)},
-    {DIST_TYPE_MP, "Big MP", DIST_TYPE, DIST_POSITION, dist_mp_settings, G_N_ELEMENTS(dist_mp_settings)},
+    {DIST_TYPE_SCREAMER, "Screamer", dist_screamer_settings, G_N_ELEMENTS(dist_screamer_settings)},
+    {DIST_TYPE_808, "808", dist_808_settings, G_N_ELEMENTS(dist_808_settings)},
+    {DIST_TYPE_SPARKDRIVE, "Sparkdrive", dist_sparkdrive_settings, G_N_ELEMENTS(dist_sparkdrive_settings)},
+    {DIST_TYPE_GUYOD, "OD Overdrive", dist_guyod_settings, G_N_ELEMENTS(dist_guyod_settings)},
+    {DIST_TYPE_DOD250, "DOD250", dist_dod250_settings, G_N_ELEMENTS(dist_dod250_settings)},
+    {DIST_TYPE_REDLINE, "Redline", dist_redline_settings, G_N_ELEMENTS(dist_redline_settings)},
+    {DIST_TYPE_RODENT, "Rodent", dist_rodent_settings, G_N_ELEMENTS(dist_rodent_settings)},
+    {DIST_TYPE_MX, "MX", dist_mx_settings, G_N_ELEMENTS(dist_mx_settings)},
+    {DIST_TYPE_DS, "DS", dist_ds_settings, G_N_ELEMENTS(dist_ds_settings)},
+    {DIST_TYPE_GRUNGE, "Grunge", dist_grunge_settings, G_N_ELEMENTS(dist_grunge_settings)},
+    {DIST_TYPE_ZONE, "Zone", dist_zone_settings, G_N_ELEMENTS(dist_zone_settings)},
+    {DIST_TYPE_DEATH, "Death", dist_death_settings, G_N_ELEMENTS(dist_death_settings)},
+    {DIST_TYPE_GONK, "Gonk", dist_gonk_settings, G_N_ELEMENTS(dist_gonk_settings)},
+    {DIST_TYPE_8TAVIA, "8tavia", dist_8tavia_settings, G_N_ELEMENTS(dist_8tavia_settings)},
+    {DIST_TYPE_FUZZLATOR, "Fuzzlator", dist_fuzzlator_settings, G_N_ELEMENTS(dist_fuzzlator_settings)},
+    {DIST_TYPE_CLASSIC_FUZZ, "Classic Fuzz", dist_classic_fuzz_settings, G_N_ELEMENTS(dist_classic_fuzz_settings)},
+    {DIST_TYPE_FUZZY, "Fuzzy", dist_fuzzy_settings, G_N_ELEMENTS(dist_fuzzy_settings)},
+    {DIST_TYPE_MP, "Big MP", dist_mp_settings, G_N_ELEMENTS(dist_mp_settings)},
 };
 
 static EffectGroup gnx4_dist_group[] = {
-    {DIST_TYPE_SCREAMER, "Screamer", DIST_TYPE, DIST_POSITION, dist_screamer_settings, G_N_ELEMENTS(dist_screamer_settings)},
-    {DIST_TYPE_RODENT, "Rodent", DIST_TYPE, DIST_POSITION, dist_rodent_settings, G_N_ELEMENTS(dist_rodent_settings)},
-    {DIST_TYPE_DS, "DS Dist", DIST_TYPE, DIST_POSITION, dist_ds_settings, G_N_ELEMENTS(dist_ds_settings)},
-    {DIST_TYPE_DOD250, "DOD250", DIST_TYPE, DIST_POSITION, dist_dod250_settings, G_N_ELEMENTS(dist_dod250_settings)},
-    {DIST_TYPE_MP, "Big MP", DIST_TYPE, DIST_POSITION, dist_mp_settings, G_N_ELEMENTS(dist_mp_settings)},
-    {DIST_TYPE_GUYOD, "Guy OD", DIST_TYPE, DIST_POSITION, dist_guyod_settings, G_N_ELEMENTS(dist_guyod_settings)},
-    {DIST_TYPE_SPARKDRIVE, "Sparkdrive", DIST_TYPE, DIST_POSITION, dist_sparkdrive_settings, G_N_ELEMENTS(dist_sparkdrive_settings)},
-    {DIST_TYPE_GRUNGE, "Grunge", DIST_TYPE, DIST_POSITION, dist_grunge_settings, G_N_ELEMENTS(dist_grunge_settings)},
-    {DIST_TYPE_FUZZY, "Fuzzy", DIST_TYPE, DIST_POSITION, dist_fuzzy_settings, G_N_ELEMENTS(dist_fuzzy_settings)},
-    {DIST_TYPE_ZONE, "Zone", DIST_TYPE, DIST_POSITION, dist_zone_settings, G_N_ELEMENTS(dist_zone_settings)},
+    {DIST_TYPE_SCREAMER, "Screamer", dist_screamer_settings, G_N_ELEMENTS(dist_screamer_settings)},
+    {DIST_TYPE_RODENT, "Rodent", dist_rodent_settings, G_N_ELEMENTS(dist_rodent_settings)},
+    {DIST_TYPE_DS, "DS Dist", dist_ds_settings, G_N_ELEMENTS(dist_ds_settings)},
+    {DIST_TYPE_DOD250, "DOD250", dist_dod250_settings, G_N_ELEMENTS(dist_dod250_settings)},
+    {DIST_TYPE_MP, "Big MP", dist_mp_settings, G_N_ELEMENTS(dist_mp_settings)},
+    {DIST_TYPE_GUYOD, "Guy OD", dist_guyod_settings, G_N_ELEMENTS(dist_guyod_settings)},
+    {DIST_TYPE_SPARKDRIVE, "Sparkdrive", dist_sparkdrive_settings, G_N_ELEMENTS(dist_sparkdrive_settings)},
+    {DIST_TYPE_GRUNGE, "Grunge", dist_grunge_settings, G_N_ELEMENTS(dist_grunge_settings)},
+    {DIST_TYPE_FUZZY, "Fuzzy", dist_fuzzy_settings, G_N_ELEMENTS(dist_fuzzy_settings)},
+    {DIST_TYPE_ZONE, "Zone", dist_zone_settings, G_N_ELEMENTS(dist_zone_settings)},
 };
 
 static EffectGroup gnx3k_dist_group[] = {
-    {DIST_TYPE_SCREAMER, "Screamer", DIST_TYPE, DIST_POSITION, dist_screamer_settings, G_N_ELEMENTS(dist_screamer_settings)},
-    {DIST_TYPE_RODENT, "Rodent", DIST_TYPE, DIST_POSITION, dist_rodent_settings, G_N_ELEMENTS(dist_rodent_settings)},
-    {DIST_TYPE_DS, "DS", DIST_TYPE, DIST_POSITION, dist_ds_settings, G_N_ELEMENTS(dist_ds_settings)},
-    {DIST_TYPE_DOD250, "DOD250", DIST_TYPE, DIST_POSITION, dist_dod250_settings, G_N_ELEMENTS(dist_dod250_settings)},
-    {DIST_TYPE_MP, "Big MP", DIST_TYPE, DIST_POSITION, dist_mp_settings, G_N_ELEMENTS(dist_mp_settings)},
-    {DIST_TYPE_GUYOD, "Guy OD", DIST_TYPE, DIST_POSITION, dist_guyod_settings, G_N_ELEMENTS(dist_guyod_settings)},
-    {DIST_TYPE_SPARKDRIVE, "Sparkdrive", DIST_TYPE, DIST_POSITION, dist_sparkdrive_settings, G_N_ELEMENTS(dist_sparkdrive_settings)},
-    {DIST_TYPE_GRUNGE, "Grunge", DIST_TYPE, DIST_POSITION, dist_grunge_settings, G_N_ELEMENTS(dist_grunge_settings)},
-    {DIST_TYPE_FUZZY, "Fuzzy", DIST_TYPE, DIST_POSITION, dist_fuzzy_settings, G_N_ELEMENTS(dist_fuzzy_settings)},
-    {DIST_TYPE_ZONE, "Zone", DIST_TYPE, DIST_POSITION, dist_zone_settings, G_N_ELEMENTS(dist_zone_settings)},
-    {DIST_TYPE_8TAVIA, "8tavia", DIST_TYPE, DIST_POSITION, dist_8tavia_settings, G_N_ELEMENTS(dist_8tavia_settings)},
+    {DIST_TYPE_SCREAMER, "Screamer", dist_screamer_settings, G_N_ELEMENTS(dist_screamer_settings)},
+    {DIST_TYPE_RODENT, "Rodent", dist_rodent_settings, G_N_ELEMENTS(dist_rodent_settings)},
+    {DIST_TYPE_DS, "DS", dist_ds_settings, G_N_ELEMENTS(dist_ds_settings)},
+    {DIST_TYPE_DOD250, "DOD250", dist_dod250_settings, G_N_ELEMENTS(dist_dod250_settings)},
+    {DIST_TYPE_MP, "Big MP", dist_mp_settings, G_N_ELEMENTS(dist_mp_settings)},
+    {DIST_TYPE_GUYOD, "Guy OD", dist_guyod_settings, G_N_ELEMENTS(dist_guyod_settings)},
+    {DIST_TYPE_SPARKDRIVE, "Sparkdrive", dist_sparkdrive_settings, G_N_ELEMENTS(dist_sparkdrive_settings)},
+    {DIST_TYPE_GRUNGE, "Grunge", dist_grunge_settings, G_N_ELEMENTS(dist_grunge_settings)},
+    {DIST_TYPE_FUZZY, "Fuzzy", dist_fuzzy_settings, G_N_ELEMENTS(dist_fuzzy_settings)},
+    {DIST_TYPE_ZONE, "Zone", dist_zone_settings, G_N_ELEMENTS(dist_zone_settings)},
+    {DIST_TYPE_8TAVIA, "8tavia", dist_8tavia_settings, G_N_ELEMENTS(dist_8tavia_settings)},
 };
 
 static EffectGroup gnx3k_noisegate_group[] = {
-    {NOISEGATE_GATE, "Silencer", NOISEGATE_TYPE, NOISEGATE_POSITION, noisegate_silencer_settings, G_N_ELEMENTS(noisegate_silencer_settings)},
-    {NOISEGATE_SWELL, "Pluck", NOISEGATE_TYPE, NOISEGATE_POSITION, noisegate_pluck_settings, G_N_ELEMENTS(noisegate_pluck_settings)},
+    {NOISEGATE_GATE, "Silencer", noisegate_silencer_settings, G_N_ELEMENTS(noisegate_silencer_settings)},
+    {NOISEGATE_SWELL, "Pluck", noisegate_pluck_settings, G_N_ELEMENTS(noisegate_pluck_settings)},
 };
 
 static EffectGroup noisegate_group[] = {
-    {NOISEGATE_GATE, "Gate", NOISEGATE_TYPE, NOISEGATE_POSITION, noisegate_gate_settings, G_N_ELEMENTS(noisegate_gate_settings)},
-    {NOISEGATE_SWELL, "Swell", NOISEGATE_TYPE, NOISEGATE_POSITION, noisegate_swell_settings, G_N_ELEMENTS(noisegate_swell_settings)},
+    {NOISEGATE_GATE, "Gate", noisegate_gate_settings, G_N_ELEMENTS(noisegate_gate_settings)},
+    {NOISEGATE_SWELL, "Swell", noisegate_swell_settings, G_N_ELEMENTS(noisegate_swell_settings)},
 };
 
 static EffectGroup gnx4_chorusfx_group[] = {
-    {GNX3K_MOD_TYPE_CHORUS, "Chorus", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_chorus_settings, G_N_ELEMENTS(gnx3k_chorus_settings)},
-    {GNX3K_MOD_TYPE_FLANGER, "Flanger", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_flanger_settings, G_N_ELEMENTS(gnx3k_flanger_settings)},
-    {GNX3K_MOD_TYPE_PHASER, "Phaser", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_phaser_settings, G_N_ELEMENTS(gnx3k_phaser_settings)},
-    {GNX3K_MOD_TYPE_TRIGFLANGER, "Triggered Flanger", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_trigflanger_settings, G_N_ELEMENTS(gnx3k_trigflanger_settings)},
-    {GNX3K_MOD_TYPE_TRIGPHASER, "Triggered Phaser", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_trigphaser_settings, G_N_ELEMENTS(gnx3k_trigphaser_settings)},
-    {GNX3K_MOD_TYPE_TREMOLO, "Tremolo", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_tremolo_settings, G_N_ELEMENTS(chorusfx_tremolo_settings)},
-    {GNX3K_MOD_TYPE_PANNER, "Panner", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_panner_settings, G_N_ELEMENTS(chorusfx_panner_settings)},
-    {GNX3K_MOD_TYPE_VIBRATO, "Vibrato", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_vibrato_settings, G_N_ELEMENTS(gnx3k_vibrato_settings)},
-    {GNX3K_MOD_TYPE_ROTARY, "Rotary", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_rotary_settings, G_N_ELEMENTS(gnx3k_rotary_settings)},
-    {GNX3K_MOD_TYPE_AUTOYA, "Auto Ya", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_autoya_settings, G_N_ELEMENTS(gnx3k_autoya_settings)},
-    {GNX3K_MOD_TYPE_YAYA, "Ya Ya", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_yaya_settings, G_N_ELEMENTS(gnx3k_yaya_settings)},
-    {GNX3K_MOD_TYPE_SYNTHTALK, "Synthtalk", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_synthtalk_settings, G_N_ELEMENTS(gnx3k_synthtalk_settings)},
-    {GNX3K_MOD_TYPE_ENVELOPE, "Envelope", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_envelope_settings, G_N_ELEMENTS(gnx3k_envelope_settings)},
-    {GNX3K_MOD_TYPE_DETUNE, "Detune", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_mod_detune_settings, G_N_ELEMENTS(gnx3k_mod_detune_settings)},
-    {GNX3K_MOD_TYPE_PITCH, "Pitch", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_mod_pitch_settings, G_N_ELEMENTS(gnx3k_mod_pitch_settings)},
+    {GNX3K_MOD_TYPE_CHORUS, "Chorus", gnx3k_chorus_settings, G_N_ELEMENTS(gnx3k_chorus_settings)},
+    {GNX3K_MOD_TYPE_FLANGER, "Flanger", gnx3k_flanger_settings, G_N_ELEMENTS(gnx3k_flanger_settings)},
+    {GNX3K_MOD_TYPE_PHASER, "Phaser", gnx3k_phaser_settings, G_N_ELEMENTS(gnx3k_phaser_settings)},
+    {GNX3K_MOD_TYPE_TRIGFLANGER, "Triggered Flanger", gnx3k_trigflanger_settings, G_N_ELEMENTS(gnx3k_trigflanger_settings)},
+    {GNX3K_MOD_TYPE_TRIGPHASER, "Triggered Phaser", gnx3k_trigphaser_settings, G_N_ELEMENTS(gnx3k_trigphaser_settings)},
+    {GNX3K_MOD_TYPE_TREMOLO, "Tremolo", chorusfx_tremolo_settings, G_N_ELEMENTS(chorusfx_tremolo_settings)},
+    {GNX3K_MOD_TYPE_PANNER, "Panner", chorusfx_panner_settings, G_N_ELEMENTS(chorusfx_panner_settings)},
+    {GNX3K_MOD_TYPE_VIBRATO, "Vibrato", gnx3k_vibrato_settings, G_N_ELEMENTS(gnx3k_vibrato_settings)},
+    {GNX3K_MOD_TYPE_ROTARY, "Rotary", gnx3k_rotary_settings, G_N_ELEMENTS(gnx3k_rotary_settings)},
+    {GNX3K_MOD_TYPE_AUTOYA, "Auto Ya", gnx3k_autoya_settings, G_N_ELEMENTS(gnx3k_autoya_settings)},
+    {GNX3K_MOD_TYPE_YAYA, "Ya Ya", gnx3k_yaya_settings, G_N_ELEMENTS(gnx3k_yaya_settings)},
+    {GNX3K_MOD_TYPE_SYNTHTALK, "Synthtalk", gnx3k_synthtalk_settings, G_N_ELEMENTS(gnx3k_synthtalk_settings)},
+    {GNX3K_MOD_TYPE_ENVELOPE, "Envelope", gnx3k_envelope_settings, G_N_ELEMENTS(gnx3k_envelope_settings)},
+    {GNX3K_MOD_TYPE_DETUNE, "Detune", gnx3k_mod_detune_settings, G_N_ELEMENTS(gnx3k_mod_detune_settings)},
+    {GNX3K_MOD_TYPE_PITCH, "Pitch", gnx3k_mod_pitch_settings, G_N_ELEMENTS(gnx3k_mod_pitch_settings)},
 };
 
 static EffectGroup gnx3k_chorusfx_group[] = {
-    {GNX3K_MOD_TYPE_CHORUS, "Chorus", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_chorus_settings, G_N_ELEMENTS(gnx3k_chorus_settings)},
-    {GNX3K_MOD_TYPE_FLANGER, "Flanger", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_flanger_settings, G_N_ELEMENTS(gnx3k_flanger_settings)},
-    {GNX3K_MOD_TYPE_PHASER, "Phaser", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_phaser_settings, G_N_ELEMENTS(gnx3k_phaser_settings)},
-    {GNX3K_MOD_TYPE_TRIGFLANGER, "Triggered Flanger", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_trigflanger_settings, G_N_ELEMENTS(gnx3k_trigflanger_settings)},
-    {GNX3K_MOD_TYPE_TRIGPHASER, "Triggered Phaser", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_trigphaser_settings, G_N_ELEMENTS(gnx3k_trigphaser_settings)},
-    {GNX3K_MOD_TYPE_UNOVIBE, "Unovibe", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_unovibe_settings, G_N_ELEMENTS(gnx3k_unovibe_settings)},
-    {GNX3K_MOD_TYPE_TREMOLO, "Tremolo", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_tremolo_settings, G_N_ELEMENTS(chorusfx_tremolo_settings)},
-    {GNX3K_MOD_TYPE_PANNER, "Panner", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_panner_settings, G_N_ELEMENTS(chorusfx_panner_settings)},
-    {GNX3K_MOD_TYPE_VIBRATO, "Vibrato", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_vibrato_settings, G_N_ELEMENTS(gnx3k_vibrato_settings)},
-    {GNX3K_MOD_TYPE_ROTARY, "Rotary", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_rotary_settings, G_N_ELEMENTS(gnx3k_rotary_settings)},
-    {GNX3K_MOD_TYPE_AUTOYA, "Auto Ya", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_autoya_settings, G_N_ELEMENTS(gnx3k_autoya_settings)},
-    {GNX3K_MOD_TYPE_YAYA, "Ya Ya", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_yaya_settings, G_N_ELEMENTS(gnx3k_yaya_settings)},
-    {GNX3K_MOD_TYPE_SYNTHTALK, "Synthtalk", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_synthtalk_settings, G_N_ELEMENTS(gnx3k_synthtalk_settings)},
-    {GNX3K_MOD_TYPE_ENVELOPE, "Envelope", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_envelope_settings, G_N_ELEMENTS(gnx3k_envelope_settings)},
-    {GNX3K_MOD_TYPE_DETUNE, "Detune", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_mod_detune_settings, G_N_ELEMENTS(gnx3k_mod_detune_settings)},
-    {GNX3K_MOD_TYPE_PITCH, "Pitch", CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_mod_pitch_settings, G_N_ELEMENTS(gnx3k_mod_pitch_settings)},
+    {GNX3K_MOD_TYPE_CHORUS, "Chorus", gnx3k_chorus_settings, G_N_ELEMENTS(gnx3k_chorus_settings)},
+    {GNX3K_MOD_TYPE_FLANGER, "Flanger", gnx3k_flanger_settings, G_N_ELEMENTS(gnx3k_flanger_settings)},
+    {GNX3K_MOD_TYPE_PHASER, "Phaser", gnx3k_phaser_settings, G_N_ELEMENTS(gnx3k_phaser_settings)},
+    {GNX3K_MOD_TYPE_TRIGFLANGER, "Triggered Flanger", gnx3k_trigflanger_settings, G_N_ELEMENTS(gnx3k_trigflanger_settings)},
+    {GNX3K_MOD_TYPE_TRIGPHASER, "Triggered Phaser", gnx3k_trigphaser_settings, G_N_ELEMENTS(gnx3k_trigphaser_settings)},
+    {GNX3K_MOD_TYPE_UNOVIBE, "Unovibe", gnx3k_unovibe_settings, G_N_ELEMENTS(gnx3k_unovibe_settings)},
+    {GNX3K_MOD_TYPE_TREMOLO, "Tremolo", chorusfx_tremolo_settings, G_N_ELEMENTS(chorusfx_tremolo_settings)},
+    {GNX3K_MOD_TYPE_PANNER, "Panner", chorusfx_panner_settings, G_N_ELEMENTS(chorusfx_panner_settings)},
+    {GNX3K_MOD_TYPE_VIBRATO, "Vibrato", gnx3k_vibrato_settings, G_N_ELEMENTS(gnx3k_vibrato_settings)},
+    {GNX3K_MOD_TYPE_ROTARY, "Rotary", gnx3k_rotary_settings, G_N_ELEMENTS(gnx3k_rotary_settings)},
+    {GNX3K_MOD_TYPE_AUTOYA, "Auto Ya", gnx3k_autoya_settings, G_N_ELEMENTS(gnx3k_autoya_settings)},
+    {GNX3K_MOD_TYPE_YAYA, "Ya Ya", gnx3k_yaya_settings, G_N_ELEMENTS(gnx3k_yaya_settings)},
+    {GNX3K_MOD_TYPE_SYNTHTALK, "Synthtalk", gnx3k_synthtalk_settings, G_N_ELEMENTS(gnx3k_synthtalk_settings)},
+    {GNX3K_MOD_TYPE_ENVELOPE, "Envelope", gnx3k_envelope_settings, G_N_ELEMENTS(gnx3k_envelope_settings)},
+    {GNX3K_MOD_TYPE_DETUNE, "Detune", gnx3k_mod_detune_settings, G_N_ELEMENTS(gnx3k_mod_detune_settings)},
+    {GNX3K_MOD_TYPE_PITCH, "Pitch", gnx3k_mod_pitch_settings, G_N_ELEMENTS(gnx3k_mod_pitch_settings)},
 };
 
 static EffectGroup rp250_chorusfx_group[] = {
-    {CHORUS_TYPE_CE, "CE Chorus", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_ce_settings, G_N_ELEMENTS(chorusfx_ce_settings)},
-    {CHORUS_TYPE_DUAL, "Dual Chorus", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_dual_settings, G_N_ELEMENTS(chorusfx_dual_settings)},
-    {CHORUS_TYPE_MULTI, "Multi Chorus", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_multi_settings, G_N_ELEMENTS(chorusfx_multi_settings)},
-    {CHORUS_TYPE_FLANGER, "Flanger", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_flanger_settings, G_N_ELEMENTS(chorusfx_flanger_settings)},
-    {CHORUS_TYPE_MXR_FLANGER, "MXR FLANGER", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_mxr_flanger_settings, G_N_ELEMENTS(chorusfx_mxr_flanger_settings)},
-    {CHORUS_TYPE_PHASER, "Phaser", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_phaser_settings, G_N_ELEMENTS(chorusfx_phaser_settings)},
-    {CHORUS_TYPE_VIBRATO, "Vibrato", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_vibrato_settings, G_N_ELEMENTS(chorusfx_vibrato_settings)},
-    {CHORUS_TYPE_ROTARY, "Rotary", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_rotary_settings, G_N_ELEMENTS(chorusfx_rotary_settings)},
-    {CHORUS_TYPE_VIBROPAN, "Vibropan", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_vibropan_settings, G_N_ELEMENTS(chorusfx_vibropan_settings)},
-    {CHORUS_TYPE_TREMOLO, "Tremolo", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_tremolo_settings, G_N_ELEMENTS(chorusfx_tremolo_settings)},
-    {CHORUS_TYPE_PANNER, "Panner", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_panner_settings, G_N_ELEMENTS(chorusfx_panner_settings)},
-    {CHORUS_TYPE_ENVELOPE, "Envelope", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_envelope_settings, G_N_ELEMENTS(chorusfx_envelope_settings)},
-    {CHORUS_TYPE_AUTOYA, "AutoYa", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_autoya_settings, G_N_ELEMENTS(chorusfx_autoya_settings)},
-    {CHORUS_TYPE_YAYA, "YaYa", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_yaya_settings, G_N_ELEMENTS(chorusfx_yaya_settings)},
-    {CHORUS_TYPE_STEP_FILTER, "Step Filter", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_step_filter_settings, G_N_ELEMENTS(chorusfx_step_filter_settings)},
-    {CHORUS_TYPE_WHAMMY, "Whammy", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_whammy_settings, G_N_ELEMENTS(chorusfx_whammy_settings)},
-    {CHORUS_TYPE_PITCH_SHIFT, "Pitch Shift", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_pitch_shift_settings, G_N_ELEMENTS(chorusfx_pitch_shift_settings)},
-    {CHORUS_TYPE_DETUNE, "Detune", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_detune_settings, G_N_ELEMENTS(chorusfx_detune_settings)},
-    {CHORUS_TYPE_IPS, "IPS", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_ips_settings, G_N_ELEMENTS(chorusfx_ips_settings)},
+    {CHORUS_TYPE_CE, "CE Chorus", chorusfx_ce_settings, G_N_ELEMENTS(chorusfx_ce_settings)},
+    {CHORUS_TYPE_DUAL, "Dual Chorus", chorusfx_dual_settings, G_N_ELEMENTS(chorusfx_dual_settings)},
+    {CHORUS_TYPE_MULTI, "Multi Chorus", chorusfx_multi_settings, G_N_ELEMENTS(chorusfx_multi_settings)},
+    {CHORUS_TYPE_FLANGER, "Flanger", chorusfx_flanger_settings, G_N_ELEMENTS(chorusfx_flanger_settings)},
+    {CHORUS_TYPE_MXR_FLANGER, "MXR FLANGER", chorusfx_mxr_flanger_settings, G_N_ELEMENTS(chorusfx_mxr_flanger_settings)},
+    {CHORUS_TYPE_PHASER, "Phaser", chorusfx_phaser_settings, G_N_ELEMENTS(chorusfx_phaser_settings)},
+    {CHORUS_TYPE_VIBRATO, "Vibrato", chorusfx_vibrato_settings, G_N_ELEMENTS(chorusfx_vibrato_settings)},
+    {CHORUS_TYPE_ROTARY, "Rotary", chorusfx_rotary_settings, G_N_ELEMENTS(chorusfx_rotary_settings)},
+    {CHORUS_TYPE_VIBROPAN, "Vibropan", chorusfx_vibropan_settings, G_N_ELEMENTS(chorusfx_vibropan_settings)},
+    {CHORUS_TYPE_TREMOLO, "Tremolo", chorusfx_tremolo_settings, G_N_ELEMENTS(chorusfx_tremolo_settings)},
+    {CHORUS_TYPE_PANNER, "Panner", chorusfx_panner_settings, G_N_ELEMENTS(chorusfx_panner_settings)},
+    {CHORUS_TYPE_ENVELOPE, "Envelope", chorusfx_envelope_settings, G_N_ELEMENTS(chorusfx_envelope_settings)},
+    {CHORUS_TYPE_AUTOYA, "AutoYa", chorusfx_autoya_settings, G_N_ELEMENTS(chorusfx_autoya_settings)},
+    {CHORUS_TYPE_YAYA, "YaYa", chorusfx_yaya_settings, G_N_ELEMENTS(chorusfx_yaya_settings)},
+    {CHORUS_TYPE_STEP_FILTER, "Step Filter", chorusfx_step_filter_settings, G_N_ELEMENTS(chorusfx_step_filter_settings)},
+    {CHORUS_TYPE_WHAMMY, "Whammy", chorusfx_whammy_settings, G_N_ELEMENTS(chorusfx_whammy_settings)},
+    {CHORUS_TYPE_PITCH_SHIFT, "Pitch Shift", chorusfx_pitch_shift_settings, G_N_ELEMENTS(chorusfx_pitch_shift_settings)},
+    {CHORUS_TYPE_DETUNE, "Detune", chorusfx_detune_settings, G_N_ELEMENTS(chorusfx_detune_settings)},
+    {CHORUS_TYPE_IPS, "IPS", chorusfx_ips_settings, G_N_ELEMENTS(chorusfx_ips_settings)},
 };
 
 static EffectGroup rp500_chorusfx_group[] = {
-    {CHORUS_TYPE_CE, "CE Chorus", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_ce_settings, G_N_ELEMENTS(chorusfx_ce_settings)},
-    {CHORUS_TYPE_TC, "TC Chorus", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_tc_settings, G_N_ELEMENTS(chorusfx_tc_settings)},
-    {CHORUS_TYPE_DUAL, "Dual Chorus", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_dual_settings, G_N_ELEMENTS(chorusfx_dual_settings)},
-    {CHORUS_TYPE_GLISTEN, "Glisten Chorus", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_glisten_settings, G_N_ELEMENTS(chorusfx_glisten_settings)},
-    {CHORUS_TYPE_MULTI, "Multi Chorus", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_multi_settings, G_N_ELEMENTS(chorusfx_multi_settings)},
-    {CHORUS_TYPE_FLANGER, "Flanger", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_flanger_settings, G_N_ELEMENTS(chorusfx_flanger_settings)},
-    {CHORUS_TYPE_TRIGGERED_FLANGER, "Triggered Flanger", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_trig_flanger_settings, G_N_ELEMENTS(chorusfx_trig_flanger_settings)},
-    {CHORUS_TYPE_MXR_FLANGER, "MXR FLANGER", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_mxr_flanger_settings, G_N_ELEMENTS(chorusfx_mxr_flanger_settings)},
-    {CHORUS_TYPE_EH_FLANGER, "EH Flanger", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_eh_flanger_settings, G_N_ELEMENTS(chorusfx_eh_flanger_settings)},
-    {CHORUS_TYPE_AD_FLANGER, "AD Flanger", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_ad_flanger_settings, G_N_ELEMENTS(chorusfx_ad_flanger_settings)},
-    {CHORUS_TYPE_PHASER, "Phaser", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_phaser_settings, G_N_ELEMENTS(chorusfx_phaser_settings)},
-    {CHORUS_TYPE_TRIGGERED_PHASER, "Triggered Phaser", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_trig_phaser_settings, G_N_ELEMENTS(chorusfx_trig_phaser_settings)},
-    {CHORUS_TYPE_MX_PHASER, "MX Phaser", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_mx_phaser_settings, G_N_ELEMENTS(chorusfx_mx_phaser_settings)},
-    {CHORUS_TYPE_EH_PHASER, "EH Phaser", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_eh_phaser_settings, G_N_ELEMENTS(chorusfx_eh_phaser_settings)},
-    {CHORUS_TYPE_VIBRATO, "Vibrato", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_vibrato_settings, G_N_ELEMENTS(chorusfx_vibrato_settings)},
-    {CHORUS_TYPE_ROTARY, "Rotary", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_rotary_settings, G_N_ELEMENTS(chorusfx_rotary_settings)},
-    {CHORUS_TYPE_VIBROPAN, "Vibropan", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_vibropan_settings, G_N_ELEMENTS(chorusfx_vibropan_settings)},
-    {CHORUS_TYPE_UNOVIBE, "Unovibe", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_unovibe_settings, G_N_ELEMENTS(chorusfx_unovibe_settings)},
-    {CHORUS_TYPE_TREMOLO, "Tremolo", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_tremolo_settings, G_N_ELEMENTS(chorusfx_tremolo_settings)},
-    {CHORUS_TYPE_SCATTER_TREM, "ScatterTrem", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_trem_settings, G_N_ELEMENTS(chorusfx_trem_settings)},
-    {CHORUS_TYPE_OPTO_TREMOLO, "Opto Tremolo", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_trem_settings, G_N_ELEMENTS(chorusfx_trem_settings)},
-    {CHORUS_TYPE_BIAS_TREMOLO, "Bias Tremolo", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_trem_settings, G_N_ELEMENTS(chorusfx_trem_settings)},
-    {CHORUS_TYPE_PANNER, "Panner", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_panner_settings, G_N_ELEMENTS(chorusfx_panner_settings)},
-    {CHORUS_TYPE_ENVELOPE, "Envelope", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_envelope_settings, G_N_ELEMENTS(chorusfx_envelope_settings)},
-    {CHORUS_TYPE_FX25, "FX25", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_fx25_settings, G_N_ELEMENTS(chorusfx_fx25_settings)},
-    {CHORUS_TYPE_AUTOYA, "AutoYa", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_autoya_settings, G_N_ELEMENTS(chorusfx_autoya_settings)},
-    {CHORUS_TYPE_YAYA, "YaYa", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_yaya_settings, G_N_ELEMENTS(chorusfx_yaya_settings)},
-    {CHORUS_TYPE_SYNTH_TALK, "Synth Talk", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_synth_talk_settings, G_N_ELEMENTS(chorusfx_synth_talk_settings)},
-    {CHORUS_TYPE_STEP_FILTER, "Step Filter", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_step_filter_settings, G_N_ELEMENTS(chorusfx_step_filter_settings)},
-    {CHORUS_TYPE_SAMPLE_HOLD, "Sample/Hold", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_sample_hold_settings, G_N_ELEMENTS(chorusfx_sample_hold_settings)},
-    {CHORUS_TYPE_WHAMMY, "Whammy", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_whammy_settings, G_N_ELEMENTS(chorusfx_whammy_settings)},
-    {CHORUS_TYPE_PITCH_SHIFT, "Pitch", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_pitch_shift_settings, G_N_ELEMENTS(chorusfx_pitch_shift_settings)},
-    {CHORUS_TYPE_DETUNE, "Detune", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_detune_settings, G_N_ELEMENTS(chorusfx_detune_settings)},
-    {CHORUS_TYPE_IPS, "Harmony Pitch", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_ips_settings, G_N_ELEMENTS(chorusfx_ips_settings)},
-    {CHORUS_TYPE_OCTAVER, "Octaver", CHORUSFX_TYPE, CHORUSFX_POSITION, chorusfx_octaver_settings, G_N_ELEMENTS(chorusfx_octaver_settings)},
+    {CHORUS_TYPE_CE, "CE Chorus", chorusfx_ce_settings, G_N_ELEMENTS(chorusfx_ce_settings)},
+    {CHORUS_TYPE_TC, "TC Chorus", chorusfx_tc_settings, G_N_ELEMENTS(chorusfx_tc_settings)},
+    {CHORUS_TYPE_DUAL, "Dual Chorus", chorusfx_dual_settings, G_N_ELEMENTS(chorusfx_dual_settings)},
+    {CHORUS_TYPE_GLISTEN, "Glisten Chorus", chorusfx_glisten_settings, G_N_ELEMENTS(chorusfx_glisten_settings)},
+    {CHORUS_TYPE_MULTI, "Multi Chorus", chorusfx_multi_settings, G_N_ELEMENTS(chorusfx_multi_settings)},
+    {CHORUS_TYPE_FLANGER, "Flanger", chorusfx_flanger_settings, G_N_ELEMENTS(chorusfx_flanger_settings)},
+    {CHORUS_TYPE_TRIGGERED_FLANGER, "Triggered Flanger", chorusfx_trig_flanger_settings, G_N_ELEMENTS(chorusfx_trig_flanger_settings)},
+    {CHORUS_TYPE_MXR_FLANGER, "MXR FLANGER", chorusfx_mxr_flanger_settings, G_N_ELEMENTS(chorusfx_mxr_flanger_settings)},
+    {CHORUS_TYPE_EH_FLANGER, "EH Flanger", chorusfx_eh_flanger_settings, G_N_ELEMENTS(chorusfx_eh_flanger_settings)},
+    {CHORUS_TYPE_AD_FLANGER, "AD Flanger", chorusfx_ad_flanger_settings, G_N_ELEMENTS(chorusfx_ad_flanger_settings)},
+    {CHORUS_TYPE_PHASER, "Phaser", chorusfx_phaser_settings, G_N_ELEMENTS(chorusfx_phaser_settings)},
+    {CHORUS_TYPE_TRIGGERED_PHASER, "Triggered Phaser", chorusfx_trig_phaser_settings, G_N_ELEMENTS(chorusfx_trig_phaser_settings)},
+    {CHORUS_TYPE_MX_PHASER, "MX Phaser", chorusfx_mx_phaser_settings, G_N_ELEMENTS(chorusfx_mx_phaser_settings)},
+    {CHORUS_TYPE_EH_PHASER, "EH Phaser", chorusfx_eh_phaser_settings, G_N_ELEMENTS(chorusfx_eh_phaser_settings)},
+    {CHORUS_TYPE_VIBRATO, "Vibrato", chorusfx_vibrato_settings, G_N_ELEMENTS(chorusfx_vibrato_settings)},
+    {CHORUS_TYPE_ROTARY, "Rotary", chorusfx_rotary_settings, G_N_ELEMENTS(chorusfx_rotary_settings)},
+    {CHORUS_TYPE_VIBROPAN, "Vibropan", chorusfx_vibropan_settings, G_N_ELEMENTS(chorusfx_vibropan_settings)},
+    {CHORUS_TYPE_UNOVIBE, "Unovibe", chorusfx_unovibe_settings, G_N_ELEMENTS(chorusfx_unovibe_settings)},
+    {CHORUS_TYPE_TREMOLO, "Tremolo", chorusfx_tremolo_settings, G_N_ELEMENTS(chorusfx_tremolo_settings)},
+    {CHORUS_TYPE_SCATTER_TREM, "ScatterTrem", chorusfx_trem_settings, G_N_ELEMENTS(chorusfx_trem_settings)},
+    {CHORUS_TYPE_OPTO_TREMOLO, "Opto Tremolo", chorusfx_trem_settings, G_N_ELEMENTS(chorusfx_trem_settings)},
+    {CHORUS_TYPE_BIAS_TREMOLO, "Bias Tremolo", chorusfx_trem_settings, G_N_ELEMENTS(chorusfx_trem_settings)},
+    {CHORUS_TYPE_PANNER, "Panner", chorusfx_panner_settings, G_N_ELEMENTS(chorusfx_panner_settings)},
+    {CHORUS_TYPE_ENVELOPE, "Envelope", chorusfx_envelope_settings, G_N_ELEMENTS(chorusfx_envelope_settings)},
+    {CHORUS_TYPE_FX25, "FX25", chorusfx_fx25_settings, G_N_ELEMENTS(chorusfx_fx25_settings)},
+    {CHORUS_TYPE_AUTOYA, "AutoYa", chorusfx_autoya_settings, G_N_ELEMENTS(chorusfx_autoya_settings)},
+    {CHORUS_TYPE_YAYA, "YaYa", chorusfx_yaya_settings, G_N_ELEMENTS(chorusfx_yaya_settings)},
+    {CHORUS_TYPE_SYNTH_TALK, "Synth Talk", chorusfx_synth_talk_settings, G_N_ELEMENTS(chorusfx_synth_talk_settings)},
+    {CHORUS_TYPE_STEP_FILTER, "Step Filter", chorusfx_step_filter_settings, G_N_ELEMENTS(chorusfx_step_filter_settings)},
+    {CHORUS_TYPE_SAMPLE_HOLD, "Sample/Hold", chorusfx_sample_hold_settings, G_N_ELEMENTS(chorusfx_sample_hold_settings)},
+    {CHORUS_TYPE_WHAMMY, "Whammy", chorusfx_whammy_settings, G_N_ELEMENTS(chorusfx_whammy_settings)},
+    {CHORUS_TYPE_PITCH_SHIFT, "Pitch", chorusfx_pitch_shift_settings, G_N_ELEMENTS(chorusfx_pitch_shift_settings)},
+    {CHORUS_TYPE_DETUNE, "Detune", chorusfx_detune_settings, G_N_ELEMENTS(chorusfx_detune_settings)},
+    {CHORUS_TYPE_IPS, "Harmony Pitch", chorusfx_ips_settings, G_N_ELEMENTS(chorusfx_ips_settings)},
+    {CHORUS_TYPE_OCTAVER, "Octaver", chorusfx_octaver_settings, G_N_ELEMENTS(chorusfx_octaver_settings)},
 };
 
 static EffectGroup gnx3k_delay_group[] = {
-    {DELAY_GNX3K_TYPE_MONO, "Mono", DELAY_TYPE, DELAY_POSITION, gnx3k_delay_settings, G_N_ELEMENTS(gnx3k_delay_settings)},
-    {DELAY_GNX3K_TYPE_PINGPONG, "Ping-Pong", DELAY_TYPE, DELAY_POSITION, gnx3k_delay_settings, G_N_ELEMENTS(gnx3k_delay_settings)},
-    {DELAY_GNX3K_TYPE_ANALOG, "Analog", DELAY_TYPE, DELAY_POSITION, gnx3k_delay_settings, G_N_ELEMENTS(gnx3k_delay_settings)},
-    {DELAY_GNX3K_TYPE_ANAPONG, "Analog-Pong", DELAY_TYPE, DELAY_POSITION, gnx3k_delay_settings, G_N_ELEMENTS(gnx3k_delay_settings)},
-    {DELAY_GNX3K_TYPE_SPREAD, "Spread", DELAY_TYPE, DELAY_POSITION, gnx3k_delay_spread_settings, G_N_ELEMENTS(gnx3k_delay_spread_settings)},
+    {DELAY_GNX3K_TYPE_MONO, "Mono", gnx3k_delay_settings, G_N_ELEMENTS(gnx3k_delay_settings)},
+    {DELAY_GNX3K_TYPE_PINGPONG, "Ping-Pong", gnx3k_delay_settings, G_N_ELEMENTS(gnx3k_delay_settings)},
+    {DELAY_GNX3K_TYPE_ANALOG, "Analog", gnx3k_delay_settings, G_N_ELEMENTS(gnx3k_delay_settings)},
+    {DELAY_GNX3K_TYPE_ANAPONG, "Analog-Pong", gnx3k_delay_settings, G_N_ELEMENTS(gnx3k_delay_settings)},
+    {DELAY_GNX3K_TYPE_SPREAD, "Spread", gnx3k_delay_spread_settings, G_N_ELEMENTS(gnx3k_delay_spread_settings)},
 };
 
 static EffectGroup rp250_delay_group[] = {
-    {DELAY_TYPE_ANALOG, "Analog", DELAY_TYPE, DELAY_POSITION, delay_analog_settings, G_N_ELEMENTS(delay_analog_settings)},
-    {DELAY_TYPE_DIGITAL, "Digital", DELAY_TYPE, DELAY_POSITION, delay_digital_settings, G_N_ELEMENTS(delay_digital_settings)},
-    {DELAY_TYPE_MODULATED, "Modulated", DELAY_TYPE, DELAY_POSITION, delay_modulated_settings, G_N_ELEMENTS(delay_modulated_settings)},
-    {DELAY_TYPE_PONG, "Pong", DELAY_TYPE, DELAY_POSITION, delay_pong_settings, G_N_ELEMENTS(delay_pong_settings)},
-    {DELAY_TYPE_TAPE, "Tape", DELAY_TYPE, DELAY_POSITION, delay_tape_settings, G_N_ELEMENTS(delay_tape_settings)},
+    {DELAY_TYPE_ANALOG, "Analog", delay_analog_settings, G_N_ELEMENTS(delay_analog_settings)},
+    {DELAY_TYPE_DIGITAL, "Digital", delay_digital_settings, G_N_ELEMENTS(delay_digital_settings)},
+    {DELAY_TYPE_MODULATED, "Modulated", delay_modulated_settings, G_N_ELEMENTS(delay_modulated_settings)},
+    {DELAY_TYPE_PONG, "Pong", delay_pong_settings, G_N_ELEMENTS(delay_pong_settings)},
+    {DELAY_TYPE_TAPE, "Tape", delay_tape_settings, G_N_ELEMENTS(delay_tape_settings)},
 };
 
 static EffectGroup rp500_delay_group[] = {
-    {DELAY_RP500_TYPE_DIGITAL, "Digital", DELAY_TYPE, DELAY_POSITION, rp500_delay_digital_settings, G_N_ELEMENTS(rp500_delay_digital_settings)},
-    {DELAY_RP500_TYPE_ANALOG, "Analog", DELAY_TYPE, DELAY_POSITION, rp500_delay_analog_settings, G_N_ELEMENTS(rp500_delay_analog_settings)},
-    {DELAY_RP500_TYPE_DM, "DM Delay", DELAY_TYPE, DELAY_POSITION, rp500_delay_dm_settings, G_N_ELEMENTS(rp500_delay_dm_settings)},
-    {DELAY_RP500_TYPE_ECHOPLEX, "Echo Plex", DELAY_TYPE, DELAY_POSITION, rp500_delay_echoplex_settings, G_N_ELEMENTS(rp500_delay_echoplex_settings)},
-    {DELAY_RP500_TYPE_MODULATED, "Modulated", DELAY_TYPE, DELAY_POSITION, rp500_delay_modulated_settings, G_N_ELEMENTS(rp500_delay_modulated_settings)},
-    {DELAY_RP500_TYPE_PONG, "Pong", DELAY_TYPE, DELAY_POSITION, rp500_delay_pong_settings, G_N_ELEMENTS(rp500_delay_pong_settings)},
-    {DELAY_RP500_TYPE_REVERSE, "Reverse", DELAY_TYPE, DELAY_POSITION, rp500_delay_reverse_settings, G_N_ELEMENTS(rp500_delay_reverse_settings)},
-    {DELAY_RP500_TYPE_TAPE, "Tape", DELAY_TYPE, DELAY_POSITION, rp500_delay_tape_settings, G_N_ELEMENTS(rp500_delay_tape_settings)},
+    {DELAY_RP500_TYPE_DIGITAL, "Digital", rp500_delay_digital_settings, G_N_ELEMENTS(rp500_delay_digital_settings)},
+    {DELAY_RP500_TYPE_ANALOG, "Analog", rp500_delay_analog_settings, G_N_ELEMENTS(rp500_delay_analog_settings)},
+    {DELAY_RP500_TYPE_DM, "DM Delay", rp500_delay_dm_settings, G_N_ELEMENTS(rp500_delay_dm_settings)},
+    {DELAY_RP500_TYPE_ECHOPLEX, "Echo Plex", rp500_delay_echoplex_settings, G_N_ELEMENTS(rp500_delay_echoplex_settings)},
+    {DELAY_RP500_TYPE_MODULATED, "Modulated", rp500_delay_modulated_settings, G_N_ELEMENTS(rp500_delay_modulated_settings)},
+    {DELAY_RP500_TYPE_PONG, "Pong", rp500_delay_pong_settings, G_N_ELEMENTS(rp500_delay_pong_settings)},
+    {DELAY_RP500_TYPE_REVERSE, "Reverse", rp500_delay_reverse_settings, G_N_ELEMENTS(rp500_delay_reverse_settings)},
+    {DELAY_RP500_TYPE_TAPE, "Tape", rp500_delay_tape_settings, G_N_ELEMENTS(rp500_delay_tape_settings)},
 };
 
 static EffectGroup gnx3k_reverb_group[] = {
-    {GNX3K_REVERB_TYPE_STUDIO, "Studio", REVERB_TYPE, REVERB_POSITION, gnx3k_reverb_settings, G_N_ELEMENTS(gnx3k_reverb_settings)},
-    {GNX3K_REVERB_TYPE_ROOM, "Room", REVERB_TYPE, REVERB_POSITION, gnx3k_reverb_settings, G_N_ELEMENTS(gnx3k_reverb_settings)},
-    {GNX3K_REVERB_TYPE_CLUB, "Club", REVERB_TYPE, REVERB_POSITION, gnx3k_reverb_settings, G_N_ELEMENTS(gnx3k_reverb_settings)},
-    {GNX3K_REVERB_TYPE_PLATE, "Plate", REVERB_TYPE, REVERB_POSITION, gnx3k_reverb_settings, G_N_ELEMENTS(gnx3k_reverb_settings)},
-    {GNX3K_REVERB_TYPE_HALL, "Hall", REVERB_TYPE, REVERB_POSITION, gnx3k_reverb_settings, G_N_ELEMENTS(gnx3k_reverb_settings)},
-    {GNX3K_REVERB_TYPE_AMPHITHEATER, "Amphitheater", REVERB_TYPE, REVERB_POSITION, gnx3k_reverb_settings, G_N_ELEMENTS(gnx3k_reverb_settings)},
-    {GNX3K_REVERB_TYPE_CHURCH, "Church", REVERB_TYPE, REVERB_POSITION, gnx3k_reverb_settings, G_N_ELEMENTS(gnx3k_reverb_settings)},
-    {GNX3K_REVERB_TYPE_GARAGE, "Garage", REVERB_TYPE, REVERB_POSITION, gnx3k_reverb_settings, G_N_ELEMENTS(gnx3k_reverb_settings)},
-    {GNX3K_REVERB_TYPE_ARENA, "Arena", REVERB_TYPE, REVERB_POSITION, gnx3k_reverb_settings, G_N_ELEMENTS(gnx3k_reverb_settings)},
-    {GNX3K_REVERB_TYPE_SPRING, "Spring", REVERB_TYPE, REVERB_POSITION, gnx3k_reverb_settings, G_N_ELEMENTS(gnx3k_reverb_settings)},
+    {GNX3K_REVERB_TYPE_STUDIO, "Studio", gnx3k_reverb_settings, G_N_ELEMENTS(gnx3k_reverb_settings)},
+    {GNX3K_REVERB_TYPE_ROOM, "Room", gnx3k_reverb_settings, G_N_ELEMENTS(gnx3k_reverb_settings)},
+    {GNX3K_REVERB_TYPE_CLUB, "Club", gnx3k_reverb_settings, G_N_ELEMENTS(gnx3k_reverb_settings)},
+    {GNX3K_REVERB_TYPE_PLATE, "Plate", gnx3k_reverb_settings, G_N_ELEMENTS(gnx3k_reverb_settings)},
+    {GNX3K_REVERB_TYPE_HALL, "Hall", gnx3k_reverb_settings, G_N_ELEMENTS(gnx3k_reverb_settings)},
+    {GNX3K_REVERB_TYPE_AMPHITHEATER, "Amphitheater", gnx3k_reverb_settings, G_N_ELEMENTS(gnx3k_reverb_settings)},
+    {GNX3K_REVERB_TYPE_CHURCH, "Church", gnx3k_reverb_settings, G_N_ELEMENTS(gnx3k_reverb_settings)},
+    {GNX3K_REVERB_TYPE_GARAGE, "Garage", gnx3k_reverb_settings, G_N_ELEMENTS(gnx3k_reverb_settings)},
+    {GNX3K_REVERB_TYPE_ARENA, "Arena", gnx3k_reverb_settings, G_N_ELEMENTS(gnx3k_reverb_settings)},
+    {GNX3K_REVERB_TYPE_SPRING, "Spring", gnx3k_reverb_settings, G_N_ELEMENTS(gnx3k_reverb_settings)},
 };
 
 static EffectGroup reverb_group[] = {
-    {REVERB_TYPE_TWIN, "Twin", REVERB_TYPE, REVERB_POSITION, reverb_twin_settings, G_N_ELEMENTS(reverb_twin_settings)},
-    {REVERB_TYPE_LEX_AMBIENCE, "Lexicon ambience", REVERB_TYPE, REVERB_POSITION, reverb_lex_settings, G_N_ELEMENTS(reverb_lex_settings)},
-    {REVERB_TYPE_LEX_STUDIO, "Lexicon studio", REVERB_TYPE, REVERB_POSITION, reverb_lex_settings, G_N_ELEMENTS(reverb_lex_settings)},
-    {REVERB_TYPE_LEX_ROOM, "Lexicon room", REVERB_TYPE, REVERB_POSITION, reverb_lex_settings, G_N_ELEMENTS(reverb_lex_settings)},
-    {REVERB_TYPE_LEX_HALL, "Lexicon hall", REVERB_TYPE, REVERB_POSITION, reverb_lex_settings, G_N_ELEMENTS(reverb_lex_settings)},
-    {REVERB_TYPE_EMT240_PLATE, "EMT240 Plate", REVERB_TYPE, REVERB_POSITION, reverb_lex_settings, G_N_ELEMENTS(reverb_lex_settings)},
+    {REVERB_TYPE_TWIN, "Twin", reverb_twin_settings, G_N_ELEMENTS(reverb_twin_settings)},
+    {REVERB_TYPE_LEX_AMBIENCE, "Lexicon ambience", reverb_lex_settings, G_N_ELEMENTS(reverb_lex_settings)},
+    {REVERB_TYPE_LEX_STUDIO, "Lexicon studio", reverb_lex_settings, G_N_ELEMENTS(reverb_lex_settings)},
+    {REVERB_TYPE_LEX_ROOM, "Lexicon room", reverb_lex_settings, G_N_ELEMENTS(reverb_lex_settings)},
+    {REVERB_TYPE_LEX_HALL, "Lexicon hall", reverb_lex_settings, G_N_ELEMENTS(reverb_lex_settings)},
+    {REVERB_TYPE_EMT240_PLATE, "EMT240 Plate", reverb_lex_settings, G_N_ELEMENTS(reverb_lex_settings)},
 };
 
 static EffectGroup rp250_amp_group[] = {
-    {AMP_TYPE_TWEED_CHAMP, "Tweed Champ", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
-    {AMP_TYPE_TWEED_DELUXE, "Tweed Deluxe", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
-    {AMP_TYPE_TWEED_BASSMAN, "Tweed Bassman", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
-    {AMP_TYPE_BLACKFACE_TWIN, "Blackface Twin", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
-    {AMP_TYPE_BLACKFACE_DELUXE, "Blackface Deluxe", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
-    {AMP_TYPE_SUPER_LEAD_PLEXI, "Super Lead Plexi", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
-    {AMP_TYPE_MASTER_VOLUME, "Master Volume", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
-    {AMP_TYPE_JCM800, "JCM800", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
-    {AMP_TYPE_JCM900, "JCM900", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
-    {AMP_TYPE_AC15, "AC15", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
-    {AMP_TYPE_AC30TB, "AC30TB", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
-    {AMP_TYPE_HIWATT_100, "Hiwatt 100", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
-    {AMP_TYPE_BOOGIE_MARK_II, "Boogie Mark II", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
-    {AMP_TYPE_DUAL_RECTIFIER, "Dual Rectifier", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
-    {AMP_TYPE_MATCHLESS_HC30, "Matchless HC30", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
-    {AMP_TYPE_SOLO, "Solo", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
-    {AMP_TYPE_METAL, "Metal", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
-    {AMP_TYPE_BRIGHT, "Bright", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
-    {AMP_TYPE_CLEAN, "Clean", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
-    {AMP_TYPE_HIGH_GAIN, "High Gain", AMP_TYPE, AMP_POSITION, rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
-    {AMP_TYPE_ACOUSTIC, "Acoustic", AMP_TYPE, AMP_POSITION, rp250_amp_settings2, G_N_ELEMENTS(rp250_amp_settings2)},
-    {AMP_TYPE_DIRECT, "Direct", AMP_TYPE, AMP_POSITION, rp250_amp_settings2, G_N_ELEMENTS(rp250_amp_settings2)},
+    {AMP_TYPE_TWEED_CHAMP, "Tweed Champ", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_TWEED_DELUXE, "Tweed Deluxe", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_TWEED_BASSMAN, "Tweed Bassman", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_BLACKFACE_TWIN, "Blackface Twin", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_BLACKFACE_DELUXE, "Blackface Deluxe", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_SUPER_LEAD_PLEXI, "Super Lead Plexi", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_MASTER_VOLUME, "Master Volume", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_JCM800, "JCM800", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_JCM900, "JCM900", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_AC15, "AC15", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_AC30TB, "AC30TB", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_HIWATT_100, "Hiwatt 100", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_BOOGIE_MARK_II, "Boogie Mark II", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_DUAL_RECTIFIER, "Dual Rectifier", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_MATCHLESS_HC30, "Matchless HC30", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_SOLO, "Solo", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_METAL, "Metal", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_BRIGHT, "Bright", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_CLEAN, "Clean", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_HIGH_GAIN, "High Gain", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_ACOUSTIC, "Acoustic", rp250_amp_settings2, G_N_ELEMENTS(rp250_amp_settings2)},
+    {AMP_TYPE_DIRECT, "Direct", rp250_amp_settings2, G_N_ELEMENTS(rp250_amp_settings2)},
 };
 
 static EffectGroup rp500_amp_group[] = {
-    {AMP_TYPE_TWEED_CHAMP, "Tweed Champ", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_TWEED_DELUXE, "Tweed Deluxe", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_TWEED_BASSMAN, "Tweed Bassman", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_BROWN_BASSMAN, "Brown Bassman", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_BLACKFACE_TWIN, "Blackface Twin", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_BLACKFACE_DELUXE, "Blackface Deluxe", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_PLEXI_JTM_45, "Plexi JTM-45", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_SUPER_LEAD_PLEXI, "Plexi Lead", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_PLEXI_JUMP_PANEL, "Plexi Jump Panel", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_MASTER_VOLUME, "Master Volume", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_JCM800, "JCM800", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_JCM900, "JCM900", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_JCM2000, "JCM2000", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_AC15, "AC-15", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_AC30TB, "AC-30 TB", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_HIWATT_100, "Hiwatt 100", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_BOOGIE_MARK_II, "Boogie Mark IIC", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_BOOGIE_MARK_IV, "Boogie Mark IV", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_DUAL_RECTIFIER, "Dual Rectifier", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_TRIPLE_RECTIFIER, "Triple Rectifier", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_LEGACY_VL100, "Legacy VL-100", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_MATCHLESS_HC30, "Matchless HC30", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_SOLDANO_100, "Soldano 100", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_SUPERGROUP, "Supergroup", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_GA40, "GA-40", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_OR120, "OR-120", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_PV5150II, "PV 5150II", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_RG100, "RG100", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_JC120_JAZZ, "JC-120 Jazz", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_SOLAR100, "Solar 100", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_SOLO, "Solo", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_METAL, "Metal", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_BRIGHT, "Bright Clean", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_CHUNK, "Chunk", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_CLEAN, "Clean Tube", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_HIGH_GAIN, "High Gain", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_BLUES, "Blues", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_FUZZ, "Fuzz", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_SPANK, "Spank", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_GSP2101_CLEAN_TUBE, "GSP2101 Clean Tube", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_GSP2101_SAT_TUBE, "GSP2101 Sat Tube", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_CRUNCH, "Crunch", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_MONSTER, "Monster", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_TWEEDFACE, "Tweedface", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_BLACKBASS, "Blackbass", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_STONER_ROCK, "Stoner Rock", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_DARK_METAL, "Dark Metal", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_TRANSISTOR, "Transistor", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_BROWN_SOUND, "Brown Sound", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_MOSH, "Mosh", AMP_TYPE, AMP_POSITION, rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
-    {AMP_TYPE_ACOUSTIC, "Dread Acoustic", AMP_TYPE, AMP_POSITION, rp500_amp_settings2, G_N_ELEMENTS(rp500_amp_settings2)},
-    {AMP_TYPE_JUMBO_ACOUSTIC, "Jumbo Acoustic", AMP_TYPE, AMP_POSITION, rp500_amp_settings2, G_N_ELEMENTS(rp500_amp_settings2)},
-    {AMP_TYPE_DIRECT, "Direct", AMP_TYPE, AMP_POSITION, rp500_amp_settings3, G_N_ELEMENTS(rp500_amp_settings3)},
+    {AMP_TYPE_TWEED_CHAMP, "Tweed Champ", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_TWEED_DELUXE, "Tweed Deluxe", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_TWEED_BASSMAN, "Tweed Bassman", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_BROWN_BASSMAN, "Brown Bassman", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_BLACKFACE_TWIN, "Blackface Twin", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_BLACKFACE_DELUXE, "Blackface Deluxe", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_PLEXI_JTM_45, "Plexi JTM-45", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_SUPER_LEAD_PLEXI, "Plexi Lead", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_PLEXI_JUMP_PANEL, "Plexi Jump Panel", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_MASTER_VOLUME, "Master Volume", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_JCM800, "JCM800", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_JCM900, "JCM900", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_JCM2000, "JCM2000", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_AC15, "AC-15", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_AC30TB, "AC-30 TB", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_HIWATT_100, "Hiwatt 100", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_BOOGIE_MARK_II, "Boogie Mark IIC", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_BOOGIE_MARK_IV, "Boogie Mark IV", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_DUAL_RECTIFIER, "Dual Rectifier", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_TRIPLE_RECTIFIER, "Triple Rectifier", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_LEGACY_VL100, "Legacy VL-100", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_MATCHLESS_HC30, "Matchless HC30", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_SOLDANO_100, "Soldano 100", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_SUPERGROUP, "Supergroup", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_GA40, "GA-40", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_OR120, "OR-120", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_PV5150II, "PV 5150II", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_RG100, "RG100", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_JC120_JAZZ, "JC-120 Jazz", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_SOLAR100, "Solar 100", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_SOLO, "Solo", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_METAL, "Metal", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_BRIGHT, "Bright Clean", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_CHUNK, "Chunk", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_CLEAN, "Clean Tube", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_HIGH_GAIN, "High Gain", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_BLUES, "Blues", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_FUZZ, "Fuzz", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_SPANK, "Spank", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_GSP2101_CLEAN_TUBE, "GSP2101 Clean Tube", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_GSP2101_SAT_TUBE, "GSP2101 Sat Tube", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_CRUNCH, "Crunch", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_MONSTER, "Monster", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_TWEEDFACE, "Tweedface", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_BLACKBASS, "Blackbass", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_STONER_ROCK, "Stoner Rock", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_DARK_METAL, "Dark Metal", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_TRANSISTOR, "Transistor", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_BROWN_SOUND, "Brown Sound", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_MOSH, "Mosh", rp500_amp_settings, G_N_ELEMENTS(rp500_amp_settings)},
+    {AMP_TYPE_ACOUSTIC, "Dread Acoustic", rp500_amp_settings2, G_N_ELEMENTS(rp500_amp_settings2)},
+    {AMP_TYPE_JUMBO_ACOUSTIC, "Jumbo Acoustic", rp500_amp_settings2, G_N_ELEMENTS(rp500_amp_settings2)},
+    {AMP_TYPE_DIRECT, "Direct", rp500_amp_settings3, G_N_ELEMENTS(rp500_amp_settings3)},
 };
 
 static EffectGroup rp250_eq_group[] = {
-    {EQ_TYPE_BRIGHT, "Bright", EQ_TYPE, EQ_POSITION, rp250_eq_settings, G_N_ELEMENTS(rp250_eq_settings)},
-    {EQ_TYPE_MIDBOOST, "Mid Boost", EQ_TYPE, EQ_POSITION, rp250_eq_settings, G_N_ELEMENTS(rp250_eq_settings)},
-    {EQ_TYPE_SCOOP, "Scoop", EQ_TYPE, EQ_POSITION, rp250_eq_settings, G_N_ELEMENTS(rp250_eq_settings)},
-    {EQ_TYPE_WARM, "Warm", EQ_TYPE, EQ_POSITION, rp250_eq_settings, G_N_ELEMENTS(rp250_eq_settings)},
+    {EQ_TYPE_BRIGHT, "Bright", rp250_eq_settings, G_N_ELEMENTS(rp250_eq_settings)},
+    {EQ_TYPE_MIDBOOST, "Mid Boost", rp250_eq_settings, G_N_ELEMENTS(rp250_eq_settings)},
+    {EQ_TYPE_SCOOP, "Scoop", rp250_eq_settings, G_N_ELEMENTS(rp250_eq_settings)},
+    {EQ_TYPE_WARM, "Warm", rp250_eq_settings, G_N_ELEMENTS(rp250_eq_settings)},
 };
 
 static EffectGroup rp500_eq_group[] = {
-    {-1, NULL, -1, -1, rp500_eq_settings, G_N_ELEMENTS(rp500_eq_settings)},
+    {-1, NULL, rp500_eq_settings, G_N_ELEMENTS(rp500_eq_settings)},
 };
 
 static EffectGroup rp250_amp_cab_group[] = {
-    {AMP_CAB_DIRECT, "Direct", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_CHAMP, "Champ 1x8", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_DELUXE, "Deluxe 1x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_TWIN, "Twin 2x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_BRITISH2_12, "British 2x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_BASSMAN, "Bassman 4x10", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_BRITISH4_12, "British 4x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_BRITISH_GREEN, "British Green 4x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_VINTAGE, "Vintage V30 4x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_DIGI_SOLO, "DigiTech Solo 4x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_DIGI_BRIGHT, "DigiTech Bright 2x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_DIGI_METAL, "DigiTech Metal 4x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_DIGI_ROCK, "DigiTech Rock 4x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_DIGI_ALT, "DigiTech Alt 4x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_DIGI_VNTG, "DigiTech Vntg 4x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
+    {AMP_CAB_DIRECT, "Direct", NULL, -1},
+    {AMP_CAB_CHAMP, "Champ 1x8", NULL, -1},
+    {AMP_CAB_DELUXE, "Deluxe 1x12", NULL, -1},
+    {AMP_CAB_TWIN, "Twin 2x12", NULL, -1},
+    {AMP_CAB_BRITISH2_12, "British 2x12", NULL, -1},
+    {AMP_CAB_BASSMAN, "Bassman 4x10", NULL, -1},
+    {AMP_CAB_BRITISH4_12, "British 4x12", NULL, -1},
+    {AMP_CAB_BRITISH_GREEN, "British Green 4x12", NULL, -1},
+    {AMP_CAB_VINTAGE, "Vintage V30 4x12", NULL, -1},
+    {AMP_CAB_DIGI_SOLO, "DigiTech Solo 4x12", NULL, -1},
+    {AMP_CAB_DIGI_BRIGHT, "DigiTech Bright 2x12", NULL, -1},
+    {AMP_CAB_DIGI_METAL, "DigiTech Metal 4x12", NULL, -1},
+    {AMP_CAB_DIGI_ROCK, "DigiTech Rock 4x12", NULL, -1},
+    {AMP_CAB_DIGI_ALT, "DigiTech Alt 4x12", NULL, -1},
+    {AMP_CAB_DIGI_VNTG, "DigiTech Vntg 4x12", NULL, -1},
 };
 
 static EffectGroup rp500_amp_cab_group[] = {
-    {AMP_CAB_DIRECT, "Direct", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_CHAMP, "Champ", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_DELUXE, "Deluxe", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_DELUXE_REVERB, "Deluxe Reverb 1x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_BRITISH1_12, "British 1x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_GA1_12, "GA 1x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_BLONDE2_12, "Blonde 2x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_TWIN, "Twin 2x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_BRITISH2_12, "British 2x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_JAZZ2_12, "Jazz 2x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_BASSMAN, "Bassman 4x10", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_BRITISH4_12, "British 4x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_BRITISH_GREEN, "Greenback 4x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_FANE4_12, "Fane 4x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_BOUTIQUE4_12, "Boutique 4x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_VINTAGE, "Vintage 4x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_RECTO4_12, "Recto 4x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_DIGI_SOLO, "DigiTech Solo 4x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_DIGI_BRIGHT, "DigiTech Bright 2x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_DIGI_METAL, "DigiTech Metal 4x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_DIGI_ROCK, "DigiTech Rock 4x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_DIGI_ALT, "DigiTech Alt 4x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_DIGI_VNTG, "DigiTech Vintage 4x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_DIGI_CHUNK, "DigiTech Chunk 4x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_DIGI_SPANK2_12, "DigiTech Spank 2x12", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
-    {AMP_CAB_DIGI_SPKR_COMP, "DigiTech Spkr Comp", AMP_CAB_TYPE, AMP_CAB_POSITION, NULL, -1},
+    {AMP_CAB_DIRECT, "Direct", NULL, -1},
+    {AMP_CAB_CHAMP, "Champ", NULL, -1},
+    {AMP_CAB_DELUXE, "Deluxe", NULL, -1},
+    {AMP_CAB_DELUXE_REVERB, "Deluxe Reverb 1x12", NULL, -1},
+    {AMP_CAB_BRITISH1_12, "British 1x12", NULL, -1},
+    {AMP_CAB_GA1_12, "GA 1x12", NULL, -1},
+    {AMP_CAB_BLONDE2_12, "Blonde 2x12", NULL, -1},
+    {AMP_CAB_TWIN, "Twin 2x12", NULL, -1},
+    {AMP_CAB_BRITISH2_12, "British 2x12", NULL, -1},
+    {AMP_CAB_JAZZ2_12, "Jazz 2x12", NULL, -1},
+    {AMP_CAB_BASSMAN, "Bassman 4x10", NULL, -1},
+    {AMP_CAB_BRITISH4_12, "British 4x12", NULL, -1},
+    {AMP_CAB_BRITISH_GREEN, "Greenback 4x12", NULL, -1},
+    {AMP_CAB_FANE4_12, "Fane 4x12", NULL, -1},
+    {AMP_CAB_BOUTIQUE4_12, "Boutique 4x12", NULL, -1},
+    {AMP_CAB_VINTAGE, "Vintage 4x12", NULL, -1},
+    {AMP_CAB_RECTO4_12, "Recto 4x12", NULL, -1},
+    {AMP_CAB_DIGI_SOLO, "DigiTech Solo 4x12", NULL, -1},
+    {AMP_CAB_DIGI_BRIGHT, "DigiTech Bright 2x12", NULL, -1},
+    {AMP_CAB_DIGI_METAL, "DigiTech Metal 4x12", NULL, -1},
+    {AMP_CAB_DIGI_ROCK, "DigiTech Rock 4x12", NULL, -1},
+    {AMP_CAB_DIGI_ALT, "DigiTech Alt 4x12", NULL, -1},
+    {AMP_CAB_DIGI_VNTG, "DigiTech Vintage 4x12", NULL, -1},
+    {AMP_CAB_DIGI_CHUNK, "DigiTech Chunk 4x12", NULL, -1},
+    {AMP_CAB_DIGI_SPANK2_12, "DigiTech Spank 2x12", NULL, -1},
+    {AMP_CAB_DIGI_SPKR_COMP, "DigiTech Spkr Comp", NULL, -1},
 };
 
+/* LIBRARY_TONE, LIBRARY_POSITION */
 static EffectGroup tone_lib_group[] = {
-    {TONE_LIB_OVERDRIVE, "Overdrive", LIBRARY_TONE, LIBRARY_POSITION, NULL, -1},
-    {TONE_LIB_ROCK1, "Rock 1", LIBRARY_TONE, LIBRARY_POSITION, NULL, -1},
-    {TONE_LIB_ROCK2, "Rock 2", LIBRARY_TONE, LIBRARY_POSITION, NULL, -1},
-    {TONE_LIB_BLUES1, "Blues 1", LIBRARY_TONE, LIBRARY_POSITION, NULL, -1},
-    {TONE_LIB_BLUES2, "Blues 2", LIBRARY_TONE, LIBRARY_POSITION, NULL, -1},
-    {TONE_LIB_METAL1, "Metal 1", LIBRARY_TONE, LIBRARY_POSITION, NULL, -1},
-    {TONE_LIB_METAL2, "Metal 2", LIBRARY_TONE, LIBRARY_POSITION, NULL, -1},
-    {TONE_LIB_COUNTRY1, "Country 1", LIBRARY_TONE, LIBRARY_POSITION, NULL, -1},
-    {TONE_LIB_COUNTRY2, "Country 2", LIBRARY_TONE, LIBRARY_POSITION, NULL, -1},
-    {TONE_LIB_WARM_DRIVE, "Warm Drive", LIBRARY_TONE, LIBRARY_POSITION, NULL, -1},
-    {TONE_LIB_CRUNCH, "Crunch", LIBRARY_TONE, LIBRARY_POSITION, NULL, -1},
-    {TONE_LIB_TEXAS_TONE, "Texas Tone", LIBRARY_TONE, LIBRARY_POSITION, NULL, -1},
-    {TONE_LIB_ROCKABILLY, "Rockabilly", LIBRARY_TONE, LIBRARY_POSITION, NULL, -1},
-    {TONE_LIB_SOLO1, "Solo 1", LIBRARY_TONE, LIBRARY_POSITION, NULL, -1},
-    {TONE_LIB_SOLO2, "Solo 2", LIBRARY_TONE, LIBRARY_POSITION, NULL, -1},
-    {TONE_LIB_ROCKWAH, "Rock Wah", LIBRARY_TONE, LIBRARY_POSITION, NULL, -1},
-    {TONE_LIB_CHUNKY, "Chunky", LIBRARY_TONE, LIBRARY_POSITION, NULL, -1},
-    {TONE_LIB_SMOOTH, "Smooth", LIBRARY_TONE, LIBRARY_POSITION, NULL, -1},
-    {TONE_LIB_HEAVY, "Heavy", LIBRARY_TONE, LIBRARY_POSITION, NULL, -1},
-    {TONE_LIB_CLEAN1, "Clean 1", LIBRARY_TONE, LIBRARY_POSITION, NULL, -1},
-    {TONE_LIB_CLEAN2, "Clean 2", LIBRARY_TONE, LIBRARY_POSITION, NULL, -1},
-    {TONE_LIB_BRITISH1, "British 1", LIBRARY_TONE, LIBRARY_POSITION, NULL, -1},
-    {TONE_LIB_BRITISH2, "British 2", LIBRARY_TONE, LIBRARY_POSITION, NULL, -1},
-    {TONE_LIB_AMERICAN1, "American 1", LIBRARY_TONE, LIBRARY_POSITION, NULL, -1},
-    {TONE_LIB_AMERICAN2, "American 2", LIBRARY_TONE, LIBRARY_POSITION, NULL, -1},
-    {TONE_LIB_TUBE_DRIVE, "Tube Drive", LIBRARY_TONE, LIBRARY_POSITION, NULL, -1},
-    {TONE_LIB_DISTORTION, "Distortion", LIBRARY_TONE, LIBRARY_POSITION, NULL, -1},
-    {TONE_LIB_SCOOPED, "Scooped", LIBRARY_TONE, LIBRARY_POSITION, NULL, -1},
-    {TONE_LIB_PUNCHY, "Punchy", LIBRARY_TONE, LIBRARY_POSITION, NULL, -1},
-    {TONE_LIB_BRIGHT_CLEAN, "Bright Clean", LIBRARY_TONE, LIBRARY_POSITION, NULL, -1},
+    {TONE_LIB_OVERDRIVE, "Overdrive", NULL, -1},
+    {TONE_LIB_ROCK1, "Rock 1", NULL, -1},
+    {TONE_LIB_ROCK2, "Rock 2", NULL, -1},
+    {TONE_LIB_BLUES1, "Blues 1", NULL, -1},
+    {TONE_LIB_BLUES2, "Blues 2", NULL, -1},
+    {TONE_LIB_METAL1, "Metal 1", NULL, -1},
+    {TONE_LIB_METAL2, "Metal 2", NULL, -1},
+    {TONE_LIB_COUNTRY1, "Country 1", NULL, -1},
+    {TONE_LIB_COUNTRY2, "Country 2", NULL, -1},
+    {TONE_LIB_WARM_DRIVE, "Warm Drive", NULL, -1},
+    {TONE_LIB_CRUNCH, "Crunch", NULL, -1},
+    {TONE_LIB_TEXAS_TONE, "Texas Tone", NULL, -1},
+    {TONE_LIB_ROCKABILLY, "Rockabilly", NULL, -1},
+    {TONE_LIB_SOLO1, "Solo 1", NULL, -1},
+    {TONE_LIB_SOLO2, "Solo 2", NULL, -1},
+    {TONE_LIB_ROCKWAH, "Rock Wah", NULL, -1},
+    {TONE_LIB_CHUNKY, "Chunky", NULL, -1},
+    {TONE_LIB_SMOOTH, "Smooth", NULL, -1},
+    {TONE_LIB_HEAVY, "Heavy", NULL, -1},
+    {TONE_LIB_CLEAN1, "Clean 1", NULL, -1},
+    {TONE_LIB_CLEAN2, "Clean 2", NULL, -1},
+    {TONE_LIB_BRITISH1, "British 1", NULL, -1},
+    {TONE_LIB_BRITISH2, "British 2", NULL, -1},
+    {TONE_LIB_AMERICAN1, "American 1", NULL, -1},
+    {TONE_LIB_AMERICAN2, "American 2", NULL, -1},
+    {TONE_LIB_TUBE_DRIVE, "Tube Drive", NULL, -1},
+    {TONE_LIB_DISTORTION, "Distortion", NULL, -1},
+    {TONE_LIB_SCOOPED, "Scooped", NULL, -1},
+    {TONE_LIB_PUNCHY, "Punchy", NULL, -1},
+    {TONE_LIB_BRIGHT_CLEAN, "Bright Clean", NULL, -1},
 };
 
+/* LIBRARY_EFFECTS, LIBRARY_POSITION */
 static EffectGroup effects_lib_group[] = {
-    {EFFECTS_LIB_CHORUS, "Chorus", LIBRARY_EFFECTS, LIBRARY_POSITION, NULL, -1},
-    {EFFECTS_LIB_PHASER, "Phaser", LIBRARY_EFFECTS, LIBRARY_POSITION, NULL, -1},
-    {EFFECTS_LIB_FLANGER, "Flanger", LIBRARY_EFFECTS, LIBRARY_POSITION, NULL, -1},
-    {EFFECTS_LIB_PITCH, "Pitch", LIBRARY_EFFECTS, LIBRARY_POSITION, NULL, -1},
-    {EFFECTS_LIB_TREMOLO, "Tremolo", LIBRARY_EFFECTS, LIBRARY_POSITION, NULL, -1},
-    {EFFECTS_LIB_ROTARY, "Rotary", LIBRARY_EFFECTS, LIBRARY_POSITION, NULL, -1},
-    {EFFECTS_LIB_ENVELOPE, "Envelope Filter", LIBRARY_EFFECTS, LIBRARY_POSITION, NULL, -1},
-    {EFFECTS_LIB_DIGITAL, "Digital Delay", LIBRARY_EFFECTS, LIBRARY_POSITION, NULL, -1},
-    {EFFECTS_LIB_ANALOG, "Analog Delay", LIBRARY_EFFECTS, LIBRARY_POSITION, NULL, -1},
-    {EFFECTS_LIB_PONG, "Pong Delay", LIBRARY_EFFECTS, LIBRARY_POSITION, NULL, -1},
-    {EFFECTS_LIB_MOD, "Mod Delay", LIBRARY_EFFECTS, LIBRARY_POSITION, NULL, -1},
-    {EFFECTS_LIB_TAPE, "Tape Delay", LIBRARY_EFFECTS, LIBRARY_POSITION, NULL, -1},
-    {EFFECTS_LIB_HALL, "Hall Reverb", LIBRARY_EFFECTS, LIBRARY_POSITION, NULL, -1},
-    {EFFECTS_LIB_PLATE, "Plate Reverb", LIBRARY_EFFECTS, LIBRARY_POSITION, NULL, -1},
-    {EFFECTS_LIB_SPRING, "Spring Reverb", LIBRARY_EFFECTS, LIBRARY_POSITION, NULL, -1},
-    {EFFECTS_LIB_CHORUS_DIGITAL, "Chorus + Digital Delay", LIBRARY_EFFECTS, LIBRARY_POSITION, NULL, -1},
-    {EFFECTS_LIB_CHORUS_DELAY_REVERB, "Chorus + Delay + Reverb", LIBRARY_EFFECTS, LIBRARY_POSITION, NULL, -1},
-    {EFFECTS_LIB_FLANGER_ANALOG, "Flanger + Analog Delay", LIBRARY_EFFECTS, LIBRARY_POSITION, NULL, -1},
-    {EFFECTS_LIB_PHASER_TAPE, "Phaser + Tape Delay", LIBRARY_EFFECTS, LIBRARY_POSITION, NULL, -1},
-    {EFFECTS_LIB_PHASER_MOD, "Phaser + Mod Delay", LIBRARY_EFFECTS, LIBRARY_POSITION, NULL, -1},
-    {EFFECTS_LIB_PHASER_ROOM, "Phaser + Room Reverb", LIBRARY_EFFECTS, LIBRARY_POSITION, NULL, -1},
-    {EFFECTS_LIB_DIGITAL_HALL, "Digital Delay + Hall Reverb", LIBRARY_EFFECTS, LIBRARY_POSITION, NULL, -1},
-    {EFFECTS_LIB_ANALOG_SPRING, "Analog Delay + Spring Reverb", LIBRARY_EFFECTS, LIBRARY_POSITION, NULL, -1},
-    {EFFECTS_LIB_CHORUS_HALL, "Chorus + Hall Reverb", LIBRARY_EFFECTS, LIBRARY_POSITION, NULL, -1},
-    {EFFECTS_LIB_PONG_HALL, "Pong Delay + Hall Reverb", LIBRARY_EFFECTS, LIBRARY_POSITION, NULL, -1},
-    {EFFECTS_LIB_TAPE_SPRING, "Tape Delay + Spring Reverb", LIBRARY_EFFECTS, LIBRARY_POSITION, NULL, -1},
-    {EFFECTS_LIB_TREMOLO_TAPE, "Tremolo + Tape Delay", LIBRARY_EFFECTS, LIBRARY_POSITION, NULL, -1},
-    {EFFECTS_LIB_PITCH_DIGITAL, "Pitch + Digital Delay", LIBRARY_EFFECTS, LIBRARY_POSITION, NULL, -1},
-    {EFFECTS_LIB_MOD_PLATE, "Mod Delay + Plate Reverb", LIBRARY_EFFECTS, LIBRARY_POSITION, NULL, -1},
-    {EFFECTS_LIB_ROTARY_TAPE, "Rotary + Tape Delay", LIBRARY_EFFECTS, LIBRARY_POSITION, NULL, -1},
+    {EFFECTS_LIB_CHORUS, "Chorus", NULL, -1},
+    {EFFECTS_LIB_PHASER, "Phaser", NULL, -1},
+    {EFFECTS_LIB_FLANGER, "Flanger", NULL, -1},
+    {EFFECTS_LIB_PITCH, "Pitch", NULL, -1},
+    {EFFECTS_LIB_TREMOLO, "Tremolo", NULL, -1},
+    {EFFECTS_LIB_ROTARY, "Rotary", NULL, -1},
+    {EFFECTS_LIB_ENVELOPE, "Envelope Filter", NULL, -1},
+    {EFFECTS_LIB_DIGITAL, "Digital Delay", NULL, -1},
+    {EFFECTS_LIB_ANALOG, "Analog Delay", NULL, -1},
+    {EFFECTS_LIB_PONG, "Pong Delay", NULL, -1},
+    {EFFECTS_LIB_MOD, "Mod Delay", NULL, -1},
+    {EFFECTS_LIB_TAPE, "Tape Delay", NULL, -1},
+    {EFFECTS_LIB_HALL, "Hall Reverb", NULL, -1},
+    {EFFECTS_LIB_PLATE, "Plate Reverb", NULL, -1},
+    {EFFECTS_LIB_SPRING, "Spring Reverb", NULL, -1},
+    {EFFECTS_LIB_CHORUS_DIGITAL, "Chorus + Digital Delay", NULL, -1},
+    {EFFECTS_LIB_CHORUS_DELAY_REVERB, "Chorus + Delay + Reverb", NULL, -1},
+    {EFFECTS_LIB_FLANGER_ANALOG, "Flanger + Analog Delay", NULL, -1},
+    {EFFECTS_LIB_PHASER_TAPE, "Phaser + Tape Delay", NULL, -1},
+    {EFFECTS_LIB_PHASER_MOD, "Phaser + Mod Delay", NULL, -1},
+    {EFFECTS_LIB_PHASER_ROOM, "Phaser + Room Reverb", NULL, -1},
+    {EFFECTS_LIB_DIGITAL_HALL, "Digital Delay + Hall Reverb", NULL, -1},
+    {EFFECTS_LIB_ANALOG_SPRING, "Analog Delay + Spring Reverb", NULL, -1},
+    {EFFECTS_LIB_CHORUS_HALL, "Chorus + Hall Reverb", NULL, -1},
+    {EFFECTS_LIB_PONG_HALL, "Pong Delay + Hall Reverb", NULL, -1},
+    {EFFECTS_LIB_TAPE_SPRING, "Tape Delay + Spring Reverb", NULL, -1},
+    {EFFECTS_LIB_TREMOLO_TAPE, "Tremolo + Tape Delay", NULL, -1},
+    {EFFECTS_LIB_PITCH_DIGITAL, "Pitch + Digital Delay", NULL, -1},
+    {EFFECTS_LIB_MOD_PLATE, "Mod Delay + Plate Reverb", NULL, -1},
+    {EFFECTS_LIB_ROTARY_TAPE, "Rotary + Tape Delay", NULL, -1},
 };
 
 static EffectGroup pickup_group[] = {
-    {PICKUP_TYPE_HB_SC, "HB>SC", PICKUP_TYPE, PICKUP_POSITION, NULL, -1},
-    {PICKUP_TYPE_SC_HB, "SC>HB", PICKUP_TYPE, PICKUP_POSITION, NULL, -1},
+    {PICKUP_TYPE_HB_SC, "HB>SC", NULL, -1},
+    {PICKUP_TYPE_SC_HB, "SC>HB", NULL, -1},
 };
 
 static Effect gnx3k_wah_effect[] = {
-    {NULL, WAH_ON_OFF, WAH_POSITION, gnx3k_wah_group, G_N_ELEMENTS(gnx3k_wah_group)},
+    {NULL, WAH_ON_OFF, WAH_TYPE, WAH_POSITION, gnx3k_wah_group, G_N_ELEMENTS(gnx3k_wah_group)},
 };
 
 static Effect wah_effect[] = {
-    {NULL, WAH_ON_OFF, WAH_POSITION, wah_group, G_N_ELEMENTS(wah_group)},
+    {NULL, WAH_ON_OFF, WAH_TYPE, WAH_POSITION, wah_group, G_N_ELEMENTS(wah_group)},
 };
 
 static Effect gnx3k_whammy_effect[] = {
-    {NULL, GNX3K_WHAM_ENABLE, GNX3K_WHAM_POSITION, gnx3k_whammy_group, G_N_ELEMENTS(gnx3k_whammy_group)},
+    {NULL, GNX3K_WHAM_ENABLE, GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_whammy_group, G_N_ELEMENTS(gnx3k_whammy_group)},
 };
 
 static Effect gnx3k_preset_effect[] = {
-    {NULL, -1, -1, gnx3k_preset_group, G_N_ELEMENTS(gnx3k_preset_group)},
+    {NULL, -1, -1, -1, gnx3k_preset_group, G_N_ELEMENTS(gnx3k_preset_group)},
 };
 
 static Effect rp250_comp_effect[] = {
-    {NULL, COMP_ON_OFF, COMP_POSITION, rp250_comp_group, G_N_ELEMENTS(rp250_comp_group)},
+    {NULL, COMP_ON_OFF, COMP_TYPE, COMP_POSITION, rp250_comp_group, G_N_ELEMENTS(rp250_comp_group)},
 };
 
 static Effect gnx_comp_effect[] = {
-    {"Compressor", COMP_ON_OFF, COMP_POSITION, gnx_comp_group, G_N_ELEMENTS(gnx_comp_group)},
+    {"Compressor", COMP_ON_OFF, -1, COMP_POSITION, gnx_comp_group, G_N_ELEMENTS(gnx_comp_group)},
 };
 
 static Effect rp500_comp_effect[] = {
-    {NULL, COMP_ON_OFF, COMP_POSITION, rp500_comp_group, G_N_ELEMENTS(rp500_comp_group)},
+    {NULL, COMP_ON_OFF, COMP_TYPE, COMP_POSITION, rp500_comp_group, G_N_ELEMENTS(rp500_comp_group)},
 };
 
 static Effect rp250_dist_effect[] = {
-    {NULL, DIST_ON_OFF, DIST_POSITION, rp250_dist_group, G_N_ELEMENTS(rp250_dist_group)},
+    {NULL, DIST_ON_OFF, DIST_TYPE, DIST_POSITION, rp250_dist_group, G_N_ELEMENTS(rp250_dist_group)},
 };
 
 static Effect rp500_dist_effect[] = {
-    {NULL, DIST_ON_OFF, DIST_POSITION, rp500_dist_group, G_N_ELEMENTS(rp500_dist_group)},
+    {NULL, DIST_ON_OFF, DIST_TYPE, DIST_POSITION, rp500_dist_group, G_N_ELEMENTS(rp500_dist_group)},
 };
 
 static Effect gnx4_dist_effect[] = {
-    {NULL, DIST_ON_OFF, DIST_POSITION, gnx4_dist_group, G_N_ELEMENTS(gnx4_dist_group)},
+    {NULL, DIST_ON_OFF, DIST_TYPE, DIST_POSITION, gnx4_dist_group, G_N_ELEMENTS(gnx4_dist_group)},
 };
 
 static Effect gnx3k_dist_effect[] = {
-    {NULL, DIST_ON_OFF, DIST_POSITION, gnx3k_dist_group, G_N_ELEMENTS(gnx3k_dist_group)},
+    {NULL, DIST_ON_OFF, DIST_TYPE, DIST_POSITION, gnx3k_dist_group, G_N_ELEMENTS(gnx3k_dist_group)},
 };
 
 static Effect gnx3k_noisegate_effect[] = {
-    {NULL, NOISEGATE_ON_OFF, NOISEGATE_POSITION, gnx3k_noisegate_group, G_N_ELEMENTS(gnx3k_noisegate_group)},
+    {NULL, NOISEGATE_ON_OFF, NOISEGATE_TYPE, NOISEGATE_POSITION, gnx3k_noisegate_group, G_N_ELEMENTS(gnx3k_noisegate_group)},
 };
 
 static Effect noisegate_effect[] = {
-    {NULL, NOISEGATE_ON_OFF, NOISEGATE_POSITION, noisegate_group, G_N_ELEMENTS(noisegate_group)},
+    {NULL, NOISEGATE_ON_OFF, NOISEGATE_TYPE, NOISEGATE_POSITION, noisegate_group, G_N_ELEMENTS(noisegate_group)},
 };
 
 static Effect gnx4_chorusfx_effect[] = {
-    {NULL, CHORUSFX_ON_OFF, CHORUSFX_POSITION, gnx4_chorusfx_group, G_N_ELEMENTS(gnx4_chorusfx_group)},
+    {NULL, CHORUSFX_ON_OFF, CHORUSFX_TYPE, CHORUSFX_POSITION, gnx4_chorusfx_group, G_N_ELEMENTS(gnx4_chorusfx_group)},
 };
 
 static Effect gnx3k_chorusfx_effect[] = {
-    {NULL, CHORUSFX_ON_OFF, CHORUSFX_POSITION, gnx3k_chorusfx_group, G_N_ELEMENTS(gnx3k_chorusfx_group)},
+    {NULL, CHORUSFX_ON_OFF, CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_chorusfx_group, G_N_ELEMENTS(gnx3k_chorusfx_group)},
 };
 
 static Effect rp250_chorusfx_effect[] = {
-    {NULL, CHORUSFX_ON_OFF, CHORUSFX_POSITION, rp250_chorusfx_group, G_N_ELEMENTS(rp250_chorusfx_group)},
+    {NULL, CHORUSFX_ON_OFF, CHORUSFX_TYPE, CHORUSFX_POSITION, rp250_chorusfx_group, G_N_ELEMENTS(rp250_chorusfx_group)},
 };
 
 static Effect rp500_chorusfx_effect[] = {
-    {NULL, CHORUSFX_ON_OFF, CHORUSFX_POSITION, rp500_chorusfx_group, G_N_ELEMENTS(rp500_chorusfx_group)},
+    {NULL, CHORUSFX_ON_OFF, CHORUSFX_TYPE, CHORUSFX_POSITION, rp500_chorusfx_group, G_N_ELEMENTS(rp500_chorusfx_group)},
 };
 
 static Effect gnx3k_delay_effect[] = {
-    {NULL, DELAY_ON_OFF, DELAY_POSITION, gnx3k_delay_group, G_N_ELEMENTS(gnx3k_delay_group)},
+    {NULL, DELAY_ON_OFF, DELAY_TYPE, DELAY_POSITION, gnx3k_delay_group, G_N_ELEMENTS(gnx3k_delay_group)},
 };
 
 static Effect rp250_delay_effect[] = {
-    {NULL, DELAY_ON_OFF, DELAY_POSITION, rp250_delay_group, G_N_ELEMENTS(rp250_delay_group)},
+    {NULL, DELAY_ON_OFF, DELAY_TYPE, DELAY_POSITION, rp250_delay_group, G_N_ELEMENTS(rp250_delay_group)},
 };
 
 static Effect rp500_delay_effect[] = {
-    {NULL, DELAY_ON_OFF, DELAY_POSITION, rp500_delay_group, G_N_ELEMENTS(rp500_delay_group)},
+    {NULL, DELAY_ON_OFF, DELAY_TYPE, DELAY_POSITION, rp500_delay_group, G_N_ELEMENTS(rp500_delay_group)},
 };
 
 static Effect gnx3k_reverb_effect[] = {
-    {NULL, REVERB_ON_OFF, REVERB_POSITION, gnx3k_reverb_group, G_N_ELEMENTS(gnx3k_reverb_group)},
+    {NULL, REVERB_ON_OFF, REVERB_TYPE, REVERB_POSITION, gnx3k_reverb_group, G_N_ELEMENTS(gnx3k_reverb_group)},
 };
 
 static Effect reverb_effect[] = {
-    {NULL, REVERB_ON_OFF, REVERB_POSITION, reverb_group, G_N_ELEMENTS(reverb_group)},
+    {NULL, REVERB_ON_OFF, REVERB_TYPE, REVERB_POSITION, reverb_group, G_N_ELEMENTS(reverb_group)},
 };
 
 static Effect rp250_amp_effect[] = {
-    {NULL, AMP_ON_OFF, AMP_POSITION, rp250_amp_group, G_N_ELEMENTS(rp250_amp_group)},
-    {"Cabinet", -1, -1, rp250_amp_cab_group, G_N_ELEMENTS(rp250_amp_cab_group)},
+    {NULL, AMP_ON_OFF, AMP_TYPE, AMP_POSITION, rp250_amp_group, G_N_ELEMENTS(rp250_amp_group)},
+    {"Cabinet", -1, AMP_CAB_TYPE, AMP_CAB_POSITION, rp250_amp_cab_group, G_N_ELEMENTS(rp250_amp_cab_group)},
 };
 
 static Effect rp500_amp_effect[] = {
-    {NULL, AMP_ON_OFF, AMP_POSITION, rp500_amp_group, G_N_ELEMENTS(rp500_amp_group)},
-    {"Cabinet", -1, -1, rp500_amp_cab_group, G_N_ELEMENTS(rp500_amp_cab_group)},
+    {NULL, AMP_ON_OFF, AMP_TYPE, AMP_POSITION, rp500_amp_group, G_N_ELEMENTS(rp500_amp_group)},
+    {"Cabinet", -1, AMP_CAB_TYPE, AMP_CAB_POSITION, rp500_amp_cab_group, G_N_ELEMENTS(rp500_amp_cab_group)},
 };
 
 static Effect rp250_eq_effect[] = {
-    {NULL, EQ_ON_OFF, EQ_POSITION, rp250_eq_group, G_N_ELEMENTS(rp250_eq_group)},
+    {NULL, EQ_ON_OFF, EQ_TYPE, EQ_POSITION, rp250_eq_group, G_N_ELEMENTS(rp250_eq_group)},
 };
 
 static Effect rp500_eq_effect[] = {
-    {"Enable Equalizer", EQ_ON_OFF, EQ_POSITION, rp500_eq_group, G_N_ELEMENTS(rp500_eq_group)},
+    {"Enable Equalizer", EQ_ON_OFF, -1, EQ_POSITION, rp500_eq_group, G_N_ELEMENTS(rp500_eq_group)},
 };
 
 static Effect pickup_effect[] = {
-    {NULL, PICKUP_ON_OFF, PICKUP_POSITION, pickup_group, G_N_ELEMENTS(pickup_group)},
+    {NULL, PICKUP_ON_OFF, PICKUP_TYPE, PICKUP_POSITION, pickup_group, G_N_ELEMENTS(pickup_group)},
 };
 
 static Effect gnx3k_amp_channel_effect[] = {
-    {NULL, -1, -1, gnx3k_amp_channel_group, G_N_ELEMENTS(gnx3k_amp_channel_group)},
+    {NULL, -1, -1, -1, gnx3k_amp_channel_group, G_N_ELEMENTS(gnx3k_amp_channel_group)},
 };
 
 static EffectList rp250_effects[] = {
@@ -2107,6 +2109,9 @@ ModifierGroup *modifier_linkable_list()
 
     ModifierGroup *modifier_group = g_slice_new(ModifierGroup);
 
+    modifier_group->type = EXP_TYPE;
+    modifier_group->position = EXP_POSITION;
+
     g_message("Group %d count %d", group_id, count);
     EffectGroup *group = g_slice_alloc(count * sizeof(EffectGroup));
 
@@ -2115,8 +2120,6 @@ ModifierGroup *modifier_linkable_list()
         guint position = str[14 + (i*3)];
 
         group[i].type = (position << 16) | id;
-        group[i].id = EXP_TYPE;
-        group[i].position = EXP_POSITION;
 
         Modifier *modifier = get_modifier(id, position);
         if (modifier) {

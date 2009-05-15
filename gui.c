@@ -350,12 +350,14 @@ void combo_box_changed_cb(GtkComboBox *widget, gpointer data)
 /**
  *  \param group Effect type groups
  *  \param amt amount of effect groups
+ *  \param id ID to set effect type
+ *  \param position position
  *
  *  Creates widget allowing user to choose effect type.
  *
  *  \return widget that allow user to set effect type.
  **/
-GtkWidget *create_widget_container(EffectGroup *group, gint amt)
+GtkWidget *create_widget_container(EffectGroup *group, gint amt, gint id, gint position)
 {
     GtkWidget *vbox;
     GtkWidget *widget;
@@ -388,12 +390,12 @@ GtkWidget *create_widget_container(EffectGroup *group, gint amt)
                 widget = NULL;
 
             settings = g_slice_new(EffectSettingsGroup);
-            settings->id = group[x].id;
+            settings->id = id;
             settings->type = group[x].type;
-            settings->position = group[x].position;
+            settings->position = position;
             settings->child = widget;
 
-            widget_list_add(GTK_OBJECT(combo_box), group[x].id, group[x].position, group[x].type, x);
+            widget_list_add(GTK_OBJECT(combo_box), id, position, group[x].type, x);
 
             name = g_strdup_printf("SettingsGroup%d", cmbox_no);
             g_object_set_data_full(G_OBJECT(combo_box), name, settings, ((GDestroyNotify)effect_settings_group_free));
@@ -453,7 +455,7 @@ GtkWidget *create_vbox(Effect *widgets, gint amt, gchar *label)
             y = 0;
         }
 
-        container = create_widget_container(widgets[x].group, widgets[x].group_amt);
+        container = create_widget_container(widgets[x].group, widgets[x].group_amt, widgets[x].type, widgets[x].position);
         gtk_table_attach_defaults(GTK_TABLE(table), container, 1-y, 2-y, x+y, x+y+1);
     }
     gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 2);
