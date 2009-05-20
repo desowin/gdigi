@@ -304,6 +304,11 @@ static EffectValues values_0_to_20 = {
     0.0, 20.0, NULL,
 };
 
+static EffectValues values_m12_to_12_semitones = {
+    /** \todo make this display propertly (display range -12.0 to 12.0 semitones) */
+    0.0, 48.0, NULL,
+};
+
 static EffectValues values_m24_to_24_step2 = {
     /** \todo make this display propertly (display range -24 to 24) */
     0.0, 24.0, NULL,
@@ -329,6 +334,11 @@ static EffectValues values_fast_medium_slow = {
 static EffectValues values_eq_db = {
     /** \todo make those display propertly (display range -12dB to 12dB) */
     0.0, 24.0, NULL,
+};
+
+static EffectValues values_eq_bass_hz = {
+    /** \todo make those display propertly (display range 50hz to 300hz) */
+    0.0, 250.0, NULL,
 };
 
 static EffectValues values_eq_mid_hz = {
@@ -684,6 +694,38 @@ static EffectSettings rp500_amp_settings2[] = {
 
 static EffectSettings rp500_amp_settings3[] = {
     {"Level", AMP_LEVEL, AMP_POSITION, &values_0_to_99},
+};
+
+static EffectSettings gnx3k_ch1_cab_tuning_settings[] = {
+    {"Tuning", AMP_CAB_TUNING, AMP_CAB_POSITION, &values_m12_to_12_semitones},
+};
+
+static EffectSettings gnx3k_ch2_cab_tuning_settings[] = {
+    {"Tuning", AMP_CAB_TUNING, CH2_AMP_CAB_POSITION, &values_m12_to_12_semitones},
+};
+
+static EffectSettings gnx3k_ch1_amp_eq_settings[] = {
+    {"Gain", AMP_GAIN, AMP_POSITION, &values_0_to_99},
+    {"Bass Freq", AMP_BASS_FREQ, AMP_POSITION, &values_eq_bass_hz},
+    {"Bass Level", AMP_BASS_LEVEL, AMP_POSITION, &values_eq_db},
+    {"Mid Freq", AMP_MID_FREQ, AMP_POSITION, &values_eq_mid_hz},
+    {"Mid Level", AMP_MID_LEVEL, AMP_POSITION, &values_eq_db},
+    {"Treb Freq", AMP_TREBLE_FREQ, AMP_POSITION, &values_eq_treb_hz},
+    {"Treb Level", AMP_TREBLE_LEVEL, AMP_POSITION, &values_eq_db},
+    {"Presence", AMP_PRESENCE, AMP_POSITION, &values_eq_db},
+    {"Level", AMP_LEVEL, AMP_POSITION, &values_0_to_99},
+};
+
+static EffectSettings gnx3k_ch2_amp_eq_settings[] = {
+    {"Gain", AMP_GAIN, CH2_AMP_POSITION, &values_0_to_99},
+    {"Bass Freq", AMP_BASS_FREQ, CH2_AMP_POSITION, &values_eq_bass_hz},
+    {"Bass Level", AMP_BASS_LEVEL, CH2_AMP_POSITION, &values_eq_db},
+    {"Mid Freq", AMP_MID_FREQ, CH2_AMP_POSITION, &values_eq_mid_hz},
+    {"Mid Level", AMP_MID_LEVEL, CH2_AMP_POSITION, &values_eq_db},
+    {"Treb Freq", AMP_TREBLE_FREQ, CH2_AMP_POSITION, &values_eq_treb_hz},
+    {"Treb Level", AMP_TREBLE_LEVEL, CH2_AMP_POSITION, &values_eq_db},
+    {"Presence", AMP_PRESENCE, CH2_AMP_POSITION, &values_eq_db},
+    {"Level", AMP_LEVEL, CH2_AMP_POSITION, &values_0_to_99},
 };
 
 static EffectSettings rp250_eq_settings[] = {
@@ -1518,6 +1560,54 @@ static EffectGroup rp500_amp_group[] = {
     {AMP_TYPE_DIRECT, "Direct", rp500_amp_settings3, G_N_ELEMENTS(rp500_amp_settings3)},
 };
 
+static EffectGroup gnx3k_amp_group[] = {
+    {AMP_TYPE_DIRECT, "Direct", NULL, -1},
+    {AMP_TYPE_TWEED_CHAMP, "Tweed Champ", NULL, -1},
+    {AMP_TYPE_TWEED_DELUXE, "Tweed Deluxe", NULL, -1},
+    {AMP_TYPE_TWEED_BASSMAN, "Tweed Bassman", NULL, -1},
+    {AMP_TYPE_BROWN_BASSMAN, "Brown Bassman", NULL, -1},
+    {AMP_TYPE_BLACKFACE_TWIN, "Blackface Twin", NULL, -1},
+    {AMP_TYPE_BLACKFACE_DELUXE, "Blackface Deluxe", NULL, -1},
+    {AMP_TYPE_PLEXI_JTM_45, "Plexi JTM-45", NULL, -1},
+    {AMP_TYPE_SUPER_LEAD_PLEXI, "Plexi Lead", NULL, -1},
+    {AMP_TYPE_PLEXI_JUMP_PANEL, "Plexi Jump Panel", NULL, -1},
+    {AMP_TYPE_MASTER_VOLUME, "Master Volume", NULL, -1},
+    {AMP_TYPE_JCM800, "JCM800", NULL, -1},
+    {AMP_TYPE_JCM900, "JCM900", NULL, -1},
+    {AMP_TYPE_JCM2000, "JCM2000", NULL, -1},
+    {AMP_TYPE_BOOGIE_MARK_II, "Boogie Mark II", NULL, -1},
+    {AMP_TYPE_DUAL_RECTIFIER, "Dual Rectifier", NULL, -1},
+    {AMP_TYPE_AC15, "AC-15", NULL, -1},
+    {AMP_TYPE_AC30TB, "AC-30 TB", NULL, -1},
+    {AMP_TYPE_HIWATT_100, "Hiwatt 100", NULL, -1},
+    {AMP_TYPE_SOLO, "Solo", NULL, -1},
+    {AMP_TYPE_MATCHLESS_HC30, "Matchless HC30", NULL, -1},
+    {AMP_TYPE_LEGACY_VL100, "Legacy VL-100", NULL, -1},
+    {AMP_TYPE_GSP2101_CLEAN_TUBE, "GSP2101 Clean Tube", NULL, -1},
+    {AMP_TYPE_GSP2101_SAT_TUBE, "GSP2101 Sat Tube", NULL, -1},
+    {AMP_TYPE_SPANK, "Spank", NULL, -1},
+    {AMP_TYPE_METAL, "Metal", NULL, -1},
+    {AMP_TYPE_BRIGHT, "Bright Clean", NULL, -1},
+    {AMP_TYPE_CHUNK, "Chunk", NULL, -1},
+    {AMP_TYPE_CLEAN, "Clean Tube", NULL, -1},
+    {AMP_TYPE_CRUNCH, "Crunch", NULL, -1},
+    {AMP_TYPE_HIGH_GAIN, "High Gain", NULL, -1},
+    {AMP_TYPE_BLUES, "Blues", NULL, -1},
+    {AMP_TYPE_FUZZ, "Fuzz", NULL, -1},
+    {AMP_TYPE_JUMBO_ACOUSTIC, "Jumbo Acoustic", NULL, -1},
+    {AMP_TYPE_ACOUSTIC, "Dread Acoustic", NULL, -1},
+    {AMP_TYPE_SVT_ROCK_BASS, "SVT Rock Bass", NULL, -1},
+    {AMP_TYPE_SVT_CLASSIC_BASS, "SVT Classic Bass", NULL, -1},
+    {AMP_TYPE_PEG_B15_BASS, "Peg B-15 Bass", NULL, -1},
+    {AMP_TYPE_BASIC_BASS , "Basic Bass", NULL, -1},
+    {AMP_TYPE_SHOWMAN_BASS , "Showman Bass", NULL, -1},
+    {AMP_TYPE_ASH_MODERN_BASS , "Ash Modern Bass", NULL, -1},
+    {AMP_TYPE_BRIT_BASS , "Brit Bass", NULL, -1},
+    {AMP_TYPE_SOLAR_BASS , "Solar 200s Bass", NULL, -1},
+    {AMP_TYPE_BOOGIE_BASS , "Boogie Bass", NULL, -1},
+    {AMP_TYPE_HART_BASS , "Hart Bass", NULL, -1},
+};
+
 static EffectGroup rp250_eq_group[] = {
     {EQ_TYPE_BRIGHT, "Bright", rp250_eq_settings, G_N_ELEMENTS(rp250_eq_settings)},
     {EQ_TYPE_MIDBOOST, "Mid Boost", rp250_eq_settings, G_N_ELEMENTS(rp250_eq_settings)},
@@ -1574,6 +1664,57 @@ static EffectGroup rp500_amp_cab_group[] = {
     {AMP_CAB_DIGI_CHUNK, "DigiTech Chunk 4x12", NULL, -1},
     {AMP_CAB_DIGI_SPANK2_12, "DigiTech Spank 2x12", NULL, -1},
     {AMP_CAB_DIGI_SPKR_COMP, "DigiTech Spkr Comp", NULL, -1},
+};
+
+static EffectGroup gnx3k_amp_cab_group[] = {
+    {GNX_AMP_CAB_DIRECT, "Direct", NULL, -1},
+    {GNX_AMP_CAB_TWEED1_8, "Tweed 1x8", NULL, -1},
+    {GNX_AMP_CAB_TWEED1_12, "Tweed 1x12", NULL, -1},
+    {GNX_AMP_CAB_BLACKFACE1_12, "Blackface 1x12", NULL, -1},
+    {GNX_AMP_CAB_BRITISH1_12, "British 1x12", NULL, -1},
+    {GNX_AMP_CAB_BLACKFACE2_12, "Blackface 2x12", NULL, -1},
+    {GNX_AMP_CAB_BLONDE2_12, "Blonde 2x12", NULL, -1},
+    {GNX_AMP_CAB_BRITISH2_12, "British 2x12", NULL, -1},
+    {GNX_AMP_CAB_TWEED4_10, "Tweed 4x10", NULL, -1},
+    {GNX_AMP_CAB_BRITISH_70_4_12, "British 70 4x12", NULL, -1},
+    {GNX_AMP_CAB_BRITISH_GREEN4_12, "British Green 4x12", NULL, -1},
+    {GNX_AMP_CAB_STRAIGHT_V30_4_12, "Straight V30 4x12", NULL, -1},
+    {GNX_AMP_CAB_SLANT_V30_4_12, "Slant V30 4x12", NULL, -1},
+    {GNX_AMP_CAB_FANE4_12, "Fane 4x12", NULL, -1},
+    {GNX_AMP_CAB_2101_SPKR_COMP, "2101 Spkr Comp", NULL, -1},
+    {GNX_AMP_CAB_DIGI_SPANK, "Digitech Spank 4x12", NULL, -1},
+    {GNX_AMP_CAB_DIGI_SOLO, "Digitech Solo 4x12", NULL, -1},
+    {GNX_AMP_CAB_DIGI_METAL, "Digitech Metal 4x12", NULL, -1},
+    {GNX_AMP_CAB_DIGI_BRIGHT, "Digitech Bright 4x12", NULL, -1},
+    {GNX_AMP_CAB_DIGI_CHUNK, "Digitech Chunk 4x12", NULL, -1},
+    {GNX_AMP_CAB_JUMBO_ACOUSTIC, "Jumbo Acoustic", NULL, -1},
+    {GNX_AMP_CAB_DREAD_ACOUSTIC, "Dread Acoustic", NULL, -1},
+    {GNX_AMP_CAB_HART_BASS1_15, "Hart Bass 1x15", NULL, -1},
+    {GNX_AMP_CAB_BASIC_BASS1_15, "Basic Bass 1x15", NULL, -1},
+    {GNX_AMP_CAB_PORTA_BASS1_15, "Porta Bass 1x15", NULL, -1},
+    {GNX_AMP_CAB_REFLEX1_18, "Reflex 1x18", NULL, -1},
+    {GNX_AMP_CAB_SOLAR_BASS2_15, "Solar Bass 2x15", NULL, -1},
+    {GNX_AMP_CAB_DE_BASS4_10, "DE Bass 4x10", NULL, -1},
+    {GNX_AMP_CAB_ASH_BASS4_10, "Ash Bass 4x10", NULL, -1},
+    {GNX_AMP_CAB_GOLIATH_BASS4_10, "Goliath Bass 4x10", NULL, -1},
+    {GNX_AMP_CAB_HART_BASS4_10, "Hart Bass 4x10", NULL, -1},
+    {GNX_AMP_CAB_SVT_BASS8_10, "SVT Bass 8x10", NULL, -1},
+};
+
+static EffectGroup gnx3k_ch1_cab_tuning_group[] = {
+    {-1, NULL, gnx3k_ch1_cab_tuning_settings, G_N_ELEMENTS(gnx3k_ch1_cab_tuning_settings)},
+};
+
+static EffectGroup gnx3k_ch2_cab_tuning_group[] = {
+    {-1, NULL, gnx3k_ch2_cab_tuning_settings, G_N_ELEMENTS(gnx3k_ch2_cab_tuning_settings)},
+};
+
+static EffectGroup gnx3k_ch1_amp_eq_group[] = {
+    {-1, NULL, gnx3k_ch1_amp_eq_settings, G_N_ELEMENTS(gnx3k_ch1_amp_eq_settings)},
+};
+
+static EffectGroup gnx3k_ch2_amp_eq_group[] = {
+    {-1, NULL, gnx3k_ch2_amp_eq_settings, G_N_ELEMENTS(gnx3k_ch2_amp_eq_settings)},
 };
 
 /* LIBRARY_TONE, LIBRARY_POSITION */
@@ -1747,6 +1888,20 @@ static Effect rp500_amp_effect[] = {
     {"Cabinet", -1, AMP_CAB_TYPE, AMP_CAB_POSITION, rp500_amp_cab_group, G_N_ELEMENTS(rp500_amp_cab_group)},
 };
 
+static Effect gnx3k_channel_1_effect[] = {
+    {"EQ Enable", AMP_EQ_ON_OFF, AMP_TYPE, AMP_POSITION, gnx3k_amp_group, G_N_ELEMENTS(gnx3k_amp_group)},
+    {NULL, -1, AMP_CAB_TYPE, AMP_CAB_POSITION, gnx3k_amp_cab_group, G_N_ELEMENTS(gnx3k_amp_cab_group)},
+    {NULL, -1, -1, -1, gnx3k_ch1_cab_tuning_group, G_N_ELEMENTS(gnx3k_ch1_cab_tuning_group)},
+    {NULL, -1, -1, -1, gnx3k_ch1_amp_eq_group, G_N_ELEMENTS(gnx3k_ch1_amp_eq_group)},
+};
+
+static Effect gnx3k_channel_2_effect[] = {
+    {"EQ Enable", AMP_EQ_ON_OFF, AMP_TYPE, CH2_AMP_POSITION, gnx3k_amp_group, G_N_ELEMENTS(gnx3k_amp_group)},
+    {NULL, -1, AMP_CAB_TYPE, CH2_AMP_CAB_POSITION, gnx3k_amp_cab_group, G_N_ELEMENTS(gnx3k_amp_cab_group)},
+    {NULL, -1, -1, -1, gnx3k_ch2_cab_tuning_group, G_N_ELEMENTS(gnx3k_ch2_cab_tuning_group)},
+    {NULL, -1, -1, -1, gnx3k_ch2_amp_eq_group, G_N_ELEMENTS(gnx3k_ch2_amp_eq_group)},
+};
+
 static Effect rp250_eq_effect[] = {
     {NULL, EQ_ON_OFF, EQ_TYPE, EQ_POSITION, rp250_eq_group, G_N_ELEMENTS(rp250_eq_group)},
 };
@@ -1801,6 +1956,8 @@ static EffectList gnx4_effects[] = {
 };
 
 static EffectList gnx3000_effects[] = {
+    {"Channel 1", gnx3k_channel_1_effect, G_N_ELEMENTS(gnx3k_channel_1_effect)},
+    {"Channel 2", gnx3k_channel_2_effect, G_N_ELEMENTS(gnx3k_channel_2_effect)},
     {"Amp Channel", gnx3k_amp_channel_effect, G_N_ELEMENTS(gnx3k_amp_channel_effect)},
     {"Pickup", pickup_effect, G_N_ELEMENTS(pickup_effect)},
     {"Wah", gnx3k_wah_effect, G_N_ELEMENTS(gnx3k_wah_effect)},
