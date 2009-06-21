@@ -63,6 +63,13 @@ typedef struct {
 
 typedef struct {
     gchar *name;
+    EffectList *effects;
+    gint n_effects;
+    gint n_rows;
+} EffectPage;
+
+typedef struct {
+    gchar *name;
     PresetBank bank;
 } Banks;
 
@@ -70,8 +77,8 @@ typedef struct {
     gchar *name;
     unsigned char family_id;
     unsigned char product_id;
-    EffectList *effects;
-    gint n_effects;
+    EffectPage *pages;
+    gint n_pages;
     Banks *banks;
     gint n_banks;
 } Device;

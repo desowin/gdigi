@@ -940,8 +940,10 @@ void gui_create(Device *device)
     GtkWidget *vbox;
     GtkWidget *hbox;
     GtkWidget *widget;
+    GtkWidget *notebook;
     GtkWidget *sw;             /* scrolled window to carry preset treeview */
     gint x;
+    gint i;
 
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "gdigi");
@@ -961,8 +963,8 @@ void gui_create(Device *device)
     widget = create_preset_tree(device);
     gtk_container_add(GTK_CONTAINER(sw), widget);
 
-    vbox = gtk_vbox_new(FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 2);
+    notebook = gtk_notebook_new();
+    gtk_box_pack_start(GTK_BOX(hbox), notebook, TRUE, TRUE, 2);
 
     knob_anim = gtk_knob_animation_new_from_inline(knob_pixbuf);
 
@@ -971,13 +973,23 @@ void gui_create(Device *device)
                                   NULL, /* key destroy func */
                                   (GDestroyNotify) widget_tree_elem_free);
 
-    for (x = 0; x<device->n_effects; x++) {
-        if ((x % ((device->n_effects+1)/2)) == 0) {
-            hbox = gtk_hbox_new(FALSE, 0);
-            gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 2);
+    gtk_notebook_set_show_tabs(GTK_NOTEBOOK(notebook), device->n_pages > 1 ? TRUE : FALSE);
+
+    for (i = 0; i<device->n_pages; i++) {
+        GtkWidget *label = NULL;
+        vbox = gtk_vbox_new(FALSE, 0);
+        label = gtk_label_new(device->pages[i].name);
+
+        gtk_notebook_append_page(GTK_NOTEBOOK(notebook), vbox, label);
+
+        for (x = 0; x<device->pages[i].n_effects; x++) {
+            if ((x % ((device->pages[i].n_effects+1)/device->pages[i].n_rows)) == 0) {
+                hbox = gtk_hbox_new(FALSE, 0);
+                gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 2);
+            }
+            widget = create_vbox(device->pages[i].effects[x].effect, device->pages[i].effects[x].amt, device->pages[i].effects[x].label);
+            gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 2);
         }
-        widget = create_vbox(device->effects[x].effect, device->effects[x].amt, device->effects[x].label);
-        gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 2);
     }
 
     apply_current_preset();

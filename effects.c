@@ -1956,9 +1956,6 @@ static EffectList gnx4_effects[] = {
 };
 
 static EffectList gnx3000_effects[] = {
-    {"Channel 1", gnx3k_channel_1_effect, G_N_ELEMENTS(gnx3k_channel_1_effect)},
-    {"Channel 2", gnx3k_channel_2_effect, G_N_ELEMENTS(gnx3k_channel_2_effect)},
-    {"Amp Channel", gnx3k_amp_channel_effect, G_N_ELEMENTS(gnx3k_amp_channel_effect)},
     {"Pickup", pickup_effect, G_N_ELEMENTS(pickup_effect)},
     {"Wah", gnx3k_wah_effect, G_N_ELEMENTS(gnx3k_wah_effect)},
     {"Whammy/IPS", gnx3k_whammy_effect, G_N_ELEMENTS(gnx3k_whammy_effect)},
@@ -1969,6 +1966,12 @@ static EffectList gnx3000_effects[] = {
     {"Chorus/Mod", gnx3k_chorusfx_effect, G_N_ELEMENTS(gnx3k_chorusfx_effect)},
     {"Delay", gnx3k_delay_effect, G_N_ELEMENTS(gnx3k_delay_effect)},
     {"Reverb", gnx3k_reverb_effect, G_N_ELEMENTS(gnx3k_reverb_effect)},
+};
+
+static EffectList gnx3000_genetx[] = {
+    {"Channel 1", gnx3k_channel_1_effect, G_N_ELEMENTS(gnx3k_channel_1_effect)},
+    {"Channel 2", gnx3k_channel_2_effect, G_N_ELEMENTS(gnx3k_channel_2_effect)},
+    {"Amp Channel", gnx3k_amp_channel_effect, G_N_ELEMENTS(gnx3k_amp_channel_effect)},
 };
 
 static Banks rp_banks[] = {
@@ -1988,12 +1991,29 @@ static Banks gnx3k_banks[] = {
     {"Factory 2", PRESETS_FACTORY2},
 };
 
+static EffectPage rp250_pages[] = {
+    {"Effects", rp250_effects, G_N_ELEMENTS(rp250_effects), 2},
+};
+
+static EffectPage rp500_pages[] = {
+    {"Effects", rp500_effects, G_N_ELEMENTS(rp500_effects), 2},
+};
+
+static EffectPage gnx4_pages[] = {
+    {"Effects", gnx4_effects, G_N_ELEMENTS(gnx4_effects), 2},
+};
+
+static EffectPage gnx3000_pages[] = {
+    {"Effects", gnx3000_effects, G_N_ELEMENTS(gnx3000_effects), 2},
+    {"Amp/GeNetX", gnx3000_genetx, G_N_ELEMENTS(gnx3000_genetx), 1},
+};
+
 static Device rp250 = {
     .name = "DigiTech RP250",
     .family_id = 0x5E,
     .product_id = 0x02,
-    .effects = rp250_effects,
-    .n_effects = G_N_ELEMENTS(rp250_effects),
+    .pages = rp250_pages,
+    .n_pages = G_N_ELEMENTS(rp250_pages),
     .banks = rp_banks,
     .n_banks = G_N_ELEMENTS(rp_banks),
 };
@@ -2002,8 +2022,8 @@ static Device rp500 = {
     .name = "DigiTech RP500",
     .family_id = 0x5E,
     .product_id = 0x05,
-    .effects = rp500_effects,
-    .n_effects = G_N_ELEMENTS(rp500_effects),
+    .pages = rp500_pages,
+    .n_pages = G_N_ELEMENTS(rp500_pages),
     .banks = rp_banks,
     .n_banks = G_N_ELEMENTS(rp_banks),
 };
@@ -2012,8 +2032,8 @@ static Device gnx4 = {
     .name = "DigiTech GNX4",
     .family_id = 0x5C,
     .product_id = 0x03,
-    .effects = gnx4_effects,
-    .n_effects = G_N_ELEMENTS(gnx4_effects),
+    .pages = gnx4_pages,
+    .n_pages = G_N_ELEMENTS(gnx4_pages),
     .banks = gnx4_banks,
     .n_banks = G_N_ELEMENTS(gnx4_banks),
 };
@@ -2022,8 +2042,8 @@ static Device gnx3000 = {
     .name = "DigiTech GNX3000",
     .family_id = 0x5C,
     .product_id = 0x04,
-    .effects = gnx3000_effects,
-    .n_effects = G_N_ELEMENTS(gnx3000_effects),
+    .pages = gnx3000_pages,
+    .n_pages = G_N_ELEMENTS(gnx3000_pages),
     .banks = gnx3k_banks,
     .n_banks = G_N_ELEMENTS(gnx3k_banks),
 };
