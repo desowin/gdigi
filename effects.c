@@ -482,6 +482,17 @@ static EffectValues values_1_to_10_step_0p1 = {
     0.0, 90.0, NULL,
 };
 
+static EffectValues values_rp_mix = {
+  /** \todo make this display properly (USB 0, USB 1, USB 2 ... USB 49, USB RP, RP 49, RP 48 ...  RP 1, RP 0) */
+    0.0, 100.0, NULL,
+};
+
+static EffectSettings usb_settings[] = {
+    {"USB/RP Mix", USB_AUDIO_PLAYBACK_MIX, USB_POSITION, &values_rp_mix},
+    {"USB Level", USB_AUDIO_LEVEL, USB_POSITION, &values_m12_to_24},
+    {"Preset Level", PRESET_LEVEL, PRESET_POSITION, &values_0_to_99},
+};
+
 static EffectSettings gnx3k_wah_settings[] = {
     {"Min", WAH_MIN, WAH_POSITION_MIN_MAX, &values_0_to_99},
     {"Max", WAH_MAX, WAH_POSITION_MIN_MAX, &values_0_to_99},
@@ -673,7 +684,16 @@ static EffectSettings rp250_amp_settings[] = {
     {"Level", AMP_LEVEL, AMP_POSITION, &values_0_to_99},
 };
 
+static EffectSettings rp355_amp_settings[] = {
+    {"Gain", AMP_GAIN, AMP_POSITION, &values_0_to_99},
+    {"Level", AMP_LEVEL, AMP_POSITION, &values_0_to_99},
+};
+
 static EffectSettings rp250_amp_settings2[] = {
+    {"Level", AMP_LEVEL, AMP_POSITION, &values_0_to_99},
+};
+
+static EffectSettings rp355_amp_settings2[] = {
     {"Level", AMP_LEVEL, AMP_POSITION, &values_0_to_99},
 };
 
@@ -693,6 +713,10 @@ static EffectSettings rp500_amp_settings2[] = {
 };
 
 static EffectSettings rp500_amp_settings3[] = {
+    {"Level", AMP_LEVEL, AMP_POSITION, &values_0_to_99},
+};
+
+static EffectSettings rp355_amp_settings3[] = {
     {"Level", AMP_LEVEL, AMP_POSITION, &values_0_to_99},
 };
 
@@ -734,6 +758,15 @@ static EffectSettings rp250_eq_settings[] = {
     {"Treble", EQ_TREBLE, EQ_POSITION, &values_eq_db},
     {"Mid Hz", EQ_MID_HZ, EQ_POSITION, &values_eq_mid_hz},
     {"Treb Hz", EQ_TREBLE_HZ, EQ_POSITION, &values_eq_treb_hz},
+};
+
+static EffectSettings rp355_eq_settings[] = {
+    {"Bass", EQ_BASS, EQ_POSITION, &values_eq_db},
+    {"Mid", EQ_MID, EQ_POSITION, &values_eq_db},
+    {"Treble", EQ_TREBLE, EQ_POSITION, &values_eq_db},
+    {"Mid Hz", EQ_MID_HZ, EQ_POSITION, &values_eq_mid_hz},
+    {"Treb Hz", EQ_TREBLE_HZ, EQ_POSITION, &values_eq_treb_hz},
+    {"Presence", EQ_PRESENCE, EQ_POSITION, &values_eq_db},
 };
 
 static EffectSettings rp500_eq_settings[] = {
@@ -1240,6 +1273,10 @@ static EffectGroup gnx3k_amp_channel_group[] = {
     {-1, NULL, gnx3k_amp_channel_settings, G_N_ELEMENTS(gnx3k_amp_channel_settings)},
 };
 
+static EffectGroup usb_group[] = {
+    {-1, NULL, usb_settings, G_N_ELEMENTS(usb_settings)},
+};
+
 static EffectGroup gnx3k_preset_group[] = {
     {-1, NULL, gnx3k_preset_settings, G_N_ELEMENTS(gnx3k_preset_settings)},
 };
@@ -1251,6 +1288,12 @@ static EffectGroup gnx_comp_group[] = {
 static EffectGroup rp250_comp_group[] = {
     {COMP_TYPE_DIGI, "Digital compressor", comp_digi_settings, G_N_ELEMENTS(comp_digi_settings)},
     {COMP_TYPE_CS, "CS compressor", comp_cs_settings, G_N_ELEMENTS(comp_cs_settings)},
+};
+
+static EffectGroup rp355_comp_group[] = {
+    {COMP_TYPE_DIGI, "Digital compressor", comp_digi_settings, G_N_ELEMENTS(comp_digi_settings)},
+    {COMP_TYPE_CS, "CS compressor", comp_cs_settings, G_N_ELEMENTS(comp_cs_settings)},
+    {COMP_TYPE_DYNA, "Dyna comp", comp_dyna_settings, G_N_ELEMENTS(comp_dyna_settings)},
 };
 
 static EffectGroup rp500_comp_group[] = {
@@ -1271,6 +1314,27 @@ static EffectGroup rp250_dist_group[] = {
     {DIST_TYPE_ZONE, "Zone", dist_zone_settings, G_N_ELEMENTS(dist_zone_settings)},
     {DIST_TYPE_DEATH, "Death", dist_death_settings, G_N_ELEMENTS(dist_death_settings)},
     {DIST_TYPE_GONK, "Gonk", dist_gonk_settings, G_N_ELEMENTS(dist_gonk_settings)},
+    {DIST_TYPE_FUZZY, "Fuzzy", dist_fuzzy_settings, G_N_ELEMENTS(dist_fuzzy_settings)},
+    {DIST_TYPE_MP, "Big MP", dist_mp_settings, G_N_ELEMENTS(dist_mp_settings)},
+};
+
+static EffectGroup rp355_dist_group[] = {
+    {DIST_TYPE_SCREAMER, "Screamer", dist_screamer_settings, G_N_ELEMENTS(dist_screamer_settings)},
+    {DIST_TYPE_808, "808", dist_808_settings, G_N_ELEMENTS(dist_808_settings)},
+    {DIST_TYPE_SPARKDRIVE, "Sparkdrive", dist_sparkdrive_settings, G_N_ELEMENTS(dist_sparkdrive_settings)},
+    {DIST_TYPE_GUYOD, "OD Overdrive", dist_guyod_settings, G_N_ELEMENTS(dist_guyod_settings)},
+    {DIST_TYPE_DOD250, "DOD250", dist_dod250_settings, G_N_ELEMENTS(dist_dod250_settings)},
+    {DIST_TYPE_REDLINE, "Redline", dist_redline_settings, G_N_ELEMENTS(dist_redline_settings)},
+    {DIST_TYPE_RODENT, "Rodent", dist_rodent_settings, G_N_ELEMENTS(dist_rodent_settings)},
+    {DIST_TYPE_MX, "MX", dist_mx_settings, G_N_ELEMENTS(dist_mx_settings)},
+    {DIST_TYPE_DS, "DS", dist_ds_settings, G_N_ELEMENTS(dist_ds_settings)},
+    {DIST_TYPE_GRUNGE, "Grunge", dist_grunge_settings, G_N_ELEMENTS(dist_grunge_settings)},
+    {DIST_TYPE_ZONE, "Zone", dist_zone_settings, G_N_ELEMENTS(dist_zone_settings)},
+    {DIST_TYPE_DEATH, "Death", dist_death_settings, G_N_ELEMENTS(dist_death_settings)},
+    {DIST_TYPE_GONK, "Gonk", dist_gonk_settings, G_N_ELEMENTS(dist_gonk_settings)},
+    {DIST_TYPE_8TAVIA, "8tavia", dist_8tavia_settings, G_N_ELEMENTS(dist_8tavia_settings)},
+    {DIST_TYPE_FUZZLATOR, "Fuzzlator", dist_fuzzlator_settings, G_N_ELEMENTS(dist_fuzzlator_settings)},
+    {DIST_TYPE_CLASSIC_FUZZ, "Classic Fuzz", dist_classic_fuzz_settings, G_N_ELEMENTS(dist_classic_fuzz_settings)},
     {DIST_TYPE_FUZZY, "Fuzzy", dist_fuzzy_settings, G_N_ELEMENTS(dist_fuzzy_settings)},
     {DIST_TYPE_MP, "Big MP", dist_mp_settings, G_N_ELEMENTS(dist_mp_settings)},
 };
@@ -1392,6 +1456,39 @@ static EffectGroup rp250_chorusfx_group[] = {
     {CHORUS_TYPE_IPS, "IPS", chorusfx_ips_settings, G_N_ELEMENTS(chorusfx_ips_settings)},
 };
 
+static EffectGroup rp355_chorusfx_group[] = {
+    {CHORUS_TYPE_CE, "CE Chorus", chorusfx_ce_settings, G_N_ELEMENTS(chorusfx_ce_settings)},
+    {CHORUS_TYPE_TC, "TC Chorus", chorusfx_tc_settings, G_N_ELEMENTS(chorusfx_tc_settings)},
+    {CHORUS_TYPE_DUAL, "Dual Chorus", chorusfx_dual_settings, G_N_ELEMENTS(chorusfx_dual_settings)},
+    {CHORUS_TYPE_MULTI, "Multi Chorus", chorusfx_multi_settings, G_N_ELEMENTS(chorusfx_multi_settings)},
+    {CHORUS_TYPE_FLANGER, "Flanger", chorusfx_flanger_settings, G_N_ELEMENTS(chorusfx_flanger_settings)},
+    {CHORUS_TYPE_TRIGGERED_FLANGER, "Triggered Flanger", chorusfx_trig_flanger_settings, G_N_ELEMENTS(chorusfx_trig_flanger_settings)},
+    {CHORUS_TYPE_MXR_FLANGER, "MXR FLANGER", chorusfx_mxr_flanger_settings, G_N_ELEMENTS(chorusfx_mxr_flanger_settings)},
+    {CHORUS_TYPE_PHASER, "Phaser", chorusfx_phaser_settings, G_N_ELEMENTS(chorusfx_phaser_settings)},
+    {CHORUS_TYPE_TRIGGERED_PHASER, "Triggered Phaser", chorusfx_trig_phaser_settings, G_N_ELEMENTS(chorusfx_trig_phaser_settings)},
+    {CHORUS_TYPE_MX_PHASER, "MX Phaser", chorusfx_mx_phaser_settings, G_N_ELEMENTS(chorusfx_mx_phaser_settings)},
+    {CHORUS_TYPE_EH_PHASER, "EH Phaser", chorusfx_eh_phaser_settings, G_N_ELEMENTS(chorusfx_eh_phaser_settings)},
+    {CHORUS_TYPE_VIBRATO, "Vibrato", chorusfx_vibrato_settings, G_N_ELEMENTS(chorusfx_vibrato_settings)},
+    {CHORUS_TYPE_ROTARY, "Rotary", chorusfx_rotary_settings, G_N_ELEMENTS(chorusfx_rotary_settings)},
+    {CHORUS_TYPE_VIBROPAN, "Vibropan", chorusfx_vibropan_settings, G_N_ELEMENTS(chorusfx_vibropan_settings)},
+    {CHORUS_TYPE_UNOVIBE, "Unovibe", chorusfx_unovibe_settings, G_N_ELEMENTS(chorusfx_unovibe_settings)},
+    {CHORUS_TYPE_TREMOLO, "Tremolo", chorusfx_tremolo_settings, G_N_ELEMENTS(chorusfx_tremolo_settings)},
+    {CHORUS_TYPE_OPTO_TREMOLO, "Opto Tremolo", chorusfx_trem_settings, G_N_ELEMENTS(chorusfx_trem_settings)},
+    {CHORUS_TYPE_BIAS_TREMOLO, "Bias Tremolo", chorusfx_trem_settings, G_N_ELEMENTS(chorusfx_trem_settings)},
+    {CHORUS_TYPE_PANNER, "Panner", chorusfx_panner_settings, G_N_ELEMENTS(chorusfx_panner_settings)},
+    {CHORUS_TYPE_ENVELOPE, "Envelope", chorusfx_envelope_settings, G_N_ELEMENTS(chorusfx_envelope_settings)},
+    {CHORUS_TYPE_FX25, "FX25", chorusfx_fx25_settings, G_N_ELEMENTS(chorusfx_fx25_settings)},
+    {CHORUS_TYPE_AUTOYA, "AutoYa", chorusfx_autoya_settings, G_N_ELEMENTS(chorusfx_autoya_settings)},
+    {CHORUS_TYPE_YAYA, "YaYa", chorusfx_yaya_settings, G_N_ELEMENTS(chorusfx_yaya_settings)},
+    {CHORUS_TYPE_SYNTH_TALK, "Synth Talk", chorusfx_synth_talk_settings, G_N_ELEMENTS(chorusfx_synth_talk_settings)},
+    {CHORUS_TYPE_STEP_FILTER, "Step Filter", chorusfx_step_filter_settings, G_N_ELEMENTS(chorusfx_step_filter_settings)},
+    {CHORUS_TYPE_WHAMMY, "Whammy", chorusfx_whammy_settings, G_N_ELEMENTS(chorusfx_whammy_settings)},
+    {CHORUS_TYPE_PITCH_SHIFT, "Pitch Shift", chorusfx_pitch_shift_settings, G_N_ELEMENTS(chorusfx_pitch_shift_settings)},
+    {CHORUS_TYPE_DETUNE, "Detune", chorusfx_detune_settings, G_N_ELEMENTS(chorusfx_detune_settings)},
+    {CHORUS_TYPE_IPS, "Harmony Pitch", chorusfx_ips_settings, G_N_ELEMENTS(chorusfx_ips_settings)},
+    {CHORUS_TYPE_OCTAVER, "Octaver", chorusfx_octaver_settings, G_N_ELEMENTS(chorusfx_octaver_settings)},
+};
+
 static EffectGroup rp500_chorusfx_group[] = {
     {CHORUS_TYPE_CE, "CE Chorus", chorusfx_ce_settings, G_N_ELEMENTS(chorusfx_ce_settings)},
     {CHORUS_TYPE_TC, "TC Chorus", chorusfx_tc_settings, G_N_ELEMENTS(chorusfx_tc_settings)},
@@ -1444,6 +1541,16 @@ static EffectGroup rp250_delay_group[] = {
     {DELAY_TYPE_MODULATED, "Modulated", delay_modulated_settings, G_N_ELEMENTS(delay_modulated_settings)},
     {DELAY_TYPE_PONG, "Pong", delay_pong_settings, G_N_ELEMENTS(delay_pong_settings)},
     {DELAY_TYPE_TAPE, "Tape", delay_tape_settings, G_N_ELEMENTS(delay_tape_settings)},
+};
+
+static EffectGroup rp355_delay_group[] = {
+    {DELAY_TYPE_ANALOG, "Analog", delay_analog_settings, G_N_ELEMENTS(delay_analog_settings)},
+    {DELAY_RP500_TYPE_DM, "DM Delay", rp500_delay_dm_settings, G_N_ELEMENTS(rp500_delay_dm_settings)},
+    {DELAY_TYPE_DIGITAL, "Digital", delay_digital_settings, G_N_ELEMENTS(delay_digital_settings)},
+    {DELAY_TYPE_MODULATED, "Modulated", delay_modulated_settings, G_N_ELEMENTS(delay_modulated_settings)},
+    {DELAY_TYPE_PONG, "Pong", delay_pong_settings, G_N_ELEMENTS(delay_pong_settings)},
+    {DELAY_TYPE_TAPE, "Tape", delay_tape_settings, G_N_ELEMENTS(delay_tape_settings)},
+    {DELAY_RP500_TYPE_ECHOPLEX, "Echo Plex", rp500_delay_echoplex_settings, G_N_ELEMENTS(rp500_delay_echoplex_settings)},
 };
 
 static EffectGroup rp500_delay_group[] = {
@@ -1502,6 +1609,49 @@ static EffectGroup rp250_amp_group[] = {
     {AMP_TYPE_HIGH_GAIN, "High Gain", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
     {AMP_TYPE_ACOUSTIC, "Acoustic", rp250_amp_settings2, G_N_ELEMENTS(rp250_amp_settings2)},
     {AMP_TYPE_DIRECT, "Direct", rp250_amp_settings2, G_N_ELEMENTS(rp250_amp_settings2)},
+};
+
+static EffectGroup rp355_amp_select_group[] = {
+    {AMP_CHANNEL_A, "A", NULL, -1},
+    {AMP_CHANNEL_B, "B", NULL, -1},
+};
+
+static EffectGroup rp355_amp_group[] = {
+    {AMP_TYPE_TWEED_CHAMP, "Tweed Champ", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
+    {AMP_TYPE_TWEED_DELUXE, "Tweed Deluxe", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
+    {AMP_TYPE_TWEED_BASSMAN, "Tweed Bassman", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
+    {AMP_TYPE_BLACKFACE_TWIN, "Blackface Twin", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
+    {AMP_TYPE_BLACKFACE_DELUXE, "Blackface Deluxe", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
+    {AMP_TYPE_PLEXI_JTM_45, "Plexi JTM-45", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
+    {AMP_TYPE_SUPER_LEAD_PLEXI, "Plexi Lead", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
+    {AMP_TYPE_PLEXI_JUMP_PANEL, "Plexi Jump Panel", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
+    {AMP_TYPE_MASTER_VOLUME, "Master Volume", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
+    {AMP_TYPE_JCM800, "JCM800", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
+    {AMP_TYPE_JCM900, "JCM900", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
+    {AMP_TYPE_AC15, "AC-15", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
+    {AMP_TYPE_AC30TB, "AC-30 TB", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
+    {AMP_TYPE_HIWATT_100, "Hiwatt 100", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
+    {AMP_TYPE_BOOGIE_MARK_II, "Boogie Mark IIC", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
+    {AMP_TYPE_DUAL_RECTIFIER, "Dual Rectifier", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
+    {AMP_TYPE_MATCHLESS_HC30, "Matchless HC30", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
+    {AMP_TYPE_SOLDANO_100, "Soldano 100", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
+    {AMP_TYPE_SOLO, "Solo", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
+    {AMP_TYPE_METAL, "Metal", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
+    {AMP_TYPE_BRIGHT, "Bright Clean", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
+    {AMP_TYPE_CHUNK, "Chunk", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
+    {AMP_TYPE_CLEAN, "Clean Tube", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
+    {AMP_TYPE_HIGH_GAIN, "High Gain", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
+    {AMP_TYPE_GSP2101_CLEAN_TUBE, "GSP2101 Clean Tube", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
+    {AMP_TYPE_GSP2101_SAT_TUBE, "GSP2101 Sat Tube", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
+    {AMP_TYPE_MONSTER, "Monster", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
+    {AMP_TYPE_TWEEDFACE, "Tweedface", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
+    {AMP_TYPE_BLACKBASS, "Blackbass", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
+    {AMP_TYPE_STONER_ROCK, "Stoner Rock", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
+    {AMP_TYPE_DARK_METAL, "Dark Metal", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
+    {AMP_TYPE_BROWN_SOUND, "Brown Sound", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
+    {AMP_TYPE_ACOUSTIC, "Dread Acoustic", rp355_amp_settings2, G_N_ELEMENTS(rp355_amp_settings2)},
+    {AMP_TYPE_JUMBO_ACOUSTIC, "Jumbo Acoustic", rp355_amp_settings2, G_N_ELEMENTS(rp355_amp_settings2)},
+    {AMP_TYPE_DIRECT, "Direct", rp355_amp_settings3, G_N_ELEMENTS(rp355_amp_settings3)},
 };
 
 static EffectGroup rp500_amp_group[] = {
@@ -1615,6 +1765,13 @@ static EffectGroup rp250_eq_group[] = {
     {EQ_TYPE_WARM, "Warm", rp250_eq_settings, G_N_ELEMENTS(rp250_eq_settings)},
 };
 
+static EffectGroup rp355_eq_group[] = {
+    {EQ_TYPE_BRIGHT, "Bright", rp355_eq_settings, G_N_ELEMENTS(rp355_eq_settings)},
+    {EQ_TYPE_MIDBOOST, "Mid Boost", rp355_eq_settings, G_N_ELEMENTS(rp355_eq_settings)},
+    {EQ_TYPE_SCOOP, "Scoop", rp355_eq_settings, G_N_ELEMENTS(rp355_eq_settings)},
+    {EQ_TYPE_WARM, "Warm", rp355_eq_settings, G_N_ELEMENTS(rp355_eq_settings)},
+};
+
 static EffectGroup rp500_eq_group[] = {
     {-1, NULL, rp500_eq_settings, G_N_ELEMENTS(rp500_eq_settings)},
 };
@@ -1628,6 +1785,28 @@ static EffectGroup rp250_amp_cab_group[] = {
     {AMP_CAB_BASSMAN, "Bassman 4x10", NULL, -1},
     {AMP_CAB_BRITISH4_12, "British 4x12", NULL, -1},
     {AMP_CAB_BRITISH_GREEN, "British Green 4x12", NULL, -1},
+    {AMP_CAB_VINTAGE, "Vintage V30 4x12", NULL, -1},
+    {AMP_CAB_DIGI_SOLO, "DigiTech Solo 4x12", NULL, -1},
+    {AMP_CAB_DIGI_BRIGHT, "DigiTech Bright 2x12", NULL, -1},
+    {AMP_CAB_DIGI_METAL, "DigiTech Metal 4x12", NULL, -1},
+    {AMP_CAB_DIGI_ROCK, "DigiTech Rock 4x12", NULL, -1},
+    {AMP_CAB_DIGI_ALT, "DigiTech Alt 4x12", NULL, -1},
+    {AMP_CAB_DIGI_VNTG, "DigiTech Vntg 4x12", NULL, -1},
+};
+
+static EffectGroup rp355_amp_cab_group[] = {
+    {AMP_CAB_DIRECT, "Direct", NULL, -1},
+    {AMP_CAB_CHAMP, "Champ 1x8", NULL, -1},
+    {AMP_CAB_DELUXE, "Deluxe 1x12", NULL, -1},
+    {AMP_CAB_DELUXE_REVERB, "Deluxe Reverb 1x12", NULL, -1},
+    {AMP_CAB_BLONDE2_12, "Blonde 2x12", NULL, -1},
+    {AMP_CAB_TWIN, "Twin 2x12", NULL, -1},
+    {AMP_CAB_BRITISH2_12, "British 2x12", NULL, -1},
+    {AMP_CAB_BASSMAN, "Bassman 4x10", NULL, -1},
+    {AMP_CAB_BRITISH4_12, "British 4x12", NULL, -1},
+    {AMP_CAB_BRITISH_GREEN, "British Green 4x12", NULL, -1},
+    {AMP_CAB_FANE4_12, "Fane 4x12", NULL, -1},
+    {AMP_CAB_BOUTIQUE4_12, "Boutique 4x12", NULL, -1},
     {AMP_CAB_VINTAGE, "Vintage V30 4x12", NULL, -1},
     {AMP_CAB_DIGI_SOLO, "DigiTech Solo 4x12", NULL, -1},
     {AMP_CAB_DIGI_BRIGHT, "DigiTech Bright 2x12", NULL, -1},
@@ -1790,6 +1969,11 @@ static EffectGroup pickup_group[] = {
     {PICKUP_TYPE_SC_HB, "SC>HB", NULL, -1},
 };
 
+static EffectGroup pre_post_group[] = {
+    {CHORUSFX_PRE, "PRE AMP", NULL, -1},
+    {CHORUSFX_POST, "POST AMP", NULL, -1},
+};
+
 static Effect gnx3k_wah_effect[] = {
     {NULL, WAH_ON_OFF, WAH_TYPE, WAH_POSITION, gnx3k_wah_group, G_N_ELEMENTS(gnx3k_wah_group)},
 };
@@ -1810,6 +1994,10 @@ static Effect rp250_comp_effect[] = {
     {NULL, COMP_ON_OFF, COMP_TYPE, COMP_POSITION, rp250_comp_group, G_N_ELEMENTS(rp250_comp_group)},
 };
 
+static Effect rp355_comp_effect[] = {
+    {NULL, COMP_ON_OFF, COMP_TYPE, COMP_POSITION, rp355_comp_group, G_N_ELEMENTS(rp355_comp_group)},
+};
+
 static Effect gnx_comp_effect[] = {
     {"Compressor", COMP_ON_OFF, -1, COMP_POSITION, gnx_comp_group, G_N_ELEMENTS(gnx_comp_group)},
 };
@@ -1820,6 +2008,10 @@ static Effect rp500_comp_effect[] = {
 
 static Effect rp250_dist_effect[] = {
     {NULL, DIST_ON_OFF, DIST_TYPE, DIST_POSITION, rp250_dist_group, G_N_ELEMENTS(rp250_dist_group)},
+};
+
+static Effect rp355_dist_effect[] = {
+    {NULL, DIST_ON_OFF, DIST_TYPE, DIST_POSITION, rp355_dist_group, G_N_ELEMENTS(rp355_dist_group)},
 };
 
 static Effect rp500_dist_effect[] = {
@@ -1854,6 +2046,11 @@ static Effect rp250_chorusfx_effect[] = {
     {NULL, CHORUSFX_ON_OFF, CHORUSFX_TYPE, CHORUSFX_POSITION, rp250_chorusfx_group, G_N_ELEMENTS(rp250_chorusfx_group)},
 };
 
+static Effect rp355_chorusfx_effect[] = {
+    {"Position",-1, CHORUSFX_PRE_POST,CHORUSFX_POSITION, pre_post_group,G_N_ELEMENTS(pre_post_group)},
+    {NULL, CHORUSFX_ON_OFF,CHORUSFX_TYPE, CHORUSFX_POSITION, rp355_chorusfx_group, G_N_ELEMENTS(rp355_chorusfx_group)},
+};
+
 static Effect rp500_chorusfx_effect[] = {
     {NULL, CHORUSFX_ON_OFF, CHORUSFX_TYPE, CHORUSFX_POSITION, rp500_chorusfx_group, G_N_ELEMENTS(rp500_chorusfx_group)},
 };
@@ -1864,6 +2061,10 @@ static Effect gnx3k_delay_effect[] = {
 
 static Effect rp250_delay_effect[] = {
     {NULL, DELAY_ON_OFF, DELAY_TYPE, DELAY_POSITION, rp250_delay_group, G_N_ELEMENTS(rp250_delay_group)},
+};
+
+static Effect rp355_delay_effect[] = {
+    {NULL, DELAY_ON_OFF, DELAY_TYPE, DELAY_POSITION, rp355_delay_group, G_N_ELEMENTS(rp355_delay_group)},
 };
 
 static Effect rp500_delay_effect[] = {
@@ -1881,6 +2082,20 @@ static Effect reverb_effect[] = {
 static Effect rp250_amp_effect[] = {
     {NULL, AMP_ON_OFF, AMP_TYPE, AMP_POSITION, rp250_amp_group, G_N_ELEMENTS(rp250_amp_group)},
     {"Cabinet", -1, AMP_CAB_TYPE, AMP_CAB_POSITION, rp250_amp_cab_group, G_N_ELEMENTS(rp250_amp_cab_group)},
+};
+
+static Effect rp355_select_amp_effect[] = {
+    {"Select Amp", -1, AMP_SELECT, AMP_SELECT_POSITION, rp355_amp_select_group, G_N_ELEMENTS(rp355_amp_select_group)},
+};
+
+static Effect rp355_amp_effect_A[] = {
+    {NULL, AMP_ON_OFF, AMP_TYPE, AMP_POSITION, rp355_amp_group, G_N_ELEMENTS(rp355_amp_group)},
+    {"Cabinet", -1, AMP_CAB_TYPE, AMP_CAB_POSITION, rp355_amp_cab_group, G_N_ELEMENTS(rp355_amp_cab_group)},
+};
+
+static Effect rp355_amp_effect_B[] = {
+    {NULL, AMP_ON_OFF, AMP_TYPE, CH2_AMP_POSITION, rp355_amp_group, G_N_ELEMENTS(rp355_amp_group)},
+    {"Cabinet", -1, AMP_CAB_TYPE, AMP_CAB_POSITION, rp355_amp_cab_group, G_N_ELEMENTS(rp355_amp_cab_group)},
 };
 
 static Effect rp500_amp_effect[] = {
@@ -1906,12 +2121,21 @@ static Effect rp250_eq_effect[] = {
     {NULL, EQ_ON_OFF, EQ_TYPE, EQ_POSITION, rp250_eq_group, G_N_ELEMENTS(rp250_eq_group)},
 };
 
+static Effect rp355_eq_effect_A[] = {
+    {NULL, EQ_ON_OFF, EQ_TYPE, EQ_POSITION, rp355_eq_group, G_N_ELEMENTS(rp355_eq_group)},
+};
+
+static Effect rp355_eq_effect_B[] = {
+    {NULL, EQ_ON_OFF, EQ_TYPE, EQ_POSITION_B, rp355_eq_group, G_N_ELEMENTS(rp355_eq_group)},
+};
+
 static Effect rp500_eq_effect[] = {
     {"Enable Equalizer", EQ_ON_OFF, -1, EQ_POSITION, rp500_eq_group, G_N_ELEMENTS(rp500_eq_group)},
 };
 
 static Effect pickup_effect[] = {
     {NULL, PICKUP_ON_OFF, PICKUP_TYPE, PICKUP_POSITION, pickup_group, G_N_ELEMENTS(pickup_group)},
+    {NULL, -1, -1, -1, usb_group, G_N_ELEMENTS(usb_group)},
 };
 
 static Effect gnx3k_amp_channel_effect[] = {
@@ -1929,6 +2153,22 @@ static EffectList rp250_effects[] = {
     {"Delay", rp250_delay_effect, G_N_ELEMENTS(rp250_delay_effect)},
     {"Reverb", reverb_effect, G_N_ELEMENTS(reverb_effect)},
     {"Pickup", pickup_effect, G_N_ELEMENTS(pickup_effect)},
+};
+
+static EffectList rp355_effects[] = {
+    {"Pickup", pickup_effect, G_N_ELEMENTS(pickup_effect)},
+    {"Wah", wah_effect, G_N_ELEMENTS(wah_effect)},
+    {"Compressor", rp355_comp_effect, G_N_ELEMENTS(rp355_comp_effect)},
+    {"Distortion", rp355_dist_effect, G_N_ELEMENTS(rp355_dist_effect)},
+    {"Select Amp", rp355_select_amp_effect, G_N_ELEMENTS(rp355_select_amp_effect)},
+    {"Amplifier A", rp355_amp_effect_A, G_N_ELEMENTS(rp355_amp_effect_A)},
+    {"Equalizer A", rp355_eq_effect_A, G_N_ELEMENTS(rp355_eq_effect_A)},
+    {"Amplifier B", rp355_amp_effect_B, G_N_ELEMENTS(rp355_amp_effect_B)},
+    {"Equalizer B", rp355_eq_effect_B, G_N_ELEMENTS(rp355_eq_effect_B)},
+    {"Noisegate", noisegate_effect, G_N_ELEMENTS(noisegate_effect)},
+    {"Chorus/FX", rp355_chorusfx_effect, G_N_ELEMENTS(rp355_chorusfx_effect)},
+    {"Delay", rp355_delay_effect, G_N_ELEMENTS(rp355_delay_effect)},
+    {"Reverb", reverb_effect, G_N_ELEMENTS(reverb_effect)},
 };
 
 static EffectList rp500_effects[] = {
@@ -1995,6 +2235,10 @@ static EffectPage rp250_pages[] = {
     {"Effects", rp250_effects, G_N_ELEMENTS(rp250_effects), 2},
 };
 
+static EffectPage rp355_pages[] = {
+    {"Effects", rp355_effects, G_N_ELEMENTS(rp355_effects), 2},
+};
+
 static EffectPage rp500_pages[] = {
     {"Effects", rp500_effects, G_N_ELEMENTS(rp500_effects), 2},
 };
@@ -2014,6 +2258,16 @@ static Device rp250 = {
     .product_id = 0x02,
     .pages = rp250_pages,
     .n_pages = G_N_ELEMENTS(rp250_pages),
+    .banks = rp_banks,
+    .n_banks = G_N_ELEMENTS(rp_banks),
+};
+
+static Device rp355 = {
+    .name = "DigiTech RP355",
+    .family_id = 0x5E,
+    .product_id = 0x09,
+    .pages = rp355_pages,
+    .n_pages = G_N_ELEMENTS(rp355_pages),
     .banks = rp_banks,
     .n_banks = G_N_ELEMENTS(rp_banks),
 };
@@ -2050,6 +2304,7 @@ static Device gnx3000 = {
 
 Device* supported_devices[] = {
     &rp250,
+    &rp355,
     &rp500,
     &gnx4,
     &gnx3000,

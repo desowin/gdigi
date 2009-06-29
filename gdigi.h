@@ -282,6 +282,12 @@ enum {
 #define AMP_POSITION 8
 #define CH2_AMP_POSITION 10
 
+#define AMP_SELECT 256
+#define AMP_SELECT_POSITION 7
+
+#define AMP_CHANNEL_A 0
+#define AMP_CHANNEL_B 1
+
 #define AMP_GAIN 2497
 #define AMP_LEVEL 2498
 #define AMP_BASS_FREQ 2499
@@ -368,11 +374,13 @@ enum {
 #define EQ_TYPE 3202
 #define EQ_ON_OFF 3212
 #define EQ_POSITION 24
+#define EQ_POSITION_B 25
 
 #define EQ_BASS 3203
 #define EQ_MID 3204
 #define EQ_MID_HZ 3206
 #define EQ_TREBLE 3205
+#define EQ_PRESENCE 3207
 #define EQ_TREBLE_HZ 3211
 #define EQ_LOW_LEVEL 3203
 #define EQ_MID_LEVEL 3204
@@ -463,7 +471,10 @@ enum {
 
 #define CHORUSFX_TYPE 768
 #define CHORUSFX_ON_OFF 769
+#define CHORUSFX_PRE_POST 770
 #define CHORUSFX_POSITION 14
+#define CHORUSFX_PRE 1543
+#define CHORUSFX_POST 1544
 
 #define CHORUS_SPEED 837
 #define CHORUS_DEPTH 838
