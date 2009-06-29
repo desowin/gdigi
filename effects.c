@@ -280,7 +280,7 @@ static EffectValues values_1_to_4 = {
 };
 
 static EffectValues values_warp_0_to_98 = {
-    /** \todo make this display propertly (display text is value + 1) */
+    /** \todo make this display properly (display text is value + 1) */
     0.0, 98.0, NULL,
 };
 
@@ -305,16 +305,16 @@ static EffectValues values_0_to_20 = {
 };
 
 static EffectValues values_m12_to_12_semitones = {
-    /** \todo make this display propertly (display range -12.0 to 12.0 semitones) */
+    /** \todo make this display properly (display range -12.0 to 12.0 semitones) */
     0.0, 48.0, NULL,
 };
 
 static EffectValues values_m24_to_24_step2 = {
-    /** \todo make this display propertly (display range -24 to 24) */
+    /** \todo make this display properly (display range -24 to 24) */
     0.0, 24.0, NULL,
 };
 static EffectValues values_m24_to_24 = {
-    /** \todo make this display propertly (display range -24 to 24) */
+    /** \todo make this display properly (display range -24 to 24) */
     0.0, 48.0, NULL,
 };
 
@@ -332,22 +332,22 @@ static EffectValues values_fast_medium_slow = {
 };
 
 static EffectValues values_eq_db = {
-    /** \todo make those display propertly (display range -12dB to 12dB) */
+    /** \todo make those display properly (display range -12dB to 12dB) */
     0.0, 24.0, NULL,
 };
 
 static EffectValues values_eq_bass_hz = {
-    /** \todo make those display propertly (display range 50hz to 300hz) */
+    /** \todo make those display properly (display range 50hz to 300hz) */
     0.0, 250.0, NULL,
 };
 
 static EffectValues values_eq_mid_hz = {
-    /** \todo make this display propertly (display range 300 to 5000) */
+    /** \todo make this display properly (display range 300 to 5000) */
     0.0, 4700.0, NULL,
 };
 
 static EffectValues values_eq_treb_hz = {
-    /** \todo make this display propertly (display range 500 to 8000) */
+    /** \todo make this display properly (display range 500 to 8000) */
     0.0, 7500.0, NULL,
 };
 
@@ -368,7 +368,7 @@ static EffectValues values_eq_high_freq = {
 };
 
 static EffectValues values_200hz_to_1_5khz = {
-    /** \todo make this display propertly (display range 200 Hz to 1.5 kHz) */
+    /** \todo make this display properly (display range 200 Hz to 1.5 kHz) */
     0.0, 130.0, NULL,
 };
 
@@ -377,12 +377,12 @@ static EffectValues values_waveform = {
 };
 
 static EffectValues values_balance = {
-    /** \todo make this display propertly */
+    /** \todo make this display properly */
     0.0, 198.0, NULL,
 };
 
 static EffectValues values_synth_talk_release = {
-    /** \todo make last value display propertly */
+    /** \todo make last value display properly */
     0.0, 100.0, NULL,
 };
 
@@ -403,57 +403,57 @@ static EffectValues values_ips_scale = {
 };
 
 static EffectValues values_predelay_time = {
-    /** \todo make this display propertly (1ms to 20ms) */
+    /** \todo make this display properly (1ms to 20ms) */
     0.0, 19.0, NULL,
 };
 
 static EffectValues values_delay_time = {
-    /** \todo make this display propertly (10 msec to 5 sec) */
+    /** \todo make this display properly (10 msec to 5 sec) */
     0.0, 139.0, NULL,
 };
 
 static EffectValues values_delay_time_0_760 = {
-    /** \todo make this display propertly */
+    /** \todo make this display properly */
     0.0, 760.0, NULL,
 };
 
 static EffectValues values_delay_time_0_2000 = {
-    /** \todo make this display propertly */
+    /** \todo make this display properly */
     0.0, 2000.0, NULL,
 };
 
 static EffectValues values_delay_time_0_4650 = {
-    /** \todo make this display propertly */
+    /** \todo make this display properly */
     0.0, 4650.0, NULL,
 };
 
 static EffectValues values_delay_time_0_4990 = {
-    /** \todo make this display propertly */
+    /** \todo make this display properly */
     0.0, 4990.0, NULL,
 };
 
 static EffectValues values_delay_time_0_5000 = {
-    /** \todo make this display propertly */
+    /** \todo make this display properly */
     0.0, 5000.0, NULL,
 };
 
 static EffectValues values_delay_repeats = {
-    /** \todo make last value display propertly */
+    /** \todo make last value display properly */
     0.0, 100.0, NULL,
 };
 
 static EffectValues values_delay_thresh = {
-    /** \todo make last value display propertly */
+    /** \todo make last value display properly */
     0.0, 100.0, NULL,
 };
 
 static EffectValues values_delay_repeat_rate_0_286 = {
-    /** \todo make this display propertly */
+    /** \todo make this display properly */
     0.0, 286.0, NULL,
 };
 
 static EffectValues values_delay_spread_0_49 = {
-    /** \todo make this display propertly */
+    /** \todo make this display properly */
     0.0, 49.0, NULL,
 };
 
@@ -478,7 +478,7 @@ static EffectValues values_pickup_type = {
 };
 
 static EffectValues values_1_to_10_step_0p1 = {
-    /** \todo make this display propertly (1.0, 1.1, ...., 10.0) */
+    /** \todo make this display properly (1.0, 1.1, ...., 10.0) */
     0.0, 90.0, NULL,
 };
 
