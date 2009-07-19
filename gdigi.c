@@ -35,6 +35,22 @@ static GMutex *message_queue_mutex = NULL;
 static GCond *message_queue_cond = NULL;
 
 /**
+ *  Registers an error quark for gdigi if necessary.
+ *
+ *  \return error quark used for gdigi errors
+ **/
+static GQuark gdigi_error_quark()
+{
+    static GQuark quark = 0;
+
+    if (quark == 0) {
+        quark = g_quark_from_static_string("gdigi-error");
+    }
+
+    return quark;
+}
+
+/**
  *  \param array data to calculate checksum
  *  \param length data length
  *
@@ -771,12 +787,14 @@ static gboolean create_backup_file(GFile *file, GError **error)
     gsize written;
     gboolean val;
 
-    *error = NULL;
+    if (error)
+        *error = NULL;
     output = g_file_create(file, G_FILE_CREATE_NONE, NULL, error);
     if (output == NULL)
         return TRUE;
 
-    *error = NULL;
+    if (error)
+        *error = NULL;
     val = g_output_stream_write_all(G_OUTPUT_STREAM(output), header,
                                     sizeof(header), &written, NULL, error);
     if (val == FALSE) {
@@ -795,7 +813,8 @@ static gboolean create_backup_file(GFile *file, GError **error)
         str = (GString*) iter->data;
 
         id = get_message_id(str);
-        *error = NULL;
+        if (error)
+            *error = NULL;
         val = g_output_stream_write_all(G_OUTPUT_STREAM(output), &id,
                                         sizeof(id), &written, NULL, error);
         if (val == FALSE) {
@@ -805,7 +824,8 @@ static gboolean create_backup_file(GFile *file, GError **error)
         }
 
         len = GUINT32_TO_LE(str->len - 10);
-        *error = NULL;
+        if (error)
+            *error = NULL;
         val = g_output_stream_write_all(G_OUTPUT_STREAM(output), &len,
                                         sizeof(len), &written, NULL, error);
         if (val == FALSE) {
@@ -814,7 +834,8 @@ static gboolean create_backup_file(GFile *file, GError **error)
             return TRUE;
         }
 
-        *error = NULL;
+        if (error)
+            *error = NULL;
         val = g_output_stream_write_all(G_OUTPUT_STREAM(output), &str->str[8],
                                         str->len - 10, &written, NULL, error);
         if (val == FALSE) {
@@ -826,10 +847,71 @@ static gboolean create_backup_file(GFile *file, GError **error)
 
     message_list_free(list);
 
-    *error = NULL;
+    if (error)
+        *error = NULL;
     val = g_output_stream_close(G_OUTPUT_STREAM(output), NULL, error);
     g_object_unref(output);
     return !val;
+}
+
+/**
+ *  Restores backup file.
+ *
+ *  \param filename backup filename
+ *  \param error a GError
+ *
+ *  \return FALSE on success, TRUE on error.
+ **/
+static gboolean restore_backup_file(const gchar *filename, GError **error)
+{
+    gchar *data;
+    gsize length;
+    gsize x;
+
+    if (g_file_get_contents(filename, &data, &length, error) == FALSE)
+        return TRUE;
+
+    if (error)
+        *error = NULL;
+
+    if (!(data[0] == 0x01 && data[1] == 0x00)) {
+        g_free(data);
+        g_set_error_literal(error, gdigi_error_quark(), 0,
+                            "Magic byte doesn't match");
+        return TRUE;
+    }
+
+    x = 0x02;
+    while (x < length) {
+        gchar id;
+        guint32 len;
+
+        id = data[x];
+        x++;
+
+        if (x+4 <= length) {
+            len = GUINT32_FROM_LE(*((guint32*) &data[x]));
+            x += 4;
+        } else {
+            g_free(data);
+            g_set_error_literal(error, gdigi_error_quark(), 0,
+                                "Unexpected end of data");
+            return TRUE;
+        }
+
+        if (x+len <= length) {
+            send_message(id, &data[x], len);
+            x += len;
+        } else {
+            g_free(data);
+            g_set_error_literal(error, gdigi_error_quark(), 0,
+                                "Unexpected end of data");
+            return TRUE;
+        }
+    }
+
+    g_free(data);
+    return FALSE;
 }
 
 /**
