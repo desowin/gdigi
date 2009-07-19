@@ -2133,9 +2133,13 @@ static Effect rp500_eq_effect[] = {
     {"Enable Equalizer", EQ_ON_OFF, -1, EQ_POSITION, rp500_eq_group, G_N_ELEMENTS(rp500_eq_group)},
 };
 
-static Effect pickup_effect[] = {
+static Effect pickup_usb_effect[] = {
     {NULL, PICKUP_ON_OFF, PICKUP_TYPE, PICKUP_POSITION, pickup_group, G_N_ELEMENTS(pickup_group)},
     {NULL, -1, -1, -1, usb_group, G_N_ELEMENTS(usb_group)},
+};
+
+static Effect pickup_effect[] = {
+    {NULL, PICKUP_ON_OFF, PICKUP_TYPE, PICKUP_POSITION, pickup_group, G_N_ELEMENTS(pickup_group)},
 };
 
 static Effect gnx3k_amp_channel_effect[] = {
@@ -2152,11 +2156,11 @@ static EffectList rp250_effects[] = {
     {"Chorus/FX", rp250_chorusfx_effect, G_N_ELEMENTS(rp250_chorusfx_effect)},
     {"Delay", rp250_delay_effect, G_N_ELEMENTS(rp250_delay_effect)},
     {"Reverb", reverb_effect, G_N_ELEMENTS(reverb_effect)},
-    {"Pickup", pickup_effect, G_N_ELEMENTS(pickup_effect)},
+    {"Pickup/USB", pickup_usb_effect, G_N_ELEMENTS(pickup_usb_effect)},
 };
 
 static EffectList rp355_effects[] = {
-    {"Pickup", pickup_effect, G_N_ELEMENTS(pickup_effect)},
+    {"Pickup/USB", pickup_usb_effect, G_N_ELEMENTS(pickup_usb_effect)},
     {"Wah", wah_effect, G_N_ELEMENTS(wah_effect)},
     {"Compressor", rp355_comp_effect, G_N_ELEMENTS(rp355_comp_effect)},
     {"Distortion", rp355_dist_effect, G_N_ELEMENTS(rp355_dist_effect)},
