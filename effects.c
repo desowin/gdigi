@@ -483,7 +483,7 @@ static EffectValues values_1_to_10_step_0p1 = {
 };
 
 static EffectValues values_rp_mix = {
-  /** \todo make this display properly (USB 0, USB 1, USB 2 ... USB 49, USB RP, RP 49, RP 48 ...  RP 1, RP 0) */
+    /** \todo make this display properly (USB 0, USB 1, USB 2 ... USB 49, USB RP, RP 49, RP 48 ...  RP 1, RP 0) */
     0.0, 100.0, NULL,
 };
 

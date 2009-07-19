@@ -213,7 +213,7 @@ static void apply_current_preset()
 {
     GList *list = get_current_preset();
     Preset *preset = create_preset_from_data(list);
-    preset_list_free(list);
+    message_list_free(list);
     apply_preset_to_gui(preset);
     preset_free(preset);
 }

@@ -894,7 +894,7 @@ void switch_preset(guint bank, guint x);
 void store_preset_name(int x, const gchar *name);
 void set_preset_level(int level);
 GStrv query_preset_names(gchar bank);
+void message_list_free(GList *list);
 GList *get_current_preset();
-void preset_list_free(GList *list);
 
 #endif /* GDIGI_H */

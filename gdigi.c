@@ -159,20 +159,27 @@ static void unpack_message(GString *msg)
     do {
         offset += 8;
         status = str[offset-1];
-        for (x=0; x<7; x++) {
+        for (x=0; x<7 && !stop; x++) {
             if (offset+x >= msg->len) {
+                i++;
                 stop = TRUE;
                 break;
             }
             if (str[offset+x] == 0xF7) {
+                if (x == 0) {
+                    str[i] = status;
+                    i++;
+                }
                 str[i] = 0xF7;
+                i++;
                 stop = TRUE;
+                break;
             }
 
             str[i] = (((status << (x+1)) & 0x80) | str[x+offset]);
             i++;
         }
-    } while (!stop && (offset+x < msg->len));
+    } while (!stop);
 
     g_string_truncate(msg, i);
 }
@@ -653,11 +660,13 @@ GStrv query_preset_names(gchar bank)
 }
 
 /**
- *  Queries current edit buffer.
+ *  Reads multiple messages and puts them into GList.
  *
- *  \return GList with preset SysEx messages, which must be freed using preset_list_free.
+ *  \param id MessageID starting message sequence
+ *
+ *  \return GList with SysEx messages, which must be freed using message_list_free.
  **/
-GList *get_current_preset()
+GList *get_message_list(MessageID id)
 {
     GString *data = NULL;
     GList *list = NULL;
@@ -665,15 +674,13 @@ GList *get_current_preset()
     gboolean found = FALSE;
     gboolean done = FALSE;
 
-    send_message(REQUEST_PRESET, "\x04\x00", 2);
-
     g_mutex_lock(message_queue_mutex);
     do {
         len = g_queue_get_length(message_queue);
 
         for (x = 0; x<len && (found == FALSE); x++) {
             data = g_queue_peek_nth(message_queue, x);
-            if (get_message_id(data) == RECEIVE_PRESET_START) {
+            if (get_message_id(data) == id) {
                 found = TRUE;
                 g_queue_pop_nth(message_queue, x);
                 unpack_message(data);
@@ -686,11 +693,23 @@ GList *get_current_preset()
             int i;
             int amt;
 
-            for (i = 10; (i < data->len) && data->str[i]; i++);
-
-            amt = (unsigned char)data->str[i+2];
+            switch (id) {
+                case RECEIVE_PRESET_START:
+                    for (i = 10; (i < data->len) && data->str[i]; i++);
+                    amt = (unsigned char)data->str[i+2];
+                    break;
+                case RECEIVE_BULK_DUMP_START:
+                    amt = ((unsigned char)data->str[8] << 8) | (unsigned char)data->str[9];
+                    break;
+                default:
+                    g_error("get_message_list() doesn't support followning id: %d", id);
+                    g_string_free(data, TRUE);
+                    g_list_free(list);
+                    return NULL;
+            }
 
             while (amt) {
+                g_message("%d messages left", amt);
                 data = g_queue_pop_nth(message_queue, x);
                 if (data == NULL) {
                     g_cond_wait(message_queue_cond, message_queue_mutex);
@@ -703,7 +722,7 @@ GList *get_current_preset()
 
             done = TRUE;
         } else {
-            /* Receive Preset Start not found in message queue */
+            /* id not found in message queue */
             g_cond_wait(message_queue_cond, message_queue_mutex);
         }
     } while (done == FALSE);
@@ -712,12 +731,105 @@ GList *get_current_preset()
     return list;
 }
 
-void preset_list_free(GList *list)
+/**
+ *  \param list list to be freed
+ *
+ *  Frees all memory used by message list.
+ **/
+void message_list_free(GList *list)
 {
     g_return_if_fail(list != NULL);
 
     g_list_foreach(list, (GFunc) message_free_func, NULL);
     g_list_free(list);
+}
+
+/**
+ *  Queries current edit buffer.
+ *
+ *  \return GList with preset SysEx messages, which must be freed using message_list_free.
+ **/
+GList *get_current_preset()
+{
+    send_message(REQUEST_PRESET, "\x04\x00", 2);
+    return get_message_list(RECEIVE_PRESET_START);
+}
+
+/**
+ *  Creates backup file.
+ *
+ *  \param file backup file handle
+ *  \param error a GError
+ *
+ *  \return FALSE on success, TRUE on error.
+ **/
+static gboolean create_backup_file(GFile *file, GError **error)
+{
+    GFileOutputStream *output = NULL;
+    GList *list = NULL, *iter = NULL;
+    const gchar header[] = {'\x01', '\x00'};
+    gsize written;
+    gboolean val;
+
+    *error = NULL;
+    output = g_file_create(file, G_FILE_CREATE_NONE, NULL, error);
+    if (output == NULL)
+        return TRUE;
+
+    *error = NULL;
+    val = g_output_stream_write_all(G_OUTPUT_STREAM(output), header,
+                                    sizeof(header), &written, NULL, error);
+    if (val == FALSE) {
+        g_object_unref(output);
+        return TRUE;
+    }
+
+    send_message(REQUEST_BULK_DUMP, "\x00", 1);
+    list = get_message_list(RECEIVE_BULK_DUMP_START);
+
+    for (iter = list; iter; iter = g_list_next(iter)) {
+        GString *str;
+        guchar id;    /* message id */
+        guint32 len;  /* message length */
+
+        str = (GString*) iter->data;
+
+        id = get_message_id(str);
+        *error = NULL;
+        val = g_output_stream_write_all(G_OUTPUT_STREAM(output), &id,
+                                        sizeof(id), &written, NULL, error);
+        if (val == FALSE) {
+            message_list_free(list);
+            g_object_unref(output);
+            return TRUE;
+        }
+
+        len = GUINT32_TO_LE(str->len - 10);
+        *error = NULL;
+        val = g_output_stream_write_all(G_OUTPUT_STREAM(output), &len,
+                                        sizeof(len), &written, NULL, error);
+        if (val == FALSE) {
+            message_list_free(list);
+            g_object_unref(output);
+            return TRUE;
+        }
+
+        *error = NULL;
+        val = g_output_stream_write_all(G_OUTPUT_STREAM(output), &str->str[8],
+                                        str->len - 10, &written, NULL, error);
+        if (val == FALSE) {
+            message_list_free(list);
+            g_object_unref(output);
+            return TRUE;
+        }
+    }
+
+    message_list_free(list);
+
+    *error = NULL;
+    val = g_output_stream_close(G_OUTPUT_STREAM(output), NULL, error);
+    g_object_unref(output);
+    return !val;
 }
 
 /**
