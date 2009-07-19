@@ -124,16 +124,13 @@ static void XMLCALL text_cb(void *data, const char* text, int len)
  **/
 Preset *create_preset_from_xml_file(gchar *filename, GError **error)
 {
-    GFile *file;
     GError *err = NULL;
     gchar *contents;
 
-    file = g_file_new_for_path(filename);
     if (g_file_get_contents(filename, &contents, NULL, &err) == FALSE) {
         g_message("Failed to get %s contents: %s", filename, err->message);
         *error = g_error_copy(err);
         g_error_free(err);
-        g_object_unref(file);
         return NULL;
     }
 
@@ -157,7 +154,6 @@ Preset *create_preset_from_xml_file(gchar *filename, GError **error)
         preset_free(ad->preset);
         g_slice_free(AppData, ad);
         g_free(contents);
-        g_object_unref(file);
         return NULL;
     }
 
@@ -168,7 +164,6 @@ Preset *create_preset_from_xml_file(gchar *filename, GError **error)
     g_slice_free(AppData, ad);
 
     g_free(contents);
-    g_object_unref(file);
     return preset;
 }
 
