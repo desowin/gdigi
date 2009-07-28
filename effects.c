@@ -1140,6 +1140,12 @@ static EffectSettings delay_analog_settings[] = {
     {"Repeats", DELAY_REPEATS, DELAY_POSITION, &values_delay_repeats},
 };
 
+static EffectSettings delay_dm_settings[] = {
+    {"Repeat Rate", DELAY_REPEAT_RATE_DM, DELAY_POSITION, &values_0_to_99},
+    {"Echo", DELAY_ECHO, DELAY_POSITION, &values_0_to_99},
+    {"Intensity", DELAY_INTENSITY, DELAY_POSITION, &values_0_to_99},
+};
+
 static EffectSettings delay_digital_settings[] = {
     {"Time", DELAY_TIME, DELAY_POSITION, &values_delay_time},
     {"Level", DELAY_LEVEL, DELAY_POSITION, &values_0_to_99},
@@ -1169,6 +1175,12 @@ static EffectSettings delay_tape_settings[] = {
     {"Repeats", DELAY_REPEATS, DELAY_POSITION, &values_delay_repeats},
     {"Wow", DELAY_TAPE_WOW, DELAY_POSITION, &values_0_to_99},
     {"Flutter", DELAY_TAPE_FLUTTER, DELAY_POSITION, &values_0_to_99},
+};
+
+static EffectSettings delay_echoplex_settings[] = {
+    {"Time", DELAY_ECHOPLEX_TIME, DELAY_POSITION, &values_0_to_99},
+    {"Repeats", DELAY_REPEATS_0_99, DELAY_POSITION, &values_0_to_99},
+    {"Volume", DELAY_VOLUME, DELAY_POSITION, &values_0_to_99},
 };
 
 static EffectSettings rp500_delay_digital_settings[] = {
@@ -1464,6 +1476,7 @@ static EffectGroup rp355_chorusfx_group[] = {
     {CHORUS_TYPE_FLANGER, "Flanger", chorusfx_flanger_settings, G_N_ELEMENTS(chorusfx_flanger_settings)},
     {CHORUS_TYPE_TRIGGERED_FLANGER, "Triggered Flanger", chorusfx_trig_flanger_settings, G_N_ELEMENTS(chorusfx_trig_flanger_settings)},
     {CHORUS_TYPE_MXR_FLANGER, "MXR FLANGER", chorusfx_mxr_flanger_settings, G_N_ELEMENTS(chorusfx_mxr_flanger_settings)},
+    {CHORUS_TYPE_EH_FLANGER, "EH Flanger", chorusfx_eh_flanger_settings, G_N_ELEMENTS(chorusfx_eh_flanger_settings)},
     {CHORUS_TYPE_PHASER, "Phaser", chorusfx_phaser_settings, G_N_ELEMENTS(chorusfx_phaser_settings)},
     {CHORUS_TYPE_TRIGGERED_PHASER, "Triggered Phaser", chorusfx_trig_phaser_settings, G_N_ELEMENTS(chorusfx_trig_phaser_settings)},
     {CHORUS_TYPE_MX_PHASER, "MX Phaser", chorusfx_mx_phaser_settings, G_N_ELEMENTS(chorusfx_mx_phaser_settings)},
@@ -1545,12 +1558,12 @@ static EffectGroup rp250_delay_group[] = {
 
 static EffectGroup rp355_delay_group[] = {
     {DELAY_TYPE_ANALOG, "Analog", delay_analog_settings, G_N_ELEMENTS(delay_analog_settings)},
-    {DELAY_RP500_TYPE_DM, "DM Delay", rp500_delay_dm_settings, G_N_ELEMENTS(rp500_delay_dm_settings)},
+    {DELAY_TYPE_DM, "DM Delay", delay_dm_settings, G_N_ELEMENTS(delay_dm_settings)},
     {DELAY_TYPE_DIGITAL, "Digital", delay_digital_settings, G_N_ELEMENTS(delay_digital_settings)},
     {DELAY_TYPE_MODULATED, "Modulated", delay_modulated_settings, G_N_ELEMENTS(delay_modulated_settings)},
     {DELAY_TYPE_PONG, "Pong", delay_pong_settings, G_N_ELEMENTS(delay_pong_settings)},
     {DELAY_TYPE_TAPE, "Tape", delay_tape_settings, G_N_ELEMENTS(delay_tape_settings)},
-    {DELAY_RP500_TYPE_ECHOPLEX, "Echo Plex", rp500_delay_echoplex_settings, G_N_ELEMENTS(rp500_delay_echoplex_settings)},
+    {DELAY_TYPE_ECHOPLEX, "Echo Plex", delay_echoplex_settings, G_N_ELEMENTS(delay_echoplex_settings)},
 };
 
 static EffectGroup rp500_delay_group[] = {
