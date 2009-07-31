@@ -16,6 +16,7 @@
 
 #include <stdio.h>
 #include <gtk/gtk.h>
+#include <gio/gio.h>
 #include <getopt.h>
 #include <alsa/asoundlib.h>
 #include <alloca.h>
