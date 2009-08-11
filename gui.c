@@ -472,6 +472,9 @@ GtkWidget *create_vbox(Effect *widgets, gint amt, gchar *label)
             widget = gtk_label_new(widgets[x].label);
             gtk_table_attach_defaults(GTK_TABLE(table), widget, 0, 1, x, x+1);
             y = 0;
+        } else {
+            /* Default to 1 */
+            y = 1;
         }
 
         container = create_widget_container(widgets[x].group, widgets[x].group_amt, widgets[x].type, widgets[x].position);
