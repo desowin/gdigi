@@ -684,17 +684,26 @@ static EffectSettings rp250_amp_settings[] = {
     {"Level", AMP_LEVEL, AMP_POSITION, &values_0_to_99},
 };
 
-static EffectSettings rp355_amp_settings[] = {
-    {"Gain", AMP_GAIN, AMP_POSITION, &values_0_to_99},
-    {"Level", AMP_LEVEL, AMP_POSITION, &values_0_to_99},
-};
-
 static EffectSettings rp250_amp_settings2[] = {
     {"Level", AMP_LEVEL, AMP_POSITION, &values_0_to_99},
 };
 
-static EffectSettings rp355_amp_settings2[] = {
+static EffectSettings rp355_amp_settings_A[] = {
+    {"Gain", AMP_GAIN, AMP_POSITION, &values_0_to_99},
     {"Level", AMP_LEVEL, AMP_POSITION, &values_0_to_99},
+};
+
+static EffectSettings rp355_amp_settings_B[] = {
+    {"Gain", AMP_GAIN, CH2_AMP_POSITION, &values_0_to_99},
+    {"Level", AMP_LEVEL, CH2_AMP_POSITION, &values_0_to_99},
+};
+
+static EffectSettings rp355_amp_settings2_A[] = {
+    {"Level", AMP_LEVEL, AMP_POSITION, &values_0_to_99},
+};
+
+static EffectSettings rp355_amp_settings2_B[] = {
+    {"Level", AMP_LEVEL, CH2_AMP_POSITION, &values_0_to_99},
 };
 
 static EffectSettings rp500_amp_settings[] = {
@@ -713,10 +722,6 @@ static EffectSettings rp500_amp_settings2[] = {
 };
 
 static EffectSettings rp500_amp_settings3[] = {
-    {"Level", AMP_LEVEL, AMP_POSITION, &values_0_to_99},
-};
-
-static EffectSettings rp355_amp_settings3[] = {
     {"Level", AMP_LEVEL, AMP_POSITION, &values_0_to_99},
 };
 
@@ -760,13 +765,22 @@ static EffectSettings rp250_eq_settings[] = {
     {"Treb Hz", EQ_TREBLE_HZ, EQ_POSITION, &values_eq_treb_hz},
 };
 
-static EffectSettings rp355_eq_settings[] = {
+static EffectSettings rp355_eq_settings_A[] = {
     {"Bass", EQ_BASS, EQ_POSITION, &values_eq_db},
     {"Mid", EQ_MID, EQ_POSITION, &values_eq_db},
     {"Treble", EQ_TREBLE, EQ_POSITION, &values_eq_db},
     {"Mid Hz", EQ_MID_HZ, EQ_POSITION, &values_eq_mid_hz},
     {"Treb Hz", EQ_TREBLE_HZ, EQ_POSITION, &values_eq_treb_hz},
     {"Presence", EQ_PRESENCE, EQ_POSITION, &values_eq_db},
+};
+
+static EffectSettings rp355_eq_settings_B[] = {
+    {"Bass", EQ_BASS, EQ_POSITION_B, &values_eq_db},
+    {"Mid", EQ_MID, EQ_POSITION_B, &values_eq_db},
+    {"Treble", EQ_TREBLE, EQ_POSITION_B, &values_eq_db},
+    {"Mid Hz", EQ_MID_HZ, EQ_POSITION_B, &values_eq_mid_hz},
+    {"Treb Hz", EQ_TREBLE_HZ, EQ_POSITION_B, &values_eq_treb_hz},
+    {"Presence", EQ_PRESENCE, EQ_POSITION_B, &values_eq_db},
 };
 
 static EffectSettings rp500_eq_settings[] = {
@@ -1629,42 +1643,80 @@ static EffectGroup rp355_amp_select_group[] = {
     {AMP_CHANNEL_B, "B", NULL, -1},
 };
 
-static EffectGroup rp355_amp_group[] = {
-    {AMP_TYPE_TWEED_CHAMP, "Tweed Champ", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
-    {AMP_TYPE_TWEED_DELUXE, "Tweed Deluxe", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
-    {AMP_TYPE_TWEED_BASSMAN, "Tweed Bassman", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
-    {AMP_TYPE_BLACKFACE_TWIN, "Blackface Twin", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
-    {AMP_TYPE_BLACKFACE_DELUXE, "Blackface Deluxe", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
-    {AMP_TYPE_PLEXI_JTM_45, "Plexi JTM-45", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
-    {AMP_TYPE_SUPER_LEAD_PLEXI, "Plexi Lead", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
-    {AMP_TYPE_PLEXI_JUMP_PANEL, "Plexi Jump Panel", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
-    {AMP_TYPE_MASTER_VOLUME, "Master Volume", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
-    {AMP_TYPE_JCM800, "JCM800", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
-    {AMP_TYPE_JCM900, "JCM900", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
-    {AMP_TYPE_AC15, "AC-15", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
-    {AMP_TYPE_AC30TB, "AC-30 TB", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
-    {AMP_TYPE_HIWATT_100, "Hiwatt 100", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
-    {AMP_TYPE_BOOGIE_MARK_II, "Boogie Mark IIC", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
-    {AMP_TYPE_DUAL_RECTIFIER, "Dual Rectifier", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
-    {AMP_TYPE_MATCHLESS_HC30, "Matchless HC30", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
-    {AMP_TYPE_SOLDANO_100, "Soldano 100", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
-    {AMP_TYPE_SOLO, "Solo", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
-    {AMP_TYPE_METAL, "Metal", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
-    {AMP_TYPE_BRIGHT, "Bright Clean", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
-    {AMP_TYPE_CHUNK, "Chunk", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
-    {AMP_TYPE_CLEAN, "Clean Tube", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
-    {AMP_TYPE_HIGH_GAIN, "High Gain", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
-    {AMP_TYPE_GSP2101_CLEAN_TUBE, "GSP2101 Clean Tube", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
-    {AMP_TYPE_GSP2101_SAT_TUBE, "GSP2101 Sat Tube", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
-    {AMP_TYPE_MONSTER, "Monster", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
-    {AMP_TYPE_TWEEDFACE, "Tweedface", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
-    {AMP_TYPE_BLACKBASS, "Blackbass", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
-    {AMP_TYPE_STONER_ROCK, "Stoner Rock", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
-    {AMP_TYPE_DARK_METAL, "Dark Metal", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
-    {AMP_TYPE_BROWN_SOUND, "Brown Sound", rp355_amp_settings, G_N_ELEMENTS(rp355_amp_settings)},
-    {AMP_TYPE_ACOUSTIC, "Dread Acoustic", rp355_amp_settings2, G_N_ELEMENTS(rp355_amp_settings2)},
-    {AMP_TYPE_JUMBO_ACOUSTIC, "Jumbo Acoustic", rp355_amp_settings2, G_N_ELEMENTS(rp355_amp_settings2)},
-    {AMP_TYPE_DIRECT, "Direct", rp355_amp_settings3, G_N_ELEMENTS(rp355_amp_settings3)},
+static EffectGroup rp355_amp_group_A[] = {
+    {AMP_TYPE_TWEED_CHAMP, "Tweed Champ", rp355_amp_settings_A, G_N_ELEMENTS(rp355_amp_settings_A)},
+    {AMP_TYPE_TWEED_DELUXE, "Tweed Deluxe", rp355_amp_settings_A, G_N_ELEMENTS(rp355_amp_settings_A)},
+    {AMP_TYPE_TWEED_BASSMAN, "Tweed Bassman", rp355_amp_settings_A, G_N_ELEMENTS(rp355_amp_settings_A)},
+    {AMP_TYPE_BLACKFACE_TWIN, "Blackface Twin", rp355_amp_settings_A, G_N_ELEMENTS(rp355_amp_settings_A)},
+    {AMP_TYPE_BLACKFACE_DELUXE, "Blackface Deluxe", rp355_amp_settings_A, G_N_ELEMENTS(rp355_amp_settings_A)},
+    {AMP_TYPE_PLEXI_JTM_45, "Plexi JTM-45", rp355_amp_settings_A, G_N_ELEMENTS(rp355_amp_settings_A)},
+    {AMP_TYPE_SUPER_LEAD_PLEXI, "Plexi Lead", rp355_amp_settings_A, G_N_ELEMENTS(rp355_amp_settings_A)},
+    {AMP_TYPE_PLEXI_JUMP_PANEL, "Plexi Jump Panel", rp355_amp_settings_A, G_N_ELEMENTS(rp355_amp_settings_A)},
+    {AMP_TYPE_MASTER_VOLUME, "Master Volume", rp355_amp_settings_A, G_N_ELEMENTS(rp355_amp_settings_A)},
+    {AMP_TYPE_JCM800, "JCM800", rp355_amp_settings_A, G_N_ELEMENTS(rp355_amp_settings_A)},
+    {AMP_TYPE_JCM900, "JCM900", rp355_amp_settings_A, G_N_ELEMENTS(rp355_amp_settings_A)},
+    {AMP_TYPE_AC15, "AC-15", rp355_amp_settings_A, G_N_ELEMENTS(rp355_amp_settings_A)},
+    {AMP_TYPE_AC30TB, "AC-30 TB", rp355_amp_settings_A, G_N_ELEMENTS(rp355_amp_settings_A)},
+    {AMP_TYPE_HIWATT_100, "Hiwatt 100", rp355_amp_settings_A, G_N_ELEMENTS(rp355_amp_settings_A)},
+    {AMP_TYPE_BOOGIE_MARK_II, "Boogie Mark IIC", rp355_amp_settings_A, G_N_ELEMENTS(rp355_amp_settings_A)},
+    {AMP_TYPE_DUAL_RECTIFIER, "Dual Rectifier", rp355_amp_settings_A, G_N_ELEMENTS(rp355_amp_settings_A)},
+    {AMP_TYPE_MATCHLESS_HC30, "Matchless HC30", rp355_amp_settings_A, G_N_ELEMENTS(rp355_amp_settings_A)},
+    {AMP_TYPE_SOLDANO_100, "Soldano 100", rp355_amp_settings_A, G_N_ELEMENTS(rp355_amp_settings_A)},
+    {AMP_TYPE_SOLO, "Solo", rp355_amp_settings_A, G_N_ELEMENTS(rp355_amp_settings_A)},
+    {AMP_TYPE_METAL, "Metal", rp355_amp_settings_A, G_N_ELEMENTS(rp355_amp_settings_A)},
+    {AMP_TYPE_BRIGHT, "Bright Clean", rp355_amp_settings_A, G_N_ELEMENTS(rp355_amp_settings_A)},
+    {AMP_TYPE_CHUNK, "Chunk", rp355_amp_settings_A, G_N_ELEMENTS(rp355_amp_settings_A)},
+    {AMP_TYPE_CLEAN, "Clean Tube", rp355_amp_settings_A, G_N_ELEMENTS(rp355_amp_settings_A)},
+    {AMP_TYPE_HIGH_GAIN, "High Gain", rp355_amp_settings_A, G_N_ELEMENTS(rp355_amp_settings_A)},
+    {AMP_TYPE_GSP2101_CLEAN_TUBE, "GSP2101 Clean Tube", rp355_amp_settings_A, G_N_ELEMENTS(rp355_amp_settings_A)},
+    {AMP_TYPE_GSP2101_SAT_TUBE, "GSP2101 Sat Tube", rp355_amp_settings_A, G_N_ELEMENTS(rp355_amp_settings_A)},
+    {AMP_TYPE_MONSTER, "Monster", rp355_amp_settings_A, G_N_ELEMENTS(rp355_amp_settings_A)},
+    {AMP_TYPE_TWEEDFACE, "Tweedface", rp355_amp_settings_A, G_N_ELEMENTS(rp355_amp_settings_A)},
+    {AMP_TYPE_BLACKBASS, "Blackbass", rp355_amp_settings_A, G_N_ELEMENTS(rp355_amp_settings_A)},
+    {AMP_TYPE_STONER_ROCK, "Stoner Rock", rp355_amp_settings_A, G_N_ELEMENTS(rp355_amp_settings_A)},
+    {AMP_TYPE_DARK_METAL, "Dark Metal", rp355_amp_settings_A, G_N_ELEMENTS(rp355_amp_settings_A)},
+    {AMP_TYPE_BROWN_SOUND, "Brown Sound", rp355_amp_settings_A, G_N_ELEMENTS(rp355_amp_settings_A)},
+    {AMP_TYPE_ACOUSTIC, "Dread Acoustic", rp355_amp_settings2_A, G_N_ELEMENTS(rp355_amp_settings2_A)},
+    {AMP_TYPE_JUMBO_ACOUSTIC, "Jumbo Acoustic", rp355_amp_settings2_A, G_N_ELEMENTS(rp355_amp_settings2_A)},
+    {AMP_TYPE_DIRECT, "Direct", rp355_amp_settings2_A, G_N_ELEMENTS(rp355_amp_settings2_A)},
+};
+
+static EffectGroup rp355_amp_group_B[] = {
+    {AMP_TYPE_TWEED_CHAMP, "Tweed Champ", rp355_amp_settings_B, G_N_ELEMENTS(rp355_amp_settings_B)},
+    {AMP_TYPE_TWEED_DELUXE, "Tweed Deluxe", rp355_amp_settings_B, G_N_ELEMENTS(rp355_amp_settings_B)},
+    {AMP_TYPE_TWEED_BASSMAN, "Tweed Bassman", rp355_amp_settings_B, G_N_ELEMENTS(rp355_amp_settings_B)},
+    {AMP_TYPE_BLACKFACE_TWIN, "Blackface Twin", rp355_amp_settings_B, G_N_ELEMENTS(rp355_amp_settings_B)},
+    {AMP_TYPE_BLACKFACE_DELUXE, "Blackface Deluxe", rp355_amp_settings_B, G_N_ELEMENTS(rp355_amp_settings_B)},
+    {AMP_TYPE_PLEXI_JTM_45, "Plexi JTM-45", rp355_amp_settings_B, G_N_ELEMENTS(rp355_amp_settings_B)},
+    {AMP_TYPE_SUPER_LEAD_PLEXI, "Plexi Lead", rp355_amp_settings_B, G_N_ELEMENTS(rp355_amp_settings_B)},
+    {AMP_TYPE_PLEXI_JUMP_PANEL, "Plexi Jump Panel", rp355_amp_settings_B, G_N_ELEMENTS(rp355_amp_settings_B)},
+    {AMP_TYPE_MASTER_VOLUME, "Master Volume", rp355_amp_settings_B, G_N_ELEMENTS(rp355_amp_settings_B)},
+    {AMP_TYPE_JCM800, "JCM800", rp355_amp_settings_B, G_N_ELEMENTS(rp355_amp_settings_B)},
+    {AMP_TYPE_JCM900, "JCM900", rp355_amp_settings_B, G_N_ELEMENTS(rp355_amp_settings_B)},
+    {AMP_TYPE_AC15, "AC-15", rp355_amp_settings_B, G_N_ELEMENTS(rp355_amp_settings_B)},
+    {AMP_TYPE_AC30TB, "AC-30 TB", rp355_amp_settings_B, G_N_ELEMENTS(rp355_amp_settings_B)},
+    {AMP_TYPE_HIWATT_100, "Hiwatt 100", rp355_amp_settings_B, G_N_ELEMENTS(rp355_amp_settings_B)},
+    {AMP_TYPE_BOOGIE_MARK_II, "Boogie Mark IIC", rp355_amp_settings_B, G_N_ELEMENTS(rp355_amp_settings_B)},
+    {AMP_TYPE_DUAL_RECTIFIER, "Dual Rectifier", rp355_amp_settings_B, G_N_ELEMENTS(rp355_amp_settings_B)},
+    {AMP_TYPE_MATCHLESS_HC30, "Matchless HC30", rp355_amp_settings_B, G_N_ELEMENTS(rp355_amp_settings_B)},
+    {AMP_TYPE_SOLDANO_100, "Soldano 100", rp355_amp_settings_B, G_N_ELEMENTS(rp355_amp_settings_B)},
+    {AMP_TYPE_SOLO, "Solo", rp355_amp_settings_B, G_N_ELEMENTS(rp355_amp_settings_B)},
+    {AMP_TYPE_METAL, "Metal", rp355_amp_settings_B, G_N_ELEMENTS(rp355_amp_settings_B)},
+    {AMP_TYPE_BRIGHT, "Bright Clean", rp355_amp_settings_B, G_N_ELEMENTS(rp355_amp_settings_B)},
+    {AMP_TYPE_CHUNK, "Chunk", rp355_amp_settings_B, G_N_ELEMENTS(rp355_amp_settings_B)},
+    {AMP_TYPE_CLEAN, "Clean Tube", rp355_amp_settings_B, G_N_ELEMENTS(rp355_amp_settings_B)},
+    {AMP_TYPE_HIGH_GAIN, "High Gain", rp355_amp_settings_B, G_N_ELEMENTS(rp355_amp_settings_B)},
+    {AMP_TYPE_GSP2101_CLEAN_TUBE, "GSP2101 Clean Tube", rp355_amp_settings_B, G_N_ELEMENTS(rp355_amp_settings_B)},
+    {AMP_TYPE_GSP2101_SAT_TUBE, "GSP2101 Sat Tube", rp355_amp_settings_B, G_N_ELEMENTS(rp355_amp_settings_B)},
+    {AMP_TYPE_MONSTER, "Monster", rp355_amp_settings_B, G_N_ELEMENTS(rp355_amp_settings_B)},
+    {AMP_TYPE_TWEEDFACE, "Tweedface", rp355_amp_settings_B, G_N_ELEMENTS(rp355_amp_settings_B)},
+    {AMP_TYPE_BLACKBASS, "Blackbass", rp355_amp_settings_B, G_N_ELEMENTS(rp355_amp_settings_B)},
+    {AMP_TYPE_STONER_ROCK, "Stoner Rock", rp355_amp_settings_B, G_N_ELEMENTS(rp355_amp_settings_B)},
+    {AMP_TYPE_DARK_METAL, "Dark Metal", rp355_amp_settings_B, G_N_ELEMENTS(rp355_amp_settings_B)},
+    {AMP_TYPE_BROWN_SOUND, "Brown Sound", rp355_amp_settings_B, G_N_ELEMENTS(rp355_amp_settings_B)},
+    {AMP_TYPE_ACOUSTIC, "Dread Acoustic", rp355_amp_settings2_B, G_N_ELEMENTS(rp355_amp_settings2_B)},
+    {AMP_TYPE_JUMBO_ACOUSTIC, "Jumbo Acoustic", rp355_amp_settings2_B, G_N_ELEMENTS(rp355_amp_settings2_B)},
+    {AMP_TYPE_DIRECT, "Direct", rp355_amp_settings2_B, G_N_ELEMENTS(rp355_amp_settings2_B)},
 };
 
 static EffectGroup rp500_amp_group[] = {
@@ -1778,11 +1830,18 @@ static EffectGroup rp250_eq_group[] = {
     {EQ_TYPE_WARM, "Warm", rp250_eq_settings, G_N_ELEMENTS(rp250_eq_settings)},
 };
 
-static EffectGroup rp355_eq_group[] = {
-    {EQ_TYPE_BRIGHT, "Bright", rp355_eq_settings, G_N_ELEMENTS(rp355_eq_settings)},
-    {EQ_TYPE_MIDBOOST, "Mid Boost", rp355_eq_settings, G_N_ELEMENTS(rp355_eq_settings)},
-    {EQ_TYPE_SCOOP, "Scoop", rp355_eq_settings, G_N_ELEMENTS(rp355_eq_settings)},
-    {EQ_TYPE_WARM, "Warm", rp355_eq_settings, G_N_ELEMENTS(rp355_eq_settings)},
+static EffectGroup rp355_eq_group_A[] = {
+    {EQ_TYPE_BRIGHT, "Bright", rp355_eq_settings_A, G_N_ELEMENTS(rp355_eq_settings_A)},
+    {EQ_TYPE_MIDBOOST, "Mid Boost", rp355_eq_settings_A, G_N_ELEMENTS(rp355_eq_settings_A)},
+    {EQ_TYPE_SCOOP, "Scoop", rp355_eq_settings_A, G_N_ELEMENTS(rp355_eq_settings_A)},
+    {EQ_TYPE_WARM, "Warm", rp355_eq_settings_A, G_N_ELEMENTS(rp355_eq_settings_A)},
+};
+
+static EffectGroup rp355_eq_group_B[] = {
+    {EQ_TYPE_BRIGHT, "Bright", rp355_eq_settings_B, G_N_ELEMENTS(rp355_eq_settings_B)},
+    {EQ_TYPE_MIDBOOST, "Mid Boost", rp355_eq_settings_B, G_N_ELEMENTS(rp355_eq_settings_B)},
+    {EQ_TYPE_SCOOP, "Scoop", rp355_eq_settings_B, G_N_ELEMENTS(rp355_eq_settings_B)},
+    {EQ_TYPE_WARM, "Warm", rp355_eq_settings_B, G_N_ELEMENTS(rp355_eq_settings_B)},
 };
 
 static EffectGroup rp500_eq_group[] = {
@@ -2102,13 +2161,13 @@ static Effect rp355_select_amp_effect[] = {
 };
 
 static Effect rp355_amp_effect_A[] = {
-    {NULL, AMP_ON_OFF, AMP_TYPE, AMP_POSITION, rp355_amp_group, G_N_ELEMENTS(rp355_amp_group)},
+    {NULL, AMP_ON_OFF, AMP_TYPE, AMP_POSITION, rp355_amp_group_A, G_N_ELEMENTS(rp355_amp_group_A)},
     {"Cabinet", -1, AMP_CAB_TYPE, AMP_CAB_POSITION, rp355_amp_cab_group, G_N_ELEMENTS(rp355_amp_cab_group)},
 };
 
 static Effect rp355_amp_effect_B[] = {
-    {NULL, AMP_ON_OFF, AMP_TYPE, CH2_AMP_POSITION, rp355_amp_group, G_N_ELEMENTS(rp355_amp_group)},
-    {"Cabinet", -1, AMP_CAB_TYPE, AMP_CAB_POSITION, rp355_amp_cab_group, G_N_ELEMENTS(rp355_amp_cab_group)},
+    {NULL, AMP_ON_OFF, AMP_TYPE, CH2_AMP_POSITION, rp355_amp_group_B, G_N_ELEMENTS(rp355_amp_group_B)},
+    {"Cabinet", -1, AMP_CAB_TYPE, CH2_AMP_CAB_POSITION, rp355_amp_cab_group, G_N_ELEMENTS(rp355_amp_cab_group)},
 };
 
 static Effect rp500_amp_effect[] = {
@@ -2135,11 +2194,11 @@ static Effect rp250_eq_effect[] = {
 };
 
 static Effect rp355_eq_effect_A[] = {
-    {NULL, EQ_ON_OFF, EQ_TYPE, EQ_POSITION, rp355_eq_group, G_N_ELEMENTS(rp355_eq_group)},
+    {NULL, EQ_ON_OFF, EQ_TYPE, EQ_POSITION, rp355_eq_group_A, G_N_ELEMENTS(rp355_eq_group_A)},
 };
 
 static Effect rp355_eq_effect_B[] = {
-    {NULL, EQ_ON_OFF, EQ_TYPE, EQ_POSITION_B, rp355_eq_group, G_N_ELEMENTS(rp355_eq_group)},
+    {NULL, EQ_ON_OFF, EQ_TYPE, EQ_POSITION_B, rp355_eq_group_B, G_N_ELEMENTS(rp355_eq_group_B)},
 };
 
 static Effect rp500_eq_effect[] = {
