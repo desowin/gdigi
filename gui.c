@@ -474,7 +474,8 @@ GtkWidget *create_vbox(Effect *widgets, gint amt, gchar *label)
             y = 0;
         } else {
             /* Default to 1 */
-            y = 1;
+            if (x == 0)
+                y = 1;
         }
 
         container = create_widget_container(widgets[x].group, widgets[x].group_amt, widgets[x].type, widgets[x].position);

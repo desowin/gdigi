@@ -490,6 +490,9 @@ static EffectValues values_rp_mix = {
 static EffectSettings usb_settings[] = {
     {"USB/RP Mix", USB_AUDIO_PLAYBACK_MIX, USB_POSITION, &values_rp_mix},
     {"USB Level", USB_AUDIO_LEVEL, USB_POSITION, &values_m12_to_24},
+};
+
+static EffectSettings misc_settings[] = {
     {"Preset Level", PRESET_LEVEL, PRESET_POSITION, &values_0_to_99},
 };
 
@@ -1299,8 +1302,13 @@ static EffectGroup gnx3k_amp_channel_group[] = {
     {-1, NULL, gnx3k_amp_channel_settings, G_N_ELEMENTS(gnx3k_amp_channel_settings)},
 };
 
+/** \todo it's not part of Preset, but should appear in GUI */
 static EffectGroup usb_group[] = {
     {-1, NULL, usb_settings, G_N_ELEMENTS(usb_settings)},
+};
+
+static EffectGroup misc_group[] = {
+    {-1, NULL, misc_settings, G_N_ELEMENTS(misc_settings)},
 };
 
 static EffectGroup gnx3k_preset_group[] = {
@@ -2205,9 +2213,9 @@ static Effect rp500_eq_effect[] = {
     {"Enable Equalizer", EQ_ON_OFF, -1, EQ_POSITION, rp500_eq_group, G_N_ELEMENTS(rp500_eq_group)},
 };
 
-static Effect pickup_usb_effect[] = {
+static Effect pickup_misc_effect[] = {
     {NULL, PICKUP_ON_OFF, PICKUP_TYPE, PICKUP_POSITION, pickup_group, G_N_ELEMENTS(pickup_group)},
-    {NULL, -1, -1, -1, usb_group, G_N_ELEMENTS(usb_group)},
+    {NULL, -1, -1, -1, misc_group, G_N_ELEMENTS(misc_group)},
 };
 
 static Effect pickup_effect[] = {
@@ -2228,11 +2236,11 @@ static EffectList rp250_effects[] = {
     {"Chorus/FX", rp250_chorusfx_effect, G_N_ELEMENTS(rp250_chorusfx_effect)},
     {"Delay", rp250_delay_effect, G_N_ELEMENTS(rp250_delay_effect)},
     {"Reverb", reverb_effect, G_N_ELEMENTS(reverb_effect)},
-    {"Pickup/USB", pickup_usb_effect, G_N_ELEMENTS(pickup_usb_effect)},
+    {"Pickup/Misc", pickup_misc_effect, G_N_ELEMENTS(pickup_misc_effect)},
 };
 
 static EffectList rp355_effects[] = {
-    {"Pickup/USB", pickup_usb_effect, G_N_ELEMENTS(pickup_usb_effect)},
+    {"Pickup/Misc", pickup_misc_effect, G_N_ELEMENTS(pickup_misc_effect)},
     {"Wah", wah_effect, G_N_ELEMENTS(wah_effect)},
     {"Compressor", rp355_comp_effect, G_N_ELEMENTS(rp355_comp_effect)},
     {"Distortion", rp355_dist_effect, G_N_ELEMENTS(rp355_dist_effect)},
