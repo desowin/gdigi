@@ -704,6 +704,7 @@ typedef struct {
 
 static SupportedFileTypes file_types[] = {
     {"RP250Preset", "*.rp250p"},
+    {"RP355Preset", "*.rp355p"},
     {"RP500Preset", "*.rp500p"},
 };
 
