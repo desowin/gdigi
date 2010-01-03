@@ -93,26 +93,31 @@ static gchar *ips_scale_labels[] = {
 static gchar *on_off_labels[] = {
     "Off",
     "On",
+    NULL,
 };
 
 static gchar *odd_even_labels[] = {
     "Odd",
     "Even",
+    NULL,
 };
 
 static gchar *chorus_vibrato_labels[] = {
     "Chorus",
     "Vibrato",
+    NULL,
 };
 
 static gchar *loose_tight_labels[] = {
     "Loose",
     "Tight",
+    NULL,
 };
 
 static gchar *pickup_type_labels[] = {
     "SC>HB",
     "HB>SC",
+    NULL,
 };
 
 static gchar *fast_medium_slow_labels[] = {
@@ -135,12 +140,14 @@ static gchar *comp_ratio_labels[] = {
     "10:1",
     "20:1",
     "Inf:1",
+    NULL,
 };
 
 static gchar *eq_bandwidth_labels[] = {
     "Wide",
     "Medium",
     "Narrow",
+    NULL,
 };
 
 static gchar *eq_low_freq_labels[] = {
@@ -182,6 +189,7 @@ static gchar *eq_low_freq_labels[] = {
     "450Hz",
     "475Hz",
     "500Hz",
+    NULL,
 };
 
 static gchar *eq_mid_freq_labels[] = {
@@ -231,6 +239,7 @@ static gchar *eq_mid_freq_labels[] = {
     "3.55kHz",
     "3.75kHz",
     "4kHz",
+    NULL,
 };
 
 static gchar *eq_high_freq_labels[] = {
@@ -259,232 +268,309 @@ static gchar *eq_high_freq_labels[] = {
     "7.1kHz",
     "7.5kHz",
     "8kHz",
+    NULL,
 };
 
 static gchar *amp_channel_labels[] = {
     "1",
     "2",
     "Warped",
+    NULL,
+};
+
+static gchar *rhold_labels[] = {
+    "RHold",
+    NULL,
 };
 
 static EffectValues values_1_2_warp = {
-    0.0, 2.0, amp_channel_labels,
+    .min = 0.0, .max = 2.0,
+    .type = VALUE_TYPE_LABEL,
+    .labels = amp_channel_labels,
 };
 
 static EffectValues values_0_to_99 = {
-    0.0, 99.0, NULL,
+    .min = 0.0, .max = 99.0, .type = VALUE_TYPE_PLAIN,
 };
 
 static EffectValues values_1_to_4 = {
-    0.0, 3.0, NULL,
+    .min = 0.0, .max = 3.0,
+    .type = VALUE_TYPE_OFFSET,
+    .offset = 1,
 };
 
 static EffectValues values_warp_0_to_98 = {
-    /** \todo make this display properly (display text is value + 1) */
-    0.0, 98.0, NULL,
+    .min = 0.0, .max = 98.0,
+    .type = VALUE_TYPE_OFFSET,
+    .offset = 1,
 };
 
 static EffectValues values_0_to_9 = {
-    0.0, 9.0, NULL,
+    .min = 0.0, .max = 9.0, .type = VALUE_TYPE_PLAIN,
 };
 
 static EffectValues values_0_to_49 = {
-    0.0, 49.0, NULL,
+    .min = 0.0, .max = 49.0, .type = VALUE_TYPE_PLAIN,
 };
 
 static EffectValues values_0_to_12 = {
-    0.0, 12.0, NULL,
+    .min = 0.0, .max = 12.0, .type = VALUE_TYPE_PLAIN,
 };
 
 static EffectValues values_0_to_15 = {
-    0.0, 15.0, NULL,
+    .min = 0.0, .max = 15.0, .type = VALUE_TYPE_PLAIN,
 };
 
 static EffectValues values_0_to_20 = {
-    0.0, 20.0, NULL,
+    .min = 0.0, .max = 20.0, .type = VALUE_TYPE_PLAIN,
 };
 
 static EffectValues values_m12_to_12_semitones = {
     /** \todo make this display properly (display range -12.0 to 12.0 semitones) */
-    0.0, 48.0, NULL,
+    .min = 0.0, .max = 48.0, .type = VALUE_TYPE_PLAIN,
+/*    .type = VALUE_TYPE_SUFFIX | VALUE_TYPE_OFFSET,
+    .suffix = "semitones", .offset = -12, */
 };
 
 static EffectValues values_m24_to_24_step2 = {
-    /** \todo make this display properly (display range -24 to 24) */
-    0.0, 24.0, NULL,
+    .min = 0.0, .max = 24.0,
+    .type = VALUE_TYPE_OFFSET | VALUE_TYPE_STEP,
+    .offset = -12, .step = 2.0,
 };
+
 static EffectValues values_m24_to_24 = {
-    /** \todo make this display properly (display range -24 to 24) */
-    0.0, 48.0, NULL,
+    .min = 0.0, .max = 48.0,
+    .type = VALUE_TYPE_OFFSET,
+    .offset = -24,
 };
 
 static EffectValues values_m12_to_24 = {
-    /** \todo make this display properly (display range -12 to 24) */
-    0.0, 36.0, NULL,
+    .min = 0.0, .max = 36.0,
+    .type = VALUE_TYPE_OFFSET,
+    .offset = -12,
 };
 
 static EffectValues values_comp_ratio = {
-    0.0, 12.0, comp_ratio_labels,
+    .min = 0.0, .max = 12.0,
+    .type = VALUE_TYPE_LABEL,
+    .labels = comp_ratio_labels,
 };
 
 static EffectValues values_fast_medium_slow = {
-    0.0, 2.0, fast_medium_slow_labels,
+    .min = 0.0, .max = 2.0,
+    .type = VALUE_TYPE_LABEL,
+    .labels = fast_medium_slow_labels,
 };
 
 static EffectValues values_eq_db = {
-    /** \todo make those display properly (display range -12dB to 12dB) */
-    0.0, 24.0, NULL,
+    .min = 0.0, .max = 24.0,
+    .type = VALUE_TYPE_SUFFIX | VALUE_TYPE_OFFSET,
+    .suffix = "dB", .offset = -12,
 };
 
 static EffectValues values_eq_bass_hz = {
-    /** \todo make those display properly (display range 50hz to 300hz) */
-    0.0, 250.0, NULL,
+    .min = 0.0, .max = 250.0,
+    .type = VALUE_TYPE_SUFFIX | VALUE_TYPE_OFFSET,
+    .suffix = "hz", .offset = 50,
 };
 
 static EffectValues values_eq_mid_hz = {
-    /** \todo make this display properly (display range 300 to 5000) */
-    0.0, 4700.0, NULL,
+    .min = 0.0, .max = 4700.0,
+    .type = VALUE_TYPE_OFFSET,
+    .offset = 300,
 };
 
 static EffectValues values_eq_treb_hz = {
-    /** \todo make this display properly (display range 500 to 8000) */
-    0.0, 7500.0, NULL,
+    .min = 0.0, .max = 7500.0,
+    .type = VALUE_TYPE_OFFSET,
+    .offset = 500,
 };
 
 static EffectValues values_eq_bandwidth = {
-    0.0, 2.0, eq_bandwidth_labels,
+    .min = 0.0, .max = 2.0,
+    .type = VALUE_TYPE_LABEL,
+    .labels = eq_bandwidth_labels,
 };
 
 static EffectValues values_eq_low_freq = {
-    0.0, 37.0, eq_low_freq_labels,
+    .min = 0.0, .max = 37.0,
+    .type = VALUE_TYPE_LABEL,
+    .labels = eq_low_freq_labels,
 };
 
 static EffectValues values_eq_mid_freq = {
-    0.0, 45.0, eq_mid_freq_labels,
+    .min = 0.0, .max = 45.0,
+    .type = VALUE_TYPE_LABEL,
+    .labels = eq_mid_freq_labels,
 };
 
 static EffectValues values_eq_high_freq = {
-    0.0, 24.0, eq_high_freq_labels,
+    .min = 0.0, .max = 24.0,
+    .type = VALUE_TYPE_LABEL,
+    .labels = eq_high_freq_labels,
 };
 
 static EffectValues values_200hz_to_1_5khz = {
     /** \todo make this display properly (display range 200 Hz to 1.5 kHz) */
-    0.0, 130.0, NULL,
+    .min = 0.0, .max = 130.0, .type = VALUE_TYPE_PLAIN,
 };
 
 static EffectValues values_waveform = {
-    0.0, 2.0, wave_labels,
+    .min = 0.0, .max = 2.0,
+    .type = VALUE_TYPE_LABEL,
+    .labels = wave_labels,
 };
 
 static EffectValues values_balance = {
     /** \todo make this display properly */
-    0.0, 198.0, NULL,
+    0.0, 198.0, .type = VALUE_TYPE_PLAIN,
 };
 
 static EffectValues values_synth_talk_release = {
     /** \todo make last value display properly */
-    0.0, 100.0, NULL,
+    0.0, 100.0, .type = VALUE_TYPE_PLAIN,
 };
 
 static EffectValues values_whammy_amount = {
-    0.0, 15.0, whammy_labels,
+    .min = 0.0, .max = 15.0,
+    .type = VALUE_TYPE_LABEL,
+    .labels = whammy_labels,
 };
 
 static EffectValues values_ips_shift = {
-    0.0, 13.0, ips_shift_labels,
+    .min = 0.0, .max = 13.0,
+    .type = VALUE_TYPE_LABEL,
+    .labels = ips_shift_labels,
 };
 
 static EffectValues values_ips_key = {
-    0.0, 11.0, ips_key_labels,
+    .min = 0.0, .max = 11.0,
+    .type = VALUE_TYPE_LABEL,
+    .labels = ips_key_labels,
 };
 
 static EffectValues values_ips_scale = {
-    0.0, 5.0, ips_scale_labels,
+    .min = 0.0, .max = 5.0,
+    .type = VALUE_TYPE_LABEL,
+    .labels = ips_scale_labels,
 };
 
 static EffectValues values_predelay_time = {
-    /** \todo make this display properly (1ms to 20ms) */
-    0.0, 19.0, NULL,
+    .min = 0.0, .max = 19.0,
+    .type = VALUE_TYPE_SUFFIX | VALUE_TYPE_OFFSET,
+    .suffix = "ms", .offset = 1,
+};
+
+static EffectValues values_delay_time_extra = {
+    /* display as 1.0 sec (99) to 5.0 sec (139) */
+    .min = 99.0, .max = 139.0,
+    .type = VALUE_TYPE_SUFFIX | VALUE_TYPE_OFFSET |
+            VALUE_TYPE_STEP | VALUE_TYPE_DECIMAL,
+    .suffix = "sec", .offset = -89,
+    .step = 0.1, .decimal = 1,
 };
 
 static EffectValues values_delay_time = {
-    /** \todo make this display properly (10 msec to 5 sec) */
-    0.0, 139.0, NULL,
+    /* 0 to 139, extended by values_delay_time_extra */
+    .min = 0.0, .max = 98.0,
+    .type = VALUE_TYPE_SUFFIX | VALUE_TYPE_OFFSET |
+            VALUE_TYPE_STEP | VALUE_TYPE_EXTRA,
+    .suffix = "msec", .offset = 1,
+    .step = 10.0, .extra = &values_delay_time_extra,
 };
 
 static EffectValues values_delay_time_0_760 = {
     /** \todo make this display properly */
-    0.0, 760.0, NULL,
+    0.0, 760.0, .type = VALUE_TYPE_PLAIN,
 };
 
 static EffectValues values_delay_time_0_2000 = {
     /** \todo make this display properly */
-    0.0, 2000.0, NULL,
+    0.0, 2000.0, .type = VALUE_TYPE_PLAIN,
 };
 
 static EffectValues values_delay_time_0_4650 = {
     /** \todo make this display properly */
-    0.0, 4650.0, NULL,
+    0.0, 4650.0, .type = VALUE_TYPE_PLAIN,
 };
 
 static EffectValues values_delay_time_0_4990 = {
     /** \todo make this display properly */
-    0.0, 4990.0, NULL,
+    0.0, 4990.0, .type = VALUE_TYPE_PLAIN,
 };
 
 static EffectValues values_delay_time_0_5000 = {
     /** \todo make this display properly */
-    0.0, 5000.0, NULL,
+    0.0, 5000.0, .type = VALUE_TYPE_PLAIN,
+};
+
+static EffectValues values_delay_repeats_extra = {
+    .min = 100.0, .max = 100.0,
+    .type = VALUE_TYPE_LABEL,
+    .labels = rhold_labels
 };
 
 static EffectValues values_delay_repeats = {
-    /** \todo make last value display properly */
-    0.0, 100.0, NULL,
+    /* 0 to 100, extended by values_delay_repeats_extra */
+    .min = 0.0, .max = 99.0,
+    .type = VALUE_TYPE_EXTRA,
+    .extra = &values_delay_repeats_extra,
 };
 
 static EffectValues values_delay_thresh = {
     /** \todo make last value display properly */
-    0.0, 100.0, NULL,
+    0.0, 100.0, .type = VALUE_TYPE_PLAIN,
 };
 
 static EffectValues values_delay_repeat_rate_0_286 = {
     /** \todo make this display properly */
-    0.0, 286.0, NULL,
+    0.0, 286.0, .type = VALUE_TYPE_PLAIN,
 };
 
 static EffectValues values_delay_spread_0_49 = {
     /** \todo make this display properly */
-    0.0, 49.0, NULL,
+    0.0, 49.0, .type = VALUE_TYPE_PLAIN,
 };
 
 static EffectValues values_on_off = {
-    0.0, 1.0, on_off_labels,
+    .min = 0.0, .max = 1.0,
+    .type = VALUE_TYPE_LABEL,
+    .labels = on_off_labels,
 };
 
 static EffectValues values_odd_even = {
-    0.0, 1.0, odd_even_labels,
+    .min = 0.0, .max = 1.0,
+    .type = VALUE_TYPE_LABEL,
+    .labels = odd_even_labels,
 };
 
 static EffectValues values_chorus_vibrato = {
-    0.0, 1.0, chorus_vibrato_labels,
+    .min = 0.0, .max = 1.0,
+    .type = VALUE_TYPE_LABEL,
+    .labels = chorus_vibrato_labels,
 };
 
 static EffectValues values_loose_tight = {
-    0.0, 1.0, loose_tight_labels,
+    .min = 0.0, .max = 1.0,
+    .type = VALUE_TYPE_LABEL,
+    .labels = loose_tight_labels,
 };
 
 static EffectValues values_pickup_type = {
-    0.0, 1.0, pickup_type_labels,
+    .min = 0.0, .max = 1.0,
+    .type = VALUE_TYPE_LABEL,
+    .labels = pickup_type_labels,
 };
 
 static EffectValues values_1_to_10_step_0p1 = {
-    /** \todo make this display properly (1.0, 1.1, ...., 10.0) */
-    0.0, 90.0, NULL,
+    .min = 0.0, .max = 90.0,
+    .type = VALUE_TYPE_OFFSET | VALUE_TYPE_STEP | VALUE_TYPE_DECIMAL,
+    .offset = 10, .step = 0.1, .decimal = 1,
 };
 
 static EffectValues values_rp_mix = {
     /** \todo make this display properly (USB 0, USB 1, USB 2 ... USB 49, USB RP, RP 49, RP 48 ...  RP 1, RP 0) */
-    0.0, 100.0, NULL,
+    .min = 0.0, .max = 100.0, .type = VALUE_TYPE_PLAIN,
 };
 
 static EffectSettings usb_settings[] = {
@@ -2676,6 +2762,28 @@ void modifier_group_free(ModifierGroup *modifier_group)
     g_slice_free1(modifier_group->group_amt * sizeof(EffectGroup),
                   modifier_group->group);
     g_slice_free(ModifierGroup, modifier_group);
+}
+
+/**
+ *  \param values EffectValues to examine
+ *  \param min return location for minimum value
+ *  \param max return location for maximum value
+ *  \param custom return location for custom flag
+ *
+ *  Retrieves information about provided EffectValues, custom is set to TRUE if values type isn't VALUE_TYPE_PLAIN.
+ **/
+void get_values_info(EffectValues *values,
+                     gdouble *min, gdouble *max, gboolean *custom)
+{
+    g_return_if_fail(values != NULL);
+
+    *min = values->min;
+    *custom = (values->type != VALUE_TYPE_PLAIN);
+
+    while ((values->type & VALUE_TYPE_EXTRA) && (values->extra != NULL))
+        values = values->extra;
+
+    *max = values->max;
 }
 
 /**

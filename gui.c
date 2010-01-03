@@ -15,6 +15,7 @@
  */
 
 #include <gtk/gtk.h>
+#include <string.h>
 #include "gdigi.h"
 #include "gui.h"
 #include "effects.h"
@@ -57,6 +58,169 @@ void show_error_message(GtkWidget *parent, gchar *message)
 }
 
 /**
+ *  \param value value to examine
+ *  \param values EffectValues to check value against
+ *
+ *  Examines whether value fits inside values range for given EffectValues.
+ *
+ *  \return TRUE is value fits inside range, otherwise FALSE.
+ **/
+static gboolean check_value_range(gint value, EffectValues *values)
+{
+    if (((gint) values->min <= value) && (value <= (gint) values->max))
+        return TRUE;
+    else
+        return FALSE;
+}
+
+/**
+ *  \param spin a GtkSpinButton
+ *  \param new_val return value for valid input
+ *  \param values signal user data, EffectValues for this parameter
+ *
+ *  Custom GtkSpinButton "input" handler for EffectValues with non plain type.
+ *
+ *  \return TRUE if new_val was set, otherwise FALSE.
+ **/
+static gboolean custom_value_input_cb(GtkSpinButton *spin, gdouble *new_val, EffectValues *values)
+{
+    gchar *text = g_strdup(gtk_entry_get_text(GTK_ENTRY(spin)));
+    gchar *err = NULL;
+    gdouble value;
+
+    for (;;) {
+        if (values->type & VALUE_TYPE_LABEL) {
+            /** search labels for value */
+            gint n;
+            for (n = 0; values->labels[n] != NULL; n++) {
+                if (g_strcmp0(values->labels[n], text) == 0) {
+                    /* Value found */
+                    *new_val = values->min + (gdouble)n;
+                    g_free(text);
+                    return TRUE;
+                }
+            }
+
+            /* Value not found */
+            if (values->type & VALUE_TYPE_EXTRA) {
+                values = values->extra;
+                continue;
+            } else {
+                g_free(text);
+                return FALSE;
+            }
+        }
+
+        if (values->type & VALUE_TYPE_SUFFIX) {
+            /* remove suffix from entry text */
+            gchar *tmp;
+
+            tmp = strstr(text, values->suffix);
+            if (tmp != NULL) {
+                gchar *temp = g_strndup(text, tmp - text);
+                g_free(text);
+                text = temp;
+            }
+        }
+
+        g_strstrip(text);
+
+        value = g_strtod(text, &err);
+        if (*err) {
+            if (values->type & VALUE_TYPE_EXTRA) {
+                values = values->extra;
+                continue;
+            } else {
+                g_free(text);
+                return FALSE;
+            }
+        }
+
+        if (values->type & VALUE_TYPE_STEP) {
+            value /= values->step;
+        }
+
+        if (values->type & VALUE_TYPE_OFFSET) {
+            value -= values->offset;
+        }
+
+        if (check_value_range((gint) value, values) == FALSE) {
+            if (values->type & VALUE_TYPE_EXTRA) {
+                values = values->extra;
+                continue;
+            } else {
+                g_free(text);
+                return FALSE;
+            }
+        }
+
+        *new_val = value;
+
+        g_free(text);
+
+        return TRUE;
+    }
+}
+
+/**
+ *  \param spin a GtkSpinButton
+ *  \param values signal user data, EffectValues for this parameter
+ *
+ *  Custom GtkSpinButton "output" handler for EffectValues with non plain type.
+ *
+ *  \return TRUE if text was set, otherwise FALSE.
+ **/
+static gboolean custom_value_output_cb(GtkSpinButton *spin, EffectValues *values)
+{
+    GtkAdjustment *adj;
+    gchar *text;
+    gdouble value;
+
+    adj = gtk_spin_button_get_adjustment(spin);
+    value = gtk_adjustment_get_value(adj);
+
+    while (check_value_range(value, values) == FALSE) {
+        if (values->type & VALUE_TYPE_EXTRA) {
+            values = values->extra;
+        } else {
+            g_message("custom_value_output_cb called with out of bounds value");
+            return FALSE;
+        }
+    }
+
+    if (values->type & VALUE_TYPE_LABEL) {
+        gtk_entry_set_text(GTK_ENTRY(spin), values->labels[(gint) value - (gint) values->min]);
+        return TRUE;
+    }
+
+    if (values->type & VALUE_TYPE_OFFSET) {
+        value += (gdouble) values->offset;
+    }
+
+    if (values->type & VALUE_TYPE_STEP) {
+        value *= values->step;
+    }
+
+    if (values->type & VALUE_TYPE_DECIMAL) {
+        text = g_strdup_printf("%.*f", values->decimal, value);
+    } else {
+        text = g_strdup_printf("%d", (gint) value);
+    }
+
+    if (values->type & VALUE_TYPE_SUFFIX) {
+        gchar *tmp;
+        tmp = g_strdup_printf("%s %s", text, values->suffix);
+        g_free(text);
+        text = tmp;
+    }
+
+    gtk_entry_set_text(GTK_ENTRY(spin), text);
+    g_free(text);
+
+    return TRUE;
+}
+
+/**
  *  \param adj the object which emitted the signal
  *  \param setting setting controlled by adj
  *
@@ -70,20 +234,6 @@ void value_changed_option_cb(GtkAdjustment *adj, EffectSettings *setting)
         gdouble val;
         g_object_get(G_OBJECT(adj), "value", &val, NULL);
         set_option(setting->id, setting->position, (gint)val);
-    }
-
-    if (setting->values != NULL && setting->values->labels != NULL) {
-        GtkWidget *label;
-        gint x;
-        gdouble val = -1.0;
-        g_object_get(G_OBJECT(adj), "value", &val, NULL);
-
-        x = (gint)val;
-
-        if ((x >= setting->values->min) && (x <= setting->values->max)) {
-            label = g_object_get_data(G_OBJECT(adj), "label");
-            gtk_label_set_text(GTK_LABEL(label), setting->values->labels[x]);
-        }
     }
 }
 
@@ -248,20 +398,24 @@ GtkWidget *create_table(EffectSettings *settings, gint amt, GHashTable *widget_t
     table = gtk_table_new(3, amt, FALSE);
 
     for (x = 0; x<amt; x++) {
+        gdouble min, max;
+        gboolean custom;
+
+        get_values_info(settings[x].values, &min, &max, &custom);
+
         label = gtk_label_new(settings[x].label);
-        adj = gtk_adjustment_new(0.0, settings[x].values->min, settings[x].values->max,
+        adj = gtk_adjustment_new(0.0, min, max,
                                  1.0,  /* step increment */
-                                 MAX((settings[x].values->max / 100), 5.0), /* page increment */
+                                 MAX((max / 100), 5.0), /* page increment */
                                  0.0);
         knob = gtk_knob_new(GTK_ADJUSTMENT(adj), knob_anim);
 
-        if (settings[x].values->labels == NULL) {
-            widget = gtk_spin_button_new(GTK_ADJUSTMENT(adj), 1.0, 0);
-            gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(widget), TRUE);
-            gtk_spin_button_set_update_policy(GTK_SPIN_BUTTON(widget), GTK_UPDATE_IF_VALID);
-        } else {
-            widget = gtk_label_new(settings[x].values->labels[0]);
-            g_object_set_data(G_OBJECT(adj), "label", widget);
+        widget = gtk_spin_button_new(GTK_ADJUSTMENT(adj), 1.0, 0);
+        gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(widget), FALSE);
+        gtk_spin_button_set_update_policy(GTK_SPIN_BUTTON(widget), GTK_UPDATE_IF_VALID);
+        if (custom == TRUE) {
+            g_signal_connect(G_OBJECT(widget), "input", G_CALLBACK(custom_value_input_cb), settings[x].values);
+            g_signal_connect(G_OBJECT(widget), "output", G_CALLBACK(custom_value_output_cb), settings[x].values);
         }
 
         widget_tree_add(adj, settings[x].id, settings[x].position, -1, -1);

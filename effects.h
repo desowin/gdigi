@@ -19,10 +19,30 @@
 
 #include <glib.h>
 
-typedef struct {
+enum {
+  VALUE_TYPE_PLAIN  = 0,      /**< value displayed directly */
+  VALUE_TYPE_SUFFIX = 1 << 0, /**< use suffix for displaying */
+  VALUE_TYPE_OFFSET = 1 << 1, /**< use value offset */
+  VALUE_TYPE_STEP   = 1 << 2, /**< use value step different than 1 */
+  VALUE_TYPE_LABEL  = 1 << 3, /**< use value labels (overrides any other option) */
+  VALUE_TYPE_EXTRA  = 1 << 4, /**< use extra values */
+  VALUE_TYPE_DECIMAL= 1 << 5, /**< display decimal places */
+} ValueType;
+
+typedef struct _EffectValues {
     gdouble min;    /**< Minumum value */
     gdouble max;    /**< Maximum value */
+    gint type;      /**< value type bitmask (ValueType) */
+
     GStrv labels;   /**< value labels */
+    gint offset;    /**< value offset */
+    gdouble step;   /**< value step */
+    gchar *suffix;  /**< value suffix */
+
+    struct _EffectValues *extra;
+                    /**< additional value range,
+                         use it when there're different range types */
+    gint decimal;   /**< amount of decimal places to display */
 } EffectValues;
 
 typedef struct {
@@ -85,6 +105,8 @@ typedef struct {
 
 ModifierGroup *modifier_linkable_list();
 void modifier_group_free(ModifierGroup *modifier_group);
+void get_values_info(EffectValues *values,
+                     gdouble *min, gdouble *max, gboolean *custom);
 gboolean get_device_info(unsigned char device_id, unsigned char family_id,
                          unsigned char product_id,
                          Device **device);
