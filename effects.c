@@ -479,9 +479,10 @@ static EffectValues values_delay_time = {
     .step = 10.0, .extra = &values_delay_time_extra,
 };
 
-static EffectValues values_delay_time_0_760 = {
-    /** \todo make this display properly */
-    0.0, 760.0, .type = VALUE_TYPE_PLAIN,
+static EffectValues values_delay_time_110_870 = {
+    .min = 0.0, .max = 760.0,
+    .type = VALUE_TYPE_SUFFIX | VALUE_TYPE_OFFSET,
+    .suffix = "ms", .offset = 110,
 };
 
 static EffectValues values_delay_time_0_2000 = {
@@ -522,9 +523,10 @@ static EffectValues values_delay_thresh = {
     0.0, 100.0, .type = VALUE_TYPE_PLAIN,
 };
 
-static EffectValues values_delay_repeat_rate_0_286 = {
-    /** \todo make this display properly */
-    0.0, 286.0, .type = VALUE_TYPE_PLAIN,
+static EffectValues values_delay_repeat_rate_24_310 = {
+    .min = 0.0, .max = 286.0,
+    .type = VALUE_TYPE_SUFFIX | VALUE_TYPE_OFFSET,
+    .suffix = "ms", .offset = 24,
 };
 
 static EffectValues values_delay_spread_0_49 = {
@@ -1301,13 +1303,13 @@ static EffectSettings rp500_delay_analog_settings[] = {
 };
 
 static EffectSettings rp500_delay_dm_settings[] = {
-    {"Repeat Rate", DELAY_REPEAT_RATE, DELAY_POSITION, &values_delay_repeat_rate_0_286},
+    {"Repeat Rate", DELAY_REPEAT_RATE, DELAY_POSITION, &values_delay_repeat_rate_24_310},
     {"Echo", DELAY_ECHO, DELAY_POSITION, &values_0_to_99},
     {"Intensity", DELAY_INTENSITY, DELAY_POSITION, &values_0_to_99},
 };
 
 static EffectSettings rp500_delay_echoplex_settings[] = {
-    {"Time", DELAY_TIME_0_760, DELAY_POSITION, &values_delay_time_0_760},
+    {"Time", DELAY_TIME_0_760, DELAY_POSITION, &values_delay_time_110_870},
     {"Volume", DELAY_VOLUME, DELAY_POSITION, &values_0_to_99},
     {"Repeats", DELAY_REPEATS_0_99, DELAY_POSITION, &values_0_to_99},
 };
