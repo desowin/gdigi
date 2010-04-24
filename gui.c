@@ -861,6 +861,7 @@ static SupportedFileTypes file_types[] = {
     {"RP255Preset", "*.rp255p"},
     {"RP355Preset", "*.rp355p"},
     {"RP500Preset", "*.rp500p"},
+    {"RP1000Preset", "*.rp1000p"},
 };
 
 static guint n_file_types = G_N_ELEMENTS(file_types);
