@@ -22,6 +22,7 @@
 typedef struct {
     gchar *name;
     GList *params;
+    GList *genetxs;
 } Preset;
 
 Preset *create_preset_from_xml_file(gchar *filename, GError **error);

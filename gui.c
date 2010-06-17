@@ -862,6 +862,8 @@ static SupportedFileTypes file_types[] = {
     {"RP355Preset", "*.rp355p"},
     {"RP500Preset", "*.rp500p"},
     {"RP1000Preset", "*.rp1000p"},
+    {"GNX4 Preset", "*.g4p"},
+    {"GNX3kPreset", "*.g3kp"},
 };
 
 static guint n_file_types = G_N_ELEMENTS(file_types);
@@ -919,41 +921,77 @@ static void action_open_preset_cb(GtkAction *action)
 
             gtk_widget_hide(dialog);
 
-            GString *msg = g_string_sized_new(500);
-            GList *iter = preset->params;
-            gint len = g_list_length(iter);
-
-            g_string_append_printf(msg, "%c%c",
-                                   ((len & 0xFF00) >> 8),
-                                   (len & 0xFF));
-
-            while (iter) {
-                SettingParam *param = iter->data;
-                iter = iter->next;
-
-                g_string_append_printf(msg, "%c%c%c",
-                                       ((param->id & 0xFF00) >> 8),
-                                       (param->id & 0xFF),
-                                       param->position);
-
-                append_value(msg, param->value);
-            };
-
             GString *start = g_string_new(NULL);
             g_string_append_printf(start,
                                    "%c%c%s%c%c%c",
                                    PRESETS_EDIT_BUFFER, 0,
                                    preset->name, 0 /* NULL terminated string */,
-                                   0 /* modified */, 2 /* messages to follow */);
+                                   0 /* modified */,
+                                   /* messages to follow */
+                                   preset->genetxs ? 10 : 2);
 
             send_message(RECEIVE_PRESET_START, start->str, start->len);
-            send_message(RECEIVE_PRESET_PARAMETERS, msg->str, msg->len);
+            send_preset_parameters(preset->params);
+            if (preset->genetxs != NULL) {
+                gint i;
+
+                /* GNX4 sends messages in following order:
+                 *   Section Bank  Index
+                 *      0x00 0x04 0x0000
+                 *      0x00 0x04 0x0001
+                 *      0x01 0x04 0x0000
+                 *      0x01 0x04 0x0001
+                 *      0x00 0x04 0x0002
+                 *      0x00 0x04 0x0003
+                 *      0x01 0x04 0x0002
+                 *      0x01 0x04 0x0003
+                 */
+
+                /* GNX3000 sends messages in following order:
+                 *   Section Bank  Index
+                 *      0x07 0x04 0x0000
+                 *      0x07 0x04 0x0001
+                 *      0x08 0x04 0x0000
+                 *      0x08 0x04 0x0001
+                 *      0x07 0x04 0x0002
+                 *      0x07 0x04 0x0003
+                 *      0x08 0x04 0x0002
+                 *      0x08 0x04 0x0003
+                 */
+                for (i = 0; i < 2; i++) {
+                    GList *iter = preset->genetxs;
+
+                    while (iter) {
+                        SectionID section;
+                        guint bank, index;
+
+                        SettingGenetx *genetx = (SettingGenetx *) iter->data;
+                        iter = iter->next;
+
+                        section = get_genetx_section_id(genetx->version,
+                                                        genetx->type);
+                        bank = 0x04;
+
+                        if (i == 0) {
+                            index = genetx->channel;
+                        } else {
+                            if (genetx->channel == GENETX_CHANNEL1) {
+                                index = GENETX_CHANNEL1_CUSTOM;
+                            } else if (genetx->channel == GENETX_CHANNEL2) {
+                                index = GENETX_CHANNEL2_CUSTOM;
+                            }
+                        }
+
+                        send_object(section, bank, index,
+                                    genetx->name, genetx->data);
+                    }
+                }
+            }
             send_message(RECEIVE_PRESET_END, NULL, 0);
 
             show_store_preset_window(window, preset->name);
 
             g_string_free(start, TRUE);
-            g_string_free(msg, TRUE);
             preset_free(preset);
             loaded = TRUE;
         }

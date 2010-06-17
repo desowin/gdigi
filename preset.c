@@ -29,12 +29,24 @@ enum {
   PARSER_TYPE_PARAM_POSITION,
   PARSER_TYPE_PARAM_VALUE,
   PARSER_TYPE_PARAM_NAME,
-  PARSER_TYPE_PARAM_TEXT
+  PARSER_TYPE_PARAM_TEXT,
+  PARSER_TYPE_GENETX_VERSION,
+  PARSER_TYPE_GENETX_TYPE,
+  PARSER_TYPE_GENETX_CHANNEL,
+  PARSER_TYPE_GENETX_NAME,
+  PARSER_TYPE_GENETX_DATA
+};
+
+enum {
+  SECTION_NOT_SET = -1,
+  SECTION_PARAMS,
+  SECTION_GENETX
 };
 
 typedef struct {
     int depth;
     int id;
+    int section;
     Preset *preset;
 } AppData;
 
@@ -46,11 +58,16 @@ static void XMLCALL start(void *data, const char *el, const char **attr) {
         if (ad->depth == 1) {
             ad->id = PARSER_TYPE_PRESET_NAME;
         } else if (ad->depth == 3) {
-            ad->id = PARSER_TYPE_PARAM_NAME;
+            if (ad->section == SECTION_PARAMS) {
+                ad->id = PARSER_TYPE_PARAM_NAME;
+            } else if (ad->section == SECTION_GENETX) {
+                ad->id = PARSER_TYPE_GENETX_NAME;
+            }
         }
     }
 
     if (g_strcmp0(el, "Params") == 0) {
+        ad->section = SECTION_PARAMS;
         if (ad->preset->params != NULL)
             g_message("Params aleady exists!");
     } else if (g_strcmp0(el, "Param") == 0) {
@@ -64,6 +81,21 @@ static void XMLCALL start(void *data, const char *el, const char **attr) {
         ad->id = PARSER_TYPE_PARAM_VALUE;
     } else if (g_strcmp0(el, "Text") == 0) {
         ad->id = PARSER_TYPE_PARAM_TEXT;
+    } else if (g_strcmp0(el, "Genetx") == 0) {
+        ad->section = SECTION_GENETX;
+        if (ad->preset->genetxs != NULL)
+            g_message("Genetx already exists!");
+    } else if (g_strcmp0(el, "GenetxModel") == 0) {
+        SettingGenetx *genetx = setting_genetx_new();
+        ad->preset->genetxs = g_list_prepend(ad->preset->genetxs, genetx);
+    } else if (g_strcmp0(el, "Version") == 0) {
+        ad->id = PARSER_TYPE_GENETX_VERSION;
+    } else if (g_strcmp0(el, "Type") == 0) {
+        ad->id = PARSER_TYPE_GENETX_TYPE;
+    } else if (g_strcmp0(el, "Channel") == 0) {
+        ad->id = PARSER_TYPE_GENETX_CHANNEL;
+    } else if (g_strcmp0(el, "Data") == 0) {
+        ad->id = PARSER_TYPE_GENETX_DATA;
     }
 
     ad->depth++;
@@ -88,28 +120,87 @@ static void XMLCALL text_cb(void *data, const char* text, int len)
         ad->preset->name = g_strndup(text, len);
     }
 
-    if (ad->preset->params == NULL)
-        return;
+    if (ad->section == SECTION_PARAMS) {
+        if (ad->preset->params == NULL)
+            return;
 
-    SettingParam *param = (SettingParam *) ad->preset->params->data;
-    if (param == NULL)
-        return;
+        SettingParam *param = (SettingParam *) ad->preset->params->data;
+        if (param == NULL)
+            return;
 
-    gchar *value = g_strndup(text, len);
+        gchar *value = g_strndup(text, len);
 
-    switch (ad->id) {
-        case PARSER_TYPE_PARAM_ID:
-            param->id = atoi(value);
-            break;
-        case PARSER_TYPE_PARAM_POSITION:
-            param->position = atoi(value);
-            break;
-        case PARSER_TYPE_PARAM_VALUE:
-            param->value = atoi(value);
-            break;
+        switch (ad->id) {
+            case PARSER_TYPE_PARAM_ID:
+                param->id = atoi(value);
+                break;
+            case PARSER_TYPE_PARAM_POSITION:
+                param->position = atoi(value);
+                break;
+            case PARSER_TYPE_PARAM_VALUE:
+                param->value = atoi(value);
+                break;
+        }
+
+        g_free(value);
+    } else if (ad->section == SECTION_GENETX) {
+        if (ad->preset->genetxs == NULL)
+            return;
+
+        SettingGenetx *genetx = (SettingGenetx *) ad->preset->genetxs->data;
+        if (genetx == NULL)
+            return;
+
+        gchar *value = g_strndup(text, len);
+
+        switch (ad->id) {
+            case PARSER_TYPE_GENETX_VERSION:
+                if (g_strcmp0(value, "Version1") == 0) {
+                    genetx->version = GENETX_VERSION_1;
+                } else if (g_strcmp0(value, "Version2") == 0) {
+                    genetx->version = GENETX_VERSION_2;
+                } else {
+                    g_message("Unknown GeNetX version: %s", value);
+                }
+                break;
+            case PARSER_TYPE_GENETX_TYPE:
+                if (g_strcmp0(value, "Amp") == 0) {
+                    genetx->type = GENETX_TYPE_AMP;
+                } else if (g_strcmp0(value, "Cabinet") == 0) {
+                    genetx->type = GENETX_TYPE_CABINET;
+                } else {
+                    g_message("Unknown GeNetX type: %s", value);
+                }
+                break;
+            case PARSER_TYPE_GENETX_CHANNEL:
+                if (g_strcmp0(value, "Channel1") == 0) {
+                    genetx->channel = GENETX_CHANNEL1;
+                } else if (g_strcmp0(value, "Channel2") == 0) {
+                    genetx->channel = GENETX_CHANNEL2;
+                } else {
+                    g_message("Unknown GeNetX channel: %s", value);
+                }
+                break;
+            case PARSER_TYPE_GENETX_NAME:
+                /* reassign pointer */
+                genetx->name = value;
+                value = NULL;
+                break;
+            case PARSER_TYPE_GENETX_DATA:
+                {
+                    guchar *data = NULL;
+                    gsize length = 0;
+
+                    data = g_base64_decode(value, &length);
+                    genetx->data = g_string_new_len((gchar *) data, length);
+
+                    g_free(data);
+                    break;
+                }
+        }
+
+        g_free(value);
     }
-
-    g_free(value);
 }
 
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
@@ -139,6 +230,7 @@ Preset *create_preset_from_xml_file(gchar *filename, GError **error)
     ad->preset = g_slice_new(Preset);
     ad->preset->name = NULL;
     ad->preset->params = NULL;
+    ad->preset->genetxs = NULL;
     ad->id = PARSER_TYPE_NOT_SET;
 
     XML_Parser p;
@@ -159,6 +251,7 @@ Preset *create_preset_from_xml_file(gchar *filename, GError **error)
 
     Preset *preset = ad->preset;
     preset->params = g_list_reverse(preset->params);
+    preset->genetxs = g_list_reverse(preset->genetxs);
 
     XML_ParserFree(p);
     g_slice_free(AppData, ad);
@@ -187,6 +280,7 @@ Preset *create_preset_from_data(GList *list)
     Preset *preset = g_slice_new(Preset);
     preset->name = NULL;
     preset->params = NULL;
+    preset->genetxs = NULL;
 
     iter = list;
     for (iter = list; iter; iter = g_list_next(iter)) {
@@ -249,8 +343,15 @@ void preset_free(Preset *preset)
         g_list_free(preset->params);
     }
 
-    if (preset->name != NULL)
-        g_free(preset->name);
+    if (preset->genetxs != NULL) {
+        GList *iter;
+        for (iter = preset->genetxs; iter; iter = iter->next) {
+            setting_genetx_free((SettingGenetx*)iter->data);
+        }
+        g_list_free(preset->genetxs);
+    }
+
+    g_free(preset->name);
 
     g_slice_free(Preset, preset);
 }

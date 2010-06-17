@@ -936,11 +936,52 @@ typedef enum {
     NACK = 0x7F
 } MessageID;
 
+typedef enum {
+    SECTION_GENETX_AMP = 0,
+    SECTION_GENETX_CABINET = 1,
+    SECTION_DRUM_PATTERN = 2,
+    SECTION_DRUM_KIT = 3,
+    SECTION_DRUM_SAMPLES = 4,
+    SECTION_SONG = 5,
+    SECTION_FOOTSWITCH = 6,
+    SECTION_GENETX2_AMP = 7,
+    SECTION_GENETX2_CABINET = 8,
+    SECTION_DEVICE_GUID = 9,
+    SECTION_DEVICE_NAME = 10,
+} SectionID;
+
 typedef struct {
     int id;
     int position;
     int value;
 } SettingParam;
+
+enum {
+    GENETX_VERSION_1,
+    GENETX_VERSION_2
+};
+
+enum {
+    GENETX_TYPE_NOT_SET = -1,
+    GENETX_TYPE_AMP,
+    GENETX_TYPE_CABINET
+};
+
+enum {
+    GENETX_CHANNEL1 = 0,
+    GENETX_CHANNEL2 = 1,
+    GENETX_CHANNEL1_CUSTOM = 2,
+    GENETX_CHANNEL2_CUSTOM = 3,
+    GENETX_CHANNEL_CURRENT = 4
+} ChannelBankIndex;
+
+typedef struct {
+    int version;
+    int type;
+    int channel;
+    gchar *name;
+    GString *data;
+} SettingGenetx;
 
 void send_message(gint procedure, gchar *data, gint len);
 MessageID get_message_id(GString *msg);
@@ -948,8 +989,14 @@ void append_value(GString *msg, guint value);
 GString *get_message_by_id(MessageID id);
 SettingParam *setting_param_new();
 SettingParam *setting_param_new_from_data(gchar *str, gint *len);
+SettingGenetx *setting_genetx_new();
+void setting_genetx_free(SettingGenetx *genetx);
 void setting_param_free(SettingParam *param);
+SectionID get_genetx_section_id(gint version, gint type);
 void set_option(guint id, guint position, guint value);
+void send_object(SectionID section, guint bank, guint index,
+                 gchar *name, GString *data);
+void send_preset_parameters(GList *params);
 void switch_preset(guint bank, guint x);
 void store_preset_name(int x, const gchar *name);
 void set_preset_level(int level);

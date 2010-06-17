@@ -565,6 +565,68 @@ void setting_param_free(SettingParam *param)
 }
 
 /**
+ *  Allocates memory for SettingGenetx.
+ *
+ *  \return SettingGenetx which must be freed using setting_genetx_free.
+ **/
+SettingGenetx *setting_genetx_new()
+{
+    SettingGenetx *genetx = g_slice_new(SettingGenetx);
+    /* Older patches don't specify GeNetX version */
+    genetx->version = GENETX_VERSION_1;
+    genetx->type = GENETX_TYPE_NOT_SET;
+    genetx->channel = -1;
+    genetx->name = NULL;
+    genetx->data = NULL;
+
+    return genetx;
+}
+
+/**
+ *  \param genetx SettingGenetx to be freed
+ *
+ *  Frees all memory used by SettingGenetx.
+ **/
+void setting_genetx_free(SettingGenetx *genetx)
+{
+    g_free(genetx->name);
+    if (genetx->data != NULL) {
+        g_string_free(genetx->data, TRUE);
+    }
+    g_slice_free(SettingGenetx, genetx);
+}
+
+/**
+ *  \param version GeNetX version
+ *  \param type GeNetX type
+ *
+ *  Retrieves SectionID for specified GeNetX version and type.
+ *
+ *  \return SectionID specified by version and type, or -1 on error.
+ **/
+SectionID get_genetx_section_id(gint version, gint type)
+{
+    if (version == GENETX_VERSION_1) {
+        if (type == GENETX_TYPE_AMP) {
+            return SECTION_GENETX_AMP;
+        } else if (type == GENETX_TYPE_CABINET) {
+            return SECTION_GENETX_CABINET;
+        }
+    } else if (version == GENETX_VERSION_2) {
+        if (type == GENETX_TYPE_AMP) {
+            return SECTION_GENETX2_AMP;
+        } else if (type == GENETX_TYPE_CABINET) {
+            return SECTION_GENETX2_CABINET;
+        }
+    }
+
+    g_message("This version of gdigi don't know what to do with this "
+              "GeNetX version (%d) and type (%d)", version, type);
+
+    return -1;
+}
+
+/**
  *  \param id Parameter ID
  *  \param position Parameter position
  *  \param value Parameter value
@@ -579,6 +641,68 @@ void set_option(guint id, guint position, guint value)
                            position);
     append_value(msg, value);
     send_message(RECEIVE_PARAMETER_VALUE, msg->str, msg->len);
+    g_string_free(msg, TRUE);
+}
+
+/**
+ *  \param section data section ID
+ *  \param bank section-specific bank number
+ *  \param index index of the desired object within the bank
+ *  \param name object name
+ *  \param data GString containing object data
+ *
+ *  Forms RECEIVE_OBJECT SysEx message then sends it to device.
+ **/
+void send_object(SectionID section, guint bank, guint index,
+                 gchar *name, GString *data)
+{
+    GString *msg = g_string_new(NULL);
+
+    gint len = data->len;
+
+    g_string_append_printf(msg,
+                           "%c%c%c%c%s%c%c%c",
+                           section, bank,
+                           ((index & 0xFF00) >> 8), (index & 0xFF),
+                           name, 0 /* NULL terminated string */,
+                           ((len & 0xFF00) >> 8), (len & 0xFF));
+
+    g_string_append_len(msg, data->str, data->len);
+
+    send_message(RECEIVE_OBJECT, msg->str, msg->len);
+
+    g_string_free(msg, TRUE);
+}
+
+/**
+ *  \param params GList containing SettingParam
+ *
+ *  Forms RECEIVE_PRESET_PARAMETERS SysEx message then sends it to device.
+ **/
+void send_preset_parameters(GList *params)
+{
+    GString *msg = g_string_sized_new(500);
+    GList *iter = params;
+    gint len = g_list_length(iter);
+
+    g_string_append_printf(msg, "%c%c",
+                           ((len & 0xFF00) >> 8),
+                           (len & 0xFF));
+
+    while (iter) {
+        SettingParam *param = (SettingParam *) iter->data;
+        iter = iter->next;
+
+        g_string_append_printf(msg, "%c%c%c",
+                               ((param->id & 0xFF00) >> 8),
+                               (param->id & 0xFF),
+                               param->position);
+
+        append_value(msg, param->value);
+    };
+
+    send_message(RECEIVE_PRESET_PARAMETERS, msg->str, msg->len);
+
     g_string_free(msg, TRUE);
 }
 
