@@ -2532,7 +2532,7 @@ static Effect rp500_chorusfx_effect[] = {
 };
 
 static Effect rp1000_chorusfx_effect[] = {
-    {NULL, CHORUSFX_ON_OFF, CHORUSFX_TYPE, CHORUSFX_POSITION, rp500_chorusfx_group, G_N_ELEMENTS(rp500_chorusfx_group)},
+    {NULL, CHORUSFX_ON_OFF, CHORUSFX_TYPE, CHORUSFX_POSITION, rp1000_chorusfx_group, G_N_ELEMENTS(rp1000_chorusfx_group)},
     {"Position",-1, CHORUSFX_PRE_POST,CHORUSFX_POSITION, pre_post_group,G_N_ELEMENTS(pre_post_group)},
 };
 
@@ -2596,8 +2596,8 @@ static Effect rp500_amp_effect[] = {
 };
 
 static Effect rp1000_amp_effect[] = {
-    {"Amp Loop", AMP_LOOP_ON_OFF, -1, AMP_LOOP_POSITION, -1, -1},
-    {"Amp/Cab Bypass", AMP_BYPASS_ON_OFF, -1, AMP_BYPASS_POSITION, -1, -1},
+    {"Amp Loop", AMP_LOOP_ON_OFF, -1, AMP_LOOP_POSITION, NULL, -1},
+    {"Amp/Cab Bypass", AMP_BYPASS_ON_OFF, -1, AMP_BYPASS_POSITION, NULL, -1},
     {NULL, -1, AMP_TYPE, AMP_POSITION, rp1000_amp_group, G_N_ELEMENTS(rp1000_amp_group)},
     {NULL, -1, AMP_CAB_TYPE, AMP_CAB_POSITION, rp1000_amp_cab_group, G_N_ELEMENTS(rp1000_amp_cab_group)},
 };
