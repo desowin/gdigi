@@ -10,35 +10,49 @@ There seems to be three possible ways to figure that out.
    (all numbers here are hex)
    04 F0 00 00 04 10 00 5E 04 02 41 00 04 30 09 00 07 00 34 F7
 
-   To get SysEx command out of it, remove every 4th byte, so we have:
+   MIDI data is transferred over USB using 32-bit USB-MIDI Event Packets.
+   Byte 0 is Cable Number (high nibble) and Code Index Number (low nibble).
+   Bytes 1, 2 and 3 are data.
+   Every bulk transfer on USB MIDI endpoint contains atleast one such packet
+   (those are sent one after each other).
+   In case of Digitech devices, the Cable Number seems to be 0 (correct me,
+   if I'm wrong).
+   There are three different Code Index Numbers that are being used in this
+   particular case:
+   0x4 - SysEx starts or continues (Byte 1, 2 and 3 from this packet are
+         part of our MIDI message)
+   0x5 - SysEx ends with following single byte (we just need to take Byte 1
+         from this packet)
+   0x6 - SysEx ends with following two bytes (we just need to take Byte 1 and 2
+         from this packet)
+   0x7 - SysEx ends with following three bytes (we need to take Byte 1, 2 and 3
+         from this packet)
+
+   Unused bytes in USB-MIDI packets are supposed to be 0.
+
+   To get SysEx command out of it, apply above rules, so we have:
       F0 00 00    10 00 5E    02 41 00    30 09 00    00 34 F7
 
    SysEx message format seems to be formed like this:
-   magic bytes - F0 00 00 10 00 5E 02 41
-   status byte - in this example 00
+   SysEx start byte - F0
+   Manufacturer ID - 00 00 10
+   Device ID - 00
+   Family ID - 5E (RP)
+   Product ID - 02 (RP250)
+   Procedure - 41 (see MessageID in gdigi.h) 
+
+   As MIDI messages must not contain bytes with MSB bit set, Digitech
+   devices use packing system.
+   First byte contains MSB bits from following 7 bytes (this scheme
+   continues as many times as needed) (see pack_data() and unpack_message() in
+   gdigi.c for details).
+
+   Assuming message has been unpacked, the meaning of next bytes:
    ID - in this example 30 09
    Position - in this example 00
    Value - in this example 00 (can be more bytes long, see below)
-   Checksum - to calculate it, XOR all bytes, and then XOR it with 07
+   Checksum - to calculate it, XOR all bytes (of packed message)
    Every message ends with F7
-
-   Status byte bits explained:
-      7th - ???
-      6th - if active add 80 to ID
-      5th - ???
-      4th - is active when value will start with length
-            In such case value can be something like:
-              01 12 or 02 12 34 or 03 12 34 56
-            and proper values are:
-              01 - 12
-              02 - 1234
-              03 - 123456
-      3rd - when 4th bit is also active, and first value byte is 01
-            then add 80 to value
-      2nd - when 4th bit is also active, and first value byte is 02
-            then add 80 to value
-      1st - when 4th bit is also active, and first value byte is 03
-            then add 80 to value
 
    So for above example:
    ID = 3009 (hex) = 12297 (decimal)
