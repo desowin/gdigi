@@ -29,7 +29,7 @@ static unsigned char product_id = 0x7F;
 
 static snd_rawmidi_t *output = NULL;
 static snd_rawmidi_t *input = NULL;
-static char *device_port = "hw:1,0,0";
+static char *device_port = NULL;
 
 static GQueue *message_queue = NULL;
 static GMutex *message_queue_mutex = NULL;
@@ -1110,6 +1110,35 @@ static GOptionEntry options[] = {
 
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
+/**
+ *  \param[out] devices GList containing numbers (packed into pointers)
+ *              of connected DigiTech devices
+ *
+ *  Checks available soundcards for DigiTech devices.
+ *
+ *  \return the number of connected DigiTech devices.
+ **/
+static gint get_digitech_devices(GList **devices)
+{
+    gint card_num = -1;
+    gint number = 0;
+    snd_card_next(&card_num);
+
+    while (card_num > -1) {
+        char* name;
+        snd_card_get_longname(card_num, &name);
+        gint count = strspn(name,"DigiTech");
+        if (count > 0)
+        {
+            number++;
+            *devices = g_list_append(*devices, GINT_TO_POINTER(card_num));
+        }
+        snd_card_next(&card_num);
+    }
+
+    return number;
+}
+
 int main(int argc, char *argv[]) {
     GError *error = NULL;
     GOptionContext *context;
@@ -1128,6 +1157,21 @@ int main(int argc, char *argv[]) {
         g_error_free(error);
         g_option_context_free(context);
         exit(EXIT_FAILURE);
+    }
+
+    if (device_port == NULL) {
+        /* port not given explicitly in commandline - search for devices */
+        GList *devices = NULL;
+        if (get_digitech_devices(&devices) <= 0) {
+            g_message("Couldn't find DigiTech devices!");
+            exit(EXIT_FAILURE);
+        }
+        device_port = g_strdup_printf("hw:%d,0,0",
+                                      GPOINTER_TO_INT(devices->data));
+        g_list_free(devices);
+        g_message("Found device %s", device_port);
+    } else {
+        g_message("Using device %s", device_port);
     }
 
     g_option_context_free(context);

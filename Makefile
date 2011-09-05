@@ -32,6 +32,7 @@ distclean : clean
 
 install: gdigi
 	install gdigi $(DESTDIR)/usr/bin
+	install gdigi.desktop $(DESTDIR)/usr/share/applications/
 
 NODEP_TARGETS := clean distclean
 depinc := 1

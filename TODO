@@ -2,5 +2,5 @@
 -handling presets (saving, exporting to xml patches)
 -buildsystem (install knob.png to share dir, don't use inline knob pixbuf)
 -various fixes to MIDI IN messages handling
--guess device port when user doesn't explicitly provide it (don't use hardcoded "hw:1,0,0")
+-ask user which device to use if more than one DigiTech device is found
 -optimizations
