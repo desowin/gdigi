@@ -122,13 +122,11 @@ GString *pack_data(gchar *data, gint len)
     gint i;
     gint new_len;
     unsigned char status;
-    gint offset;
     gint status_byte;
 
     new_len = len + (len/7);
     packed = g_string_sized_new(new_len);
     status = 0;
-    offset = -1;
     status_byte = 0;
 
     for (i=0; i<len; i++) {

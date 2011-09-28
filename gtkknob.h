@@ -3,7 +3,7 @@
  * Most of this code comes from gAlan 0.2.0, copyright (C) 1999
  * Tony Garnock-Jones, with modifications by Sean Bolton,
  * copyright (C) 2004, and minor modifications by William Weston,
- * copyright (C) 2007, Tomasz Moń, copyright (C) 2009
+ * copyright (C) 2007, Tomasz Moń, copyright (C) 2009-2011
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,9 +36,16 @@ typedef struct _GtkKnob		GtkKnob;
 typedef struct _GtkKnobClass	GtkKnobClass;
 typedef struct _GtkKnobAnim	GtkKnobAnim;
 
+typedef enum
+{
+    GTK_KNOB_UPDATE_CONTINUOUS,
+    GTK_KNOB_UPDATE_DISCONTINUOUS,
+    GTK_KNOB_UPDATE_DELAYED
+} GtkKnobUpdateType;
+
 	/* better to make this an object and let widgets ref/deref it perhaps */
     struct _GtkKnobAnim {
-	GdkPixbuf *pixbuf;
+	cairo_surface_t *image;
 	gint width;  /* derived from image width */
 	gint height;  /* derived from image height. */
 	gint frame_width;  /* derived from pixbuf (width / height) or provided override for rectangular frames */
@@ -47,6 +54,7 @@ typedef struct _GtkKnobAnim	GtkKnobAnim;
     struct _GtkKnob {
 	GtkWidget widget;
 
+        GdkWindow *event_window;
 	/* update policy (GTK_UPDATE_[CONTINUOUS/DELAYED/DISCONTINUOUS]) */
 	guint policy : 2;
 
@@ -61,14 +69,10 @@ typedef struct _GtkKnobAnim	GtkKnobAnim;
 	GtkKnobAnim *anim;
 	gint width, height;
 	
-	GdkBitmap *mask;
-	GdkGC *mask_gc;
-	GdkGC *red_gc;
-
 	/* Old values from adjustment stored so we know when something changes */
-	gfloat old_value;
-	gfloat old_lower;
-	gfloat old_upper;
+	gdouble old_value;
+	gdouble old_lower;
+	gdouble old_upper;
 
 	/* The adjustment object that stores the data for this knob */
 	GtkAdjustment *adjustment;
@@ -82,16 +86,11 @@ typedef struct _GtkKnobAnim	GtkKnobAnim;
     extern GtkWidget *gtk_knob_new(GtkAdjustment *adjustment, GtkKnobAnim *anim);
     extern GType gtk_knob_get_type(void);
     extern GtkAdjustment *gtk_knob_get_adjustment(GtkKnob *knob);
-    extern void gtk_knob_set_update_policy(GtkKnob *knob, GtkUpdateType  policy);
+    extern void gtk_knob_set_update_policy(GtkKnob *knob, GtkKnobUpdateType  policy);
     extern void gtk_knob_set_adjustment(GtkKnob *knob, GtkAdjustment *adjustment);
 
-    GtkKnobAnim *gtk_knob_animation_new_from_inline(const guint8 *pixbuf);
-    GtkKnobAnim *gtk_knob_animation_new_from_file_full(gchar *filename,
-						       gint frame_width,
-						       gint width,
-						       gint height);
+    GtkKnobAnim *gtk_knob_animation_new_from_inline();
 
-    GtkKnobAnim *gtk_knob_animation_new_from_file(gchar *filename);
     void gtk_knob_set_animation (GtkKnob *knob, GtkKnobAnim *anim);
     void gtk_knob_animation_free(GtkKnobAnim *anim);
 

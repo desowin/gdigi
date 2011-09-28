@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2009 Tomasz Moń <desowin@gmail.com>
+ *  Copyright (c) 2009-2011 Tomasz Moń <desowin@gmail.com>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -15,16 +15,16 @@
  */
 
 #include <gtk/gtk.h>
+#include <glib-object.h>
 #include <string.h>
 #include "gdigi.h"
 #include "gui.h"
 #include "effects.h"
 #include "preset.h"
 #include "gtkknob.h"
-#include "knob.h"
 
 typedef struct {
-    GtkObject *widget;
+    GObject *widget;
 
     /* used for combo boxes, if widget isn't combo box, then both value and x are -1 */
     gint value;           /**< effect type value */
@@ -254,7 +254,7 @@ void toggled_cb(GtkToggleButton *button, Effect *effect)
 }
 
 /**
- *  \param widget GtkObject to add to widget tree
+ *  \param widget GObject to add to widget tree
  *  \param id object controlled ID
  *  \param position object controlled position
  *  \param value effect value type (if widget is GtkComboBox, otherwise -1)
@@ -262,7 +262,7 @@ void toggled_cb(GtkToggleButton *button, Effect *effect)
  *
  *  Adds widget to widget tree.
  **/
-static WidgetTreeElem *widget_tree_add(GtkObject *widget, gint id, gint position, gint value, gint x)
+static WidgetTreeElem *widget_tree_add(GObject *widget, gint id, gint position, gint value, gint x)
 {
     GList *list;
     WidgetTreeElem *el;
@@ -386,7 +386,7 @@ gboolean apply_current_preset_to_gui(gpointer data)
 GtkWidget *create_table(EffectSettings *settings, gint amt, GHashTable *widget_table)
 {
     GtkWidget *table, *label, *widget, *knob;
-    GtkObject *adj;
+    GtkAdjustment *adj;
     int x;
 
     if (widget_table != NULL) {
@@ -418,7 +418,8 @@ GtkWidget *create_table(EffectSettings *settings, gint amt, GHashTable *widget_t
             g_signal_connect(G_OBJECT(widget), "output", G_CALLBACK(custom_value_output_cb), settings[x].values);
         }
 
-        widget_tree_add(adj, settings[x].id, settings[x].position, -1, -1);
+        widget_tree_add(G_OBJECT(adj), settings[x].id,
+                        settings[x].position, -1, -1);
         gtk_table_attach(GTK_TABLE(table), label, 0, 1, x, x+1, GTK_SHRINK, GTK_SHRINK, 2, 2);
         gtk_table_attach(GTK_TABLE(table), knob, 1, 2, x, x+1, GTK_SHRINK, GTK_SHRINK, 2, 2);
         gtk_table_attach(GTK_TABLE(table), widget, 2, 3, x, x+1, GTK_SHRINK, GTK_SHRINK, 2, 2);
@@ -449,7 +450,7 @@ GtkWidget *create_on_off_button(Effect *effect)
         button = gtk_check_button_new_with_label(effect->label);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), FALSE);
     g_signal_connect(G_OBJECT(button), "toggled", G_CALLBACK(toggled_cb), effect);
-    widget_tree_add(GTK_OBJECT(button), effect->id, effect->position, -1, -1);
+    widget_tree_add(G_OBJECT(button), effect->id, effect->position, -1, -1);
     return button;
 }
 
@@ -548,12 +549,13 @@ GtkWidget *create_widget_container(EffectGroup *group, gint amt, gint id, gint p
     for (x = 0; x<amt; x++) {
         if (group[x].label) {
             if (combo_box == NULL) {
-                combo_box = gtk_combo_box_new_text();
+                combo_box = gtk_combo_box_text_new();
                 gtk_container_add(GTK_CONTAINER(vbox), combo_box);
                 g_signal_connect(G_OBJECT(combo_box), "changed", G_CALLBACK(combo_box_changed_cb), group);
                 g_object_set_data(G_OBJECT(combo_box), "vbox", vbox);
             }
-            gtk_combo_box_append_text(GTK_COMBO_BOX(combo_box), group[x].label);
+            gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(combo_box),
+                                      NULL, group[x].label);
             cmbox_no++;
 
             if ((group[x].settings != NULL) && (group[x].settings_amt > 0)) {
@@ -568,7 +570,7 @@ GtkWidget *create_widget_container(EffectGroup *group, gint amt, gint id, gint p
             settings->position = position;
             settings->child = widget;
 
-            widget_tree_add(GTK_OBJECT(combo_box), id, position, group[x].type, x);
+            widget_tree_add(G_OBJECT(combo_box), id, position, group[x].type, x);
 
             name = g_strdup_printf("SettingsGroup%d", cmbox_no);
             g_object_set_data_full(G_OBJECT(combo_box), name, settings, ((GDestroyNotify)effect_settings_group_free));
@@ -783,11 +785,11 @@ static void show_store_preset_window(GtkWidget *window, gchar *default_name)
     table = gtk_table_new(2, 2, FALSE);
     gtk_container_add(GTK_CONTAINER(vbox), table);
 
-    cmbox = gtk_combo_box_new_text();
+    cmbox = gtk_combo_box_text_new();
     names = query_preset_names(PRESETS_USER);
     for (x=0; x<g_strv_length(names); x++) {
         gchar *title = g_strdup_printf("%d - %s", x+1, names[x]);
-        gtk_combo_box_append_text(GTK_COMBO_BOX(cmbox), title);
+        gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(cmbox), NULL, title);
         g_free(title);
     }
     g_strfreev(names);
@@ -1166,7 +1168,7 @@ void gui_create(Device *device)
     notebook = gtk_notebook_new();
     gtk_box_pack_start(GTK_BOX(hbox), notebook, TRUE, TRUE, 2);
 
-    knob_anim = gtk_knob_animation_new_from_inline(knob_pixbuf);
+    knob_anim = gtk_knob_animation_new_from_inline();
 
     widget_tree = g_tree_new_full(widget_tree_key_compare_func,
                                   NULL, /* key compare data */
@@ -1242,9 +1244,10 @@ gboolean unsupported_device_dialog(Device **device)
                           "Please take a look at gdigi's HACKING file.");
     gtk_container_add(GTK_CONTAINER(vbox), label);
 
-    combo_box = gtk_combo_box_new_text();
+    combo_box = gtk_combo_box_text_new();
     for (x=0; x<n_supported_devices; x++) {
-        gtk_combo_box_append_text(GTK_COMBO_BOX(combo_box), supported_devices[x]->name);
+        gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(combo_box),
+                                  NULL, supported_devices[x]->name);
     }
 
     gtk_container_add(GTK_CONTAINER(vbox), combo_box);
