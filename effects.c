@@ -1496,6 +1496,18 @@ static EffectGroup rp500_comp_group[] = {
     {COMP_TYPE_DYNA, "Dyna comp", comp_dyna_settings, G_N_ELEMENTS(comp_dyna_settings)},
 };
 
+static EffectGroup rp150_dist_group[] = {
+    {DIST_TYPE_SCREAMER, "Screamer", dist_screamer_settings, G_N_ELEMENTS(dist_screamer_settings)},
+    {DIST_TYPE_DOD250, "DOD250", dist_dod250_settings, G_N_ELEMENTS(dist_dod250_settings)},
+    {DIST_TYPE_RODENT, "Rodent", dist_rodent_settings, G_N_ELEMENTS(dist_rodent_settings)},
+    {DIST_TYPE_DS, "DS", dist_ds_settings, G_N_ELEMENTS(dist_ds_settings)},
+    {DIST_TYPE_GRUNGE, "Grunge", dist_grunge_settings, G_N_ELEMENTS(dist_grunge_settings)},
+    {DIST_TYPE_ZONE, "Zone", dist_zone_settings, G_N_ELEMENTS(dist_zone_settings)},
+    {DIST_TYPE_GONK, "Gonk", dist_gonk_settings, G_N_ELEMENTS(dist_gonk_settings)},
+    {DIST_TYPE_FUZZY, "Fuzzy", dist_fuzzy_settings, G_N_ELEMENTS(dist_fuzzy_settings)},
+    {DIST_TYPE_MP, "Big MP", dist_mp_settings, G_N_ELEMENTS(dist_mp_settings)},
+};
+
 static EffectGroup rp155_dist_group[] = {
     {DIST_TYPE_SCREAMER, "Screamer", dist_screamer_settings, G_N_ELEMENTS(dist_screamer_settings)},
     {DIST_TYPE_808, "808", dist_808_settings, G_N_ELEMENTS(dist_808_settings)},
@@ -1917,6 +1929,28 @@ static EffectGroup reverb_group[] = {
     {REVERB_TYPE_EMT240_PLATE, "EMT240 Plate", reverb_lex_settings, G_N_ELEMENTS(reverb_lex_settings)},
 };
 
+static EffectGroup rp150_amp_group[] = {
+    {AMP_TYPE_TWEED_CHAMP, "Tweed Champ", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_TWEED_DELUXE, "Tweed Deluxe", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_TWEED_BASSMAN, "Tweed Bassman", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_BLACKFACE_TWIN, "Blackface Twin", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_SUPER_LEAD_PLEXI, "Super Lead Plexi", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_MASTER_VOLUME, "Master Volume", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_JCM800, "JCM800", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_AC30TB, "AC30TB", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_HIWATT_100, "Hiwatt 100", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_BOOGIE_MARK_II, "Boogie Mark II", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_DUAL_RECTIFIER, "Dual Rectifier", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_MATCHLESS_HC30, "Matchless HC30", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_SOLO, "Solo", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_METAL, "Metal", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_BRIGHT, "Bright", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_CLEAN, "Clean", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
+    {AMP_TYPE_ACOUSTIC, "Acoustic", rp250_amp_settings2, G_N_ELEMENTS(rp250_amp_settings2)},
+    {AMP_TYPE_DIRECT, "Direct", rp250_amp_settings2, G_N_ELEMENTS(rp250_amp_settings2)},
+};
+
+
 static EffectGroup rp155_amp_group[] = {
     {AMP_TYPE_TWEED_CHAMP, "Tweed Champ", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
     {AMP_TYPE_TWEED_DELUXE, "Tweed Deluxe", rp250_amp_settings, G_N_ELEMENTS(rp250_amp_settings)},
@@ -2264,7 +2298,7 @@ static EffectGroup rp500_eq_group[] = {
     {-1, NULL, rp500_eq_settings, G_N_ELEMENTS(rp500_eq_settings)},
 };
 
-static EffectGroup rp155_amp_cab_group[] = {
+static EffectGroup rp150_amp_cab_group[] = {
     {AMP_CAB_DIRECT, "Direct", NULL, -1},
     {AMP_CAB_DELUXE, "Deluxe 1x12", NULL, -1},
     {AMP_CAB_TWIN, "Twin 2x12", NULL, -1},
@@ -2548,6 +2582,10 @@ static Effect rp500_comp_effect[] = {
     {NULL, COMP_ON_OFF, COMP_TYPE, COMP_POSITION, rp500_comp_group, G_N_ELEMENTS(rp500_comp_group)},
 };
 
+static Effect rp150_dist_effect[] = {
+    {NULL, DIST_ON_OFF, DIST_TYPE, DIST_POSITION, rp150_dist_group, G_N_ELEMENTS(rp150_dist_group)},
+};
+
 static Effect rp155_dist_effect[] = {
     {NULL, DIST_ON_OFF, DIST_TYPE, DIST_POSITION, rp155_dist_group, G_N_ELEMENTS(rp155_dist_group)},
 };
@@ -2592,7 +2630,7 @@ static Effect gnx3k_chorusfx_effect[] = {
     {NULL, CHORUSFX_ON_OFF, CHORUSFX_TYPE, CHORUSFX_POSITION, gnx3k_chorusfx_group, G_N_ELEMENTS(gnx3k_chorusfx_group)},
 };
 
-static Effect rp155_chorusfx_effect[] = {
+static Effect rp150_chorusfx_effect[] = {
     {NULL, CHORUSFX_ON_OFF, CHORUSFX_TYPE, CHORUSFX_POSITION, rp155_chorusfx_group, G_N_ELEMENTS(rp155_chorusfx_group)},
 };
 
@@ -2647,9 +2685,14 @@ static Effect reverb_effect[] = {
     {NULL, REVERB_ON_OFF, REVERB_TYPE, REVERB_POSITION, reverb_group, G_N_ELEMENTS(reverb_group)},
 };
 
+static Effect rp150_amp_effect[] = {
+    {NULL, AMP_ON_OFF, AMP_TYPE, AMP_POSITION, rp150_amp_group, G_N_ELEMENTS(rp150_amp_group)},
+    {"Cabinet", -1, AMP_CAB_TYPE, AMP_CAB_POSITION, rp150_amp_cab_group, G_N_ELEMENTS(rp150_amp_cab_group)},
+};
+
 static Effect rp155_amp_effect[] = {
     {NULL, AMP_ON_OFF, AMP_TYPE, AMP_POSITION, rp155_amp_group, G_N_ELEMENTS(rp155_amp_group)},
-    {"Cabinet", -1, AMP_CAB_TYPE, AMP_CAB_POSITION, rp155_amp_cab_group, G_N_ELEMENTS(rp155_amp_cab_group)},
+    {"Cabinet", -1, AMP_CAB_TYPE, AMP_CAB_POSITION, rp150_amp_cab_group, G_N_ELEMENTS(rp150_amp_cab_group)},
 };
 
 static Effect rp250_amp_effect[] = {
@@ -2733,6 +2776,19 @@ static Effect gnx3k_amp_channel_effect[] = {
 };
 
 /* in signal chain order */
+static EffectList rp150_effects[] = {
+    {"Pickup", pickup_misc_effect, G_N_ELEMENTS(pickup_misc_effect)},
+    {"Wah", wah_effect, G_N_ELEMENTS(wah_effect)},
+    {"Compressor", rp250_comp_effect, G_N_ELEMENTS(rp250_comp_effect)},
+    {"Distortion", rp150_dist_effect, G_N_ELEMENTS(rp150_dist_effect)},
+    {"Amplifier", rp150_amp_effect, G_N_ELEMENTS(rp150_amp_effect)},
+    {"Equalizer", rp250_eq_effect, G_N_ELEMENTS(rp250_eq_effect)},
+    {"Noisegate", noisegate_effect, G_N_ELEMENTS(noisegate_effect)},
+    {"Chorus/FX", rp150_chorusfx_effect, G_N_ELEMENTS(rp150_chorusfx_effect)},
+    {"Delay", rp250_delay_effect, G_N_ELEMENTS(rp250_delay_effect)},
+    {"Reverb", reverb_effect, G_N_ELEMENTS(reverb_effect)},
+};
+
 static EffectList rp155_effects[] = {
     {"Pickup", pickup_misc_effect, G_N_ELEMENTS(pickup_misc_effect)},
     {"Wah", wah_effect, G_N_ELEMENTS(wah_effect)},
@@ -2741,7 +2797,7 @@ static EffectList rp155_effects[] = {
     {"Amplifier", rp155_amp_effect, G_N_ELEMENTS(rp155_amp_effect)},
     {"Equalizer", rp250_eq_effect, G_N_ELEMENTS(rp250_eq_effect)},
     {"Noisegate", noisegate_effect, G_N_ELEMENTS(noisegate_effect)},
-    {"Chorus/FX", rp155_chorusfx_effect, G_N_ELEMENTS(rp155_chorusfx_effect)},
+    {"Chorus/FX", rp150_chorusfx_effect, G_N_ELEMENTS(rp150_chorusfx_effect)},
     {"Delay", rp250_delay_effect, G_N_ELEMENTS(rp250_delay_effect)},
     {"Reverb", reverb_effect, G_N_ELEMENTS(reverb_effect)},
 };
@@ -2861,6 +2917,10 @@ static Banks gnx3k_banks[] = {
     {"Factory 2", PRESETS_FACTORY2},
 };
 
+static EffectPage rp150_pages[] = {
+    {"Effects", rp150_effects, G_N_ELEMENTS(rp150_effects), 2},
+};
+
 static EffectPage rp155_pages[] = {
     {"Effects", rp155_effects, G_N_ELEMENTS(rp155_effects), 2},
 };
@@ -2892,6 +2952,16 @@ static EffectPage gnx4_pages[] = {
 static EffectPage gnx3000_pages[] = {
     {"Effects", gnx3000_effects, G_N_ELEMENTS(gnx3000_effects), 2},
     {"Amp/GeNetX", gnx3000_genetx, G_N_ELEMENTS(gnx3000_genetx), 1},
+};
+
+static Device rp150 = {
+    .name = "DigiTech RP150",
+    .family_id = 0x5E,
+    .product_id = 0x01,
+    .pages = rp150_pages,
+    .n_pages = G_N_ELEMENTS(rp150_pages),
+    .banks = rp_banks,
+    .n_banks = G_N_ELEMENTS(rp_banks),
 };
 
 static Device rp155 = {
@@ -2975,6 +3045,7 @@ static Device gnx3000 = {
 };
 
 Device* supported_devices[] = {
+    &rp150,
     &rp155,
     &rp250,
     &rp255,
