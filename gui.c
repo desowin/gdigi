@@ -377,25 +377,27 @@ gboolean apply_current_preset_to_gui(gpointer data)
 /**
  *  \param settings effect parameters
  *  \param amt amount of effect parameters
- *  \param widget_table hash table matching settings pointer with created table (may be NULL)
+ *  \param widget_table hash table matching settings pointer with created grid (may be NULL)
  *
  *  Creates knobs that allow user to set effect parameters.
  *
- *  \return GtkTable containing necessary widgets to set effect parameters.
+ *  \return GtkGrid containing necessary widgets to set effect parameters.
  **/
-GtkWidget *create_table(EffectSettings *settings, gint amt, GHashTable *widget_table)
+GtkWidget *create_grid(EffectSettings *settings, gint amt, GHashTable *widget_table)
 {
-    GtkWidget *table, *label, *widget, *knob;
+    GtkWidget *grid, *label, *widget, *knob;
     GtkAdjustment *adj;
     int x;
 
     if (widget_table != NULL) {
-        table = g_hash_table_lookup(widget_table, settings);
-        if (table != NULL)
-            return table;
+        grid = g_hash_table_lookup(widget_table, settings);
+        if (grid != NULL)
+            return grid;
     }
 
-    table = gtk_table_new(3, amt, FALSE);
+    grid = gtk_grid_new();
+    gtk_grid_set_row_spacing(GTK_GRID(grid), 2);
+    gtk_grid_set_column_spacing(GTK_GRID(grid), 2);
 
     for (x = 0; x<amt; x++) {
         gdouble min, max;
@@ -413,6 +415,7 @@ GtkWidget *create_table(EffectSettings *settings, gint amt, GHashTable *widget_t
         widget = gtk_spin_button_new(GTK_ADJUSTMENT(adj), 1.0, 0);
         gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(widget), FALSE);
         gtk_spin_button_set_update_policy(GTK_SPIN_BUTTON(widget), GTK_UPDATE_IF_VALID);
+
         if (custom == TRUE) {
             g_signal_connect(G_OBJECT(widget), "input", G_CALLBACK(custom_value_input_cb), settings[x].values);
             g_signal_connect(G_OBJECT(widget), "output", G_CALLBACK(custom_value_output_cb), settings[x].values);
@@ -420,18 +423,18 @@ GtkWidget *create_table(EffectSettings *settings, gint amt, GHashTable *widget_t
 
         widget_tree_add(G_OBJECT(adj), settings[x].id,
                         settings[x].position, -1, -1);
-        gtk_table_attach(GTK_TABLE(table), label, 0, 1, x, x+1, GTK_SHRINK, GTK_SHRINK, 2, 2);
-        gtk_table_attach(GTK_TABLE(table), knob, 1, 2, x, x+1, GTK_SHRINK, GTK_SHRINK, 2, 2);
-        gtk_table_attach(GTK_TABLE(table), widget, 2, 3, x, x+1, GTK_SHRINK, GTK_SHRINK, 2, 2);
+        gtk_grid_attach(GTK_GRID(grid), label, 0, x, 1, 1);
+        gtk_grid_attach(GTK_GRID(grid), knob, 1, x, 1, 1);
+        gtk_grid_attach(GTK_GRID(grid), widget, 2, x, 1, 1);
 
         g_signal_connect(G_OBJECT(adj), "value-changed", G_CALLBACK(value_changed_option_cb), &settings[x]);
 
         if (widget_table != NULL) {
-            g_hash_table_insert(widget_table, settings, table);
+            g_hash_table_insert(widget_table, settings, grid);
         }
     }
 
-    return table;
+    return grid;
 }
 
 /**
@@ -550,7 +553,7 @@ GtkWidget *create_widget_container(EffectGroup *group, gint amt, gint id, gint p
         if (group[x].label) {
             if (combo_box == NULL) {
                 combo_box = gtk_combo_box_text_new();
-                gtk_container_add(GTK_CONTAINER(vbox), combo_box);
+                gtk_box_pack_end(GTK_BOX(vbox), combo_box, FALSE, TRUE, 0);
                 g_signal_connect(G_OBJECT(combo_box), "changed", G_CALLBACK(combo_box_changed_cb), group);
                 g_object_set_data(G_OBJECT(combo_box), "vbox", vbox);
             }
@@ -559,7 +562,7 @@ GtkWidget *create_widget_container(EffectGroup *group, gint amt, gint id, gint p
             cmbox_no++;
 
             if ((group[x].settings != NULL) && (group[x].settings_amt > 0)) {
-                widget = create_table(group[x].settings, group[x].settings_amt, widget_table);
+                widget = create_grid(group[x].settings, group[x].settings_amt, widget_table);
                 g_object_ref_sink(widget);
             } else
                 widget = NULL;
@@ -577,8 +580,8 @@ GtkWidget *create_widget_container(EffectGroup *group, gint amt, gint id, gint p
             g_free(name);
         } else {
             if ((group[x].settings != NULL) && (group[x].settings_amt > 0)) {
-                widget = create_table(group[x].settings, group[x].settings_amt, widget_table);
-                gtk_container_add(GTK_CONTAINER(vbox), widget);
+                widget = create_grid(group[x].settings, group[x].settings_amt, widget_table);
+                gtk_box_pack_end(GTK_BOX(vbox), widget, FALSE, TRUE, 0);
             }
         }
     }
@@ -601,7 +604,7 @@ GtkWidget *create_vbox(Effect *widgets, gint amt, gchar *label)
 {
     GtkWidget *vbox;
     GtkWidget *widget;
-    GtkWidget *table;
+    GtkWidget *grid;
     GtkWidget *container;
     GtkWidget *frame;
     int x;
@@ -611,13 +614,13 @@ GtkWidget *create_vbox(Effect *widgets, gint amt, gchar *label)
 
     vbox = gtk_vbox_new(FALSE, 0);
 
-    table = gtk_table_new(2, amt, FALSE);
-    gtk_table_set_col_spacings(GTK_TABLE(table), 2);
+    grid = gtk_grid_new();
+    gtk_grid_set_column_spacing(GTK_GRID(grid), 2);
 
     for (x = 0; x<amt; x++) {
         if ((widgets[x].id != -1) && (widgets[x].position != -1)) {
             widget = create_on_off_button(&widgets[x]);
-            gtk_table_attach_defaults(GTK_TABLE(table), widget, 0, 1, x, x+1);
+            gtk_grid_attach(GTK_GRID(grid), widget, 0, x, 1, 1);
 
             if (widgets[x].label)
                 y = 1;
@@ -626,7 +629,7 @@ GtkWidget *create_vbox(Effect *widgets, gint amt, gchar *label)
 
         } else if (widgets[x].label) {
             widget = gtk_label_new(widgets[x].label);
-            gtk_table_attach_defaults(GTK_TABLE(table), widget, 0, 1, x, x+1);
+            gtk_grid_attach(GTK_GRID(grid), widget, 0, x, 1, 1);
             y = 0;
         } else {
             /* Default to 1 */
@@ -635,9 +638,9 @@ GtkWidget *create_vbox(Effect *widgets, gint amt, gchar *label)
         }
 
         container = create_widget_container(widgets[x].group, widgets[x].group_amt, widgets[x].type, widgets[x].position);
-        gtk_table_attach_defaults(GTK_TABLE(table), container, 1-y, 2-y, x+y, x+y+1);
+        gtk_grid_attach(GTK_GRID(grid), container, 1-y, x+y, 1, 1);
     }
-    gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 2);
+    gtk_box_pack_start(GTK_BOX(vbox), grid, FALSE, FALSE, 2);
 
     gtk_container_add(GTK_CONTAINER(frame), vbox);
     return frame;
@@ -769,7 +772,7 @@ GtkWidget *create_preset_tree(Device *device)
  **/
 static void show_store_preset_window(GtkWidget *window, gchar *default_name)
 {
-    GtkWidget *dialog, *cmbox, *entry, *table, *label, *vbox;
+    GtkWidget *dialog, *cmbox, *entry, *grid, *label, *vbox;
     GStrv names;
     int x;
 
@@ -782,8 +785,8 @@ static void show_store_preset_window(GtkWidget *window, gchar *default_name)
 
     vbox = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
 
-    table = gtk_table_new(2, 2, FALSE);
-    gtk_container_add(GTK_CONTAINER(vbox), table);
+    grid = gtk_grid_new();
+    gtk_container_add(GTK_CONTAINER(vbox), grid);
 
     cmbox = gtk_combo_box_text_new();
     names = query_preset_names(PRESETS_USER);
@@ -793,18 +796,18 @@ static void show_store_preset_window(GtkWidget *window, gchar *default_name)
         g_free(title);
     }
     g_strfreev(names);
-    gtk_table_attach_defaults(GTK_TABLE(table), cmbox, 1, 2, 0, 1);
+    gtk_grid_attach(GTK_GRID(grid), cmbox, 1, 0, 1, 1);
 
     entry = gtk_entry_new();
     if (default_name != NULL)
         gtk_entry_set_text(GTK_ENTRY(entry), default_name);
-    gtk_table_attach_defaults(GTK_TABLE(table), entry, 1, 2, 1, 2);
+    gtk_grid_attach(GTK_GRID(grid), entry, 1, 1, 1, 1);
 
     label = gtk_label_new("Preset slot:");
-    gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 0, 1);
+    gtk_grid_attach(GTK_GRID(grid), label, 0, 0, 1, 1);
 
     label = gtk_label_new("Preset name:");
-    gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 1, 2);
+    gtk_grid_attach(GTK_GRID(grid), label, 0, 1, 1, 1);
 
     gtk_widget_show_all(vbox);
     if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
