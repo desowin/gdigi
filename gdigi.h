@@ -1114,6 +1114,7 @@ void setting_genetx_free(SettingGenetx *genetx);
 void setting_param_free(SettingParam *param);
 SectionID get_genetx_section_id(gint version, gint type);
 void set_option(guint id, guint position, guint value);
+void get_option(guint id, guint position);
 void send_object(SectionID section, guint bank, guint index,
                  gchar *name, GString *data);
 void send_preset_parameters(GList *params);

@@ -220,31 +220,37 @@ MessageID get_message_id(GString *msg)
 
 void push_message(GString *msg)
 {
+    MessageID msgid = get_message_id(msg);
     if (((unsigned char)msg->str[0] == 0xF0) && ((unsigned char)msg->str[msg->len-1] == 0xF7))
         g_message("Pushing correct message!");
     else
         g_warning("Pushing incorrect message!");
 
     int x;
-    for (x = 0; x<msg->len; x++)
+    for (x = 0; x<msg->len; x++) {
+        if (x && (x % 26) == 0) {
+            printf("\n");
+        }
         printf("%02x ", (unsigned char)msg->str[x]);
-    printf("\n");
+    }
+    if (x % 26) {
+        printf("\n");
+    }
+    g_message("Received %s", get_message_name(msgid));
 
-    switch (get_message_id(msg)) {
+    switch (msgid) {
         case ACK:
-            g_message("Received ACK");
             g_string_free(msg, TRUE);
             return;
 
         case NACK:
-            g_message("Received NACK");
             g_string_free(msg, TRUE);
             return;
 
         case RECEIVE_PARAMETER_VALUE:
             unpack_message(msg);
             SettingParam *param = setting_param_new_from_data(&msg->str[8], NULL);
-            g_message("Received parameter change ID: %d Position: %d Value: %d", param->id, param->position, param->value);
+            g_message("ID: %d Position: %d Value: %d", param->id, param->position, param->value);
 
             GDK_THREADS_ENTER();
             apply_setting_param_to_gui(param);
@@ -400,6 +406,7 @@ void send_message(gint procedure, gchar *data, gint len)
     g_string_append_printf(msg, "%c\xF7",
                            calculate_checksum(&msg->str[1], msg->len - 1));
 
+    g_message("Sending message %s len %d", get_message_name(procedure), len);
     send_data(msg->str, msg->len);
 
     g_string_free(msg, TRUE);
@@ -626,6 +633,23 @@ SectionID get_genetx_section_id(gint version, gint type)
     return -1;
 }
 
+/**
+ *  \param id Parameter ID
+ *  \param position Parameter position
+ *  \param value Parameter value
+ *
+ *  Forms SysEx message to request parameter then sends it to device.
+ **/
+void get_option(guint id, guint position)
+{
+    GString *msg = g_string_sized_new(9);
+    g_message("Requesting parameter id %d position %d", id, position);
+    g_string_append_printf(msg, "%c%c%c",
+                           ((id & 0xFF00) >> 8), (id & 0xFF),
+                           position);
+    send_message(REQUEST_PARAMETER_VALUE, msg->str, msg->len);
+    g_string_free(msg, TRUE);
+}
 /**
  *  \param id Parameter ID
  *  \param position Parameter position
