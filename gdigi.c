@@ -274,12 +274,59 @@ void push_message(GString *msg)
                     } else {
                         g_message("%d %d moved to %d %d", str[9], str[10], str[11], str[12]);
                     }
+                case NOTIFY_MODIFIER_GROUP_CHANGED:
+                {
+                    int i;
+                    printf("\n");
+                    for (i = 0; i < msg->len; i++) {
+                        printf(" %02x", (unsigned char) str[i]);
+                    }
+                    printf("\n");
+                    g_message("Modifier group id %d changed",
+                               (str[9] << 8) | (str[10]));
                     break;
+                }
                 default:
                     g_message("Received unhandled device notification 0x%x", str[11]);
             }
             g_string_free(msg, TRUE);
             return;
+        case RECEIVE_GLOBAL_PARAMETERS:
+            unpack_message(msg);
+            gint tot, n, x;
+            tot = (unsigned char)msg->str[9];
+            for (n = 0; n < msg->len; n++) {
+                printf("%02x ",(unsigned char) msg->str[n]);
+            }
+            printf("\n");
+
+            n = 0;
+            x = 10;
+            do {
+                param = setting_param_new_from_data(&msg->str[x], &x);
+                g_message("Received global param ID: %d Position: %d Value: %d",
+                           param->id, param->position, param->value);
+                setting_param_free(param);
+            } while ( (x < msg->len) && n < tot);
+                             
+            g_string_free(msg, TRUE);
+            return;
+
+
+        case RECEIVE_MODIFIER_LINKABLE_LIST:
+            unpack_message(msg);
+            tot = (unsigned char)msg->str[9];
+            for (n = 0; n < msg->len; n++) {
+                printf("%02x ",(unsigned char) msg->str[n]);
+            }
+            printf("\n");
+
+            modifier_linkable_list(msg);
+                             
+            g_string_free(msg, TRUE);
+            return;
+
+
         default:
             g_mutex_lock(message_queue_mutex);
             g_queue_push_tail(message_queue, msg);
@@ -664,6 +711,7 @@ void set_option(guint id, guint position, guint value)
                            ((id & 0xFF00) >> 8), (id & 0xFF),
                            position);
     append_value(msg, value);
+    g_message("Sending id %d position %d value %d", id, position, value);
     send_message(RECEIVE_PARAMETER_VALUE, msg->str, msg->len);
     g_string_free(msg, TRUE);
 }

@@ -1338,8 +1338,15 @@ void gui_create(Device *device)
     g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(gtk_main_quit), NULL);
 
     /* Not part of the preset, but update from the device. */
-    get_option(USB_AUDIO_LEVEL, USB_POSITION);
-    get_option(USB_AUDIO_PLAYBACK_MIX, USB_POSITION);
+    get_option(TUNING_REFERENCE, GLOBAL_POSITION);
+    get_option(USB_AUDIO_PLAYBACK_MIX, GLOBAL_POSITION);
+    get_option(GUI_MODE_ON_OFF, GLOBAL_POSITION);
+    get_option(USB_AUDIO_LEVEL, GLOBAL_POSITION);
+    get_option(EXP_PEDAL_LEVEL, GLOBAL_POSITION);
+    get_option(STOMP_MODE, GLOBAL_POSITION);
+
+    send_message(REQUEST_MODIFIER_LINKABLE_LIST, "\x00\x01", 2);
+
 }
 
 /**

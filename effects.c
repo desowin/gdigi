@@ -305,6 +305,14 @@ static EffectValues values_0_to_99 = {
     .min = 0.0, .max = 99.0, .type = VALUE_TYPE_PLAIN,
 };
 
+static EffectValues values_0_to_255 = {
+    .min = 0.0, .max = 255.0, .type = VALUE_TYPE_PLAIN,
+};
+
+static EffectValues values_0_to_29 = {
+    .min = 0.0, .max = 29.0, .type = VALUE_TYPE_PLAIN,
+};
+
 static EffectValues values_1_to_4 = {
     .min = 0.0, .max = 3.0,
     .type = VALUE_TYPE_OFFSET,
@@ -708,9 +716,14 @@ static EffectValues values_rp_mix = {
     .min = 0.0, .max = 100.0, .type = VALUE_TYPE_PLAIN,
 };
 
-static EffectSettings usb_settings[] = {
-    {"USB/RP Mix", USB_AUDIO_PLAYBACK_MIX, USB_POSITION, &values_rp_mix},
-    {"USB Level", USB_AUDIO_LEVEL, USB_POSITION, &values_m12_to_24},
+static EffectSettings global_settings[] = {
+    {"USB/RP Mix", USB_AUDIO_PLAYBACK_MIX, GLOBAL_POSITION, &values_rp_mix},
+    {"USB Level", USB_AUDIO_LEVEL, GLOBAL_POSITION, &values_m12_to_24},
+    {"GUI Mode", GUI_MODE_ON_OFF, GLOBAL_POSITION, &values_on_off},
+    {"Tuning Reference", TUNING_REFERENCE, GLOBAL_POSITION, &values_0_to_29},
+    {"Pedal Position", EXP_PEDAL_LEVEL, USB_POSITION, &values_0_to_255},
+    {"Stomp", STOMP_MODE, GLOBAL_POSITION, &values_on_off},
+    {"Wah Pedal Position", WAH_PEDAL_POSITION, WAH_POSITION, &values_0_to_99},
 };
 
 static EffectSettings misc_settings[] = {
@@ -1556,6 +1569,20 @@ static EffectSettings gnx3k_reverb_settings[] = {
     {"Level", REVERB_LEVEL, REVERB_POSITION, &values_0_to_99},
 };
 
+static EffectSettings lfo1_settings[] = {
+    {"Heel", LFO_MIN, LFO1_POSITION, &values_0_to_99},
+    {"Toe", LFO_MAX, LFO1_POSITION, &values_0_to_99},
+    {"Waveform", LFO_WAVEFORM, LFO1_POSITION, &values_waveform},
+    {"Speed(HZ)", LFO_SPEED, LFO1_POSITION, &values_lfo_speed},
+};
+
+static EffectSettings lfo2_settings[] = {
+    {"Heel", LFO_MIN, REVERB_POSITION, &values_0_to_99},
+    {"Toe", LFO_MAX, REVERB_POSITION, &values_0_to_99},
+    {"Waveform", LFO_WAVEFORM, REVERB_POSITION, &values_waveform},
+    {"Speed(HZ)", LFO_SPEED, REVERB_POSITION, &values_lfo_speed},
+};
+
 static EffectSettings reverb_lex_settings[] = {
     {"Predelay", REVERB_PREDELAY, REVERB_POSITION, &values_0_to_15},
     {"Decay", REVERB_DECAY, REVERB_POSITION, &values_0_to_99},
@@ -1592,8 +1619,8 @@ static EffectGroup gnx3k_amp_channel_group[] = {
 };
 
 /** \todo it's not part of Preset, but should appear in GUI */
-static EffectGroup usb_group[] = {
-    {-1, NULL, usb_settings, G_N_ELEMENTS(usb_settings)},
+static EffectGroup global_group[] = {
+    {-1, NULL, global_settings, G_N_ELEMENTS(global_settings)},
 };
 
 static EffectGroup misc_group[] = {
@@ -1915,6 +1942,19 @@ static EffectGroup rp355_chorusfx_group[] = {
     {CHORUS_TYPE_OCTAVER, "Octaver", chorusfx_octaver_settings, G_N_ELEMENTS(chorusfx_octaver_settings)},
 };
 
+#define LFO_POSID_TO_TYPE(_a, _b) ((_a << 16) | (_b))
+static EffectGroup rp355_lfo1_group[] = {
+    {LFO_POSID_TO_TYPE(CHORUSFX_POSITION, CHORUS_LEVEL), "Chorus Level", lfo1_settings, G_N_ELEMENTS(lfo1_settings)},
+    {LFO_POSID_TO_TYPE(DIST_POSITION, DIST_ON_OFF), "Distortion On/Off", lfo1_settings, G_N_ELEMENTS(lfo1_settings)},
+    {LFO_POSID_TO_TYPE(DIST_POSITION, DIST_SCREAMER_DRIVE), "Distortion Screamer Drive", lfo1_settings, G_N_ELEMENTS(lfo1_settings)},
+    {LFO_POSID_TO_TYPE(DIST_POSITION, DIST_SCREAMER_TONE), "Distortion Screamer Tone", lfo1_settings, G_N_ELEMENTS(lfo1_settings)},
+    {LFO_POSID_TO_TYPE(DIST_POSITION, DIST_SCREAMER_LVL), "Distortion Screamer Level", lfo1_settings, G_N_ELEMENTS(lfo1_settings)},
+    {LFO_POSID_TO_TYPE(DIST_POSITION, DIST_808_OVERDRIVE), "Distortion 808 Overdrive", lfo1_settings, G_N_ELEMENTS(lfo1_settings)},
+    {LFO_POSID_TO_TYPE(DIST_POSITION, DIST_808_TONE), "Distortion 808 Tone", lfo1_settings, G_N_ELEMENTS(lfo1_settings)},
+    {LFO_POSID_TO_TYPE(DIST_POSITION, DIST_808_LVL), "Distortion 808 Level", lfo1_settings, G_N_ELEMENTS(lfo1_settings)},
+    };
+
+   
 static EffectGroup rp500_chorusfx_group[] = {
     {CHORUS_TYPE_CE, "CE Chorus", chorusfx_ce_settings, G_N_ELEMENTS(chorusfx_ce_settings)},
     {CHORUS_TYPE_TC, "TC Chorus", chorusfx_tc_settings, G_N_ELEMENTS(chorusfx_tc_settings)},
@@ -2784,6 +2824,10 @@ static Effect rp355_chorusfx_effect[] = {
     {NULL, CHORUSFX_ON_OFF,CHORUSFX_TYPE, CHORUSFX_POSITION, rp355_chorusfx_group, G_N_ELEMENTS(rp355_chorusfx_group)},
 };
 
+static Effect rp355_lfo1_effect[] = {
+    {NULL, -1, LFO_TYPE, LFO1_POSITION, rp355_lfo1_group, G_N_ELEMENTS(rp355_lfo1_group)},
+};
+
 static Effect rp500_chorusfx_effect[] = {
     {NULL, CHORUSFX_ON_OFF, CHORUSFX_TYPE, CHORUSFX_POSITION, rp500_chorusfx_group, G_N_ELEMENTS(rp500_chorusfx_group)},
 };
@@ -2899,8 +2943,8 @@ static Effect rp500_eq_effect[] = {
     {"Enable Equalizer", EQ_ENABLE, -1, EQ_A_POSITION, rp500_eq_group, G_N_ELEMENTS(rp500_eq_group)},
 };
 
-static Effect usb_effect[] = {
-    {NULL, -1, USB_AUDIO_LEVEL, USB_POSITION, usb_group, G_N_ELEMENTS(usb_group)},
+static Effect global_effect[] = {
+    {NULL, -1, USB_AUDIO_LEVEL, USB_POSITION, global_group, G_N_ELEMENTS(global_group)},
 };
 
 static Effect pickup_misc_effect[] = {
@@ -2986,7 +3030,8 @@ static EffectList rp355_effects[] = {
     {"Chorus/FX", rp355_chorusfx_effect, G_N_ELEMENTS(rp355_chorusfx_effect)},
     {"Delay", rp355_delay_effect, G_N_ELEMENTS(rp355_delay_effect)},
     {"Reverb", reverb_effect, G_N_ELEMENTS(reverb_effect)},
-    {"USB settings", usb_effect, G_N_ELEMENTS(usb_effect)},
+    {"Global Settings", global_effect, G_N_ELEMENTS(global_effect)},
+    {"LFO1", rp355_lfo1_effect, G_N_ELEMENTS(rp355_lfo1_effect)},
 };
 
 static EffectList rp500_effects[] = {
@@ -3078,7 +3123,7 @@ static EffectPage rp255_pages[] = {
 };
 
 static EffectPage rp355_pages[] = {
-    {"Effects", rp355_effects, G_N_ELEMENTS(rp355_effects), 2},
+    {"Effects", rp355_effects, G_N_ELEMENTS(rp355_effects), 3},
 };
 
 static EffectPage rp500_pages[] = {
@@ -4087,17 +4132,15 @@ static void effect_settings_free(EffectSettings *settings)
  *
  *  \return ModifierGroup which must be freed using modifier_group_free.
  **/
-ModifierGroup *modifier_linkable_list()
+ModifierGroup *modifier_linkable_list(GString *msg)
 {
     guint group_id;
     guint count;
     guint i;
 
-    send_message(REQUEST_MODIFIER_LINKABLE_LIST, "\x00\x01", 2);
+    //send_message(REQUEST_MODIFIER_LINKABLE_LIST, "\x00\x01", 2);
 
-    GString *data = get_message_by_id(RECEIVE_MODIFIER_LINKABLE_LIST);
-
-    unsigned char *str = (unsigned char*)data->str;
+    unsigned char *str = (unsigned char*)msg->str;
 
     group_id = (str[8] << 8) | str[9];
     count = (str[10] << 8) | str[11];
@@ -4134,6 +4177,7 @@ ModifierGroup *modifier_linkable_list()
 
     modifier_group->group = group;
     modifier_group->group_amt = count;
+
 
     return modifier_group;
 }

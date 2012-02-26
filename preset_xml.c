@@ -83,7 +83,6 @@ map_xml_value(XmlSettings *xml, gint value)
     return NULL;
 }
 
-
 gboolean value_is_extra (EffectValues *val, SettingParam *param)
 {
     if ((param->value < val->min) || (param->value > val->max)) {
@@ -96,7 +95,6 @@ gboolean value_is_extra (EffectValues *val, SettingParam *param)
 void
 write_preset_to_xml(Preset *preset, gchar *filename)
 {
-
     int rc;
     xmlTextWriterPtr writer;
     GList *iter_params = preset->params;
@@ -246,11 +244,7 @@ write_preset_to_xml(Preset *preset, gchar *filename)
 
         iter_params  = iter_params->next;
     }
-  
-  /* Here we could close the elements ORDER and EXAMPLE using the
-     * function xmlTextWriterEndElement, but since we do not want to
-     * write any other elements, we simply call xmlTextWriterEndDocument,
-     * which will do all the work. */
+
     rc = xmlTextWriterEndDocument(writer);
     if (rc < 0) {
         printf("testXmlwriterFilename: Error at xmlTextWriterEndDocument\n");
