@@ -51,7 +51,7 @@ void show_error_message(GtkWidget *parent, gchar *message)
                                             GTK_DIALOG_MODAL,
                                             GTK_MESSAGE_ERROR,
                                             GTK_BUTTONS_OK,
-                                            message);
+                                            "%s", message);
 
     gtk_dialog_run(GTK_DIALOG(msg));
     gtk_widget_destroy(msg);
@@ -861,20 +861,25 @@ typedef struct {
     gchar *suffix;
 } SupportedFileTypes;
 
-static SupportedFileTypes file_types[] = {
-    {"RP150Preset", "*.rp150p"},
-    {"RP155Preset", "*.rp155p"},
-    {"RP250Preset", "*.rp250p"},
-    {"RP255Preset", "*.rp255p"},
-    {"RP355Preset", "*.rp355p"},
-    {"RP500Preset", "*.rp500p"},
-    {"RP1000Preset", "*.rp1000p"},
-    {"GNX4 Preset", "*.g4p"},
-    {"GNX3kPreset", "*.g3kp"},
+SupportedFileTypes file_types[] = {
+    [ RP150]    = {"RP150Preset", "*.rp150p"},
+    [ RP155 ]   = {"RP155Preset", "*.rp155p"},
+    [ RP250 ]   = {"RP250Preset", "*.rp250p"},
+    [ RP255 ]   = {"RP255Preset", "*.rp255p"},
+    [ RP355 ]   = {"RP355Preset", "*.rp355p"},
+    [ RP500 ]   = {"RP500Preset", "*.rp500p"},
+    [ RP1000 ]  = {"RP1000Preset", "*.rp1000p"},
+    [ GNX4 ]    = {"GNX4 Preset", "*.g4p"},
+    [ GNX3000 ] = {"GNX3kPreset", "*.g3kp"},
 };
 
 static guint n_file_types = G_N_ELEMENTS(file_types);
 
+gchar * 
+get_preset_filename (int prod_id)
+{
+    return file_types[prod_id].name;
+}
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
 /**
@@ -906,12 +911,21 @@ static void action_open_preset_cb(GtkAction *action)
     int x;
     for (x=0; x<n_file_types; x++) {
         GtkFileFilter *current_filter = gtk_file_filter_new();
+        if (file_types[x].name == NULL) {
+            g_message("Skipping NULL array entry");
+            continue;
+        }
 
         gtk_file_filter_set_name(current_filter, file_types[x].name);
         gtk_file_filter_add_pattern(current_filter, file_types[x].suffix);
         gtk_file_filter_add_pattern(filter, file_types[x].suffix);
 
         gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), current_filter);
+        if (x == product_id) {
+            
+            gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(dialog), current_filter);
+        }
+
     }
 
     gboolean loaded = FALSE;
@@ -1010,6 +1024,57 @@ static void action_open_preset_cb(GtkAction *action)
 }
 
 /**
+ *  \param action the object which emitted the signal
+ *
+ *  Shows file chooser dialog.
+ *  If the user chooses a file, the preset in the edit buffer is
+ *  written out in XML format.
+ **/
+static void action_save_preset_cb(GtkAction *action)
+{
+    static GtkWidget *dialog = NULL;
+
+    if (dialog != NULL)
+        return;
+
+    GtkWidget *window = g_object_get_data(G_OBJECT(action), "window");
+
+    dialog = gtk_file_chooser_dialog_new("Save Preset", GTK_WINDOW(window),
+                                         GTK_FILE_CHOOSER_ACTION_SAVE,
+                                         GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                                         GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
+                                         NULL);
+    if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
+        GError *error = NULL;
+        gchar *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+
+
+
+        if (error) {
+            show_error_message(window, error->message);
+            g_error_free(error);
+            error = NULL;
+        } else {
+            gchar real_filename[256];
+            GList *list = get_current_preset();
+            Preset *preset = create_preset_from_data(list);
+
+            snprintf(real_filename, 256, "%s.%s",
+                     filename, file_types[product_id].suffix + 2);
+
+            gtk_widget_hide(dialog);
+            write_preset_to_xml(preset, real_filename);
+
+            preset_free(preset);
+        }
+        g_free(filename);
+    }
+
+    gtk_widget_destroy(dialog);
+    dialog = NULL;
+}
+
+/**
  *  \param list widget tree list to be freed
  *
  *  Frees all memory used by widget tree list.
@@ -1040,11 +1105,12 @@ static void action_quit_cb(GtkAction *action)
 
 static GtkActionEntry entries[] = {
     {"File", NULL, "_File"},
-    {"Preset", NULL, "_Preset"},
-    {"Help", NULL, "_Help"},
-    {"Open", GTK_STOCK_OPEN, "_Open", "<control>O", "Open preset file", G_CALLBACK(action_open_preset_cb)},
     {"Quit", GTK_STOCK_QUIT, "_Quit", "<control>Q", "Quit", G_CALLBACK(action_quit_cb)},
-    {"Store", NULL, "_Store", "<control>S", "Store", G_CALLBACK(action_store_cb)},
+    {"Preset", NULL, "_Preset"},
+    {"Store", NULL, "_Store Preset to Device", "<control>D", "Store Preset to Device", G_CALLBACK(action_store_cb)},
+    {"Load", GTK_STOCK_OPEN, "_Load Preset from File", "<control>O", "Load Preset from File", G_CALLBACK(action_open_preset_cb)},
+    {"Save", GTK_STOCK_SAVE, "_Save Preset to File", "<control>S", "Save Preset to File", G_CALLBACK(action_save_preset_cb)},
+    {"Help", NULL, "_Help"},
     {"About", GTK_STOCK_ABOUT, "_About", "<control>A", "About", G_CALLBACK(action_show_about_dialog_cb)},
 };
 static guint n_entries = G_N_ELEMENTS(entries);
@@ -1053,12 +1119,14 @@ static const gchar *menu_info =
 "<ui>"
 " <menubar name='MenuBar'>"
 "  <menu action='File'>"
-"   <menuitem action='Open'/>"
 "   <separator/>"
 "   <menuitem action='Quit'/>"
 "  </menu>"
 "  <menu action='Preset'>"
 "   <menuitem action='Store'/>"
+"   <separator/>"
+"   <menuitem action='Load'/>"
+"   <menuitem action='Save'/>"
 "  </menu>"
 "  <menu action='Help'>"
 "   <menuitem action='About'/>"
@@ -1115,8 +1183,9 @@ static void add_menubar(GtkWidget *window, GtkWidget *vbox)
                        FALSE, FALSE, 0);
 
     add_action_data(ui, "/MenuBar/File/Quit", window);
-    add_action_data(ui, "/MenuBar/File/Open", window);
     add_action_data(ui, "/MenuBar/Preset/Store", window);
+    add_action_data(ui, "/MenuBar/Preset/Save", window);
+    add_action_data(ui, "/MenuBar/Preset/Load", window);
     add_action_data(ui, "/MenuBar/Help/About", window);
 
     g_object_unref(ui);

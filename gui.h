@@ -17,9 +17,11 @@
 #ifndef GDIGI_GUI_H
 #define GDIGI_GUI_H
 
+#include <gtk/gtk.h>
 #include <glib.h>
 #include "effects.h"
 
+gchar * get_preset_filename(int prod_id);
 void show_error_message(GtkWidget *parent, gchar *message);
 void apply_setting_param_to_gui(SettingParam *param);
 gboolean apply_current_preset_to_gui(gpointer data);

@@ -19,7 +19,7 @@
 
 #include <glib.h>
 
-enum {
+typedef enum {
   VALUE_TYPE_PLAIN  = 0,      /**< value displayed directly */
   VALUE_TYPE_SUFFIX = 1 << 0, /**< use suffix for displaying */
   VALUE_TYPE_OFFSET = 1 << 1, /**< use value offset */
@@ -27,6 +27,7 @@ enum {
   VALUE_TYPE_LABEL  = 1 << 3, /**< use value labels (overrides any other option) */
   VALUE_TYPE_EXTRA  = 1 << 4, /**< use extra values */
   VALUE_TYPE_DECIMAL= 1 << 5, /**< display decimal places */
+  VALUE_TYPE_NONE   = 1 << 6, /**< no value displayed */
 } ValueType;
 
 typedef struct _EffectValues {
@@ -93,6 +94,18 @@ typedef struct {
     PresetBank bank;
 } Banks;
 
+enum product_id {
+   RP150    = 1,
+   RP250    = 2,
+   GNX4     = 3,
+   GNX3000  = 4,
+   RP500    = 5,
+   RP1000   = 6,
+   RP155    = 7,
+   RP255    = 8,
+   RP355    = 9,
+};
+   
 typedef struct {
     gchar *name;
     unsigned char family_id;
