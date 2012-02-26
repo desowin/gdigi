@@ -2899,6 +2899,10 @@ static Effect rp500_eq_effect[] = {
     {"Enable Equalizer", EQ_ENABLE, -1, EQ_A_POSITION, rp500_eq_group, G_N_ELEMENTS(rp500_eq_group)},
 };
 
+static Effect usb_effect[] = {
+    {NULL, -1, USB_AUDIO_LEVEL, USB_POSITION, usb_group, G_N_ELEMENTS(usb_group)},
+};
+
 static Effect pickup_misc_effect[] = {
     {NULL, PICKUP_ON_OFF, PICKUP_TYPE, PICKUP_POSITION, pickup_group, G_N_ELEMENTS(pickup_group)},
     {NULL, -1, PRESET_LEVEL, PRESET_POSITION,  misc_group, G_N_ELEMENTS(misc_group)},
@@ -2982,6 +2986,7 @@ static EffectList rp355_effects[] = {
     {"Chorus/FX", rp355_chorusfx_effect, G_N_ELEMENTS(rp355_chorusfx_effect)},
     {"Delay", rp355_delay_effect, G_N_ELEMENTS(rp355_delay_effect)},
     {"Reverb", reverb_effect, G_N_ELEMENTS(reverb_effect)},
+    {"USB settings", usb_effect, G_N_ELEMENTS(usb_effect)},
 };
 
 static EffectList rp500_effects[] = {
