@@ -14,19 +14,26 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses>.
  */
 
-#ifndef GDIGI_PRESET_H
-#define GDIGI_PRESET_H
+#ifndef GDIGI_XML_H
+#define GDIGI_XML_H
 
 #include <glib.h>
+#include "effects.h"
+typedef struct {
+    guint   type;
+    gchar  *label;
+} XmlLabel;
 
 typedef struct {
-    gchar *name;
-    GList *params;
-    GList *genetxs;
-} Preset;
+    guint           id;
+    guint           position;
+    gchar          *label;
+    EffectValues   *values;
+    XmlLabel       *xml_labels;        /* 'type' id's have a label group. */
+    guint           xml_labels_amt;
+} XmlSettings;
 
-Preset *create_preset_from_xml_file(gchar *filename, GError **error);
-Preset *create_preset_from_data(GList *list);
-void preset_free(Preset *preset);
-void write_preset_to_xml(Preset *preset, gchar *filename);
-#endif /* GDIGI_PRESET_H */
+//  XmlSettings *get_xml_settings(guint id, guint position);
+// gchar *get_xml_label(guint id, guint position, gint type);
+
+#endif /* GDIGI_XML_H */

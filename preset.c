@@ -260,6 +260,21 @@ Preset *create_preset_from_xml_file(gchar *filename, GError **error)
     return preset;
 }
 
+gint params_cmp(gconstpointer a, gconstpointer b)
+{
+    const SettingParam *param_a = a;
+    const SettingParam *param_b = b;
+
+    if (param_a->position != param_b->position) {
+        return (param_a->position > param_b->position) ? 1 : -1;
+    }
+    if (param_a->id != param_b->id) {
+        return (param_a->id > param_b->id) ? 1 : -1;
+    }
+
+    return 0;
+}
+
 /**
  *  \param list list containing unpacked preset SysEx messages.
  *
@@ -314,7 +329,7 @@ Preset *create_preset_from_data(GList *list)
                     g_message("%d ID %d Position %d Value %d", n, param->id, param->position, param->value);
                 } while ((x < data->len) && n<total);
                 g_message("TOTAL %d", total);
-                preset->params = g_list_reverse(preset->params);
+                preset->params = g_list_sort(preset->params, params_cmp);
                 break;
             case RECEIVE_PRESET_END:
                 break;

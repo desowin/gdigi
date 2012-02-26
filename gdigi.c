@@ -25,7 +25,7 @@
 
 static unsigned char device_id = 0x7F;
 static unsigned char family_id = 0x7F;
-static unsigned char product_id = 0x7F;
+unsigned char product_id = 0x7F;
 
 static snd_rawmidi_t *output = NULL;
 static snd_rawmidi_t *input = NULL;
@@ -265,10 +265,12 @@ void push_message(GString *msg)
                         GDK_THREADS_ENTER();
                         g_timeout_add(0, apply_current_preset_to_gui, NULL);
                         GDK_THREADS_LEAVE();
-                    } else
+                    } else {
                         g_message("%d %d moved to %d %d", str[9], str[10], str[11], str[12]);
+                    }
+                    break;
                 default:
-                    g_message("Received unhandled device notification");
+                    g_message("Received unhandled device notification 0x%x", str[11]);
             }
             g_string_free(msg, TRUE);
             return;
@@ -300,7 +302,7 @@ gpointer read_data_thread(gboolean *stop)
 
         /* SysEx messages can't contain bytes with 8th bit set.
            memset our buffer to 0xFF, so if for some reason we'll get out of reply bounds, we'll catch it */
-        memset(buf, sizeof(buf), 0xFF);
+        memset(buf, '\0', sizeof(buf));
 
         err = poll(pfds, npfds, 200);
         if (err < 0 && errno == EINTR)
