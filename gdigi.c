@@ -250,7 +250,7 @@ void push_message(GString *msg)
         case RECEIVE_PARAMETER_VALUE:
             unpack_message(msg);
             SettingParam *param = setting_param_new_from_data(&msg->str[8], NULL);
-            g_message("ID: %d Position: %d Value: %d", param->id, param->position, param->value);
+            g_message("ID: %5d Position: %2d Value: %.1d", param->id, param->position, param->value);
 
             GDK_THREADS_ENTER();
             apply_setting_param_to_gui(param);
@@ -304,7 +304,7 @@ void push_message(GString *msg)
             x = 10;
             do {
                 param = setting_param_new_from_data(&msg->str[x], &x);
-                g_message("Received global param ID: %d Position: %d Value: %d",
+                g_message("Received global param ID: %5d Position: %2.1d Value: %6.1d",
                            param->id, param->position, param->value);
                 setting_param_free(param);
             } while ( (x < msg->len) && n < tot);
