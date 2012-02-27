@@ -1014,9 +1014,9 @@ static EffectSettings gnx3k_ch1_amp_eq_settings[] = {
     {"Bass Level", AMP_BASS_LEVEL, AMP_A_POSITION, &values_eq_db},
     {"Mid Freq", AMP_MID_FREQ, AMP_A_POSITION, &values_eq_mid_hz},
     {"Mid Level", AMP_MID_LEVEL, AMP_A_POSITION, &values_eq_db},
-    {"Presence", AMP_PRESENCE, AMP_A_POSITION, &values_eq_db},
     {"Treb Freq", AMP_TREBLE_FREQ, AMP_A_POSITION, &values_eq_treb_hz},
     {"Treb Level", AMP_TREBLE_LEVEL, AMP_A_POSITION, &values_eq_db},
+    {"Presence", AMP_PRESENCE, AMP_A_POSITION, &values_eq_db},
     {"Level", AMP_LEVEL, AMP_A_POSITION, &values_0_to_99},
 };
 
@@ -1026,9 +1026,9 @@ static EffectSettings gnx3k_ch2_amp_eq_settings[] = {
     {"Bass Level", AMP_BASS_LEVEL, AMP_B_POSITION, &values_eq_db},
     {"Mid Freq", AMP_MID_FREQ, AMP_B_POSITION, &values_eq_mid_hz},
     {"Mid Level", AMP_MID_LEVEL, AMP_B_POSITION, &values_eq_db},
-    {"Presence", AMP_PRESENCE, AMP_B_POSITION, &values_eq_db},
     {"Treb Freq", AMP_TREBLE_FREQ, AMP_B_POSITION, &values_eq_treb_hz},
     {"Treb Level", AMP_TREBLE_LEVEL, AMP_B_POSITION, &values_eq_db},
+    {"Presence", AMP_PRESENCE, AMP_B_POSITION, &values_eq_db},
     {"Level", AMP_LEVEL, AMP_B_POSITION, &values_0_to_99},
 };
 
