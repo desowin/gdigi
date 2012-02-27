@@ -218,6 +218,9 @@ MessageID get_message_id(GString *msg)
     return -1;
 }
 
+#include "gdigi_xml.h"
+extern XmlSettings *get_xml_settings (guint id, guint position);
+
 void push_message(GString *msg)
 {
     MessageID msgid = get_message_id(msg);
@@ -238,6 +241,7 @@ void push_message(GString *msg)
     }
     g_message("Received %s", get_message_name(msgid));
 
+    SettingParam *param;
     switch (msgid) {
         case ACK:
             g_string_free(msg, TRUE);
@@ -248,9 +252,12 @@ void push_message(GString *msg)
             return;
 
         case RECEIVE_PARAMETER_VALUE:
+        {
             unpack_message(msg);
-            SettingParam *param = setting_param_new_from_data(&msg->str[8], NULL);
-            g_message("ID: %5d Position: %2d Value: %.1d", param->id, param->position, param->value);
+            param = setting_param_new_from_data(&msg->str[8], NULL);
+            XmlSettings *xml = get_xml_settings(param->id, param->position);
+            char *label = xml ? xml->label : "NULL";
+            g_message("ID: %5d Position: %2d Value: %.1d: %s", param->id, param->position, param->value, label);
 
             GDK_THREADS_ENTER();
             apply_setting_param_to_gui(param);
@@ -259,6 +266,7 @@ void push_message(GString *msg)
             setting_param_free(param);
             g_string_free(msg, TRUE);
             return;
+        }
 
         case RECEIVE_DEVICE_NOTIFICATION:
             unpack_message(msg);
@@ -304,7 +312,7 @@ void push_message(GString *msg)
             x = 10;
             do {
                 param = setting_param_new_from_data(&msg->str[x], &x);
-                g_message("Received global param ID: %5d Position: %2.1d Value: %6.1d",
+                g_message("Received global param ID: %5d Position: %2.1d Value: %6.1d: %s",
                            param->id, param->position, param->value);
                 setting_param_free(param);
             } while ( (x < msg->len) && n < tot);

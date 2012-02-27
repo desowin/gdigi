@@ -4074,6 +4074,14 @@ XmlSettings xml_settings[] = {
     {FX_LIB_LEVEL_MAX1, LIB_POSITION, "FxLibLvlMax1", &values_0_to_99,},
     {FX_LIB_LEVEL_MAX2, LIB_POSITION, "FxLibLvlMax2", &values_0_to_99,},
     {FX_LIB_LEVEL_MAX3, LIB_POSITION, "FxLibLvlMax3", &values_0_to_99,},
+
+    // Global settings, not part of presets or standard XML.
+    {TUNING_REFERENCE, GLOBAL_POSITION, "Tuning Reference", &values_0_to_99,},
+    {USB_AUDIO_PLAYBACK_MIX, GLOBAL_POSITION, "USB Audio Playback Mix", &values_0_to_99,},
+    {USB_AUDIO_LEVEL, GLOBAL_POSITION, "USB Audio Level", &values_0_to_99,},
+    {GUI_MODE_ON_OFF, GLOBAL_POSITION, "GUI Mode", &values_0_to_99,},
+    {EXP_PEDAL_LEVEL, GLOBAL_POSITION, "EXP Pedal Level", &values_0_to_99,},
+    {STOMP_MODE, GLOBAL_POSITION, "Stomp Mode", &values_0_to_99,},
 };
 
 
