@@ -4167,7 +4167,10 @@ ModifierGroup *modifier_linkable_list(GString *msg)
     modifier_group->type = EXP_TYPE;
     modifier_group->position = EXP_POSITION;
 
-    g_message("Group %d count %d", group_id, count);
+    debug_msg(DEBUG_MSG2HOST|DEBUG_GROUP,
+              "RECEIVE_MODIFIER_LINKABLE_LIST: Group %d count %d",
+              group_id, count);
+
     EffectGroup *group = g_slice_alloc(count * sizeof(EffectGroup));
 
     for (i=0; i<count; i++) {
@@ -4189,7 +4192,9 @@ ModifierGroup *modifier_linkable_list(GString *msg)
         if (group[i].settings == NULL)
             group[i].settings_amt = 0;
 
-        g_message("ID: %4d Position: %2d Label: %s", id, position, modifier ? modifier->label : NULL);
+        debug_msg(DEBUG_MSG2HOST|DEBUG_GROUP,
+                  "ID: %4d Position: %2d Label: %s",
+                  id, position, modifier ? modifier->label : NULL);
     }
 
     modifier_group->group = group;

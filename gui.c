@@ -248,7 +248,7 @@ static gboolean custom_value_output_cb(GtkSpinButton *spin, EffectValues *values
         if (values->type & VALUE_TYPE_EXTRA) {
             values = values->extra;
         } else {
-            g_message("custom_value_output_cb called with out of bounds value");
+            g_warning("custom_value_output_cb called with out of bounds value");
             return FALSE;
         }
     }
@@ -977,7 +977,7 @@ static void action_open_preset_cb(GtkAction *action)
     for (x=0; x<n_file_types; x++) {
         GtkFileFilter *current_filter = gtk_file_filter_new();
         if (file_types[x].name == NULL) {
-            g_message("Skipping NULL array entry");
+            g_warning("Skipping NULL array entry");
             continue;
         }
 
@@ -1239,7 +1239,7 @@ static void add_menubar(GtkWidget *window, GtkWidget *vbox)
     gtk_window_add_accel_group(GTK_WINDOW(window), gtk_ui_manager_get_accel_group(ui));
 
     if (!gtk_ui_manager_add_ui_from_string(ui, menu_info, -1, &error)) {
-        g_message("building menus failed: %s", error->message);
+        g_warning("building menus failed: %s", error->message);
         g_error_free(error);
         error = NULL;
     }
@@ -1405,7 +1405,8 @@ gboolean unsupported_device_dialog(Device **device)
     if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
         gint number = gtk_combo_box_get_active(GTK_COMBO_BOX(combo_box));
         if (number != -1 && number <n_supported_devices) {
-            g_message("Starting %s compability mode", supported_devices[number]->name);
+            g_message("Starting %s compability mode",
+                      supported_devices[number]->name);
             *device = supported_devices[number];
             gtk_widget_destroy(dialog);
             return TRUE;
