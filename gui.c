@@ -17,6 +17,7 @@
 #include <gtk/gtk.h>
 #include <glib-object.h>
 #include <string.h>
+#include <alsa/asoundlib.h>
 #include "gdigi.h"
 #include "gui.h"
 #include "effects.h"
@@ -1338,4 +1339,56 @@ gboolean unsupported_device_dialog(Device **device)
 
     gtk_widget_destroy(dialog);
     return FALSE;
+}
+
+/**
+ *  \param devices List containing the available Digitech devices.
+ *
+ *  Displays dialogbox for choosing a device.
+ *
+ *  \return Index of the selected device or -1 on failure.
+ **/
+gint select_device_dialog (GList *devices)
+{
+
+    GtkWidget *dialog;
+    GtkWidget *label;
+    GtkWidget *combo_box;
+    GtkWidget *vbox;
+    GList     *device;
+
+    dialog = gtk_dialog_new_with_buttons("Select Digitech device",
+                                         NULL, GTK_DIALOG_MODAL,
+                                         GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                                         GTK_STOCK_OK, GTK_RESPONSE_ACCEPT,
+                                         NULL);
+
+    vbox = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+
+    label = gtk_label_new("You have multiple Digitech devices, select one.\n");
+    gtk_container_add(GTK_CONTAINER(vbox), label);
+
+    combo_box = gtk_combo_box_text_new();
+    device = g_list_first(devices);
+    do {
+        char *name;
+
+        snd_card_get_longname(GPOINTER_TO_INT(device->data), &name);
+        gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(combo_box), NULL, name);
+
+    } while ((device = g_list_next(device)));
+
+    gtk_container_add(GTK_CONTAINER(vbox), combo_box);
+
+    gtk_widget_show_all(vbox);
+    if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
+        gint number = gtk_combo_box_get_active(GTK_COMBO_BOX(combo_box));
+        if (number != -1) {
+            gtk_widget_destroy(dialog);
+            return (number);
+        }
+    }
+
+    gtk_widget_destroy(dialog);
+    return  -1;
 }

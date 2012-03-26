@@ -28,5 +28,6 @@ gboolean apply_current_preset_to_gui(gpointer data);
 void gui_create(Device *device);
 void gui_free();
 gboolean unsupported_device_dialog(Device **device);
+gint select_device_dialog (GList *devices);
 
 #endif /* GDIGI_GUI_H */
