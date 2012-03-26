@@ -1,4 +1,4 @@
-Requirments: alsa, gtk+, glib, expat
+Requirments: alsa, gtk+, glib, expat, libxml-2
 
 Getting started guide:
 -to compile: make
