@@ -841,10 +841,21 @@ static void action_show_about_dialog_cb(GtkAction *action)
 {
     static const gchar * const authors[] = {
         "Tomasz Moń <desowin@gmail.com>",
+        "Stephen Rigler <riglersc@gmail.com>",
+        "Jaco Kroon <jaco@kroon.co.za>",
+        "Rafael Moreno <laocanfei@yahoo.com>",
+        "Andrew O. Shadoura <bugzilla@tut.by>",
+        "Andreas Karajannis <aakara13@googlemail.com>",
+        "Miklos Aubert <miklos.aubert@gmail.com>",
+        "Jonathan A. Tice <jonandtice@gmail.com>",
+        "John Hammen <jhammen@gmail.com>",
+        "Ahmed Toulan <thelinuxer@gmail.com>",
+        "Tim LaBerge <tlaberge@visi.com>",
         NULL
     };
     static const gchar copyright[] = "Copyright \xc2\xa9 2009 Tomasz Moń";
     static const gchar website[] = "http://desowin.org/gdigi/";
+    static const gchar version[] = "0.3.0";
 
     GtkWidget *window = g_object_get_data(G_OBJECT(action), "window");
 
@@ -852,6 +863,10 @@ static void action_show_about_dialog_cb(GtkAction *action)
                           "authors", authors,
                           "copyright", copyright,
                           "website", website,
+                          "license-type", GTK_LICENSE_GPL_3_0,
+                          "wrap-license", TRUE,
+                          "program-name", "gdigi",
+                          "version", version,
                           NULL);
 }
 
