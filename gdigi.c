@@ -1058,6 +1058,8 @@ static gboolean request_who_am_i(unsigned char *device_id, unsigned char *family
         *device_id = data->str[8];
         *family_id = data->str[9];
         *product_id = data->str[10];
+        g_message("I am device id %d family %d product id %d.",
+                   *device_id, *family_id, *product_id);
         g_string_free(data, TRUE);
         return TRUE;
     }
@@ -1122,18 +1124,14 @@ static gint get_digitech_devices(GList **devices)
 {
     gint card_num = -1;
     gint number = 0;
-    snd_card_next(&card_num);
 
-    while (card_num > -1) {
+    while (!snd_card_next(&card_num) && (card_num > -1)) {
         char* name;
         snd_card_get_longname(card_num, &name);
-        gint count = strspn(name,"DigiTech");
-        if (count > 0)
-        {
+        if (strspn(name,"DigiTech") > 0) {
             number++;
             *devices = g_list_append(*devices, GINT_TO_POINTER(card_num));
         }
-        snd_card_next(&card_num);
     }
 
     return number;
@@ -1161,13 +1159,24 @@ int main(int argc, char *argv[]) {
 
     if (device_port == NULL) {
         /* port not given explicitly in commandline - search for devices */
-        GList *devices = NULL;
-        if (get_digitech_devices(&devices) <= 0) {
-            g_message("Couldn't find DigiTech devices!");
+        GList  *devices = NULL;
+        GList  *device = NULL;
+        int     num_devices = 0;
+        int     chosen_device = 0;
+        if ((num_devices = get_digitech_devices(&devices)) <= 0) {
+            g_message("Couldn't find any DigiTech devices!");
             exit(EXIT_FAILURE);
         }
+        if (num_devices > 1) {
+            chosen_device = select_device_dialog(devices);
+            if (chosen_device < 0) {
+                show_error_message(NULL, "No device chosen");
+                exit(EXIT_FAILURE);
+            }
+        }
+        device = g_list_nth(devices, chosen_device);
         device_port = g_strdup_printf("hw:%d,0,0",
-                                      GPOINTER_TO_INT(devices->data));
+                                      GPOINTER_TO_INT(device->data));
         g_list_free(devices);
         g_message("Found device %s", device_port);
     } else {
