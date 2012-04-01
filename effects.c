@@ -4145,7 +4145,7 @@ ModifierGroup *modifier_linkable_list()
             group[i].settings_amt = 0;
 
         debug_msg(DEBUG_MSG2HOST|DEBUG_GROUP,
-                  "ID: %4d Position: %2d Label: %s",
+                  "ID: %4d Position: %2d: %s",
                   id, position, modifier ? modifier->label : NULL);
     }
 
