@@ -326,7 +326,8 @@ Preset *create_preset_from_data(GList *list)
                     SettingParam *param = setting_param_new_from_data(&data->str[x], &x);
                     n++;
                     preset->params = g_list_prepend(preset->params, param);
-                    g_message("%d ID %d Position %d Value %d", n, param->id, param->position, param->value);
+                    g_message("%3d ID %4d Position %2d Value %6.1d",
+                               n, param->id, param->position, param->value);
                 } while ((x < data->len) && n<total);
                 g_message("TOTAL %d", total);
                 preset->params = g_list_sort(preset->params, params_cmp);

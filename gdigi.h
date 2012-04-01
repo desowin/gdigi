@@ -315,7 +315,7 @@ enum {
 
 #define AMP_TYPE 2496
 #define AMP_ON_OFF 265
-#define AMP_POSITION 8
+#define AMP_A_POSITION 8
 #define AMP_B_POSITION 10
 
 #define AMP_LOOP_ON_OFF 3649
@@ -426,7 +426,6 @@ enum {
 #define EQ_PRESENCE 3207
 #define EQ_TREB_FREQ 3211
 #define EQ_ENABLE 3212
-
 
 #define EQ_LOW_FREQ 3213
 #define EQ_MID_FREQ_XXX 3214
