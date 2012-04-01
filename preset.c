@@ -69,7 +69,7 @@ static void XMLCALL start(void *data, const char *el, const char **attr) {
     if (g_strcmp0(el, "Params") == 0) {
         ad->section = SECTION_PARAMS;
         if (ad->preset->params != NULL)
-            g_message("Params aleady exists!");
+            g_warning("Params aleady exists!");
     } else if (g_strcmp0(el, "Param") == 0) {
         SettingParam *param = setting_param_new();
         ad->preset->params = g_list_prepend(ad->preset->params, param);
@@ -84,7 +84,7 @@ static void XMLCALL start(void *data, const char *el, const char **attr) {
     } else if (g_strcmp0(el, "Genetx") == 0) {
         ad->section = SECTION_GENETX;
         if (ad->preset->genetxs != NULL)
-            g_message("Genetx already exists!");
+            g_warning("Genetx already exists!");
     } else if (g_strcmp0(el, "GenetxModel") == 0) {
         SettingGenetx *genetx = setting_genetx_new();
         ad->preset->genetxs = g_list_prepend(ad->preset->genetxs, genetx);
@@ -160,7 +160,7 @@ static void XMLCALL text_cb(void *data, const char* text, int len)
                 } else if (g_strcmp0(value, "Version2") == 0) {
                     genetx->version = GENETX_VERSION_2;
                 } else {
-                    g_message("Unknown GeNetX version: %s", value);
+                    g_warning("Unknown GeNetX version: %s", value);
                 }
                 break;
             case PARSER_TYPE_GENETX_TYPE:
@@ -169,7 +169,7 @@ static void XMLCALL text_cb(void *data, const char* text, int len)
                 } else if (g_strcmp0(value, "Cabinet") == 0) {
                     genetx->type = GENETX_TYPE_CABINET;
                 } else {
-                    g_message("Unknown GeNetX type: %s", value);
+                    g_warning("Unknown GeNetX type: %s", value);
                 }
                 break;
             case PARSER_TYPE_GENETX_CHANNEL:
@@ -178,7 +178,7 @@ static void XMLCALL text_cb(void *data, const char* text, int len)
                 } else if (g_strcmp0(value, "Channel2") == 0) {
                     genetx->channel = GENETX_CHANNEL2;
                 } else {
-                    g_message("Unknown GeNetX channel: %s", value);
+                    g_warning("Unknown GeNetX channel: %s", value);
                 }
                 break;
             case PARSER_TYPE_GENETX_NAME:
@@ -219,7 +219,7 @@ Preset *create_preset_from_xml_file(gchar *filename, GError **error)
     gchar *contents;
 
     if (g_file_get_contents(filename, &contents, NULL, &err) == FALSE) {
-        g_message("Failed to get %s contents: %s", filename, err->message);
+        g_warning("Failed to get %s contents: %s", filename, err->message);
         *error = g_error_copy(err);
         g_error_free(err);
         return NULL;
@@ -308,12 +308,16 @@ Preset *create_preset_from_data(GList *list)
                 modified = (unsigned char)data->str[11+strlen(name)];
 
                 if ((bank == PRESETS_EDIT_BUFFER) && (number == 0)) {
-                    g_message("Received current edit buffer");
+                    debug_msg(DEBUG_MSG2HOST, 
+                              "RECEIVE_PRESET_START:  current edit buffer");
                 } else {
-                    g_message("Received preset %d from bank %d", number, bank);
+                    debug_msg(DEBUG_MSG2HOST,
+                              "RECEIVE_PRESET_START: preset %d from bank %d",
+                              number, bank);
                 }
 
-                g_message("Modified flag: %d Name: %s", modified, name);
+                debug_msg(DEBUG_MSG2HOST, "Name: %s, %sodified",
+                                          name, modified ? "M" : "Not m");
                 preset->name = name;
                 break;
             case RECEIVE_PRESET_PARAMETERS:
@@ -326,16 +330,19 @@ Preset *create_preset_from_data(GList *list)
                     SettingParam *param = setting_param_new_from_data(&data->str[x], &x);
                     n++;
                     preset->params = g_list_prepend(preset->params, param);
-                    g_message("%3d ID %4d Position %2d Value %6.1d",
-                               n, param->id, param->position, param->value);
+                    debug_msg(DEBUG_MSG2HOST, "%3d ID %4d Position %2d "
+                                              "Value %6.1d",
+                                              n, param->id, param->position,
+                                              param->value);
                 } while ((x < data->len) && n<total);
-                g_message("TOTAL %d", total);
+                debug_msg(DEBUG_MSG2HOST, "TOTAL %d", total);
                 preset->params = g_list_sort(preset->params, params_cmp);
                 break;
             case RECEIVE_PRESET_END:
                 break;
             default:
-                g_message("Unhandled message in preset messages list");
+                g_warning("Unhandled message 0x%x in preset messages list",
+                          get_message_id(data));
         }
     }
 

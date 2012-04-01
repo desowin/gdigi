@@ -22,6 +22,19 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+typedef enum {
+    DEBUG_MSG2DEV   = (1 << 0),     // Device bound messages.
+    DEBUG_MSG2HOST  = (1 << 1),     // Host bound messages.
+    DEBUG_STARTUP   = (1 << 2),
+    DEBUG_GROUP     = (1 << 3),     // Modifier group
+    DEBUG_HEX       = (1 << 4),     // Dump message contents in hex.
+    DEBUG_XML       = (1 << 5),     
+    DEBUG_VERBOSE   = (1 << 6),     
+} debug_flags_t;
+
+void debug_msg (debug_flags_t, char *fmt, ...);
+gboolean debug_flag_is_set (debug_flags_t flag);
+
 #define GNX_CHANNEL_POSITION 7
 #define GNX_CHANNEL_AMP 260
 #define GNX_WARP 261
@@ -885,7 +898,10 @@ enum {
 
 #define TONE_LIB_TYPE 8704
 #define FX_LIB_TYPE 8705
-#define FX_LIB_LEVEL 8706
+#define FX_LIB_LEVEL 8706      // This influences pitch shift mix, delay level,
+                               // and reverb level, in proportion, as
+                               // specified by FX_LIB_LEVEL_MAX1,2,3.
+                               // 
 #define FX_LIB_LEVEL_MAX1 8708
 #define FX_LIB_LEVEL_MAX2 8710
 #define FX_LIB_LEVEL_MAX3 8712
@@ -962,11 +978,17 @@ enum {
   EFFECTS_LIB_CUSTOM = 1856
 };
 
-#define USB_POSITION 0
+#define GLOBAL_POSITION 0
+
+#define TUNING_REFERENCE 12288
+
 #define USB_AUDIO_PLAYBACK_MIX 12297
 #define USB_AUDIO_LEVEL 12307
 
 #define GUI_MODE_ON_OFF 12298
+
+#define EXP_PEDAL_LEVEL 12300
+#define STOMP_MODE 12370
 
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 

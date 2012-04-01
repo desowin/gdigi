@@ -57,11 +57,12 @@ map_xml_value(XmlSettings *xml, gint value)
     switch (xml->values->type) {
     case VALUE_TYPE_LABEL:
         if ((xml->values == &values_on_off) && (value > 1)) {
-            g_message("Skipping modifier->label %s\n", xml->label);
+            g_warning("Skipping modifier->label %s\n", xml->label);
             return NULL;
         }   
         if (value > xml->values->max || value < xml->values->min) {
-            g_message("%s value %d out of range %0.1f %0.1f",  xml->label, value, xml->values->min, xml->values->max);
+            g_warning("%s value %d out of range %0.1f %0.1f",
+                      xml->label, value, xml->values->min, xml->values->max);
         } 
         {
             XmlLabel *labels = xml->xml_labels;
@@ -144,7 +145,7 @@ write_preset_to_xml(Preset *preset, gchar *filename)
         SettingParam *param = (SettingParam *) iter_params->data;
  
         if (param->id == last_id && param->position == last_position) {
-            g_message("Skipping duplicate parameter id %d position %d",
+            g_warning("Skipping duplicate parameter id %d position %d",
                        last_id, last_position);
             iter_params  = iter_params->next;
             continue;
@@ -208,8 +209,9 @@ write_preset_to_xml(Preset *preset, gchar *filename)
             {
                 char *textp = map_xml_value(xml, param->value);
                 if (!textp) {
-                    g_message("Unable to map %s value %d for id %d position %d",
-                            xml->label, param->value, param->id, param->position);
+                    g_warning("Unable to map %s value %d for id %d position %d",
+                              xml->label, param->value, param->id,
+                              param->position);
                     textp = "";
                 }
                 rc = xmlTextWriterWriteElement(writer, BAD_CAST "Text",
@@ -237,7 +239,7 @@ write_preset_to_xml(Preset *preset, gchar *filename)
                 break;
 
             default:
-                g_message("Unhandled value type %d", type);
+                g_warning("Unhandled value type %d", type);
                 break;
             }
         }

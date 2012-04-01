@@ -709,8 +709,8 @@ static EffectValues values_rp_mix = {
 };
 
 static EffectSettings usb_settings[] = {
-    {"USB/RP Mix", USB_AUDIO_PLAYBACK_MIX, USB_POSITION, &values_rp_mix},
-    {"USB Level", USB_AUDIO_LEVEL, USB_POSITION, &values_m12_to_24},
+    {"USB/RP Mix", USB_AUDIO_PLAYBACK_MIX, GLOBAL_POSITION, &values_rp_mix},
+    {"USB Level", USB_AUDIO_LEVEL, GLOBAL_POSITION, &values_m12_to_24},
 };
 
 static EffectSettings misc_settings[] = {
@@ -4119,7 +4119,10 @@ ModifierGroup *modifier_linkable_list()
     modifier_group->type = EXP_TYPE;
     modifier_group->position = EXP_POSITION;
 
-    g_message("Group %d count %d", group_id, count);
+    debug_msg(DEBUG_MSG2HOST|DEBUG_GROUP,
+              "RECEIVE_MODIFIER_LINKABLE_LIST: Group %d count %d",
+              group_id, count);
+
     EffectGroup *group = g_slice_alloc(count * sizeof(EffectGroup));
 
     for (i=0; i<count; i++) {
@@ -4141,7 +4144,9 @@ ModifierGroup *modifier_linkable_list()
         if (group[i].settings == NULL)
             group[i].settings_amt = 0;
 
-        g_message("ID: %4d Position: %2d Label: %s", id, position, modifier ? modifier->label : NULL);
+        debug_msg(DEBUG_MSG2HOST|DEBUG_GROUP,
+                  "ID: %4d Position: %2d Label: %s",
+                  id, position, modifier ? modifier->label : NULL);
     }
 
     modifier_group->group = group;
