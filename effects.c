@@ -587,58 +587,58 @@ static EffectValues values_loose_tight = {
 };
 
 static EffectValues values_pickup_type = {
-    .min = 0.0, .max = 1.0,
+    .min = 65.0, .max = 66.0,
     .type = VALUE_TYPE_LABEL,
     .labels = pickup_type_labels,
 };
 
 static EffectValues values_comp_type = {
-    .min = 0.0, .max = 1.0,
+    .min = 195.0, .max = 197.0,
     .type = VALUE_TYPE_LABEL,
 };
 
 static EffectValues values_dist_type = {
-    .min = 0.0, .max = 24.0,
+    .min = 1280.0, .max = 1302.0,
     .type = VALUE_TYPE_LABEL,
 };
 
 static EffectValues values_amp_type = {
-    .min = 0.0, .max = 1.0,
+    .min = 307.0, .max = 351.0,
     .type = VALUE_TYPE_LABEL,
 };
 
 static EffectValues values_cab_type = {
-    .min = 0.0, .max = 19.0,
+    .min = 570.0, .max = 627.0,
     .type = VALUE_TYPE_LABEL,
 };
 
 static EffectValues values_gate_type = {
-    .min = 0.0, .max = 1.0,
+    .min = 768.0, .max = 769.0,
     .type = VALUE_TYPE_LABEL,
 };
 
 static EffectValues values_mod_type = {
-    .min = 0.0, .max = 19.0,
+    .min = 862.0, .max = 1347.0,
     .type = VALUE_TYPE_LABEL,
 };
 
 static EffectValues values_pre_post = {
-    .min = 0.0, .max = 15.0,
+    .min = 1543.0, .max = 1544.0,
     .type = VALUE_TYPE_LABEL,
 };
 
 static EffectValues values_delay_type = {
-    .min = 0.0, .max = 15.0,
+    .min = 1027.0, .max = 1066.0,
     .type = VALUE_TYPE_LABEL,
 };
 
 static EffectValues values_reverb_type = {
-    .min = 0.0, .max = 14.0,
+    .min = 1107.0, .max = 1151.0,
     .type = VALUE_TYPE_LABEL,
 };
 
 static EffectValues values_wah_type = {
-    .min = 0.0, .max = 1.0,
+    .min = 129.0, .max = 134.0,
     .type = VALUE_TYPE_LABEL,
 };
 
@@ -686,7 +686,7 @@ static EffectValues values_lfo_speed = {
 };
 
 static EffectValues values_eq_type = {
-    .min = 0.0, .max = 3.0,
+    .min = 1472.0, .max = 1475.0,
     .type = VALUE_TYPE_LABEL,
 };
 
@@ -696,12 +696,12 @@ static EffectValues values_lfo_waveform = {
 };
 
 static EffectValues values_tone_lib_type= {
-    .min = 0.0, .max = 31.0,
+    .min = 1792.0, .max = 1822.0,
     .type = VALUE_TYPE_LABEL,
 };
 
 static EffectValues values_fx_lib_type= {
-    .min = 0.0, .max = 31.0,
+    .min = 1856.0, .max = 1866.0,
     .type = VALUE_TYPE_LABEL,
 };
 
@@ -3995,6 +3995,15 @@ XmlSettings xml_settings[] = {
     {IPS_SCALE, CHORUSFX_POSITION, "IPS Scale", &values_ips_scale, xml_ips_scale_labels, G_N_ELEMENTS(xml_ips_scale_labels)},
     {IPS_LEVEL, CHORUSFX_POSITION, "IPS Level", &values_0_to_99,},
 
+    {SYNTH_TALK_ATTACK, CHORUSFX_POSITION, "Synth Talk Attack", &values_0_to_99,},
+    {GNX3K_SYNTH_TALK_RELEASE, CHORUSFX_POSITION, "Synth Talk Release", &values_0_to_99,},
+    {SYNTH_TALK_RELEASE, CHORUSFX_POSITION, "Synth Talk Release", &values_0_to_99,},
+    {SYNTH_TALK_SENS, CHORUSFX_POSITION, "Synth Talk Sens", &values_0_to_99,},
+    {SYNTH_TALK_VOX, CHORUSFX_POSITION, "Synth Talk Vox", &values_0_to_99,},
+    {SYNTH_TALK_BALANCE, CHORUSFX_POSITION, "Synth Talk Balance", &values_0_to_99,},
+
+
+
     {DELAY_TYPE, DELAY_POSITION, "Delay Type", &values_delay_type, xml_delay_labels, G_N_ELEMENTS(xml_delay_labels)},
     {DELAY_ON_OFF, DELAY_POSITION, "Delay Enable", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
     {DELAY_TIME, DELAY_POSITION, "Delay Time", &values_delay_time,},
@@ -4020,7 +4029,6 @@ XmlSettings xml_settings[] = {
     {WAH_ON_OFF, WAH_POSITION, "Wah Enable", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
     {WAH_PEDAL_POSITION, WAH_POSITION, "Wah Position", &values_0_to_99,},
     {WAH_VOLUME_BOOST, WAH_POSITION, "Wah Vol. Boost", &values_db_boost,},
-    //{MOD_TYPE, MOD_POSITION, "Mod Type", &values_0_to_99,}, // ???
 
     {PRESET_LEVEL, PRESET_POSITION, "Preset Level", &values_0_to_99,},
 
