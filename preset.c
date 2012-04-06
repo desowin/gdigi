@@ -330,10 +330,11 @@ Preset *create_preset_from_data(GList *list)
                     SettingParam *param = setting_param_new_from_data(&data->str[x], &x);
                     n++;
                     preset->params = g_list_prepend(preset->params, param);
-                    debug_msg(DEBUG_MSG2HOST, "%3d ID %4d Position %2d "
-                                              "Value %6.1d",
-                                              n, param->id, param->position,
-                                              param->value);
+                    if (debug_flag_is_set(DEBUG_MSG2HOST)) {
+                        GString *ipv = format_ipv(param->id, param->position, param->value);
+                        debug_msg(DEBUG_MSG2HOST, "%3d %s", n, ipv->str);
+                        g_string_free(ipv, TRUE);
+                    }
                 } while ((x < data->len) && n<total);
                 debug_msg(DEBUG_MSG2HOST, "TOTAL %d", total);
                 preset->params = g_list_sort(preset->params, params_cmp);

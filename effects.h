@@ -116,6 +116,7 @@ typedef struct {
     gint n_banks;
 } Device;
 
+gchar *get_position(guint position);
 ModifierGroup *modifier_linkable_list();
 void modifier_group_free(ModifierGroup *modifier_group);
 void get_values_info(EffectValues *values,

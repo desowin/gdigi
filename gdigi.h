@@ -530,7 +530,6 @@ enum {
 };
 
 #define MOD_TYPE 768
-#define MOD_POSITION 768
 #define MOD_PRE_POST 1798
 
 #define CHORUSFX_TYPE 768
@@ -893,7 +892,6 @@ enum {
 #define LIBRARY_EFFECTS 8705
 #define EFFECTS_LEVEL 8706
 
-#define LIBRARY_POSITION 25
 #define LIB_POSITION 26
 
 #define TONE_LIB_TYPE 8704
@@ -1143,5 +1141,6 @@ void set_preset_level(int level);
 GStrv query_preset_names(gchar bank);
 void message_list_free(GList *list);
 GList *get_current_preset();
+GString *format_ipv(guint id, guint pos, guint val);
 
 #endif /* GDIGI_H */

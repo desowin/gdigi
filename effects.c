@@ -4020,7 +4020,7 @@ XmlSettings xml_settings[] = {
     {WAH_ON_OFF, WAH_POSITION, "Wah Enable", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
     {WAH_PEDAL_POSITION, WAH_POSITION, "Wah Position", &values_0_to_99,},
     {WAH_VOLUME_BOOST, WAH_POSITION, "Wah Vol. Boost", &values_db_boost,},
-    {MOD_TYPE, MOD_POSITION, "Mod Type", &values_0_to_99,}, // ???
+    //{MOD_TYPE, MOD_POSITION, "Mod Type", &values_0_to_99,}, // ???
 
     {PRESET_LEVEL, PRESET_POSITION, "Preset Level", &values_0_to_99,},
 
@@ -4084,8 +4084,51 @@ XmlSettings xml_settings[] = {
     {STOMP_MODE, GLOBAL_POSITION, "Stomp Mode", &values_0_to_99,},
 };
 
-
 guint n_xml_settings = G_N_ELEMENTS(xml_settings);
+
+gchar *Positions[] = {
+    [ GLOBAL_POSITION ] = "Global",
+    [ PICKUP_POSITION ] = "Pickup",
+    [ WAH_POSITION ] = "Wah",
+    [ COMP_POSITION ] = "Compressor",
+    [ GNX3K_WHAM_POSITION ] = "Gnx3K Wham",
+    [ DIST_POSITION ] = "Distortion",
+    [ AMP_CHANNEL_POSITION ] = "Amp Channel",
+    [ GNX_CHANNEL_POSITION ] = "Gnx Channel",
+    [ AMP_A_POSITION ] = "Amp A",
+    [ AMP_CAB_POSITION ] = "Amp Cab A",
+    [ AMP_B_POSITION ] = "Amp B",
+    [ AMP_CAB_B_POSITION ] = "Amp Cab B",
+    [ NOISEGATE_POSITION ] = "Noise Gate",
+    [ VOLUME_PRE_FX_POSITION ] = "Volume Pre Fx",
+    [ CHORUSFX_POSITION ] = "Chorus Fx",
+    [ DELAY_POSITION ] = "Delay",
+    [ REVERB_POSITION ] = "Reverb",
+    [ VOLUME_POST_FX_POSITION ] = "Volume Post Fx",
+    [ PRESET_POSITION ] = "Preset",
+    [ EXP_POSITION ] = "Expression",
+    [ WAH_POSITION_MIN_MAX ] = "Wah Min Max",
+    [ VSWITCH_ASSIGN_POSITION ] = "Vswitch",
+    [ LFO1_POSITION ] = "LFO 1",
+    [ LFO2_POSITION ] = "LFO 2",
+    [ EQ_A_POSITION ] = "EQ A",
+    [ EQ_B_POSITION ] = "EQ B",
+    [ LIB_POSITION ] = "Library",
+    [ AMP_LOOP_POSITION ] = "Amp Loop",
+};
+
+guint max_position = G_N_ELEMENTS(Positions);
+
+gchar *
+get_position (guint position)
+{
+    if (position > max_position) {
+        return "";
+    }
+
+    return Positions[position];
+}
+
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
 /**

@@ -52,7 +52,7 @@ XmlSettings *get_xml_settings (guint id, guint position)
 }
 
 gchar *
-map_xml_value(XmlSettings *xml, gint value)
+map_xml_value (XmlSettings *xml, gint value)
 {
     switch (xml->values->type) {
     case VALUE_TYPE_LABEL:
@@ -84,9 +84,9 @@ map_xml_value(XmlSettings *xml, gint value)
     return NULL;
 }
 
-gboolean value_is_extra (EffectValues *val, SettingParam *param)
+gboolean value_is_extra (EffectValues *val, int value)
 {
-    if ((param->value < val->min) || (param->value > val->max)) {
+    if ((value < val->min) || (value > val->max)) {
         return TRUE;
     }
     return FALSE;
@@ -176,7 +176,7 @@ write_preset_to_xml(Preset *preset, gchar *filename)
                                                    BAD_CAST xml->label);
             values = xml->values;
             type = values->type;
-            while ((type & VALUE_TYPE_EXTRA) && value_is_extra(values, param)) {
+            while ((type & VALUE_TYPE_EXTRA) && value_is_extra(values, param->value)) {
                 values = values->extra;
                 type = values->type;
             }
