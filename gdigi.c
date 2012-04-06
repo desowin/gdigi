@@ -180,7 +180,15 @@ format_ipv (guint id, guint pos, guint val)
     GString *buf = g_string_sized_new(1);
     GString *vec_buf = g_string_sized_new(1);
     XmlSettings *xml = get_xml_settings(id, pos);
-    GString *val_buf = format_value(xml, val);
+    GString *val_buf;
+
+    if (!xml) {
+        g_warning("Failed to find xml settings for position %d id %d.",
+                   id, pos);
+        g_string_printf(buf, "%s", "error");
+        return buf;
+    }
+    val_buf = format_value(xml, val);
 
     g_string_printf(vec_buf, "(%d, %d, %d)", pos, id, val);
     g_string_printf(buf, "%-16s %s: %s: %s",
