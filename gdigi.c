@@ -21,6 +21,7 @@
 #include <alsa/asoundlib.h>
 #include <alloca.h>
 #include "gdigi.h"
+#include "gdigi_xml.h"
 #include "gui.h"
 
 static unsigned char device_id = 0x7F;
@@ -55,6 +56,9 @@ gboolean set_debug_flags (const gchar *option_name, const gchar *value,
     if (strchr(value, 'h')) {
         DebugFlags |= DEBUG_MSG2HOST;
     }
+    if (strchr(value, 'm')) {
+        DebugFlags |= DEBUG_MSG2DEV|DEBUG_MSG2HOST|DEBUG_GROUP;
+    }
     if (strchr(value, 's')) {
         DebugFlags |= DEBUG_STARTUP;
     }
@@ -88,8 +92,103 @@ debug_msg (debug_flags_t flags, char *fmt, ...)
         vsnprintf(buf, 1024, fmt, ap);
         va_end(ap);
         
-        g_message("%s", buf);
+        fprintf(stderr, "%s\n", buf);
     }
+}
+
+/*
+ * Format a value according to the xml setting.
+ * Returns an allocated buffer that must be freed by the caller.
+ */
+GString *
+format_value (XmlSettings *xml, guint value)
+{
+    GString        *buf = g_string_sized_new(1);
+    EffectValues   *values = NULL;
+    ValueType       vtype;
+    gchar          *suffix = "";
+    gdouble         step = 1.0;
+    gint            offset = 0;
+    gboolean        decimal = FALSE;
+
+    values = xml->values;
+    vtype = values->type;
+    while ((vtype & VALUE_TYPE_EXTRA) && value_is_extra(values, value)) {
+        values = values->extra;
+        vtype = values->type;
+    }
+    vtype &= ~VALUE_TYPE_EXTRA;
+
+    if (vtype & VALUE_TYPE_OFFSET) {
+        offset = values->offset;
+        vtype &= ~VALUE_TYPE_OFFSET;
+    }
+
+    if (vtype & VALUE_TYPE_STEP) {
+        step = values->step;
+        vtype &= ~VALUE_TYPE_STEP;
+    }
+
+    if (vtype & VALUE_TYPE_SUFFIX) {
+        suffix = values->suffix;
+        vtype &= ~VALUE_TYPE_SUFFIX;
+    }
+
+    if (vtype & VALUE_TYPE_DECIMAL) {
+        decimal = TRUE;
+        vtype &= ~VALUE_TYPE_DECIMAL;
+    }
+
+    switch (vtype) {
+    case VALUE_TYPE_LABEL:
+    {
+        char *textp = map_xml_value(xml, value);
+        if (!textp) {
+            g_warning("Unable to map %s value %d for id %d position %d",
+                      xml->label, value, xml->id, xml->position);
+            textp = "";
+        }
+        g_string_printf(buf, "%s", textp);
+        break;
+    }
+    case VALUE_TYPE_PLAIN:
+    {
+        if (decimal) {
+            double dvalue = (value + offset) * step;
+                g_string_printf(buf, "%0.2f%s", dvalue, suffix);
+        } else {
+            gint ivalue = (value + offset) * step;
+            g_string_printf(buf, "%d%s", ivalue, suffix);
+        }
+        break;
+    }
+    case VALUE_TYPE_NONE:
+        g_string_printf(buf, "%s", "");
+        break;
+
+    default:
+        g_warning("Unhandled value type %d", vtype);
+        break;
+    }
+
+    return buf;
+} 
+
+GString *
+format_ipv (guint id, guint pos, guint val)
+{
+    GString *buf = g_string_sized_new(1);
+    GString *vec_buf = g_string_sized_new(1);
+    XmlSettings *xml = get_xml_settings(id, pos);
+    GString *val_buf = format_value(xml, val);
+
+    g_string_printf(vec_buf, "(%d, %d, %d)", pos, id, val);
+    g_string_printf(buf, "%-16s %s: %s: %s",
+                          vec_buf->str,
+                          get_position(pos), xml->label, val_buf->str);
+    g_string_free(vec_buf, TRUE);
+    g_string_free(val_buf, TRUE);
+    return buf;
 }
 
 /**
@@ -275,10 +374,7 @@ MessageID get_message_id(GString *msg)
     return -1;
 }
 
-#include "gdigi_xml.h"
-extern XmlSettings *get_xml_settings (guint id, guint position);
-
-void push_message(GString *msg)
+void push_message (GString *msg)
 {
     MessageID msgid = get_message_id(msg);
     if (((unsigned char)msg->str[0] == 0xF0) && ((unsigned char)msg->str[msg->len-1] == 0xF7))
@@ -315,13 +411,14 @@ void push_message(GString *msg)
         {
             unpack_message(msg);
             param = setting_param_new_from_data(&msg->str[8], NULL);
-            XmlSettings *xml = get_xml_settings(param->id, param->position);
-            char *label = xml ? xml->label : "NULL";
-            debug_msg(DEBUG_MSG2HOST,
-                      "RECEIVE_PARAMETER_VALUE: ID: %5d Position: %2d "
-                      "Value: %6.1d: %s",
-                      param->id, param->position,
-                      param->value, label);
+            if (debug_flag_is_set(DEBUG_MSG2HOST)) {
+                GString *ipv = format_ipv(param->id,
+                                          param->position,
+                                          param->value);
+                debug_msg(DEBUG_MSG2HOST, "RECEIVE_PARAMETER_VALUE\n%s",
+                                          ipv->str);
+                g_string_free(ipv, TRUE);
+            }
 
             GDK_THREADS_ENTER();
             apply_setting_param_to_gui(param);
@@ -545,8 +642,9 @@ void send_message(gint procedure, gchar *data, gint len)
     g_string_append_printf(msg, "%c\xF7",
                            calculate_checksum(&msg->str[1], msg->len - 1));
 
-    debug_msg(DEBUG_VERBOSE, "Sending message %s len %d",
-                             get_message_name(procedure), len);
+    debug_msg(DEBUG_VERBOSE, "Sending %s len %d",
+                              get_message_name(procedure), len);
+
     send_data(msg->str, msg->len);
 
     g_string_free(msg, TRUE);
@@ -805,8 +903,11 @@ void set_option(guint id, guint position, guint value)
                            ((id & 0xFF00) >> 8), (id & 0xFF),
                            position);
     append_value(msg, value);
-    debug_msg(DEBUG_MSG2DEV, "Sending id %d position %d value %d",
-                             id, position, value);
+    if (debug_flag_is_set(DEBUG_MSG2DEV)) {
+        GString *ipv = format_ipv(id, position, value);
+        debug_msg(DEBUG_MSG2DEV, "RECEIVE_PARAMETER_VALUE\n%s", ipv->str);
+        g_string_free(ipv, TRUE);
+    }
     send_message(RECEIVE_PARAMETER_VALUE, msg->str, msg->len);
     g_string_free(msg, TRUE);
 }
