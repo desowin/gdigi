@@ -190,7 +190,7 @@ format_ipv (guint id, guint pos, guint val)
     }
     val_buf = format_value(xml, val);
 
-    g_string_printf(vec_buf, "(%d, %d, %d)", pos, id, val);
+    g_string_printf(vec_buf, "(%2d, %4d, %d)", pos, id, val);
     g_string_printf(buf, "%-16s %s: %s: %s",
                           vec_buf->str,
                           get_position(pos), xml->label, val_buf->str);
@@ -382,23 +382,27 @@ MessageID get_message_id(GString *msg)
     return -1;
 }
 
-void push_message (GString *msg)
+#define HEX_WIDTH 26
+
+void push_message(GString *msg)
 {
     MessageID msgid = get_message_id(msg);
-    if (((unsigned char)msg->str[0] == 0xF0) && ((unsigned char)msg->str[msg->len-1] == 0xF7))
+    if (((unsigned char)msg->str[0] == 0xF0) &&
+            ((unsigned char)msg->str[msg->len-1] == 0xF7)) {
         debug_msg(DEBUG_VERBOSE, "Pushing correct message!");
-    else
+    } else {
         g_warning("Pushing incorrect message!");
+    }
 
     int x;
     if (debug_flag_is_set(DEBUG_HEX)) {
         for (x = 0; x<msg->len; x++) {
-            if (x && (x % 26) == 0) {
+            if (x && (x % HEX_WIDTH) == 0) {
                 printf("\n");
             }
             printf("%02x ", (unsigned char)msg->str[x]);
         }
-        if (x % 26) {
+        if (x % HEX_WIDTH) {
             printf("\n");
         }
     }
@@ -423,7 +427,7 @@ void push_message (GString *msg)
                 GString *ipv = format_ipv(param->id,
                                           param->position,
                                           param->value);
-                debug_msg(DEBUG_MSG2HOST, "RECEIVE_PARAMETER_VALUE\n%s",
+                debug_msg(DEBUG_MSG2HOST, "Receive RECEIVE_PARAMETER_VALUE: %s",
                                           ipv->str);
                 g_string_free(ipv, TRUE);
             }
@@ -438,51 +442,60 @@ void push_message (GString *msg)
         }
 
         case RECEIVE_DEVICE_NOTIFICATION:
-            unpack_message(msg);
+        {
             unsigned char *str = (unsigned char*)msg->str;
-            switch (str[8]) {
-                case NOTIFY_PRESET_MOVED:
-                    if (str[11] == PRESETS_EDIT_BUFFER && str[12] == 0) {
 
-                        GDK_THREADS_ENTER();
-                        g_timeout_add(0, apply_current_preset_to_gui, NULL);
-                        GDK_THREADS_LEAVE();
-                        debug_msg(DEBUG_MSG2HOST,
-                                  "RECEIVE_DEVICE_NOTIFICATION: Loaded preset "
-                                  "%d from bank %d",
+            unpack_message(msg);
+            switch (str[8]) {
+            case NOTIFY_PRESET_MOVED:
+                if (str[11] == PRESETS_EDIT_BUFFER && str[12] == 0) {
+
+                    GDK_THREADS_ENTER();
+                    g_timeout_add(0, apply_current_preset_to_gui, NULL);
+                    GDK_THREADS_LEAVE();
+                    debug_msg(DEBUG_MSG2HOST,
+                              "Receive RECEIVE_DEVICE_NOTIFICATION: Loaded preset "
+                              "%d from bank %d",
                                   str[10], str[9]);
-                    } else {
-                        debug_msg(DEBUG_MSG2HOST, 
-                                  "RECEIVE_DEVICE_NOTIFICATION: %d %d moved to "
-                                  "%d %d",
-                                  str[9], str[10],
-                                  str[11], str[12]);
-                    }
-                case NOTIFY_MODIFIER_GROUP_CHANGED:
-                {
-                    int i;
-                    if (debug_flag_is_set(DEBUG_HEX)) {
-                        printf("\n");
-                        for (i = 0; i < msg->len; i++) {
-                            printf(" %02x", (unsigned char) str[i]);
-                        }
-                        printf("\n");
-                    }
+                } else {
                     debug_msg(DEBUG_MSG2HOST, 
-                              "NOTIFY_MODIFIER_GROUP_CHANGED: Modifier group "
-                              "id %d changed",
-                              (str[9] << 8) | (str[10]));
-                    break;
+                              "Receive RECEIVE_DEVICE_NOTIFICATION: %d %d moved to "
+                              "%d %d",
+                              str[9], str[10],
+                              str[11], str[12]);
                 }
-                default:
-                    g_warning("Received unhandled device notification 0x%x",
-                              str[11]);
+                break;
+
+            case NOTIFY_MODIFIER_GROUP_CHANGED:
+            {
+                int i;
+                if (debug_flag_is_set(DEBUG_HEX)) {
+                    printf("\n");
+                    for (i = 0; i < msg->len; i++) {
+                        printf(" %02x", (unsigned char) str[i]);
+                    }
+                    printf("\n");
+                }
+                debug_msg(DEBUG_MSG2HOST, 
+                          "Receive NOTIFY_MODIFIER_GROUP_CHANGED: Modifier group "
+                          "id %d changed",
+                          (str[9] << 8) | (str[10]));
+                break;
+            }
+
+            default:
+                g_warning("Received unhandled device notification 0x%x", str[11]);
+                break;
             }
             g_string_free(msg, TRUE);
             return;
+        }
+
         case RECEIVE_GLOBAL_PARAMETERS:
-            unpack_message(msg);
+        {
             gint tot, n, x;
+
+            unpack_message(msg);
             tot = (unsigned char)msg->str[9];
             if (debug_flag_is_set(DEBUG_HEX)) {
                 for (n = 0; n < msg->len; n++) {
@@ -496,7 +509,7 @@ void push_message (GString *msg)
             do {
                 param = setting_param_new_from_data(&msg->str[x], &x);
                 debug_msg(DEBUG_MSG2HOST,
-                          "RECEIVE_GLOBAL_PARAMETERS ID: %5d "
+                          "Receive RECEIVE_GLOBAL_PARAMETERS ID: %5d "
                           "Position: %2.1d Value: %6.1d: %s",
                           param->id,
                           param->position, param->value, "XXX");
@@ -505,9 +518,12 @@ void push_message (GString *msg)
                              
             g_string_free(msg, TRUE);
             return;
-
+        }
 
         case RECEIVE_MODIFIER_LINKABLE_LIST:
+        {
+            gint tot, n;
+
             unpack_message(msg);
             tot = (unsigned char)msg->str[9];
 
@@ -522,13 +538,14 @@ void push_message (GString *msg)
                              
             g_string_free(msg, TRUE);
             return;
-
+        }
 
         default:
             g_mutex_lock(message_queue_mutex);
             g_queue_push_tail(message_queue, msg);
             g_cond_signal(message_queue_cond);
             g_mutex_unlock(message_queue_mutex);
+            break;
     }
 }
 
@@ -551,7 +568,8 @@ gpointer read_data_thread(gboolean *stop)
         unsigned short revents;
 
         /* SysEx messages can't contain bytes with 8th bit set.
-           memset our buffer to 0xFF, so if for some reason we'll get out of reply bounds, we'll catch it */
+           memset our buffer to 0xFF, so if for some reason we'll
+           get out of reply bounds, we'll catch it */
         memset(buf, '\0', sizeof(buf));
 
         err = poll(pfds, npfds, 200);
@@ -913,7 +931,7 @@ void set_option(guint id, guint position, guint value)
     append_value(msg, value);
     if (debug_flag_is_set(DEBUG_MSG2DEV)) {
         GString *ipv = format_ipv(id, position, value);
-        debug_msg(DEBUG_MSG2DEV, "RECEIVE_PARAMETER_VALUE\n%s", ipv->str);
+        debug_msg(DEBUG_MSG2DEV, "Send RECEIVE_PARAMETER_VALUE: %s", ipv->str);
         g_string_free(ipv, TRUE);
     }
     send_message(RECEIVE_PARAMETER_VALUE, msg->str, msg->len);
@@ -1334,6 +1352,10 @@ static gboolean request_who_am_i(unsigned char *device_id, unsigned char *family
         *device_id = data->str[8];
         *family_id = data->str[9];
         *product_id = data->str[10];
+        debug_msg(DEBUG_STARTUP, "Found device id %d family %d product id %d.",
+                                 *device_id,
+                                 *family_id,
+                                 *product_id);
         g_string_free(data, TRUE);
         return TRUE;
     }
@@ -1381,8 +1403,24 @@ static void request_device_configuration()
 
 static GOptionEntry options[] = {
     {"device", 'd', G_OPTION_FLAG_IN_MAIN, G_OPTION_ARG_STRING, &device_port, "MIDI device port to use", NULL},
-    {"debug-flags", 'D', G_OPTION_FLAG_IN_MAIN, G_OPTION_ARG_CALLBACK, set_debug_flags, 
-        "Set debug flags: any combination of a, d, h, s:\n", 
+    {"debug-flags <flags>", 'D', G_OPTION_FLAG_IN_MAIN, G_OPTION_ARG_CALLBACK, set_debug_flags, 
+        "<flags> any of a, d, g, h, m, s, x, v:\n"
+        "                                "
+        "a: Everything.\n"
+        "                                "
+        "d: Messages to the device.\n"
+        "                                "
+        "g: Group messages.\n"
+        "                                "
+        "h: Dump message contents in hex.\n"
+        "                                "
+        "m: All messages.\n"
+        "                                "
+        "s: Startup.\n"
+        "                                "
+        "x: Debug xml parsing/writing.\n"
+        "                                "
+        "v: Additional verbosity.\n" , 
         NULL},
     {NULL}
 };
@@ -1455,9 +1493,9 @@ int main(int argc, char *argv[]) {
         device_port = g_strdup_printf("hw:%d,0,0",
                                       GPOINTER_TO_INT(device->data));
         g_list_free(devices);
-        debug_msg(DEBUG_STARTUP, "Found device %s\n", device_port);
+        debug_msg(DEBUG_STARTUP, "Found device %s.", device_port);
     } else {
-        debug_msg(DEBUG_STARTUP, "Using device %s\n", device_port);
+        debug_msg(DEBUG_STARTUP, "Using device %s.", device_port);
     }
 
     g_option_context_free(context);

@@ -634,18 +634,19 @@ static EffectValues values_wah_type = {
     .type = VALUE_TYPE_LABEL,
 };
 
+// 4259839 is 0x40 FFFF, i.e. 0x<pos> <val>.
 static EffectValues values_exp_assign = {
-    .min = 0.0, .max = 1.0,
+    .min = 0.0, .max = 4259839.0,
     .type = VALUE_TYPE_LABEL,
 };
 
 static EffectValues values_vswitch_pedal_assign = {
-    .min = 0.0, .max = 1.0,
+    .min = 0.0, .max = 4259839.0,
     .type = VALUE_TYPE_LABEL,
 };
 
 static EffectValues values_vswitch_assign = {
-    .min = 0.0, .max = 1.0,
+    .min = 0.0, .max = 4259839.0,
     .type = VALUE_TYPE_LABEL,
 };
 
@@ -3952,8 +3953,6 @@ XmlSettings xml_settings[] = {
     {SYNTH_TALK_VOX, CHORUSFX_POSITION, "Synth Talk Vox", &values_0_to_99,},
     {SYNTH_TALK_BALANCE, CHORUSFX_POSITION, "Synth Talk Balance", &values_0_to_99,},
 
-
-
     {DELAY_TYPE, DELAY_POSITION, "Delay Type", &values_delay_type, xml_delay_labels, G_N_ELEMENTS(xml_delay_labels)},
     {DELAY_ON_OFF, DELAY_POSITION, "Delay Enable", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
     {DELAY_TIME, DELAY_POSITION, "Delay Time", &values_delay_time,},
@@ -4265,6 +4264,7 @@ gboolean get_device_info(unsigned char device_id, unsigned char family_id,
     for (x = 0; x < G_N_ELEMENTS(supported_devices); x++) {
         if (supported_devices[x]->product_id == product_id && supported_devices[x]->family_id == family_id) {
             *device = supported_devices[x];
+            debug_msg(DEBUG_STARTUP, "Device name %s.", (*device)->name);
             return TRUE;
         }
     }

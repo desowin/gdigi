@@ -29,7 +29,7 @@ typedef enum {
     DEBUG_GROUP     = (1 << 3),     // Modifier group
     DEBUG_HEX       = (1 << 4),     // Dump message contents in hex.
     DEBUG_XML       = (1 << 5),     
-    DEBUG_VERBOSE   = (1 << 6),     
+    DEBUG_VERBOSE   = (1 << 6),
 } debug_flags_t;
 
 void debug_msg (debug_flags_t, char *fmt, ...);
