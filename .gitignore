@@ -3,3 +3,5 @@
 cscope.*
 tags
 gdigi
+*.orig
+*.swp

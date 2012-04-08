@@ -101,7 +101,7 @@ debug_msg (debug_flags_t flags, char *fmt, ...)
  * Returns an allocated buffer that must be freed by the caller.
  */
 GString *
-format_value (XmlSettings *xml, guint value)
+format_value (XmlSettings *xml, gint value)
 {
     GString        *buf = g_string_sized_new(1);
     EffectValues   *values = NULL;
