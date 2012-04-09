@@ -24,6 +24,71 @@
 #include "preset.h"
 #include "gtkknob.h"
 
+
+static gchar* MessageID_names[] = {
+    [REQUEST_WHO_AM_I] = "REQUEST_WHO_AM_I",
+    [RECEIVE_WHO_AM_I] = "RECEIVE_WHO_AM_I",
+
+    [REQUEST_DEVICE_CONFIGURATION] = "REQUEST_DEVICE_CONFIGURATION",
+    [RECEIVE_DEVICE_CONFIGURATION] = "RECEIVE_DEVICE_CONFIGURATION",
+
+    [REQUEST_GLOBAL_PARAMETERS] = "REQUEST_GLOBAL_PARAMETERS",
+    [RECEIVE_GLOBAL_PARAMETERS] = "RECEIVE_GLOBAL_PARAMETERS",
+
+    [REQUEST_BULK_DUMP] = "REQUEST_BULK_DUMP",
+    [RECEIVE_BULK_DUMP_START] = "RECEIVE_BULK_DUMP_START",
+    [RECEIVE_BULK_DUMP_END] = "RECEIVE_BULK_DUMP_END",
+
+    [REQUEST_PRESET_NAMES] = "REQUEST_PRESET_NAMES",
+    [RECEIVE_PRESET_NAMES] = "RECEIVE_PRESET_NAMES",
+
+    [REQUEST_PRESET_NAME] = "REQUEST_PRESET_NAME",
+    [RECEIVE_PRESET_NAME] = "RECEIVE_PRESET_NAME",
+
+    [REQUEST_PRESET] = "REQUEST_PRESET",
+    [RECEIVE_PRESET_START] = "RECEIVE_PRESET_START",
+    [RECEIVE_PRESET_END] = "RECEIVE_PRESET_END",
+    [RECEIVE_PRESET_PARAMETERS] = "RECEIVE_PRESET_PARAMETERS",
+
+    [LOAD_EDIT_BUFFER_PRESET] = "LOAD_EDIT_BUFFER_PRESET",
+
+    [MOVE_PRESET] = "MOVE_PRESET",
+
+    [REQUEST_MODIFIER_LINKABLE_LIST] = "REQUEST_MODIFIER_LINKABLE_LIST",
+    [RECEIVE_MODIFIER_LINKABLE_LIST] = "RECEIVE_MODIFIER_LINKABLE_LIST",
+
+    [REQUEST_PARAMETER_VALUE] = "REQUEST_PARAMETER_VALUE",
+    [RECEIVE_PARAMETER_VALUE] = "RECEIVE_PARAMETER_VALUE",
+
+    /* version 1 and later */
+    [REQUEST_OBJECT_NAMES] = "REQUEST_OBJECT_NAMES",
+    [RECEIVE_OBJECT_NAMES] = "RECEIVE_OBJECT_NAMES",
+    [REQUEST_OBJECT_NAME] = "REQUEST_OBJECT_NAME",
+    [RECEIVE_OBJECT_NAME] = "RECEIVE_OBJECT_NAME",
+    [REQUEST_OBJECT] = "REQUEST_OBJECT",
+    [RECEIVE_OBJECT] = "RECEIVE_OBJECT",
+    [MOVE_OBJECT] = "MOVE_OBJECT",
+    [DELETE_OBJECT] = "DELETE_OBJECT",
+    [REQUEST_TABLE] = "REQUEST_TABLE",
+    [RECEIVE_TABLE] = "RECEIVE_TABLE",
+
+    [RECEIVE_DEVICE_NOTIFICATION] = "RECEIVE_DEVICE_NOTIFICATION",
+
+    [ACK] = "ACK",
+    [NACK] = "NACK",
+};
+
+const gchar*
+get_message_name(MessageID msgid)
+{
+    if (MessageID_names[msgid]) {
+        return MessageID_names[msgid];
+    }
+
+    return "Unknown";
+    
+}
+
 typedef struct {
     GObject *widget;
 
@@ -184,7 +249,7 @@ static gboolean custom_value_output_cb(GtkSpinButton *spin, EffectValues *values
         if (values->type & VALUE_TYPE_EXTRA) {
             values = values->extra;
         } else {
-            g_message("custom_value_output_cb called with out of bounds value");
+            g_warning("custom_value_output_cb called with out of bounds value");
             return FALSE;
         }
     }
@@ -928,7 +993,7 @@ static void action_open_preset_cb(GtkAction *action)
     for (x=0; x<n_file_types; x++) {
         GtkFileFilter *current_filter = gtk_file_filter_new();
         if (file_types[x].name == NULL) {
-            g_message("Skipping NULL array entry");
+            g_warning("Skipping NULL array entry");
             continue;
         }
 
@@ -1190,7 +1255,7 @@ static void add_menubar(GtkWidget *window, GtkWidget *vbox)
     gtk_window_add_accel_group(GTK_WINDOW(window), gtk_ui_manager_get_accel_group(ui));
 
     if (!gtk_ui_manager_add_ui_from_string(ui, menu_info, -1, &error)) {
-        g_message("building menus failed: %s", error->message);
+        g_warning("building menus failed: %s", error->message);
         g_error_free(error);
         error = NULL;
     }
@@ -1287,6 +1352,7 @@ void gui_create(Device *device)
     gtk_widget_show_all(window);
 
     g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(gtk_main_quit), NULL);
+
 }
 
 /**
@@ -1345,7 +1411,8 @@ gboolean unsupported_device_dialog(Device **device)
     if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
         gint number = gtk_combo_box_get_active(GTK_COMBO_BOX(combo_box));
         if (number != -1 && number <n_supported_devices) {
-            g_message("Starting %s compability mode", supported_devices[number]->name);
+            g_message("Starting %s compability mode",
+                      supported_devices[number]->name);
             *device = supported_devices[number];
             gtk_widget_destroy(dialog);
             return TRUE;

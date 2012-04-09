@@ -33,7 +33,8 @@ typedef struct {
     guint           xml_labels_amt;
 } XmlSettings;
 
-//  XmlSettings *get_xml_settings(guint id, guint position);
-// gchar *get_xml_label(guint id, guint position, gint type);
+XmlSettings *get_xml_settings(guint id, guint position);
+gboolean value_is_extra(EffectValues *val, int value);
+gchar * map_xml_value(XmlSettings *xml, gint value);
 
 #endif /* GDIGI_XML_H */

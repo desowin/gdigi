@@ -579,73 +579,74 @@ static EffectValues values_loose_tight = {
 };
 
 static EffectValues values_pickup_type = {
-    .min = 0.0, .max = 1.0,
+    .min = 65.0, .max = 66.0,
     .type = VALUE_TYPE_LABEL,
     .labels = pickup_type_labels,
 };
 
 static EffectValues values_comp_type = {
-    .min = 0.0, .max = 1.0,
+    .min = 195.0, .max = 197.0,
     .type = VALUE_TYPE_LABEL,
 };
 
 static EffectValues values_dist_type = {
-    .min = 0.0, .max = 24.0,
+    .min = 1280.0, .max = 1302.0,
     .type = VALUE_TYPE_LABEL,
 };
 
 static EffectValues values_amp_type = {
-    .min = 0.0, .max = 1.0,
+    .min = 307.0, .max = 351.0,
     .type = VALUE_TYPE_LABEL,
 };
 
 static EffectValues values_cab_type = {
-    .min = 0.0, .max = 19.0,
+    .min = 570.0, .max = 627.0,
     .type = VALUE_TYPE_LABEL,
 };
 
 static EffectValues values_gate_type = {
-    .min = 0.0, .max = 1.0,
+    .min = 768.0, .max = 769.0,
     .type = VALUE_TYPE_LABEL,
 };
 
 static EffectValues values_mod_type = {
-    .min = 0.0, .max = 19.0,
+    .min = 862.0, .max = 1347.0,
     .type = VALUE_TYPE_LABEL,
 };
 
 static EffectValues values_pre_post = {
-    .min = 0.0, .max = 15.0,
+    .min = 1543.0, .max = 1544.0,
     .type = VALUE_TYPE_LABEL,
 };
 
 static EffectValues values_delay_type = {
-    .min = 0.0, .max = 15.0,
+    .min = 1027.0, .max = 1066.0,
     .type = VALUE_TYPE_LABEL,
 };
 
 static EffectValues values_reverb_type = {
-    .min = 0.0, .max = 14.0,
+    .min = 1107.0, .max = 1151.0,
     .type = VALUE_TYPE_LABEL,
 };
 
 static EffectValues values_wah_type = {
-    .min = 0.0, .max = 1.0,
+    .min = 129.0, .max = 134.0,
     .type = VALUE_TYPE_LABEL,
 };
 
+// 4259839 is 0x40 FFFF, i.e. 0x<pos> <val>.
 static EffectValues values_exp_assign = {
-    .min = 0.0, .max = 1.0,
+    .min = 0.0, .max = 4259839.0,
     .type = VALUE_TYPE_LABEL,
 };
 
 static EffectValues values_vswitch_pedal_assign = {
-    .min = 0.0, .max = 1.0,
+    .min = 0.0, .max = 4259839.0,
     .type = VALUE_TYPE_LABEL,
 };
 
 static EffectValues values_vswitch_assign = {
-    .min = 0.0, .max = 1.0,
+    .min = 0.0, .max = 4259839.0,
     .type = VALUE_TYPE_LABEL,
 };
 
@@ -678,7 +679,7 @@ static EffectValues values_lfo_speed = {
 };
 
 static EffectValues values_eq_type = {
-    .min = 0.0, .max = 3.0,
+    .min = 1472.0, .max = 1475.0,
     .type = VALUE_TYPE_LABEL,
 };
 
@@ -688,12 +689,12 @@ static EffectValues values_lfo_waveform = {
 };
 
 static EffectValues values_tone_lib_type= {
-    .min = 0.0, .max = 31.0,
+    .min = 1792.0, .max = 1822.0,
     .type = VALUE_TYPE_LABEL,
 };
 
 static EffectValues values_fx_lib_type= {
-    .min = 0.0, .max = 31.0,
+    .min = 1856.0, .max = 1866.0,
     .type = VALUE_TYPE_LABEL,
 };
 
@@ -709,8 +710,8 @@ static EffectValues values_rp_mix = {
 };
 
 static EffectSettings usb_settings[] = {
-    {"USB/RP Mix", USB_AUDIO_PLAYBACK_MIX, USB_POSITION, &values_rp_mix},
-    {"USB Level", USB_AUDIO_LEVEL, USB_POSITION, &values_m12_to_24},
+    {"USB/RP Mix", USB_AUDIO_PLAYBACK_MIX, GLOBAL_POSITION, &values_rp_mix},
+    {"USB Level", USB_AUDIO_LEVEL, GLOBAL_POSITION, &values_m12_to_24},
 };
 
 static EffectSettings misc_settings[] = {
@@ -942,17 +943,17 @@ static EffectSettings dist_mp_settings[] = {
 };
 
 static EffectSettings rp250_amp_settings[] = {
-    {"Gain", AMP_GAIN, AMP_POSITION, &values_0_to_99},
-    {"Level", AMP_LEVEL, AMP_POSITION, &values_0_to_99},
+    {"Gain", AMP_GAIN, AMP_A_POSITION, &values_0_to_99},
+    {"Level", AMP_LEVEL, AMP_A_POSITION, &values_0_to_99},
 };
 
 static EffectSettings rp250_amp_settings2[] = {
-    {"Level", AMP_LEVEL, AMP_POSITION, &values_0_to_99},
+    {"Level", AMP_LEVEL, AMP_A_POSITION, &values_0_to_99},
 };
 
 static EffectSettings rp355_amp_settings_A[] = {
-    {"Gain", AMP_GAIN, AMP_POSITION, &values_0_to_99},
-    {"Level", AMP_LEVEL, AMP_POSITION, &values_0_to_99},
+    {"Gain", AMP_GAIN, AMP_A_POSITION, &values_0_to_99},
+    {"Level", AMP_LEVEL, AMP_A_POSITION, &values_0_to_99},
 };
 
 static EffectSettings rp355_amp_settings_B[] = {
@@ -961,7 +962,7 @@ static EffectSettings rp355_amp_settings_B[] = {
 };
 
 static EffectSettings rp355_amp_settings2_A[] = {
-    {"Level", AMP_LEVEL, AMP_POSITION, &values_0_to_99},
+    {"Level", AMP_LEVEL, AMP_A_POSITION, &values_0_to_99},
 };
 
 static EffectSettings rp355_amp_settings2_B[] = {
@@ -969,22 +970,22 @@ static EffectSettings rp355_amp_settings2_B[] = {
 };
 
 static EffectSettings rp500_amp_settings[] = {
-    {"Gain", AMP_GAIN, AMP_POSITION, &values_0_to_99},
-    {"Level", AMP_LEVEL, AMP_POSITION, &values_0_to_99},
-    {"Bass", AMP_BASS, AMP_POSITION, &values_1_to_10_step_0p1},
-    {"Mid", AMP_MID, AMP_POSITION, &values_1_to_10_step_0p1},
-    {"Treble", AMP_TREBLE, AMP_POSITION, &values_1_to_10_step_0p1},
+    {"Gain", AMP_GAIN, AMP_A_POSITION, &values_0_to_99},
+    {"Level", AMP_LEVEL, AMP_A_POSITION, &values_0_to_99},
+    {"Bass", AMP_BASS, AMP_A_POSITION, &values_1_to_10_step_0p1},
+    {"Mid", AMP_MID, AMP_A_POSITION, &values_1_to_10_step_0p1},
+    {"Treble", AMP_TREBLE, AMP_A_POSITION, &values_1_to_10_step_0p1},
 };
 
 static EffectSettings rp500_amp_settings2[] = {
-    {"Level", AMP_LEVEL, AMP_POSITION, &values_0_to_99},
-    {"Bass", AMP_BASS, AMP_POSITION, &values_1_to_10_step_0p1},
-    {"Mid", AMP_MID, AMP_POSITION, &values_1_to_10_step_0p1},
-    {"Treble", AMP_TREBLE, AMP_POSITION, &values_1_to_10_step_0p1},
+    {"Level", AMP_LEVEL, AMP_A_POSITION, &values_0_to_99},
+    {"Bass", AMP_BASS, AMP_A_POSITION, &values_1_to_10_step_0p1},
+    {"Mid", AMP_MID, AMP_A_POSITION, &values_1_to_10_step_0p1},
+    {"Treble", AMP_TREBLE, AMP_A_POSITION, &values_1_to_10_step_0p1},
 };
 
 static EffectSettings rp500_amp_settings3[] = {
-    {"Level", AMP_LEVEL, AMP_POSITION, &values_0_to_99},
+    {"Level", AMP_LEVEL, AMP_A_POSITION, &values_0_to_99},
 };
 
 static EffectSettings gnx3k_ch1_cab_tuning_settings[] = {
@@ -996,15 +997,15 @@ static EffectSettings gnx3k_ch2_cab_tuning_settings[] = {
 };
 
 static EffectSettings gnx3k_ch1_amp_eq_settings[] = {
-    {"Gain", AMP_GAIN, AMP_POSITION, &values_0_to_99},
-    {"Bass Freq", AMP_BASS_FREQ, AMP_POSITION, &values_eq_bass_hz},
-    {"Bass Level", AMP_BASS_LEVEL, AMP_POSITION, &values_eq_db},
-    {"Mid Freq", AMP_MID_FREQ, AMP_POSITION, &values_eq_mid_hz},
-    {"Mid Level", AMP_MID_LEVEL, AMP_POSITION, &values_eq_db},
-    {"Treb Freq", AMP_TREBLE_FREQ, AMP_POSITION, &values_eq_treb_hz},
-    {"Treb Level", AMP_TREBLE_LEVEL, AMP_POSITION, &values_eq_db},
-    {"Presence", AMP_PRESENCE, AMP_POSITION, &values_eq_db},
-    {"Level", AMP_LEVEL, AMP_POSITION, &values_0_to_99},
+    {"Gain", AMP_GAIN, AMP_A_POSITION, &values_0_to_99},
+    {"Bass Freq", AMP_BASS_FREQ, AMP_A_POSITION, &values_eq_bass_hz},
+    {"Bass Level", AMP_BASS_LEVEL, AMP_A_POSITION, &values_eq_db},
+    {"Mid Freq", AMP_MID_FREQ, AMP_A_POSITION, &values_eq_mid_hz},
+    {"Mid Level", AMP_MID_LEVEL, AMP_A_POSITION, &values_eq_db},
+    {"Treb Freq", AMP_TREBLE_FREQ, AMP_A_POSITION, &values_eq_treb_hz},
+    {"Treb Level", AMP_TREBLE_LEVEL, AMP_A_POSITION, &values_eq_db},
+    {"Presence", AMP_PRESENCE, AMP_A_POSITION, &values_eq_db},
+    {"Level", AMP_LEVEL, AMP_A_POSITION, &values_0_to_99},
 };
 
 static EffectSettings gnx3k_ch2_amp_eq_settings[] = {
@@ -1031,18 +1032,18 @@ static EffectSettings rp355_eq_settings_A[] = {
     {"Bass", EQ_BASS, EQ_A_POSITION, &values_eq_db},
     {"Mid", EQ_MID, EQ_A_POSITION, &values_eq_db},
     {"Treble", EQ_TREB, EQ_A_POSITION, &values_eq_db},
+    {"Presence", EQ_PRESENCE, EQ_A_POSITION, &values_eq_db},
     {"Mid Hz", EQ_MID_FREQ, EQ_A_POSITION, &values_eq_mid_hz},
     {"Treb Hz", EQ_TREB_FREQ, EQ_A_POSITION, &values_eq_treb_hz},
-    {"Presence", EQ_PRESENCE, EQ_A_POSITION, &values_eq_db},
 };
 
 static EffectSettings rp355_eq_settings_B[] = {
     {"Bass", EQ_BASS, EQ_B_POSITION, &values_eq_db},
     {"Mid", EQ_MID, EQ_B_POSITION, &values_eq_db},
     {"Treble", EQ_TREB, EQ_B_POSITION, &values_eq_db},
+    {"Presence", EQ_PRESENCE, EQ_B_POSITION, &values_eq_db},
     {"Mid Hz", EQ_MID_FREQ, EQ_B_POSITION, &values_eq_mid_hz},
     {"Treb Hz", EQ_TREB_FREQ, EQ_B_POSITION, &values_eq_treb_hz},
-    {"Presence", EQ_PRESENCE, EQ_B_POSITION, &values_eq_db},
 };
 
 static EffectSettings rp500_eq_settings[] = {
@@ -2823,23 +2824,23 @@ static Effect reverb_effect[] = {
 };
 
 static Effect rp150_amp_effect[] = {
-    {NULL, AMP_ON_OFF, AMP_TYPE, AMP_POSITION, rp150_amp_group, G_N_ELEMENTS(rp150_amp_group)},
+    {NULL, AMP_ON_OFF, AMP_TYPE, AMP_A_POSITION, rp150_amp_group, G_N_ELEMENTS(rp150_amp_group)},
     {"Cabinet", -1, AMP_CAB_TYPE, AMP_CAB_POSITION, rp150_amp_cab_group, G_N_ELEMENTS(rp150_amp_cab_group)},
 };
 
 static Effect rp155_amp_effect[] = {
-    {NULL, AMP_ON_OFF, AMP_TYPE, AMP_POSITION, rp155_amp_group, G_N_ELEMENTS(rp155_amp_group)},
+    {NULL, AMP_ON_OFF, AMP_TYPE, AMP_A_POSITION, rp155_amp_group, G_N_ELEMENTS(rp155_amp_group)},
     {"Cabinet", -1, AMP_CAB_TYPE, AMP_CAB_POSITION, rp150_amp_cab_group, G_N_ELEMENTS(rp150_amp_cab_group)},
 };
 
 static Effect rp250_amp_effect[] = {
-    {NULL, AMP_ON_OFF, AMP_TYPE, AMP_POSITION, rp250_amp_group, G_N_ELEMENTS(rp250_amp_group)},
+    {NULL, AMP_ON_OFF, AMP_TYPE, AMP_A_POSITION, rp250_amp_group, G_N_ELEMENTS(rp250_amp_group)},
     {"Cabinet", -1, AMP_CAB_TYPE, AMP_CAB_POSITION, rp250_amp_cab_group, G_N_ELEMENTS(rp250_amp_cab_group)},
 };
 
 /* same cabs as rp250, but 3 new amp models */
 static Effect rp255_amp_effect[] = {
-    {NULL, AMP_ON_OFF, AMP_TYPE, AMP_POSITION, rp255_amp_group, G_N_ELEMENTS(rp255_amp_group)},
+    {NULL, AMP_ON_OFF, AMP_TYPE, AMP_A_POSITION, rp255_amp_group, G_N_ELEMENTS(rp255_amp_group)},
     {"Cabinet", -1, AMP_CAB_TYPE, AMP_CAB_POSITION, rp250_amp_cab_group, G_N_ELEMENTS(rp250_amp_cab_group)},
 };
 
@@ -2848,7 +2849,7 @@ static Effect rp355_select_amp_effect[] = {
 };
 
 static Effect rp355_amp_effect_A[] = {
-    {NULL, AMP_ON_OFF, AMP_TYPE, AMP_POSITION, rp355_amp_group_A, G_N_ELEMENTS(rp355_amp_group_A)},
+    {NULL, AMP_ON_OFF, AMP_TYPE, AMP_A_POSITION, rp355_amp_group_A, G_N_ELEMENTS(rp355_amp_group_A)},
     {"Cabinet", -1, AMP_CAB_TYPE, AMP_CAB_POSITION, rp355_amp_cab_group, G_N_ELEMENTS(rp355_amp_cab_group)},
 };
 
@@ -2858,19 +2859,19 @@ static Effect rp355_amp_effect_B[] = {
 };
 
 static Effect rp500_amp_effect[] = {
-    {NULL, AMP_ON_OFF, AMP_TYPE, AMP_POSITION, rp500_amp_group, G_N_ELEMENTS(rp500_amp_group)},
+    {NULL, AMP_ON_OFF, AMP_TYPE, AMP_A_POSITION, rp500_amp_group, G_N_ELEMENTS(rp500_amp_group)},
     {"Cabinet", -1, AMP_CAB_TYPE, AMP_CAB_POSITION, rp500_amp_cab_group, G_N_ELEMENTS(rp500_amp_cab_group)},
 };
 
 static Effect rp1000_amp_effect[] = {
     {"Amp Loop", AMP_LOOP_ON_OFF, -1, AMP_LOOP_POSITION, NULL, -1},
     {"Amp/Cab Bypass", AMP_BYPASS_ON_OFF, -1, AMP_BYPASS_POSITION, NULL, -1},
-    {NULL, -1, AMP_TYPE, AMP_POSITION, rp1000_amp_group, G_N_ELEMENTS(rp1000_amp_group)},
+    {NULL, -1, AMP_TYPE, AMP_A_POSITION, rp1000_amp_group, G_N_ELEMENTS(rp1000_amp_group)},
     {NULL, -1, AMP_CAB_TYPE, AMP_CAB_POSITION, rp1000_amp_cab_group, G_N_ELEMENTS(rp1000_amp_cab_group)},
 };
 
 static Effect gnx3k_channel_1_effect[] = {
-    {"EQ Enable", AMP_EQ_ON_OFF, AMP_TYPE, AMP_POSITION, gnx3k_amp_group, G_N_ELEMENTS(gnx3k_amp_group)},
+    {"EQ Enable", AMP_EQ_ON_OFF, AMP_TYPE, AMP_A_POSITION, gnx3k_amp_group, G_N_ELEMENTS(gnx3k_amp_group)},
     {NULL, -1, AMP_CAB_TYPE, AMP_CAB_POSITION, gnx3k_amp_cab_group, G_N_ELEMENTS(gnx3k_amp_cab_group)},
     {NULL, -1, -1, -1, gnx3k_ch1_cab_tuning_group, G_N_ELEMENTS(gnx3k_ch1_cab_tuning_group)},
     {NULL, -1, -1, -1, gnx3k_ch1_amp_eq_group, G_N_ELEMENTS(gnx3k_ch1_amp_eq_group)},
@@ -3259,13 +3260,22 @@ static Modifier modifiers[] = {
     {"Dist Sustain", DIST_MP_SUSTAIN, DIST_POSITION, &values_0_to_99},
     {"Dist Tone", DIST_MP_TONE, DIST_POSITION, &values_0_to_99},
     {"Dist Volume", DIST_MP_VOLUME, DIST_POSITION, &values_0_to_99},
-    {"Amp Channel Enable", AMP_ON_OFF, AMP_POSITION, &values_on_off},
-    {"Amp Gain", AMP_GAIN, AMP_POSITION, &values_0_to_99},
-    {"Amp Level", AMP_LEVEL, AMP_POSITION, &values_0_to_99},
+    {"Amp Channel Enable", AMP_ON_OFF, AMP_A_POSITION, &values_on_off},
+    {"Amp Gain", AMP_GAIN, AMP_A_POSITION, &values_0_to_99},
+    {"Amp Level", AMP_LEVEL, AMP_A_POSITION, &values_0_to_99},
+    {"Amp Channel Enable", AMP_ON_OFF, AMP_B_POSITION, &values_on_off},
+    {"Amp Gain", AMP_GAIN, AMP_B_POSITION, &values_0_to_99},
+    {"Amp Level", AMP_LEVEL, AMP_B_POSITION, &values_0_to_99},
     {"EQ Enable", EQ_ENABLE, EQ_A_POSITION, &values_on_off},
     {"EQ Bass", EQ_BASS, EQ_A_POSITION, &values_eq_db},
     {"EQ Mid", EQ_MID, EQ_A_POSITION, &values_eq_db},
     {"EQ Treb", EQ_TREB, EQ_A_POSITION, &values_eq_db},
+    {"EQ Treb", EQ_PRESENCE, EQ_A_POSITION, &values_eq_db},
+    {"EQ Enable", EQ_ENABLE, EQ_B_POSITION, &values_on_off},
+    {"EQ Bass", EQ_BASS, EQ_B_POSITION, &values_eq_db},
+    {"EQ Mid", EQ_MID, EQ_B_POSITION, &values_eq_db},
+    {"EQ Treb", EQ_TREB, EQ_B_POSITION, &values_eq_db},
+    {"EQ Treb", EQ_PRESENCE, EQ_B_POSITION, &values_eq_db},
     {"Gate Enable", NOISEGATE_ON_OFF, NOISEGATE_POSITION, &values_on_off},
     {"Gate Pluck Sens", NOISEGATE_SWELL_SENS, NOISEGATE_POSITION, &values_0_to_99},
     {"Gate Threshold", NOISEGATE_GATE_TRESHOLD, NOISEGATE_POSITION, &values_0_to_99},
@@ -3853,10 +3863,10 @@ XmlSettings xml_settings[] = {
 
     {AMP_CHANNEL, AMP_CHANNEL_POSITION, "Amp Channel", &values_a_b, xml_amp_channel_labels, G_N_ELEMENTS(xml_amp_channel_labels)},
 
-    {AMP_TYPE, AMP_POSITION, "Amp A Type", &values_amp_type, xml_amp_labels, G_N_ELEMENTS(xml_amp_labels)},
-    {AMP_ON_OFF, AMP_POSITION, "Amp A Enable", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
-    {AMP_GAIN, AMP_POSITION, "Amp A Gain", &values_0_to_99,},
-    {AMP_LEVEL, AMP_POSITION, "Amp A Level", &values_0_to_99,},
+    {AMP_TYPE, AMP_A_POSITION, "Amp A Type", &values_amp_type, xml_amp_labels, G_N_ELEMENTS(xml_amp_labels)},
+    {AMP_ON_OFF, AMP_A_POSITION, "Amp A Enable", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
+    {AMP_GAIN, AMP_A_POSITION, "Amp A Gain", &values_0_to_99,},
+    {AMP_LEVEL, AMP_A_POSITION, "Amp A Level", &values_0_to_99,},
 
     {AMP_TYPE, AMP_B_POSITION, "Amp B Type", &values_amp_type, xml_amp_labels, G_N_ELEMENTS(xml_amp_labels)},
     {AMP_ON_OFF, AMP_B_POSITION, "Amp B Enable", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
@@ -3936,6 +3946,13 @@ XmlSettings xml_settings[] = {
     {IPS_SCALE, CHORUSFX_POSITION, "IPS Scale", &values_ips_scale, xml_ips_scale_labels, G_N_ELEMENTS(xml_ips_scale_labels)},
     {IPS_LEVEL, CHORUSFX_POSITION, "IPS Level", &values_0_to_99,},
 
+    {SYNTH_TALK_ATTACK, CHORUSFX_POSITION, "Synth Talk Attack", &values_0_to_99,},
+    {GNX3K_SYNTH_TALK_RELEASE, CHORUSFX_POSITION, "Synth Talk Release", &values_0_to_99,},
+    {SYNTH_TALK_RELEASE, CHORUSFX_POSITION, "Synth Talk Release", &values_0_to_99,},
+    {SYNTH_TALK_SENS, CHORUSFX_POSITION, "Synth Talk Sens", &values_0_to_99,},
+    {SYNTH_TALK_VOX, CHORUSFX_POSITION, "Synth Talk Vox", &values_0_to_99,},
+    {SYNTH_TALK_BALANCE, CHORUSFX_POSITION, "Synth Talk Balance", &values_0_to_99,},
+
     {DELAY_TYPE, DELAY_POSITION, "Delay Type", &values_delay_type, xml_delay_labels, G_N_ELEMENTS(xml_delay_labels)},
     {DELAY_ON_OFF, DELAY_POSITION, "Delay Enable", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
     {DELAY_TIME, DELAY_POSITION, "Delay Time", &values_delay_time,},
@@ -3961,7 +3978,6 @@ XmlSettings xml_settings[] = {
     {WAH_ON_OFF, WAH_POSITION, "Wah Enable", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
     {WAH_PEDAL_POSITION, WAH_POSITION, "Wah Position", &values_0_to_99,},
     {WAH_VOLUME_BOOST, WAH_POSITION, "Wah Vol. Boost", &values_db_boost,},
-    {MOD_TYPE, MOD_POSITION, "Mod Type", &values_0_to_99,}, // ???
 
     {PRESET_LEVEL, PRESET_POSITION, "Preset Level", &values_0_to_99,},
 
@@ -3996,8 +4012,8 @@ XmlSettings xml_settings[] = {
     {EQ_BASS, EQ_A_POSITION, "EQ A Bass", &values_eq_db,},
     {EQ_MID, EQ_A_POSITION, "EQ A Mid", &values_eq_db,},
     {EQ_TREB, EQ_A_POSITION, "EQ A Treb", &values_eq_db,},
-    {EQ_MID_FREQ, EQ_A_POSITION, "EQ A Mid Freq", &values_eq_mid_hz,},
     {EQ_PRESENCE, EQ_A_POSITION, "EQ A Presence", &values_eq_db,},
+    {EQ_MID_FREQ, EQ_A_POSITION, "EQ A Mid Freq", &values_eq_mid_hz,},
     {EQ_TREB_FREQ, EQ_A_POSITION, "EQ A Treb Freq", &values_eq_treb_hz,},
 
     {EQ_ENABLE, EQ_B_POSITION, "EQ B Enable", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
@@ -4005,8 +4021,8 @@ XmlSettings xml_settings[] = {
     {EQ_BASS, EQ_B_POSITION, "EQ B Bass", &values_eq_db,},
     {EQ_MID, EQ_B_POSITION, "EQ B Mid", &values_eq_db,},
     {EQ_TREB, EQ_B_POSITION, "EQ B Treb", &values_eq_db,},
-    {EQ_MID_FREQ, EQ_B_POSITION, "EQ B Mid Freq", &values_eq_mid_hz,},
     {EQ_PRESENCE, EQ_B_POSITION, "EQ B Presence", &values_eq_db,},
+    {EQ_MID_FREQ, EQ_B_POSITION, "EQ B Mid Freq", &values_eq_mid_hz,},
     {EQ_TREB_FREQ, EQ_B_POSITION, "EQ B Treb Freq", &values_eq_treb_hz,},
 
     {TONE_LIB_TYPE, LIB_POSITION, "Tone Lib Type", &values_tone_lib_type, xml_tone_lib_labels, G_N_ELEMENTS(xml_tone_lib_labels)},
@@ -4015,10 +4031,61 @@ XmlSettings xml_settings[] = {
     {FX_LIB_LEVEL_MAX1, LIB_POSITION, "FxLibLvlMax1", &values_0_to_99,},
     {FX_LIB_LEVEL_MAX2, LIB_POSITION, "FxLibLvlMax2", &values_0_to_99,},
     {FX_LIB_LEVEL_MAX3, LIB_POSITION, "FxLibLvlMax3", &values_0_to_99,},
+
+    // Global settings, not part of presets or standard XML.
+    {TUNING_REFERENCE, GLOBAL_POSITION, "Tuning Reference", &values_0_to_99,},
+    {USB_AUDIO_PLAYBACK_MIX, GLOBAL_POSITION, "USB Audio Playback Mix", &values_0_to_99,},
+    {USB_AUDIO_LEVEL, GLOBAL_POSITION, "USB Audio Level", &values_0_to_99,},
+    {GUI_MODE_ON_OFF, GLOBAL_POSITION, "GUI Mode", &values_0_to_99,},
+    {EXP_PEDAL_LEVEL, GLOBAL_POSITION, "EXP Pedal Level", &values_0_to_99,},
+    {STOMP_MODE, GLOBAL_POSITION, "Stomp Mode", &values_0_to_99,},
 };
 
-
 guint n_xml_settings = G_N_ELEMENTS(xml_settings);
+
+gchar *Positions[] = {
+    [ GLOBAL_POSITION ] = "Global",
+    [ PICKUP_POSITION ] = "Pickup",
+    [ WAH_POSITION ] = "Wah",
+    [ COMP_POSITION ] = "Compressor",
+    [ GNX3K_WHAM_POSITION ] = "Gnx3K Wham",
+    [ DIST_POSITION ] = "Distortion",
+    [ AMP_CHANNEL_POSITION ] = "Amp Channel",
+    [ GNX_CHANNEL_POSITION ] = "Gnx Channel",
+    [ AMP_A_POSITION ] = "Amp A",
+    [ AMP_CAB_POSITION ] = "Amp Cab A",
+    [ AMP_B_POSITION ] = "Amp B",
+    [ AMP_CAB_B_POSITION ] = "Amp Cab B",
+    [ NOISEGATE_POSITION ] = "Noise Gate",
+    [ VOLUME_PRE_FX_POSITION ] = "Volume Pre Fx",
+    [ CHORUSFX_POSITION ] = "Chorus Fx",
+    [ DELAY_POSITION ] = "Delay",
+    [ REVERB_POSITION ] = "Reverb",
+    [ VOLUME_POST_FX_POSITION ] = "Volume Post Fx",
+    [ PRESET_POSITION ] = "Preset",
+    [ EXP_POSITION ] = "Expression",
+    [ WAH_POSITION_MIN_MAX ] = "Wah Min Max",
+    [ VSWITCH_ASSIGN_POSITION ] = "Vswitch",
+    [ LFO1_POSITION ] = "LFO 1",
+    [ LFO2_POSITION ] = "LFO 2",
+    [ EQ_A_POSITION ] = "EQ A",
+    [ EQ_B_POSITION ] = "EQ B",
+    [ LIB_POSITION ] = "Library",
+    [ AMP_LOOP_POSITION ] = "Amp Loop",
+};
+
+guint max_position = G_N_ELEMENTS(Positions);
+
+gchar *
+get_position (guint position)
+{
+    if (position > max_position) {
+        return "";
+    }
+
+    return Positions[position];
+}
+
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
 /**
@@ -4102,7 +4169,10 @@ ModifierGroup *modifier_linkable_list()
     modifier_group->type = EXP_TYPE;
     modifier_group->position = EXP_POSITION;
 
-    g_message("Group %d count %d", group_id, count);
+    debug_msg(DEBUG_MSG2HOST|DEBUG_GROUP,
+              "RECEIVE_MODIFIER_LINKABLE_LIST: Group %d count %d",
+              group_id, count);
+
     EffectGroup *group = g_slice_alloc(count * sizeof(EffectGroup));
 
     for (i=0; i<count; i++) {
@@ -4124,7 +4194,9 @@ ModifierGroup *modifier_linkable_list()
         if (group[i].settings == NULL)
             group[i].settings_amt = 0;
 
-        g_message("ID: %d Position: %d Label: %s", id, position, modifier ? modifier->label : NULL);
+        debug_msg(DEBUG_MSG2HOST|DEBUG_GROUP,
+                  "ID: %4d Position: %2d: %s",
+                  id, position, modifier ? modifier->label : NULL);
     }
 
     modifier_group->group = group;
@@ -4192,6 +4264,7 @@ gboolean get_device_info(unsigned char device_id, unsigned char family_id,
     for (x = 0; x < G_N_ELEMENTS(supported_devices); x++) {
         if (supported_devices[x]->product_id == product_id && supported_devices[x]->family_id == family_id) {
             *device = supported_devices[x];
+            debug_msg(DEBUG_STARTUP, "Device name %s.", (*device)->name);
             return TRUE;
         }
     }

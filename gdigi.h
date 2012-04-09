@@ -22,6 +22,19 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+typedef enum {
+    DEBUG_MSG2DEV   = (1 << 0),     // Device bound messages.
+    DEBUG_MSG2HOST  = (1 << 1),     // Host bound messages.
+    DEBUG_STARTUP   = (1 << 2),
+    DEBUG_GROUP     = (1 << 3),     // Modifier group
+    DEBUG_HEX       = (1 << 4),     // Dump message contents in hex.
+    DEBUG_XML       = (1 << 5),     
+    DEBUG_VERBOSE   = (1 << 6),
+} debug_flags_t;
+
+void debug_msg (debug_flags_t, char *fmt, ...);
+gboolean debug_flag_is_set (debug_flags_t flag);
+
 #define GNX_CHANNEL_POSITION 7
 #define GNX_CHANNEL_AMP 260
 #define GNX_WARP 261
@@ -315,7 +328,7 @@ enum {
 
 #define AMP_TYPE 2496
 #define AMP_ON_OFF 265
-#define AMP_POSITION 8
+#define AMP_A_POSITION 8
 #define AMP_B_POSITION 10
 
 #define AMP_LOOP_ON_OFF 3649
@@ -427,7 +440,6 @@ enum {
 #define EQ_TREB_FREQ 3211
 #define EQ_ENABLE 3212
 
-
 #define EQ_LOW_FREQ 3213
 #define EQ_MID_FREQ_XXX 3214
 #define EQ_HIGH_FREQ 3215
@@ -518,7 +530,6 @@ enum {
 };
 
 #define MOD_TYPE 768
-#define MOD_POSITION 768
 #define MOD_PRE_POST 1798
 
 #define CHORUSFX_TYPE 768
@@ -881,12 +892,14 @@ enum {
 #define LIBRARY_EFFECTS 8705
 #define EFFECTS_LEVEL 8706
 
-#define LIBRARY_POSITION 25
 #define LIB_POSITION 26
 
 #define TONE_LIB_TYPE 8704
 #define FX_LIB_TYPE 8705
-#define FX_LIB_LEVEL 8706
+#define FX_LIB_LEVEL 8706      // This influences pitch shift mix, delay level,
+                               // and reverb level, in proportion, as
+                               // specified by FX_LIB_LEVEL_MAX1,2,3.
+                               // 
 #define FX_LIB_LEVEL_MAX1 8708
 #define FX_LIB_LEVEL_MAX2 8710
 #define FX_LIB_LEVEL_MAX3 8712
@@ -963,11 +976,17 @@ enum {
   EFFECTS_LIB_CUSTOM = 1856
 };
 
-#define USB_POSITION 0
+#define GLOBAL_POSITION 0
+
+#define TUNING_REFERENCE 12288
+
 #define USB_AUDIO_PLAYBACK_MIX 12297
 #define USB_AUDIO_LEVEL 12307
 
 #define GUI_MODE_ON_OFF 12298
+
+#define EXP_PEDAL_LEVEL 12300
+#define STOMP_MODE 12370
 
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
@@ -1114,6 +1133,7 @@ void setting_genetx_free(SettingGenetx *genetx);
 void setting_param_free(SettingParam *param);
 SectionID get_genetx_section_id(gint version, gint type);
 void set_option(guint id, guint position, guint value);
+void get_option(guint id, guint position);
 void send_object(SectionID section, guint bank, guint index,
                  gchar *name, GString *data);
 void send_preset_parameters(GList *params);
@@ -1123,5 +1143,6 @@ void set_preset_level(int level);
 GStrv query_preset_names(gchar bank);
 void message_list_free(GList *list);
 GList *get_current_preset();
+GString *format_ipv(guint id, guint pos, guint val);
 
 #endif /* GDIGI_H */

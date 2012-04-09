@@ -52,16 +52,17 @@ XmlSettings *get_xml_settings (guint id, guint position)
 }
 
 gchar *
-map_xml_value(XmlSettings *xml, gint value)
+map_xml_value (XmlSettings *xml, gint value)
 {
     switch (xml->values->type) {
     case VALUE_TYPE_LABEL:
         if ((xml->values == &values_on_off) && (value > 1)) {
-            g_message("Skipping modifier->label %s\n", xml->label);
+            g_warning("Skipping modifier->label %s\n", xml->label);
             return NULL;
         }   
         if (value > xml->values->max || value < xml->values->min) {
-            g_message("%s value %d out of range %0.1f %0.1f",  xml->label, value, xml->values->min, xml->values->max);
+            g_warning("%s value %d out of range %0.1f %0.1f",
+                      xml->label, value, xml->values->min, xml->values->max);
         } 
         {
             XmlLabel *labels = xml->xml_labels;
@@ -83,10 +84,9 @@ map_xml_value(XmlSettings *xml, gint value)
     return NULL;
 }
 
-
-gboolean value_is_extra (EffectValues *val, SettingParam *param)
+gboolean value_is_extra (EffectValues *val, int value)
 {
-    if ((param->value < val->min) || (param->value > val->max)) {
+    if ((value < val->min) || (value > val->max)) {
         return TRUE;
     }
     return FALSE;
@@ -96,7 +96,6 @@ gboolean value_is_extra (EffectValues *val, SettingParam *param)
 void
 write_preset_to_xml(Preset *preset, gchar *filename)
 {
-
     int rc;
     xmlTextWriterPtr writer;
     GList *iter_params = preset->params;
@@ -144,7 +143,7 @@ write_preset_to_xml(Preset *preset, gchar *filename)
         SettingParam *param = (SettingParam *) iter_params->data;
  
         if (param->id == last_id && param->position == last_position) {
-            g_message("Skipping duplicate parameter id %d position %d",
+            g_warning("Skipping duplicate parameter id %d position %d",
                        last_id, last_position);
             iter_params  = iter_params->next;
             continue;
@@ -177,7 +176,7 @@ write_preset_to_xml(Preset *preset, gchar *filename)
                                                    BAD_CAST xml->label);
             values = xml->values;
             type = values->type;
-            while ((type & VALUE_TYPE_EXTRA) && value_is_extra(values, param)) {
+            while ((type & VALUE_TYPE_EXTRA) && value_is_extra(values, param->value)) {
                 values = values->extra;
                 type = values->type;
             }
@@ -208,8 +207,9 @@ write_preset_to_xml(Preset *preset, gchar *filename)
             {
                 char *textp = map_xml_value(xml, param->value);
                 if (!textp) {
-                    g_message("Unable to map %s value %d for id %d position %d",
-                            xml->label, param->value, param->id, param->position);
+                    g_warning("Unable to map %s value %d for id %d position %d",
+                              xml->label, param->value, param->id,
+                              param->position);
                     textp = "";
                 }
                 rc = xmlTextWriterWriteElement(writer, BAD_CAST "Text",
@@ -237,7 +237,7 @@ write_preset_to_xml(Preset *preset, gchar *filename)
                 break;
 
             default:
-                g_message("Unhandled value type %d", type);
+                g_warning("Unhandled value type %d", type);
                 break;
             }
         }
@@ -246,11 +246,7 @@ write_preset_to_xml(Preset *preset, gchar *filename)
 
         iter_params  = iter_params->next;
     }
-  
-  /* Here we could close the elements ORDER and EXAMPLE using the
-     * function xmlTextWriterEndElement, but since we do not want to
-     * write any other elements, we simply call xmlTextWriterEndDocument,
-     * which will do all the work. */
+
     rc = xmlTextWriterEndDocument(writer);
     if (rc < 0) {
         printf("testXmlwriterFilename: Error at xmlTextWriterEndDocument\n");
