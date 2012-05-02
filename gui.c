@@ -23,6 +23,7 @@
 #include "effects.h"
 #include "preset.h"
 #include "gtkknob.h"
+#include "images/gdigi_icon.h"
 
 
 static gchar* MessageID_names[] = {
@@ -918,6 +919,12 @@ static void action_show_about_dialog_cb(GtkAction *action)
         "Tim LaBerge <tlaberge@visi.com>",
         NULL
     };
+
+    static const gchar * const artists[] = {
+        "Islam Alwazery <wazery@ubuntu.com>",
+        NULL
+    };
+
     static const gchar copyright[] = "Copyright \xc2\xa9 2009 Tomasz Moń";
     static const gchar website[] = "http://desowin.org/gdigi/";
     static const gchar version[] = "0.3.0";
@@ -926,6 +933,7 @@ static void action_show_about_dialog_cb(GtkAction *action)
 
     gtk_show_about_dialog(GTK_WINDOW(window),
                           "authors", authors,
+                          "artists", artists,
                           "copyright", copyright,
                           "website", website,
                           "license-type", GTK_LICENSE_GPL_3_0,
@@ -1298,11 +1306,16 @@ void gui_create(Device *device)
     GtkWidget *widget;
     GtkWidget *notebook;
     GtkWidget *sw;             /* scrolled window to carry preset treeview */
+    GdkPixbuf *icon;
+
     gint x;
     gint i;
 
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "gdigi");
+
+    icon = gdk_pixbuf_new_from_inline(-1, gdigi_icon, FALSE, NULL);
+    gtk_window_set_icon(GTK_WINDOW(window), icon);
 
     vbox = gtk_vbox_new(FALSE, 0);
     gtk_container_add(GTK_CONTAINER(window), vbox);

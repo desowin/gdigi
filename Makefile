@@ -19,16 +19,21 @@ all: gdigi
 gdigi: $(OBJECTS) 
 	$(CC) $(LDFLAGS) -o $@ $+ $(LDADD)
 
+images/gdigi_icon.h: images/icon.png
+	gdk-pixbuf-csource --raw --name=gdigi_icon $< > $@
+
 clean:
 	rm -f *.o
 
 distclean : clean
 	rm -f .*.m
+	rm -r images/gdigi_icon.h
 	rm -f gdigi
 
 install: gdigi
 	install gdigi $(DESTDIR)/usr/bin
 	install gdigi.desktop $(DESTDIR)/usr/share/applications/
+	install images/gdigi.png $(DESTDIR)/usr/share/icons/
 
 NODEP_TARGETS := clean distclean
 depinc := 1
