@@ -910,7 +910,7 @@ static void action_show_about_dialog_cb(GtkAction *action)
         "Stephen Rigler <riglersc@gmail.com>",
         "Jaco Kroon <jaco@kroon.co.za>",
         "Rafael Moreno <laocanfei@yahoo.com>",
-        "Andrew O. Shadoura <bugzilla@tut.by>",
+        "Andrew Shadura <bugzilla@tut.by>",
         "Andreas Karajannis <aakara13@googlemail.com>",
         "Miklos Aubert <miklos.aubert@gmail.com>",
         "Jonathan A. Tice <jonandtice@gmail.com>",
