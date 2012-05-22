@@ -1385,7 +1385,7 @@ void gui_free()
  *
  *  Displays dialogbox stating that device is unsupported.
  *
- *  \return TRUE if user selects "compability mode", otherwise FALSE.
+ *  \return TRUE if user selects "compatibility mode", otherwise FALSE.
  **/
 gboolean unsupported_device_dialog(Device **device)
 {
@@ -1408,7 +1408,7 @@ gboolean unsupported_device_dialog(Device **device)
 
     label = gtk_label_new("Your device appears to be unsupported by gdigi.\n"
                           "As some of the settings may be common between different devices,\n"
-                          "you can now select compability mode with one of the supported devices.\n"
+                          "you can now select compatibility mode with one of the supported devices.\n"
                           "Please take a look at gdigi's HACKING file.");
     gtk_container_add(GTK_CONTAINER(vbox), label);
 
@@ -1424,7 +1424,7 @@ gboolean unsupported_device_dialog(Device **device)
     if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
         gint number = gtk_combo_box_get_active(GTK_COMBO_BOX(combo_box));
         if (number != -1 && number <n_supported_devices) {
-            g_message("Starting %s compability mode",
+            g_message("Starting %s compatibility mode",
                       supported_devices[number]->name);
             *device = supported_devices[number];
             gtk_widget_destroy(dialog);
