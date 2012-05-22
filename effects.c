@@ -1070,7 +1070,7 @@ static EffectSettings noisegate_pluck_settings[] = {
 };
 
 static EffectSettings noisegate_gate_settings[] = {
-    {"Treshold", NOISEGATE_GATE_TRESHOLD, NOISEGATE_POSITION, &values_0_to_99},
+    {"Threshold", NOISEGATE_GATE_TRESHOLD, NOISEGATE_POSITION, &values_0_to_99},
     {"Attack", NOISEGATE_ATTACK, NOISEGATE_POSITION, &values_0_to_99},
     {"Release", NOISEGATE_RELEASE, NOISEGATE_POSITION, &values_0_to_99},
     {"Attn", NOISEGATE_ATTN, NOISEGATE_POSITION, &values_0_to_99},
