@@ -120,7 +120,7 @@ void show_error_message(GtkWidget *parent, gchar *message)
                                             GTK_BUTTONS_OK,
                                             "%s", message);
 
-    gtk_dialog_run(GTK_DIALOG(msg));
+    (void)gtk_dialog_run(GTK_DIALOG(msg));
     gtk_widget_destroy(msg);
 }
 
@@ -567,27 +567,34 @@ void combo_box_changed_cb(GtkComboBox *widget, gpointer data)
     vbox = g_object_get_data(G_OBJECT(widget), "vbox");
 
     if (x != -1) {
+        GtkWidget *new_child = NULL;
+
         name = g_strdup_printf("SettingsGroup%d", x);
         settings = g_object_get_data(G_OBJECT(widget), name);
         g_free(name);
 
-        if (settings != NULL && allow_send)
-            set_option(settings->id, settings->position, settings->type);
-
         child = g_object_get_data(G_OBJECT(widget), "active_child");
-        if (child == settings->child) {
-            return;
+        if (settings != NULL)
+        {
+            if (allow_send)
+                set_option(settings->id, settings->position, settings->type);
+
+            if (child == settings->child) {
+                return;
+            }
         }
 
         if (child != NULL) {
             gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(gtk_widget_get_parent(vbox))), child);
         }
 
-        if (settings->child != NULL) {
+        if (settings != NULL && settings->child != NULL) {
             gtk_container_add(GTK_CONTAINER(gtk_widget_get_parent(gtk_widget_get_parent(vbox))), settings->child);
             gtk_widget_show_all(gtk_widget_get_parent(gtk_widget_get_parent(vbox)));
+            new_child = settings->child;
         }
-        g_object_set_data(G_OBJECT(widget), "active_child", settings->child);
+
+        g_object_set_data(G_OBJECT(widget), "active_child", new_child);
     }
 }
 
@@ -1080,10 +1087,9 @@ static void action_open_preset_cb(GtkAction *action)
                         section = get_genetx_section_id(genetx->version,
                                                         genetx->type);
                         bank = 0x04;
+                        index = genetx->channel;
 
-                        if (i == 0) {
-                            index = genetx->channel;
-                        } else {
+                        if (i != 0) {
                             if (genetx->channel == GENETX_CHANNEL1) {
                                 index = GENETX_CHANNEL1_CUSTOM;
                             } else if (genetx->channel == GENETX_CHANNEL2) {
@@ -1133,15 +1139,10 @@ static void action_save_preset_cb(GtkAction *action)
                                          GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
                                          NULL);
     if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
-        GError *error = NULL;
         gchar *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
 
-
-
-        if (error) {
-            show_error_message(window, error->message);
-            g_error_free(error);
-            error = NULL;
+        if (filename == NULL) {
+            show_error_message(window, "No file name");
         } else {
             gchar real_filename[256];
             GList *list = get_current_preset();
@@ -1154,8 +1155,8 @@ static void action_save_preset_cb(GtkAction *action)
             write_preset_to_xml(preset, real_filename);
 
             preset_free(preset);
+            g_free(filename);
         }
-        g_free(filename);
     }
 
     gtk_widget_destroy(dialog);
@@ -1462,13 +1463,14 @@ gint select_device_dialog (GList *devices)
 
     combo_box = gtk_combo_box_text_new();
     device = g_list_first(devices);
-    do {
+    while (device != NULL) {
         char *name;
 
         snd_card_get_longname(GPOINTER_TO_INT(device->data), &name);
         gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(combo_box), NULL, name);
 
-    } while ((device = g_list_next(device)));
+        device = g_list_next(device);
+    };
 
     gtk_container_add(GTK_CONTAINER(vbox), combo_box);
 

@@ -625,7 +625,7 @@ static gint gtk_knob_key_press(GtkWidget *widget, GdkEventKey *event)
 static gint
 gtk_knob_motion_notify(GtkWidget *widget, GdkEventMotion *event) {
     GtkKnob *knob;
-    GdkModifierType mods;
+    GdkWindow *window;
     gint x, y;
 
     g_return_val_if_fail (widget != NULL, FALSE);
@@ -637,10 +637,6 @@ gtk_knob_motion_notify(GtkWidget *widget, GdkEventMotion *event) {
     x = event->x;
     y = event->y;
 
-    if (event->is_hint || (event->window != gtk_widget_get_window(widget))) {
-	gdk_window_get_pointer(gtk_widget_get_window(widget), &x, &y, &mods);
-    }
-
     switch (knob->state) {
 
     case STATE_PRESSED:
@@ -648,14 +644,22 @@ gtk_knob_motion_notify(GtkWidget *widget, GdkEventMotion *event) {
 	/* fall through */
 
     case STATE_DRAGGING:
-	if (mods & GDK_BUTTON1_MASK) {
-	    gtk_knob_update_mouse (knob, x, y, TRUE);
-	    return TRUE;
-	}
-	else if (mods & GDK_BUTTON3_MASK) {
-	    gtk_knob_update_mouse (knob, x, y, FALSE);
-	    return TRUE;
-	}
+        window = gtk_widget_get_window(widget);
+        if (event->is_hint || (event->window != window)) {
+            GdkModifierType mods;
+            GdkDeviceManager *device_manager = gdk_display_get_device_manager(gdk_window_get_display(window));
+            GdkDevice *pointer = gdk_device_manager_get_client_pointer(device_manager);
+
+            gdk_window_get_device_position(window, pointer, &x, &y, &mods);
+            if (mods & GDK_BUTTON1_MASK) {
+                gtk_knob_update_mouse (knob, x, y, TRUE);
+                return TRUE;
+            }
+            else if (mods & GDK_BUTTON3_MASK) {
+                gtk_knob_update_mouse (knob, x, y, FALSE);
+                return TRUE;
+            }
+        }
 	break;
     }
 
