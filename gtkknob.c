@@ -153,6 +153,7 @@ gtk_knob_init (GtkKnob *knob) {
     gtk_widget_set_has_window(GTK_WIDGET(knob), FALSE);
     gtk_widget_set_hexpand(GTK_WIDGET(knob), FALSE);
     gtk_widget_set_vexpand(GTK_WIDGET(knob), FALSE);
+    gtk_widget_add_events(GTK_WIDGET(knob), GDK_SCROLL_MASK);
 }
 
 
