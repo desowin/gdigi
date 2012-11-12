@@ -52,7 +52,7 @@ gboolean set_debug_flags (const gchar *option_name, const gchar *value,
 {
     if (strchr(value, 'd')) {
         DebugFlags |= DEBUG_MSG2DEV;
-    } 
+    }
     if (strchr(value, 'h')) {
         DebugFlags |= DEBUG_MSG2HOST;
     }
@@ -91,7 +91,7 @@ debug_msg (debug_flags_t flags, char *fmt, ...)
         va_start(ap, fmt);
         vsnprintf(buf, 1024, fmt, ap);
         va_end(ap);
-        
+
         fprintf(stderr, "%s\n", buf);
     }
 }
@@ -172,7 +172,7 @@ format_value (XmlSettings *xml, gint value)
     }
 
     return buf;
-} 
+}
 
 GString *
 format_ipv (guint id, guint pos, guint val)
@@ -458,7 +458,7 @@ void push_message(GString *msg)
                               "%d from bank %d",
                                   str[10], str[9]);
                 } else {
-                    debug_msg(DEBUG_MSG2HOST, 
+                    debug_msg(DEBUG_MSG2HOST,
                               "Receive RECEIVE_DEVICE_NOTIFICATION: %d %d moved to "
                               "%d %d",
                               str[9], str[10],
@@ -476,7 +476,7 @@ void push_message(GString *msg)
                     }
                     printf("\n");
                 }
-                debug_msg(DEBUG_MSG2HOST, 
+                debug_msg(DEBUG_MSG2HOST,
                           "Receive NOTIFY_MODIFIER_GROUP_CHANGED: Modifier group "
                           "id %d changed",
                           (str[9] << 8) | (str[10]));
@@ -515,7 +515,7 @@ void push_message(GString *msg)
                           param->position, param->value, "XXX");
                 setting_param_free(param);
             } while ( (x < msg->len) && n < tot);
-                             
+
             g_string_free(msg, TRUE);
             return;
         }
@@ -535,7 +535,7 @@ void push_message(GString *msg)
             }
 
             modifier_linkable_list(msg);
-                             
+
             g_string_free(msg, TRUE);
             return;
         }
@@ -1403,7 +1403,7 @@ static void request_device_configuration()
 
 static GOptionEntry options[] = {
     {"device", 'd', G_OPTION_FLAG_IN_MAIN, G_OPTION_ARG_STRING, &device_port, "MIDI device port to use", NULL},
-    {"debug-flags <flags>", 'D', G_OPTION_FLAG_IN_MAIN, G_OPTION_ARG_CALLBACK, set_debug_flags, 
+    {"debug-flags <flags>", 'D', G_OPTION_FLAG_IN_MAIN, G_OPTION_ARG_CALLBACK, set_debug_flags,
         "<flags> any of a, d, g, h, m, s, x, v:\n"
         "                                "
         "a: Everything.\n"
@@ -1420,7 +1420,7 @@ static GOptionEntry options[] = {
         "                                "
         "x: Debug xml parsing/writing.\n"
         "                                "
-        "v: Additional verbosity.\n" , 
+        "v: Additional verbosity.\n" ,
         NULL},
     {NULL}
 };

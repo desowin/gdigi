@@ -87,7 +87,7 @@ get_message_name(MessageID msgid)
     }
 
     return "Unknown";
-    
+
 }
 
 typedef struct {
@@ -964,7 +964,7 @@ SupportedFileTypes file_types[] = {
 
 static guint n_file_types = G_N_ELEMENTS(file_types);
 
-gchar * 
+gchar *
 get_preset_filename (int prod_id)
 {
     return file_types[prod_id].name;
@@ -1011,7 +1011,6 @@ static void action_open_preset_cb(GtkAction *action)
 
         gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), current_filter);
         if (x == product_id) {
-            
             gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(dialog), current_filter);
         }
 
@@ -1365,7 +1364,6 @@ void gui_create(Device *device)
     gtk_widget_show_all(window);
 
     g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(gtk_main_quit), NULL);
-
 }
 
 /**
@@ -1445,7 +1443,6 @@ gboolean unsupported_device_dialog(Device **device)
  **/
 gint select_device_dialog (GList *devices)
 {
-
     GtkWidget *dialog;
     GtkWidget *label;
     GtkWidget *combo_box;

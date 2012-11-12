@@ -59,11 +59,11 @@ map_xml_value (XmlSettings *xml, gint value)
         if ((xml->values == &values_on_off) && (value > 1)) {
             g_warning("Skipping modifier->label %s\n", xml->label);
             return NULL;
-        }   
+        }
         if (value > xml->values->max || value < xml->values->min) {
             g_warning("%s value %d out of range %0.1f %0.1f",
                       xml->label, value, xml->values->min, xml->values->max);
-        } 
+        }
         {
             XmlLabel *labels = xml->xml_labels;
             guint labels_amt = xml->xml_labels_amt;
@@ -110,7 +110,7 @@ write_preset_to_xml(Preset *preset, gchar *filename)
         return;
     }
 
-    /* 
+    /*
      * Start the document with the xml default for the version,
      * encoding and the default for the standalone declaration.
      */
@@ -129,7 +129,7 @@ write_preset_to_xml(Preset *preset, gchar *filename)
     rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "SchemaVersion",
                                      BAD_CAST "1.2");
 
-   
+
     rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "xmlns",
                                      BAD_CAST "http://www.digitech.com/xml/preset");
 
@@ -141,7 +141,7 @@ write_preset_to_xml(Preset *preset, gchar *filename)
     while (iter_params) {
         XmlSettings *xml;
         SettingParam *param = (SettingParam *) iter_params->data;
- 
+
         if (param->id == last_id && param->position == last_position) {
             g_warning("Skipping duplicate parameter id %d position %d",
                        last_id, last_position);
@@ -223,7 +223,7 @@ write_preset_to_xml(Preset *preset, gchar *filename)
                     double value = (param->value + offset) * step;
                     rc = xmlTextWriterWriteFormatElement(writer, BAD_CAST "Text",
                             "%0.2f%s", value, suffix);
-                } else {    
+                } else {
                     gint value = (param->value + offset) * step;
                     rc = xmlTextWriterWriteFormatElement(writer, BAD_CAST "Text",
                             "%d%s", value, suffix);
@@ -241,7 +241,7 @@ write_preset_to_xml(Preset *preset, gchar *filename)
                 break;
             }
         }
-        
+
         rc = xmlTextWriterEndElement(writer);
 
         iter_params  = iter_params->next;

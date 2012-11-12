@@ -308,7 +308,7 @@ Preset *create_preset_from_data(GList *list)
                 modified = (unsigned char)data->str[11+strlen(name)];
 
                 if ((bank == PRESETS_EDIT_BUFFER) && (number == 0)) {
-                    debug_msg(DEBUG_MSG2HOST, 
+                    debug_msg(DEBUG_MSG2HOST,
                               "RECEIVE_PRESET_START:  current edit buffer");
                 } else {
                     debug_msg(DEBUG_MSG2HOST,

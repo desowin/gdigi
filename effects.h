@@ -105,7 +105,7 @@ enum product_id {
    RP255    = 8,
    RP355    = 9,
 };
-   
+
 typedef struct {
     gchar *name;
     unsigned char family_id;

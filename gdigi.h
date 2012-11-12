@@ -28,7 +28,7 @@ typedef enum {
     DEBUG_STARTUP   = (1 << 2),
     DEBUG_GROUP     = (1 << 3),     // Modifier group
     DEBUG_HEX       = (1 << 4),     // Dump message contents in hex.
-    DEBUG_XML       = (1 << 5),     
+    DEBUG_XML       = (1 << 5),
     DEBUG_VERBOSE   = (1 << 6),
 } debug_flags_t;
 
@@ -742,7 +742,7 @@ enum {
     IPS_SCALE_LYDIAN = 4,
     IPS_SCALE_HMINOR = 5,
 };
-    
+
 #define OCTAVER_OCTAVE1 1746
 #define OCTAVER_OCTAVE2 1747
 #define OCTAVER_DRY_LEVEL 1748
@@ -853,7 +853,7 @@ enum {
 #define EXP_POSITION 19
 
 #define EXP_VOLUME_PRE_FX 854594
-#define EXP_VOLUME_POST_FX 1116738 
+#define EXP_VOLUME_POST_FX 1116738
 
 #define EXP_MIN 8195
 #define EXP_MAX 8196
@@ -866,7 +866,7 @@ enum {
 
 #define LFO_WAVEFORM_TRI 0
 #define LFO_WAVEFORM_SINE 1
-#define LFO_WAVEFORM_SQUARE 2 
+#define LFO_WAVEFORM_SQUARE 2
 
 #define LFO1_POSITION 22
 #define LFO2_POSITION 23
@@ -875,7 +875,7 @@ enum {
 #define LFO_ASSIGN_NONE 0
 #define LFO_ASSIGN_PICKUP_ON 131137
 #define LFO_ASSIGN_COMP_ON 262337
-#define LFO_ASSIGN_SUSTAN 262352 
+#define LFO_ASSIGN_SUSTAN 262352
 
 #define VSWITCH_ASSIGN 8384
 #define VSWITCH_MIN 8385
@@ -899,7 +899,6 @@ enum {
 #define FX_LIB_LEVEL 8706      // This influences pitch shift mix, delay level,
                                // and reverb level, in proportion, as
                                // specified by FX_LIB_LEVEL_MAX1,2,3.
-                               // 
 #define FX_LIB_LEVEL_MAX1 8708
 #define FX_LIB_LEVEL_MAX2 8710
 #define FX_LIB_LEVEL_MAX3 8712

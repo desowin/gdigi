@@ -50,7 +50,7 @@ typedef enum
 	gint height;  /* derived from image height. */
 	gint frame_width;  /* derived from pixbuf (width / height) or provided override for rectangular frames */
     };
-    
+
     struct _GtkKnob {
 	GtkWidget widget;
 
@@ -68,7 +68,7 @@ typedef enum
 	/* knob animation */
 	GtkKnobAnim *anim;
 	gint width, height;
-	
+
 	/* Old values from adjustment stored so we know when something changes */
 	gdouble old_value;
 	gdouble old_lower;

@@ -368,7 +368,7 @@ gtk_knob_get_preferred_width(GtkWidget *widget,
     g_return_if_fail (widget != NULL);
     g_return_if_fail (GTK_IS_KNOB (widget));
 
-    *minimum_width = *natural_width = GTK_KNOB(widget)->width; 
+    *minimum_width = *natural_width = GTK_KNOB(widget)->width;
 }
 
 static void
@@ -379,7 +379,7 @@ gtk_knob_get_preferred_height(GtkWidget *widget,
     g_return_if_fail (widget != NULL);
     g_return_if_fail (GTK_IS_KNOB (widget));
 
-    *minimum_height = *natural_height = GTK_KNOB(widget)->height; 
+    *minimum_height = *natural_height = GTK_KNOB(widget)->height;
 }
 
 

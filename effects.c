@@ -3533,7 +3533,7 @@ static XmlLabel xml_amp_cab_labels[] = {
 static XmlLabel xml_noisegate_labels[] = {
     {NOISEGATE_GATE, "Gate"},
     {NOISEGATE_SWELL, "Swell"},
-};  
+};
 
 static XmlLabel xml_chorus_pre_post_labels[] = {
     {CHORUSFX_PRE, "Pre"},
@@ -3646,7 +3646,7 @@ static XmlLabel xml_ips_scale_labels[] = {
     {IPS_SCALE_LYDIAN, "Lydian"},
     {IPS_SCALE_HMINOR, "HMinor"},
 };
-        
+
 static XmlLabel xml_delay_labels[] = {
 
     {DELAY_TYPE_ANALOG, "Analog"},
@@ -3972,7 +3972,7 @@ XmlSettings xml_settings[] = {
     {REVERB_PREDELAY, REVERB_POSITION, "Reverb Predelay", &values_0_to_15,},
 
     {PRESET_LEVEL, VOLUME_PRE_FX_POSITION, "Volume Pre FX", &values_0_to_99,},
-    {PRESET_LEVEL, VOLUME_POST_FX_POSITION, "Volume Post FX", &values_0_to_99,}, 
+    {PRESET_LEVEL, VOLUME_POST_FX_POSITION, "Volume Post FX", &values_0_to_99,},
 
     {WAH_TYPE, WAH_POSITION, "Wah Type", &values_wah_type, xml_wah_labels, G_N_ELEMENTS(xml_wah_labels)},
     {WAH_ON_OFF, WAH_POSITION, "Wah Enable", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
