@@ -562,6 +562,10 @@ EffectValues values_on_off = {
     .labels = on_off_labels,
 };
 
+EffectValues values_posid = {
+    .type = VALUE_TYPE_POSID,
+};
+
 static EffectValues values_odd_even = {
     .min = 0.0, .max = 1.0,
     .type = VALUE_TYPE_LABEL,
@@ -643,8 +647,8 @@ static EffectValues values_wah_type = {
 };
 
 static EffectValues values_exp_assign = {
-    .min = 0.0, .max = 1.0,
-    .type = VALUE_TYPE_LABEL,
+    .min = 0.0, .max = 0x7fffffff,
+    .type = VALUE_TYPE_POSID,
 };
 
 static EffectValues values_vswitch_pedal_assign = {
@@ -1205,6 +1209,12 @@ static EffectSettings chorusfx_ce_settings[] = {
     {"Depth", CHORUS_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
 };
 
+#if 0
+static EffectSettings pickup_enable_settings[] = {
+    {"Pickup", PICKUP_ON_OFF, PICKUP_POSITION, &values_on_off},
+};
+#endif
+
 static EffectSettings chorusfx_tc_settings[] = {
     {"Speed", CHORUS_SPEED, CHORUSFX_POSITION, &values_0_to_99},
     {"Width", CHORUS_WIDTH, CHORUSFX_POSITION, &values_0_to_99},
@@ -1576,12 +1586,14 @@ static EffectSettings lfo1_settings[] = {
     {"Speed(HZ)", LFO_SPEED, LFO1_POSITION, &values_lfo_speed},
 };
 
+#if 0
 static EffectSettings lfo2_settings[] = {
     {"Heel", LFO_MIN, REVERB_POSITION, &values_0_to_99},
     {"Toe", LFO_MAX, REVERB_POSITION, &values_0_to_99},
     {"Waveform", LFO_WAVEFORM, REVERB_POSITION, &values_waveform},
     {"Speed(HZ)", LFO_SPEED, REVERB_POSITION, &values_lfo_speed},
 };
+#endif
 
 static EffectSettings reverb_lex_settings[] = {
     {"Predelay", REVERB_PREDELAY, REVERB_POSITION, &values_0_to_15},
@@ -1942,6 +1954,10 @@ static EffectGroup rp355_chorusfx_group[] = {
     {CHORUS_TYPE_OCTAVER, "Octaver", chorusfx_octaver_settings, G_N_ELEMENTS(chorusfx_octaver_settings)},
 };
 
+static EffectGroup rp355_pedal1_assign_group[] = {
+    { 0, "Placeholder", NULL, 0},
+    };
+
 #define LFO_POSID_TO_TYPE(_a, _b) ((_a << 16) | (_b))
 static EffectGroup rp355_lfo1_group[] = {
     {LFO_POSID_TO_TYPE(CHORUSFX_POSITION, CHORUS_LEVEL), "Chorus Level", lfo1_settings, G_N_ELEMENTS(lfo1_settings)},
@@ -1954,7 +1970,6 @@ static EffectGroup rp355_lfo1_group[] = {
     {LFO_POSID_TO_TYPE(DIST_POSITION, DIST_808_LVL), "Distortion 808 Level", lfo1_settings, G_N_ELEMENTS(lfo1_settings)},
     };
 
-   
 static EffectGroup rp500_chorusfx_group[] = {
     {CHORUS_TYPE_CE, "CE Chorus", chorusfx_ce_settings, G_N_ELEMENTS(chorusfx_ce_settings)},
     {CHORUS_TYPE_TC, "TC Chorus", chorusfx_tc_settings, G_N_ELEMENTS(chorusfx_tc_settings)},
@@ -2820,12 +2835,20 @@ static Effect rp255_chorusfx_effect[] = {
 };
 
 static Effect rp355_chorusfx_effect[] = {
-    {"Position",-1, CHORUSFX_PRE_POST,CHORUSFX_POSITION, pre_post_group,G_N_ELEMENTS(pre_post_group)},
     {NULL, CHORUSFX_ON_OFF,CHORUSFX_TYPE, CHORUSFX_POSITION, rp355_chorusfx_group, G_N_ELEMENTS(rp355_chorusfx_group)},
+    {"Position",-1, CHORUSFX_PRE_POST,CHORUSFX_POSITION, pre_post_group,G_N_ELEMENTS(pre_post_group)},
 };
 
 static Effect rp355_lfo1_effect[] = {
     {NULL, -1, LFO_TYPE, LFO1_POSITION, rp355_lfo1_group, G_N_ELEMENTS(rp355_lfo1_group)},
+};
+
+/*
+ * The elements of this group are discovered dynamically from the
+ * MODIFIER_LINKABLE_LIST message.
+ */
+static Effect rp355_pedal1_assign_effect[] = {
+    {NULL, -1, EXP_TYPE, EXP_POSITION, rp355_pedal1_assign_group, G_N_ELEMENTS(rp355_pedal1_assign_group)},
 };
 
 static Effect rp500_chorusfx_effect[] = {
@@ -3032,6 +3055,7 @@ static EffectList rp355_effects[] = {
     {"Reverb", reverb_effect, G_N_ELEMENTS(reverb_effect)},
     {"Global Settings", global_effect, G_N_ELEMENTS(global_effect)},
     {"LFO1", rp355_lfo1_effect, G_N_ELEMENTS(rp355_lfo1_effect)},
+    {"Pedal1 Assign", rp355_pedal1_assign_effect, G_N_ELEMENTS(rp355_pedal1_assign_effect)},
 };
 
 static EffectList rp500_effects[] = {
@@ -3267,6 +3291,8 @@ static Modifier modifiers[] = {
     {"Compressor Tone", COMP_TONE, COMP_POSITION, &values_0_to_99},
     {"Compressor Level", COMP_LEVEL, COMP_POSITION, &values_0_to_99},
     {"Compressor Attack", COMP_ATTACK, COMP_POSITION, &values_0_to_99},
+    {"Compressor Sensitivity", COMP_SENSITIVITY, COMP_POSITION, &values_0_to_99},
+    {"Compressor Output", COMP_OUTPUT, COMP_POSITION, &values_0_to_99},
     {"Dist Enable", DIST_ON_OFF, DIST_POSITION, &values_on_off},
     {"Dist Drive", DIST_SCREAMER_DRIVE, DIST_POSITION, &values_0_to_99},
     {"Dist Tone", DIST_SCREAMER_TONE, DIST_POSITION, &values_0_to_99},
@@ -3309,12 +3335,12 @@ static Modifier modifiers[] = {
     {"Dist Sustain", DIST_MP_SUSTAIN, DIST_POSITION, &values_0_to_99},
     {"Dist Tone", DIST_MP_TONE, DIST_POSITION, &values_0_to_99},
     {"Dist Volume", DIST_MP_VOLUME, DIST_POSITION, &values_0_to_99},
-    {"Amp Channel Enable", AMP_ON_OFF, AMP_A_POSITION, &values_on_off},
+    {"Amp Enable", AMP_ON_OFF, AMP_A_POSITION, &values_on_off},
     {"Amp Gain", AMP_GAIN, AMP_A_POSITION, &values_0_to_99},
     {"Amp Level", AMP_LEVEL, AMP_A_POSITION, &values_0_to_99},
-    {"Amp Channel Enable", AMP_ON_OFF, AMP_B_POSITION, &values_on_off},
-    {"Amp Gain", AMP_GAIN, AMP_B_POSITION, &values_0_to_99},
-    {"Amp Level", AMP_LEVEL, AMP_B_POSITION, &values_0_to_99},
+    {"Amp B Enable", AMP_ON_OFF, AMP_B_POSITION, &values_on_off},
+    {"Amp B Gain", AMP_GAIN, AMP_B_POSITION, &values_0_to_99},
+    {"Amp B Level", AMP_LEVEL, AMP_B_POSITION, &values_0_to_99},
     {"EQ Enable", EQ_ENABLE, EQ_A_POSITION, &values_on_off},
     {"EQ Bass", EQ_BASS, EQ_A_POSITION, &values_eq_db},
     {"EQ Mid", EQ_MID, EQ_A_POSITION, &values_eq_db},
@@ -3399,8 +3425,8 @@ static Modifier modifiers[] = {
     {"Reverb Liveliness", REVERB_LIVELINESS, REVERB_POSITION, &values_0_to_99},
     {"Reverb Level", REVERB_LEVEL, REVERB_POSITION, &values_0_to_99},
     {"Reverb Predelay", REVERB_PREDELAY, REVERB_POSITION, &values_0_to_15},
-    {"Volume Pre FX", 2626, 13, &values_0_to_99},
-    {"Volume Post FX", 2626, 17, &values_0_to_99},
+    {"Volume Pre FX", PRESET_LEVEL, VOLUME_PRE_FX_POSITION, &values_0_to_99},
+    {"Volume Post FX", PRESET_LEVEL, VOLUME_POST_FX_POSITION, &values_0_to_99},
 };
 
 int n_modifiers = G_N_ELEMENTS(modifiers);
@@ -4196,6 +4222,12 @@ static void effect_settings_free(EffectSettings *settings)
 }
 
 /**
+ * Global holding the list of linkable parameters.
+ *
+ * Used for Pedal Assignment and the LFO's.
+ */
+ModifierGroup *ModifierLinkableList;
+/**
  *  Retrieves modifier linkable group from device.
  *
  *  \return ModifierGroup which must be freed using modifier_group_free.
@@ -4244,13 +4276,14 @@ ModifierGroup *modifier_linkable_list(GString *msg)
             group[i].settings_amt = 0;
 
         debug_msg(DEBUG_MSG2HOST|DEBUG_GROUP,
-                  "ID: %4d Position: %2d: %s",
-                  id, position, modifier ? modifier->label : NULL);
+                  "Position : %d\nID       : %d\nName     : %s\n",
+                  position, id, modifier ? modifier->label : NULL);
     }
 
     modifier_group->group = group;
     modifier_group->group_amt = count;
 
+    ModifierLinkableList = modifier_group;
 
     return modifier_group;
 }

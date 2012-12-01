@@ -656,6 +656,61 @@ GtkWidget *create_widget_container(EffectGroup *group, gint amt, gint id, gint p
     return vbox;
 }
 
+/* This should take ID and POSITION of Pedal1Assign, LFO1, or LFO2 */
+void
+create_pedal1_assign (void)
+{
+    guint i;
+    gpointer key;
+    WidgetTreeElem *el;
+    GList *list;
+    EffectSettingsGroup *settings = NULL;
+    GObject *AssignComboBox;
+    gchar *name = NULL;
+
+    key = GINT_TO_POINTER(EXP_ASSIGN1| (EXP_POSITION << 16));
+    list = g_tree_lookup(widget_tree, key);
+    if (!list) {
+        printf("NO PEDAL ASSIGN COMBO BOX!\n");
+        return;
+    }
+
+    /* The only element should be the one with the placeholder. */
+    el = g_list_nth_data(list, 0);
+    if (!el) {
+        printf("NO LIST\n");
+        return;
+    }
+
+    AssignComboBox = GTK_COMBO_BOX(el->widget);
+
+    /* Remove the placeholder. */
+    gtk_combo_box_text_remove(GTK_COMBO_BOX_TEXT(AssignComboBox), 0);
+    for (i = 0; i < ModifierLinkableList->group_amt; i++) {
+        gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(AssignComboBox),
+                NULL, 
+                ModifierLinkableList->group[i].label);
+
+        printf("Added label %s\n", ModifierLinkableList->group[i].label);
+
+        settings = g_slice_new(EffectSettingsGroup);
+        settings->id = EXP_ASSIGN1; 
+        settings->type = ModifierLinkableList->group[i].type;
+        settings->position = EXP_POSITION;
+        settings->child = NULL;
+        name = g_strdup_printf("SettingsGroup%d", i);
+
+        widget_tree_add(G_OBJECT(AssignComboBox), EXP_ASSIGN1, EXP_POSITION, 
+                    ModifierLinkableList->group[i].type, i); 
+        g_object_set_data_full(G_OBJECT(AssignComboBox), name, settings,
+                ((GDestroyNotify)effect_settings_group_free));
+    }
+
+    // Get the current setting.
+    get_option(EXP_ASSIGN1,EXP_POSITION);
+}
+
+
 /**
  *  \param widgets Effect descriptions
  *  \param amt amount of effect descriptions

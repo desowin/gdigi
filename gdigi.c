@@ -166,6 +166,10 @@ format_value (XmlSettings *xml, guint value)
         g_string_printf(buf, "%s", "");
         break;
 
+    case VALUE_TYPE_POSID:
+        g_string_printf(buf, "%d", value);
+        break;
+
     default:
         g_warning("Unhandled value type %d", vtype);
         break;
@@ -521,6 +525,8 @@ void push_message (GString *msg)
             modifier_linkable_list(msg);
                              
             g_string_free(msg, TRUE);
+
+            create_pedal1_assign();
             return;
 
 

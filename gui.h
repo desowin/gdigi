@@ -29,5 +29,6 @@ void gui_create(Device *device);
 void gui_free();
 gboolean unsupported_device_dialog(Device **device);
 const gchar* get_message_name(MessageID msgid);
+void create_pedal1_assign(void);
 
 #endif /* GDIGI_GUI_H */
