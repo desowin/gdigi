@@ -1564,6 +1564,13 @@ static EffectSettings reverb_lex_settings[] = {
     {"Level", REVERB_LEVEL, REVERB_POSITION, &values_0_to_99},
 };
 
+static EffectSettings tone_lib_level_b_settings[] = {
+    {"Tone Effect Level", FX_LIB_LEVEL, LIB_POSITION_B, &values_0_to_99},
+    {"Tone Level 1", FX_LIB_LEVEL_MAX1, LIB_POSITION_B, &values_0_to_99},
+    {"Tone Level 2", FX_LIB_LEVEL_MAX2, LIB_POSITION_B, &values_0_to_99},
+    {"Tone Level 3", FX_LIB_LEVEL_MAX3, LIB_POSITION_B, &values_0_to_99},
+};
+
 static EffectGroup gnx3k_wah_group[] = {
     {GNX3K_WAH_TYPE_CRY, "Cry", gnx3k_wah_settings, G_N_ELEMENTS(gnx3k_wah_settings)},
     {GNX3K_WAH_TYPE_BOUTIQUE, "Boutique", gnx3k_wah_settings, G_N_ELEMENTS(gnx3k_wah_settings)},
@@ -2670,6 +2677,11 @@ static EffectGroup effects_lib_group[] = {
     {EFFECTS_LIB_ROTARY_TAPE, "Rotary + Tape Delay", NULL, -1},
 };
 
+static EffectGroup tone_lib_level_b_group[] = {
+    {-1, NULL, tone_lib_level_b_settings, G_N_ELEMENTS(tone_lib_level_b_settings)},
+};
+
+
 static EffectGroup pickup_group[] = {
     {PICKUP_TYPE_HB_SC, "HB>SC", NULL, -1},
     {PICKUP_TYPE_SC_HB, "SC>HB", NULL, -1},
@@ -2915,6 +2927,12 @@ static Effect gnx3k_amp_channel_effect[] = {
     {NULL, -1, -1, -1, gnx3k_amp_channel_group, G_N_ELEMENTS(gnx3k_amp_channel_group)},
 };
 
+static Effect tone_lib_effect_b[] = {
+    {NULL, -1, TONE_LIB_TYPE, LIB_POSITION_B, tone_lib_group, G_N_ELEMENTS(tone_lib_group)},
+    {NULL, -1, FX_LIB_TYPE, LIB_POSITION_B, effects_lib_group, G_N_ELEMENTS(effects_lib_group)},
+    {NULL, -1, FX_LIB_LEVEL, LIB_POSITION_B, tone_lib_level_b_group, G_N_ELEMENTS(tone_lib_level_b_group)},
+};
+
 /* in signal chain order */
 static EffectList rp150_effects[] = {
     {"Pickup", pickup_misc_effect, G_N_ELEMENTS(pickup_misc_effect)},
@@ -2957,6 +2975,7 @@ static EffectList rp250_effects[] = {
 
 /* Almost like rp250, except for Amplifier and Chorus/FX */
 static EffectList rp255_effects[] = {
+    {"Tone Library", tone_lib_effect_b, G_N_ELEMENTS(tone_lib_effect_b)},
     {"Wah", wah_effect, G_N_ELEMENTS(wah_effect)},
     {"Amplifier", rp255_amp_effect, G_N_ELEMENTS(rp255_amp_effect)},
     {"Equalizer", rp250_eq_effect, G_N_ELEMENTS(rp250_eq_effect)},
@@ -4025,12 +4044,19 @@ XmlSettings xml_settings[] = {
     {EQ_MID_FREQ, EQ_B_POSITION, "EQ B Mid Freq", &values_eq_mid_hz,},
     {EQ_TREB_FREQ, EQ_B_POSITION, "EQ B Treb Freq", &values_eq_treb_hz,},
 
-    {TONE_LIB_TYPE, LIB_POSITION, "Tone Lib Type", &values_tone_lib_type, xml_tone_lib_labels, G_N_ELEMENTS(xml_tone_lib_labels)},
-    {FX_LIB_TYPE, LIB_POSITION, "FX Lib Type", &values_fx_lib_type, xml_fx_lib_labels, G_N_ELEMENTS(xml_fx_lib_labels)},
-    {FX_LIB_LEVEL, LIB_POSITION, "FxLiblvl", &values_0_to_99,},
-    {FX_LIB_LEVEL_MAX1, LIB_POSITION, "FxLibLvlMax1", &values_0_to_99,},
-    {FX_LIB_LEVEL_MAX2, LIB_POSITION, "FxLibLvlMax2", &values_0_to_99,},
-    {FX_LIB_LEVEL_MAX3, LIB_POSITION, "FxLibLvlMax3", &values_0_to_99,},
+    {TONE_LIB_TYPE, LIB_POSITION_A, "Tone Lib Type", &values_tone_lib_type, xml_tone_lib_labels, G_N_ELEMENTS(xml_tone_lib_labels)},
+    {FX_LIB_TYPE, LIB_POSITION_A, "FX Lib Type", &values_fx_lib_type, xml_fx_lib_labels, G_N_ELEMENTS(xml_fx_lib_labels)},
+    {FX_LIB_LEVEL, LIB_POSITION_A, "FxLiblvl", &values_0_to_99,},
+    {FX_LIB_LEVEL_MAX1, LIB_POSITION_A, "FxLibLvlMax1", &values_0_to_99,},
+    {FX_LIB_LEVEL_MAX2, LIB_POSITION_A, "FxLibLvlMax2", &values_0_to_99,},
+    {FX_LIB_LEVEL_MAX3, LIB_POSITION_A, "FxLibLvlMax3", &values_0_to_99,},
+
+    {TONE_LIB_TYPE, LIB_POSITION_B, "Tone Lib B Type", &values_tone_lib_type, xml_tone_lib_labels, G_N_ELEMENTS(xml_tone_lib_labels)},
+    {FX_LIB_TYPE, LIB_POSITION_B, "FX Lib B Type", &values_fx_lib_type, xml_fx_lib_labels, G_N_ELEMENTS(xml_fx_lib_labels)},
+    {FX_LIB_LEVEL, LIB_POSITION_B, "FxLib B lvl", &values_0_to_99,},
+    {FX_LIB_LEVEL_MAX1, LIB_POSITION_B, "FxLib B LvlMax1", &values_0_to_99,},
+    {FX_LIB_LEVEL_MAX2, LIB_POSITION_B, "FxLib B LvlMax2", &values_0_to_99,},
+    {FX_LIB_LEVEL_MAX3, LIB_POSITION_B, "FxLib B LvlMax3", &values_0_to_99,},
 
     // Global settings, not part of presets or standard XML.
     {TUNING_REFERENCE, GLOBAL_POSITION, "Tuning Reference", &values_0_to_99,},
@@ -4070,7 +4096,8 @@ gchar *Positions[] = {
     [ LFO2_POSITION ] = "LFO 2",
     [ EQ_A_POSITION ] = "EQ A",
     [ EQ_B_POSITION ] = "EQ B",
-    [ LIB_POSITION ] = "Library",
+    [ LIB_POSITION_A ] = "Library A",
+    [ LIB_POSITION_B ] = "Library B",
     [ AMP_LOOP_POSITION ] = "Amp Loop",
 };
 

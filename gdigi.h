@@ -892,7 +892,8 @@ enum {
 #define LIBRARY_EFFECTS 8705
 #define EFFECTS_LEVEL 8706
 
-#define LIB_POSITION 26
+#define LIB_POSITION_A 26
+#define LIB_POSITION_B 25
 
 #define TONE_LIB_TYPE 8704
 #define FX_LIB_TYPE 8705
