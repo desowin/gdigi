@@ -679,13 +679,13 @@ static EffectValues values_lfo_none = {
 static EffectValues values_lfo_speed_extra = {
     .min = 95.0, .max = 185.0,
     .type = VALUE_TYPE_PLAIN | VALUE_TYPE_OFFSET | VALUE_TYPE_STEP | VALUE_TYPE_DECIMAL,
-    .offset = 5.0, .step = 0.1, .decimal = 1, .suffix = "Hz",
+    .offset = -85.0, .step = 0.1, .decimal = 1, .suffix = "Hz",
 };
 
 static EffectValues values_lfo_speed = {
     .min = 0.0, .max = 94.0,
     .type = VALUE_TYPE_PLAIN | VALUE_TYPE_OFFSET | VALUE_TYPE_STEP | VALUE_TYPE_DECIMAL | VALUE_TYPE_EXTRA | VALUE_TYPE_SUFFIX,
-    .offset = 5, .step = 0.01, .decimal = 1, .suffix = "Hz",
+    .offset = 5, .step = 0.01, .decimal = 2, .suffix = "Hz",
     .extra = &values_lfo_speed_extra,
 };
 
