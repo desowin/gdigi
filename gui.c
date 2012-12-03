@@ -22,6 +22,7 @@
 #include "effects.h"
 #include "preset.h"
 #include "gtkknob.h"
+#include "gdigi_xml.h"
 
 
 static gchar* MessageID_names[] = {
@@ -370,8 +371,9 @@ static void apply_widget_setting(WidgetTreeElem *el, SettingParam *param)
         else if (GTK_IS_ADJUSTMENT(el->widget))
             gtk_adjustment_set_value(GTK_ADJUSTMENT(el->widget), (gdouble)param->value);
     } else { /* combo box */
-        if (el->value == param->value)
+        if (el->value == param->value) {
             gtk_combo_box_set_active(GTK_COMBO_BOX(el->widget), el->x);
+        }
     }
 }
 
@@ -538,8 +540,9 @@ void effect_settings_group_free(EffectSettingsGroup *group)
 {
     if (group->child != NULL) {
         /* destroy widget without parent */
-        if (gtk_widget_get_parent(group->child) == NULL)
+        if (gtk_widget_get_parent(group->child) == NULL) {
             gtk_widget_destroy(group->child);
+        }
 
         g_object_unref(group->child);
     }
@@ -656,58 +659,85 @@ GtkWidget *create_widget_container(EffectGroup *group, gint amt, gint id, gint p
     return vbox;
 }
 
-/* This should take ID and POSITION of Pedal1Assign, LFO1, or LFO2 */
+/**
+ * Given a linkable effect, build the combo box for the linkable parameters.
+ *
+ * @param[in] pos Position
+ * @param[in] id Id
+ */
 void
-create_pedal1_assign (void)
+create_modifier_group (guint pos, guint id)
 {
     guint i;
     gpointer key;
     WidgetTreeElem *el;
     GList *list;
-    EffectSettingsGroup *settings = NULL;
+    EffectSettingsGroup *settings = NULL, *orig_settings = NULL;
     GObject *AssignComboBox;
+    GtkWidget *child_widget = NULL;
     gchar *name = NULL;
 
-    key = GINT_TO_POINTER(EXP_ASSIGN1| (EXP_POSITION << 16));
+    debug_msg(DEBUG_GROUP, "Building modifier group for position %d id %d \"%s\"",
+                           pos, id, get_xml_settings(id, pos)->label);
+
+    key = GINT_TO_POINTER((pos << 16) | id);
     list = g_tree_lookup(widget_tree, key);
     if (!list) {
-        printf("NO PEDAL ASSIGN COMBO BOX!\n");
+        g_warning("No widget tree entry for position %d id %d!\n",
+                   pos, id);
         return;
     }
 
     /* The only element should be the one with the placeholder. */
     el = g_list_nth_data(list, 0);
     if (!el) {
-        printf("NO LIST\n");
+        g_warning("No effect settings group for position %d id %d!\n",
+                   pos, id);
         return;
     }
 
-    AssignComboBox = GTK_COMBO_BOX(el->widget);
+    AssignComboBox = el->widget;
 
+    name = g_strdup_printf("SettingsGroup%d", 0);
+    orig_settings = g_object_get_data(G_OBJECT(AssignComboBox), name);
+    if (orig_settings) {
+        child_widget = orig_settings->child;
+        /* Steal the data so we don't trigger the destroy method on the grid. */
+        g_object_steal_data(AssignComboBox, name);
+    }
     /* Remove the placeholder. */
     gtk_combo_box_text_remove(GTK_COMBO_BOX_TEXT(AssignComboBox), 0);
+
+
     for (i = 0; i < ModifierLinkableList->group_amt; i++) {
         gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(AssignComboBox),
                 NULL, 
                 ModifierLinkableList->group[i].label);
 
-        printf("Added label %s\n", ModifierLinkableList->group[i].label);
-
         settings = g_slice_new(EffectSettingsGroup);
-        settings->id = EXP_ASSIGN1; 
         settings->type = ModifierLinkableList->group[i].type;
-        settings->position = EXP_POSITION;
+        settings->id = id; 
+        settings->position = pos;
         settings->child = NULL;
+        if (child_widget) { 
+            settings->child  = child_widget;
+            g_object_ref_sink(settings->child);
+        }
+
         name = g_strdup_printf("SettingsGroup%d", i);
 
-        widget_tree_add(G_OBJECT(AssignComboBox), EXP_ASSIGN1, EXP_POSITION, 
+        debug_msg(DEBUG_GROUP, "%d: \"%s\"",
+                               i,
+                               ModifierLinkableList->group[i].label);
+
+        widget_tree_add(G_OBJECT(AssignComboBox), id, pos, 
                     ModifierLinkableList->group[i].type, i); 
         g_object_set_data_full(G_OBJECT(AssignComboBox), name, settings,
                 ((GDestroyNotify)effect_settings_group_free));
     }
 
     // Get the current setting.
-    get_option(EXP_ASSIGN1,EXP_POSITION);
+    get_option(id, pos);
 }
 
 
@@ -1167,8 +1197,6 @@ static void action_save_preset_cb(GtkAction *action)
     if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
         GError *error = NULL;
         gchar *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-
-
 
         if (error) {
             show_error_message(window, error->message);

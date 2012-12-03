@@ -526,7 +526,9 @@ void push_message (GString *msg)
                              
             g_string_free(msg, TRUE);
 
-            create_pedal1_assign();
+            create_modifier_group(EXP_POSITION, EXP_ASSIGN1);
+            create_modifier_group(LFO1_POSITION, LFO_TYPE);
+            create_modifier_group(LFO2_POSITION, LFO_TYPE);
             return;
 
 
@@ -1505,7 +1507,7 @@ int main(int argc, char *argv[]) {
         g_mutex_free(message_queue_mutex);
     }
 
-    if (message_queue != NULL) {
+    if (message_queue != NULL && g_queue_get_length(message_queue)) {
         g_warning("%d unread messages in queue",
                   g_queue_get_length(message_queue));
         g_queue_foreach(message_queue, (GFunc) message_free_func, NULL);

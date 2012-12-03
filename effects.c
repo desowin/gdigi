@@ -652,13 +652,13 @@ static EffectValues values_exp_assign = {
 };
 
 static EffectValues values_vswitch_pedal_assign = {
-    .min = 0.0, .max = 1.0,
-    .type = VALUE_TYPE_LABEL,
+    .min = 0.0, .max = 0x7fffffff,
+    .type = VALUE_TYPE_POSID,
 };
 
 static EffectValues values_vswitch_assign = {
-    .min = 0.0, .max = 1.0,
-    .type = VALUE_TYPE_LABEL,
+    .min = 0.0, .max = 0x7fffffff,
+    .type = VALUE_TYPE_POSID,
 };
 
 static EffectValues values_vswitch_type = {
@@ -667,8 +667,8 @@ static EffectValues values_vswitch_type = {
 };
 
 static EffectValues values_lfo_assign = {
-    .min = 0.0, .max = 1.0,
-    .type = VALUE_TYPE_LABEL,
+    .min = 0.0, .max = 0x7fffffff,
+    .type = VALUE_TYPE_POSID,
 };
 
 static EffectValues values_lfo_none = {
@@ -1489,7 +1489,7 @@ static EffectSettings delay_tape_settings[] = {
     {"Time", DELAY_TIME, DELAY_POSITION, &values_delay_time},
     {"Level", DELAY_LEVEL, DELAY_POSITION, &values_0_to_99},
     {"Repeats", DELAY_REPEATS, DELAY_POSITION, &values_delay_repeats},
-    {"Wow", DELAY_TAPE_WOW, DELAY_POSITION, &values_0_to_99},
+    {"Delay Tape Wow", DELAY_TAPE_WOW, DELAY_POSITION, &values_0_to_99},
     {"Flutter", DELAY_TAPE_FLUTTER, DELAY_POSITION, &values_0_to_99},
 };
 
@@ -1550,8 +1550,8 @@ static EffectSettings rp500_delay_tape_settings[] = {
     {"Tap Time", DELAY_TAP_TIME_0_4990, DELAY_POSITION, &values_delay_time_0_4990},
     {"Repeats", DELAY_REPEATS, DELAY_POSITION, &values_delay_repeats},
     {"Level", DELAY_LEVEL, DELAY_POSITION, &values_0_to_99},
-    {"Tape Wow", DELAY_TAPE_WOW, DELAY_POSITION, &values_0_to_99},
-    {"Tape Flutter", DELAY_TAPE_FLUTTER, DELAY_POSITION, &values_0_to_99},
+    {"Delay Tape Wow", DELAY_TAPE_WOW, DELAY_POSITION, &values_0_to_99},
+    {"Delay Tape Flutter", DELAY_TAPE_FLUTTER, DELAY_POSITION, &values_0_to_99},
 };
 
 static EffectSettings rp1000_delay_lo_fi_settings[] = {
@@ -1586,14 +1586,12 @@ static EffectSettings lfo1_settings[] = {
     {"Speed(HZ)", LFO_SPEED, LFO1_POSITION, &values_lfo_speed},
 };
 
-#if 0
 static EffectSettings lfo2_settings[] = {
-    {"Heel", LFO_MIN, REVERB_POSITION, &values_0_to_99},
-    {"Toe", LFO_MAX, REVERB_POSITION, &values_0_to_99},
-    {"Waveform", LFO_WAVEFORM, REVERB_POSITION, &values_waveform},
-    {"Speed(HZ)", LFO_SPEED, REVERB_POSITION, &values_lfo_speed},
+    {"Heel", LFO_MIN, LFO2_POSITION, &values_0_to_99},
+    {"Toe", LFO_MAX, LFO2_POSITION, &values_0_to_99},
+    {"Waveform", LFO_WAVEFORM, LFO2_POSITION, &values_waveform},
+    {"Speed(HZ)", LFO_SPEED, LFO2_POSITION, &values_lfo_speed},
 };
-#endif
 
 static EffectSettings reverb_lex_settings[] = {
     {"Predelay", REVERB_PREDELAY, REVERB_POSITION, &values_0_to_15},
@@ -1958,16 +1956,12 @@ static EffectGroup rp355_pedal1_assign_group[] = {
     { 0, "Placeholder", NULL, 0},
     };
 
-#define LFO_POSID_TO_TYPE(_a, _b) ((_a << 16) | (_b))
+static EffectGroup rp355_lfo2_group[] = {
+    { 0, "Placeholder", lfo2_settings, G_N_ELEMENTS(lfo2_settings)},
+};
+
 static EffectGroup rp355_lfo1_group[] = {
-    {LFO_POSID_TO_TYPE(CHORUSFX_POSITION, CHORUS_LEVEL), "Chorus Level", lfo1_settings, G_N_ELEMENTS(lfo1_settings)},
-    {LFO_POSID_TO_TYPE(DIST_POSITION, DIST_ON_OFF), "Distortion On/Off", lfo1_settings, G_N_ELEMENTS(lfo1_settings)},
-    {LFO_POSID_TO_TYPE(DIST_POSITION, DIST_SCREAMER_DRIVE), "Distortion Screamer Drive", lfo1_settings, G_N_ELEMENTS(lfo1_settings)},
-    {LFO_POSID_TO_TYPE(DIST_POSITION, DIST_SCREAMER_TONE), "Distortion Screamer Tone", lfo1_settings, G_N_ELEMENTS(lfo1_settings)},
-    {LFO_POSID_TO_TYPE(DIST_POSITION, DIST_SCREAMER_LVL), "Distortion Screamer Level", lfo1_settings, G_N_ELEMENTS(lfo1_settings)},
-    {LFO_POSID_TO_TYPE(DIST_POSITION, DIST_808_OVERDRIVE), "Distortion 808 Overdrive", lfo1_settings, G_N_ELEMENTS(lfo1_settings)},
-    {LFO_POSID_TO_TYPE(DIST_POSITION, DIST_808_TONE), "Distortion 808 Tone", lfo1_settings, G_N_ELEMENTS(lfo1_settings)},
-    {LFO_POSID_TO_TYPE(DIST_POSITION, DIST_808_LVL), "Distortion 808 Level", lfo1_settings, G_N_ELEMENTS(lfo1_settings)},
+    { 0, "Placeholder", lfo1_settings, G_N_ELEMENTS(lfo1_settings)},
     };
 
 static EffectGroup rp500_chorusfx_group[] = {
@@ -2843,6 +2837,10 @@ static Effect rp355_lfo1_effect[] = {
     {NULL, -1, LFO_TYPE, LFO1_POSITION, rp355_lfo1_group, G_N_ELEMENTS(rp355_lfo1_group)},
 };
 
+static Effect rp355_lfo2_effect[] = {
+    {NULL, -1, LFO_TYPE, LFO2_POSITION, rp355_lfo2_group, G_N_ELEMENTS(rp355_lfo2_group)},
+};
+
 /*
  * The elements of this group are discovered dynamically from the
  * MODIFIER_LINKABLE_LIST message.
@@ -3054,8 +3052,9 @@ static EffectList rp355_effects[] = {
     {"Delay", rp355_delay_effect, G_N_ELEMENTS(rp355_delay_effect)},
     {"Reverb", reverb_effect, G_N_ELEMENTS(reverb_effect)},
     {"Global Settings", global_effect, G_N_ELEMENTS(global_effect)},
-    {"LFO1", rp355_lfo1_effect, G_N_ELEMENTS(rp355_lfo1_effect)},
     {"Pedal1 Assign", rp355_pedal1_assign_effect, G_N_ELEMENTS(rp355_pedal1_assign_effect)},
+    {"LFO1", rp355_lfo1_effect, G_N_ELEMENTS(rp355_lfo1_effect)},
+    {"LFO2", rp355_lfo2_effect, G_N_ELEMENTS(rp355_lfo2_effect)},
 };
 
 static EffectList rp500_effects[] = {
@@ -3346,11 +3345,11 @@ static Modifier modifiers[] = {
     {"EQ Mid", EQ_MID, EQ_A_POSITION, &values_eq_db},
     {"EQ Treb", EQ_TREB, EQ_A_POSITION, &values_eq_db},
     {"EQ Treb", EQ_PRESENCE, EQ_A_POSITION, &values_eq_db},
-    {"EQ Enable", EQ_ENABLE, EQ_B_POSITION, &values_on_off},
-    {"EQ Bass", EQ_BASS, EQ_B_POSITION, &values_eq_db},
-    {"EQ Mid", EQ_MID, EQ_B_POSITION, &values_eq_db},
-    {"EQ Treb", EQ_TREB, EQ_B_POSITION, &values_eq_db},
-    {"EQ Treb", EQ_PRESENCE, EQ_B_POSITION, &values_eq_db},
+    {"EQ B Enable", EQ_ENABLE, EQ_B_POSITION, &values_on_off},
+    {"EQ B Bass", EQ_BASS, EQ_B_POSITION, &values_eq_db},
+    {"EQ B Mid", EQ_MID, EQ_B_POSITION, &values_eq_db},
+    {"EQ B Treb", EQ_TREB, EQ_B_POSITION, &values_eq_db},
+    {"EQ B Treb", EQ_PRESENCE, EQ_B_POSITION, &values_eq_db},
     {"Gate Enable", NOISEGATE_ON_OFF, NOISEGATE_POSITION, &values_on_off},
     {"Gate Pluck Sens", NOISEGATE_SWELL_SENS, NOISEGATE_POSITION, &values_0_to_99},
     {"Gate Threshold", NOISEGATE_GATE_TRESHOLD, NOISEGATE_POSITION, &values_0_to_99},
