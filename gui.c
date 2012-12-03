@@ -924,6 +924,7 @@ static void action_show_about_dialog_cb(GtkAction *action)
         "John Hammen <jhammen@gmail.com>",
         "Ahmed Toulan <thelinuxer@gmail.com>",
         "Tim LaBerge <tlaberge@visi.com>",
+        "Mauro Carvalho Chehab <maurochehab@gmail.com>",
         NULL
     };
 
