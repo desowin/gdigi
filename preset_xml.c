@@ -30,6 +30,7 @@
 extern XmlSettings xml_settings[];
 extern guint n_xml_settings;
 extern EffectValues values_on_off;
+
 /**
  *  \param id modifier ID
  *  \param position modifier position
@@ -52,15 +53,16 @@ XmlSettings *get_xml_settings (guint id, guint position)
 }
 
 gchar *
-map_xml_value (XmlSettings *xml, gint value)
+map_xml_value (XmlSettings *xml, EffectValues *values,  gint value)
 {
-    switch (xml->values->type) {
+    switch (values->type) {
     case VALUE_TYPE_LABEL:
-        if ((xml->values == &values_on_off) && (value > 1)) {
+        if ((values == &values_on_off) && (value > 1)) {
             g_warning("Skipping modifier->label %s\n", xml->label);
             return NULL;
         }   
-        if (value > xml->values->max || value < xml->values->min) {
+
+        if (value > values->max || value < values->min) {
             g_warning("%s value %d out of range %0.1f %0.1f",
                       xml->label, value, xml->values->min, xml->values->max);
         } 
@@ -205,7 +207,7 @@ write_preset_to_xml(Preset *preset, gchar *filename)
             switch (type) {
             case VALUE_TYPE_LABEL:
             {
-                char *textp = map_xml_value(xml, param->value);
+                char *textp = map_xml_value(xml, values, param->value);
                 if (!textp) {
                     g_warning("Unable to map %s value %d for id %d position %d",
                               xml->label, param->value, param->id,

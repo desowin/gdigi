@@ -3875,6 +3875,9 @@ static XmlLabel xml_fx_lib_labels[] = {
     {EFFECTS_LIB_ROTARY_TAPE, "Rotary + Tape Delay"},
 };
 
+static XmlLabel xml_rhold_labels[] = {
+    {100, "RHold"},
+};
 /* Array to map id/position pairs to labels and settings. */
 XmlSettings xml_settings[] = {
     {0, 0, "None", NULL,},
@@ -4027,12 +4030,10 @@ XmlSettings xml_settings[] = {
     {SYNTH_TALK_VOX, CHORUSFX_POSITION, "Synth Talk Vox", &values_0_to_99,},
     {SYNTH_TALK_BALANCE, CHORUSFX_POSITION, "Synth Talk Balance", &values_0_to_99,},
 
-
-
     {DELAY_TYPE, DELAY_POSITION, "Delay Type", &values_delay_type, xml_delay_labels, G_N_ELEMENTS(xml_delay_labels)},
     {DELAY_ON_OFF, DELAY_POSITION, "Delay Enable", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
     {DELAY_TIME, DELAY_POSITION, "Delay Time", &values_delay_time,},
-    {DELAY_REPEATS, DELAY_POSITION, "Delay Repeats", &values_delay_repeats,},
+    {DELAY_REPEATS, DELAY_POSITION, "Delay Repeats", &values_delay_repeats, xml_rhold_labels, G_N_ELEMENTS(xml_rhold_labels)},
     {DELAY_LEVEL, DELAY_POSITION, "Delay Level", &values_0_to_99,},
     {DELAY_DUCK_THRESH, DELAY_POSITION, "Delay Duck Thresh", &values_0_to_99,},
     {DELAY_DUCK_LEVEL, DELAY_POSITION, "Delay Duck Level", &values_0_to_99,},

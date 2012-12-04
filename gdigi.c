@@ -142,7 +142,7 @@ format_value (XmlSettings *xml, guint value)
     switch (vtype) {
     case VALUE_TYPE_LABEL:
     {
-        char *textp = map_xml_value(xml, value);
+        char *textp = map_xml_value(xml, values, value);
         if (!textp) {
             g_warning("Unable to map %s value %d for id %d position %d",
                       xml->label, value, xml->id, xml->position);
