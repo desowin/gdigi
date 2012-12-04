@@ -613,7 +613,7 @@ GtkWidget *create_widget_container(EffectGroup *group, gint amt, gint id, gint p
     gint x;
     gint cmbox_no = -1;
 
-    vbox = gtk_vbox_new(FALSE, 0);
+    vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
     widget_table = g_hash_table_new(g_direct_hash, g_direct_equal);
 
@@ -762,7 +762,7 @@ GtkWidget *create_vbox(Effect *widgets, gint amt, gchar *label)
 
     frame = gtk_frame_new(label);
 
-    vbox = gtk_vbox_new(FALSE, 0);
+    vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
     grid = gtk_grid_new();
     gtk_grid_set_column_spacing(GTK_GRID(grid), 2);
@@ -1371,12 +1371,12 @@ void gui_create(Device *device)
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "gdigi");
 
-    vbox = gtk_vbox_new(FALSE, 0);
+    vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     gtk_container_add(GTK_CONTAINER(window), vbox);
 
     add_menubar(window, vbox);
 
-    hbox = gtk_hbox_new(FALSE, 0);
+    hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_container_add(GTK_CONTAINER(vbox), hbox);
 
     sw = gtk_scrolled_window_new(NULL, NULL);
@@ -1400,14 +1400,14 @@ void gui_create(Device *device)
 
     for (i = 0; i<device->n_pages; i++) {
         GtkWidget *label = NULL;
-        vbox = gtk_vbox_new(FALSE, 0);
+        vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
         label = gtk_label_new(device->pages[i].name);
 
         gtk_notebook_append_page(GTK_NOTEBOOK(notebook), vbox, label);
 
         for (x = 0; x<device->pages[i].n_effects; x++) {
             if ((x % ((device->pages[i].n_effects+1)/device->pages[i].n_rows)) == 0) {
-                hbox = gtk_hbox_new(FALSE, 0);
+                hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
                 gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 2);
             }
             widget = create_vbox(device->pages[i].effects[x].effect, device->pages[i].effects[x].amt, device->pages[i].effects[x].label);
