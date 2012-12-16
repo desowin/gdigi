@@ -144,8 +144,8 @@ format_value (XmlSettings *xml, guint value)
     {
         char *textp = map_xml_value(xml, values, value);
         if (!textp) {
-            g_warning("Unable to map %s value %d for id %d position %d",
-                      xml->label, value, xml->id, xml->position);
+            g_warning("%s: Unable to map %s value %d for id %d position %d",
+                      __FUNCTION__, xml->label, value, xml->id, xml->position);
             textp = "";
         }
         g_string_printf(buf, "%s", textp);
