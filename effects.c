@@ -1579,6 +1579,11 @@ static EffectSettings gnx3k_reverb_settings[] = {
     {"Level", REVERB_LEVEL, REVERB_POSITION, &values_0_to_99},
 };
 
+static EffectSettings pedal1_assign_settings[] = {
+    {"Pedal Min 1", EXP_MIN, EXP_POSITION, &values_0_to_99,},
+    {"Pedal Max 1", EXP_MAX, EXP_POSITION, &values_0_to_99,},
+};
+
 static EffectSettings lfo1_settings[] = {
     {"Heel", LFO_MIN, LFO1_POSITION, &values_0_to_99},
     {"Toe", LFO_MAX, LFO1_POSITION, &values_0_to_99},
@@ -1953,16 +1958,19 @@ static EffectGroup rp355_chorusfx_group[] = {
 };
 
 static EffectGroup rp355_pedal1_assign_group[] = {
-    { 0, "Placeholder", NULL, 0},
-    };
+    { 0, NULL, pedal1_assign_settings, G_N_ELEMENTS(pedal1_assign_settings)},
+    { 0, "None", NULL, 0},
+};
 
 static EffectGroup rp355_lfo2_group[] = {
-    { 0, "Placeholder", lfo2_settings, G_N_ELEMENTS(lfo2_settings)},
+    { 0, NULL, lfo2_settings, G_N_ELEMENTS(lfo2_settings)},
+    { 0, "None", NULL, 0},
 };
 
 static EffectGroup rp355_lfo1_group[] = {
-    { 0, "Placeholder", lfo1_settings, G_N_ELEMENTS(lfo1_settings)},
-    };
+    { 0, NULL, lfo1_settings, G_N_ELEMENTS(lfo1_settings)},
+    { 0, "None", NULL, 0},
+};
 
 static EffectGroup rp500_chorusfx_group[] = {
     {CHORUS_TYPE_CE, "CE Chorus", chorusfx_ce_settings, G_N_ELEMENTS(chorusfx_ce_settings)},
@@ -3362,6 +3370,11 @@ static Modifier modifiers[] = {
     {"Phaser Regen", PHASER_REGEN, CHORUSFX_POSITION, &values_0_to_99},
     {"Phaser Waveform", PHASER_WAVE, CHORUSFX_POSITION, &values_waveform},
     {"Phaser Level", PHASER_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
+    {"Phaser Intensity", MX_PHASER_INTENSITY, CHORUSFX_POSITION, &values_0_to_99},
+    {"Trig Phaser Speed", TRIG_PHASER_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Trig Phaser Sens", TRIG_PHASER_SENS, CHORUSFX_POSITION, &values_0_to_99},
+    {"Trig Phaser LFO", TRIG_PHASER_LFO_START, CHORUSFX_POSITION, &values_0_to_99},
+    {"Trig Phaser Level", TRIG_PHASER_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
     {"Chorus Speed", CHORUS_SPEED, CHORUSFX_POSITION, &values_0_to_99},
     {"Chorus Depth", CHORUS_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
     {"Chorus Level", CHORUS_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
@@ -3972,6 +3985,7 @@ XmlSettings xml_settings[] = {
     {PHASER_REGEN, CHORUSFX_POSITION, "Phaser Regen", &values_0_to_99,},
     {PHASER_WAVE, CHORUSFX_POSITION, "Phaser Waveform", &values_waveform, xml_waveform_labels, G_N_ELEMENTS(xml_waveform_labels)},
     {PHASER_LEVEL, CHORUSFX_POSITION, "Phaser Level", &values_0_to_99,},
+    {MX_PHASER_INTENSITY, CHORUSFX_POSITION, "Intensity", &values_1_to_4,},
     {CHORUS_SPEED, CHORUSFX_POSITION, "Chorus Speed", &values_0_to_99,},
     {CHORUS_DEPTH, CHORUSFX_POSITION, "Chorus Depth", &values_0_to_99,},
     {CHORUS_LEVEL, CHORUSFX_POSITION, "Chorus Level", &values_0_to_99,},

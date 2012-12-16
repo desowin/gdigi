@@ -462,6 +462,8 @@ void push_message (GString *msg)
                                   str[9], str[10],
                                   str[11], str[12]);
                     }
+                    break;
+
                 case NOTIFY_MODIFIER_GROUP_CHANGED:
                 {
                     int i;
@@ -472,10 +474,18 @@ void push_message (GString *msg)
                         }
                         printf("\n");
                     }
+
                     debug_msg(DEBUG_MSG2HOST, 
                               "NOTIFY_MODIFIER_GROUP_CHANGED: Modifier group "
                               "id %d changed",
                               (str[9] << 8) | (str[10]));
+
+                    if (ModifierLinkableList) {
+                        modifier_group_free(ModifierLinkableList);
+                        ModifierLinkableList = NULL;
+                    }
+
+                    send_message(REQUEST_MODIFIER_LINKABLE_LIST, "\x00\x01", 2);
                     break;
                 }
                 default:
@@ -526,9 +536,14 @@ void push_message (GString *msg)
                              
             g_string_free(msg, TRUE);
 
+            GDK_THREADS_ENTER();
+
             create_modifier_group(EXP_POSITION, EXP_ASSIGN1);
             create_modifier_group(LFO1_POSITION, LFO_TYPE);
             create_modifier_group(LFO2_POSITION, LFO_TYPE);
+
+            GDK_THREADS_LEAVE();
+
             return;
 
 
@@ -1130,6 +1145,7 @@ GList *get_message_list(MessageID id)
                     g_error("get_message_list() doesn't support followning id: %d", id);
                     g_string_free(data, TRUE);
                     g_list_free(list);
+                    g_assert(!"BUG");
                     return NULL;
             }
 
@@ -1420,6 +1436,7 @@ static gint get_digitech_devices(GList **devices)
             number++;
             *devices = g_list_append(*devices, GINT_TO_POINTER(card_num));
         }
+        free(name);
         snd_card_next(&card_num);
     }
 
@@ -1485,6 +1502,7 @@ int main(int argc, char *argv[]) {
             }
 
             if (device != NULL) {
+
                 /* enable GUI mode */
                 set_option(GUI_MODE_ON_OFF, USB_POSITION, 1);
 

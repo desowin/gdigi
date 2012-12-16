@@ -563,6 +563,7 @@ void combo_box_changed_cb(GtkComboBox *widget, gpointer data)
     EffectSettingsGroup *settings = NULL;
     gchar *name = NULL;
     gint x;
+
     g_object_get(G_OBJECT(widget), "active", &x, NULL);
 
     vbox = g_object_get_data(G_OBJECT(widget), "vbox");
@@ -625,15 +626,22 @@ GtkWidget *create_widget_container(EffectGroup *group, gint amt, gint id, gint p
                 g_signal_connect(G_OBJECT(combo_box), "changed", G_CALLBACK(combo_box_changed_cb), group);
                 g_object_set_data(G_OBJECT(combo_box), "vbox", vbox);
             }
-            gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(combo_box),
-                                      NULL, group[x].label);
+
+            gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_box), group[x].label);
             cmbox_no++;
 
             if ((group[x].settings != NULL) && (group[x].settings_amt > 0)) {
-                widget = create_grid(group[x].settings, group[x].settings_amt, widget_table);
+                /*
+                 * Create a grid for each combo box entry to contain per
+                 * combo box entry settings.
+                 */
+                widget = create_grid(group[x].settings,
+                                     group[x].settings_amt,
+                                     widget_table);
                 g_object_ref_sink(widget);
-            } else
+            } else {
                 widget = NULL;
+            }
 
             settings = g_slice_new(EffectSettingsGroup);
             settings->id = id;
@@ -644,11 +652,15 @@ GtkWidget *create_widget_container(EffectGroup *group, gint amt, gint id, gint p
             widget_tree_add(G_OBJECT(combo_box), id, position, group[x].type, x);
 
             name = g_strdup_printf("SettingsGroup%d", cmbox_no);
-            g_object_set_data_full(G_OBJECT(combo_box), name, settings, ((GDestroyNotify)effect_settings_group_free));
+            g_object_set_data_full(G_OBJECT(combo_box),
+                                   name, settings,
+                                   ((GDestroyNotify)effect_settings_group_free));
             g_free(name);
         } else {
             if ((group[x].settings != NULL) && (group[x].settings_amt > 0)) {
-                widget = create_grid(group[x].settings, group[x].settings_amt, widget_table);
+                widget = create_grid(group[x].settings,
+                                     group[x].settings_amt,
+                                     widget_table);
                 gtk_box_pack_end(GTK_BOX(vbox), widget, FALSE, TRUE, 0);
             }
         }
@@ -660,7 +672,67 @@ GtkWidget *create_widget_container(EffectGroup *group, gint amt, gint id, gint p
 }
 
 /**
- * Given a linkable effect, build the combo box for the linkable parameters.
+ * Populate a combo box with text entries from the modifier group.
+ */
+void update_modifier_combo_box(GObject *combo_box, EffectGroup *group, gint amt, gint id, gint position)
+{
+    gint x;
+    EffectSettingsGroup *settings = NULL;
+
+    for (x = 0; x<amt; x++) {
+        gchar *name;
+        g_assert(group[x].label);
+
+        settings = g_slice_new(EffectSettingsGroup);
+        settings->id = id;
+        settings->type = group[x].type;
+        settings->position = position;
+        settings->child = NULL;
+
+        name = g_strdup_printf("SettingsGroup%d", x);
+        g_object_set_data(G_OBJECT(combo_box), name, settings);
+        g_free(name);
+
+        gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_box), group[x].label);
+        widget_tree_add(combo_box, id, position, group[x].type, x);
+    }
+
+    return;
+}
+
+static void widget_tree_elem_free(GList *);
+
+static void clean_modifier_combo_box (GObject *ComboBox, GList *list)
+{
+    EffectSettingsGroup *settings = NULL;
+    WidgetTreeElem *el;
+    gchar *name;
+    GList *link, *next;
+
+    link = g_list_first(list);
+
+    while (link != NULL) {
+        next = link->next;
+        el = link->data;
+        if (el->value != -1) {
+            /* Useless assignment, but silences compiler warning. */
+            link = g_list_remove_link(list, link);
+            
+            g_assert(ComboBox == el->widget);
+            name = g_strdup_printf("SettingsGroup%d", el->x);
+            settings = g_object_steal_data(G_OBJECT(ComboBox), name);
+
+            g_free(name);
+            g_slice_free(EffectSettingsGroup, settings);
+            g_slice_free(WidgetTreeElem, el);
+        }
+        link = next;
+    }
+    gtk_combo_box_text_remove_all(GTK_COMBO_BOX_TEXT(ComboBox));
+}
+
+/**
+ * Given a linkable effect, update the combo box for the linkable parameters.
  *
  * @param[in] pos Position
  * @param[in] id Id
@@ -668,27 +740,30 @@ GtkWidget *create_widget_container(EffectGroup *group, gint amt, gint id, gint p
 void
 create_modifier_group (guint pos, guint id)
 {
-    guint i;
+    
+    GtkWidget *vbox;
     gpointer key;
     WidgetTreeElem *el;
     GList *list;
-    EffectSettingsGroup *settings = NULL, *orig_settings = NULL;
     GObject *AssignComboBox;
-    GtkWidget *child_widget = NULL;
-    gchar *name = NULL;
 
     debug_msg(DEBUG_GROUP, "Building modifier group for position %d id %d \"%s\"",
                            pos, id, get_xml_settings(id, pos)->label);
 
     key = GINT_TO_POINTER((pos << 16) | id);
     list = g_tree_lookup(widget_tree, key);
+
+    /* 
+     * The list will be destroyed and recreated, but we don't want to 
+     * handle the teardown ourselves. So steal it from the tree.
+     */
+    g_tree_steal(widget_tree, key);
     if (!list) {
         g_warning("No widget tree entry for position %d id %d!\n",
                    pos, id);
         return;
     }
 
-    /* The only element should be the one with the placeholder. */
     el = g_list_nth_data(list, 0);
     if (!el) {
         g_warning("No effect settings group for position %d id %d!\n",
@@ -697,46 +772,18 @@ create_modifier_group (guint pos, guint id)
     }
 
     AssignComboBox = el->widget;
+    g_assert(AssignComboBox != NULL);
 
-    name = g_strdup_printf("SettingsGroup%d", 0);
-    orig_settings = g_object_get_data(G_OBJECT(AssignComboBox), name);
-    if (orig_settings) {
-        child_widget = orig_settings->child;
-        /* Steal the data so we don't trigger the destroy method on the grid. */
-        g_object_steal_data(AssignComboBox, name);
-    }
-    /* Remove the placeholder. */
-    gtk_combo_box_text_remove(GTK_COMBO_BOX_TEXT(AssignComboBox), 0);
+    vbox = g_object_get_data(AssignComboBox, "vbox");
+    g_assert(vbox != NULL);
 
+    clean_modifier_combo_box(AssignComboBox, list);
 
-    for (i = 0; i < ModifierLinkableList->group_amt; i++) {
-        gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(AssignComboBox),
-                NULL, 
-                ModifierLinkableList->group[i].label);
+    update_modifier_combo_box(AssignComboBox,
+                              ModifierLinkableList->group,
+                              ModifierLinkableList->group_amt,
+                              id, pos);
 
-        settings = g_slice_new(EffectSettingsGroup);
-        settings->type = ModifierLinkableList->group[i].type;
-        settings->id = id; 
-        settings->position = pos;
-        settings->child = NULL;
-        if (child_widget) { 
-            settings->child  = child_widget;
-            g_object_ref_sink(settings->child);
-        }
-
-        name = g_strdup_printf("SettingsGroup%d", i);
-
-        debug_msg(DEBUG_GROUP, "%d: \"%s\"",
-                               i,
-                               ModifierLinkableList->group[i].label);
-
-        widget_tree_add(G_OBJECT(AssignComboBox), id, pos, 
-                    ModifierLinkableList->group[i].type, i); 
-        g_object_set_data_full(G_OBJECT(AssignComboBox), name, settings,
-                ((GDestroyNotify)effect_settings_group_free));
-    }
-
-    // Get the current setting.
     get_option(id, pos);
 }
 
@@ -769,6 +816,7 @@ GtkWidget *create_vbox(Effect *widgets, gint amt, gchar *label)
 
     for (x = 0; x<amt; x++) {
         if ((widgets[x].id != -1) && (widgets[x].position != -1)) {
+
             widget = create_on_off_button(&widgets[x]);
             gtk_grid_attach(GTK_GRID(grid), widget, 0, x, 1, 1);
 
@@ -778,21 +826,29 @@ GtkWidget *create_vbox(Effect *widgets, gint amt, gchar *label)
                 y = 0;
 
         } else if (widgets[x].label) {
+
             widget = gtk_label_new(widgets[x].label);
             gtk_grid_attach(GTK_GRID(grid), widget, 0, x, 1, 1);
             y = 0;
+
         } else {
+
             /* Default to 1 */
             if (x == 0)
                 y = 1;
         }
 
-        container = create_widget_container(widgets[x].group, widgets[x].group_amt, widgets[x].type, widgets[x].position);
+        container = create_widget_container(widgets[x].group,
+                                            widgets[x].group_amt,
+                                            widgets[x].type,
+                                            widgets[x].position);
+
         gtk_grid_attach(GTK_GRID(grid), container, 1-y, x+y, 1, 1);
     }
+    
     gtk_box_pack_start(GTK_BOX(vbox), grid, FALSE, FALSE, 2);
-
     gtk_container_add(GTK_CONTAINER(frame), vbox);
+
     return frame;
 }
 
@@ -1429,7 +1485,6 @@ void gui_create(Device *device)
     get_option(STOMP_MODE, GLOBAL_POSITION);
 
     send_message(REQUEST_MODIFIER_LINKABLE_LIST, "\x00\x01", 2);
-
 }
 
 /**
