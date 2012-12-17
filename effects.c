@@ -725,7 +725,7 @@ static EffectSettings global_settings[] = {
     {"USB Level", USB_AUDIO_LEVEL, GLOBAL_POSITION, &values_m12_to_24},
     {"GUI Mode", GUI_MODE_ON_OFF, GLOBAL_POSITION, &values_on_off},
     {"Tuning Reference", TUNING_REFERENCE, GLOBAL_POSITION, &values_0_to_29},
-    {"Pedal Position", EXP_PEDAL_LEVEL, USB_POSITION, &values_0_to_255},
+    {"Pedal Position", EXP_PEDAL_LEVEL, GLOBAL_POSITION, &values_0_to_255},
     {"Stomp", STOMP_MODE, GLOBAL_POSITION, &values_on_off},
     {"Wah Pedal Position", WAH_PEDAL_POSITION, WAH_POSITION, &values_0_to_99},
 };
@@ -1599,6 +1599,13 @@ static EffectSettings reverb_lex_settings[] = {
     {"Level", REVERB_LEVEL, REVERB_POSITION, &values_0_to_99},
 };
 
+static EffectSettings tone_lib_level_a_settings[] = {
+    {"Tone Effect Level", FX_LIB_LEVEL, LIB_POSITION_A, &values_0_to_99},
+    {"Tone Level 1", FX_LIB_LEVEL_MAX1, LIB_POSITION_A, &values_0_to_99},
+    {"Tone Level 2", FX_LIB_LEVEL_MAX2, LIB_POSITION_A, &values_0_to_99},
+    {"Tone Level 3", FX_LIB_LEVEL_MAX3, LIB_POSITION_A, &values_0_to_99},
+};
+
 static EffectSettings tone_lib_level_b_settings[] = {
     {"Tone Effect Level", FX_LIB_LEVEL, LIB_POSITION_B, &values_0_to_99},
     {"Tone Level 1", FX_LIB_LEVEL_MAX1, LIB_POSITION_B, &values_0_to_99},
@@ -1958,6 +1965,12 @@ static EffectGroup rp355_chorusfx_group[] = {
     {CHORUS_TYPE_OCTAVER, "Octaver", chorusfx_octaver_settings, G_N_ELEMENTS(chorusfx_octaver_settings)},
 };
 
+/*
+ * The combo boxes for the pedal assign and lfo groups are populated dynamically
+ * from the RECEIVE_MODIFIER_LINKABLE_LIST. We request this message at startup
+ * and are sent this message asynchronously whenever the selected chorus/FX
+ * effect changes.
+ */
 static EffectGroup rp355_pedal1_assign_group[] = {
     { 0, NULL, pedal1_assign_settings, G_N_ELEMENTS(pedal1_assign_settings)},
     { 0, "None", NULL, 0},
@@ -2727,10 +2740,13 @@ static EffectGroup effects_lib_group[] = {
     {EFFECTS_LIB_ROTARY_TAPE, "Rotary + Tape Delay", NULL, -1},
 };
 
+static EffectGroup tone_lib_level_a_group[] = {
+    {-1, NULL, tone_lib_level_a_settings, G_N_ELEMENTS(tone_lib_level_a_settings)},
+};
+
 static EffectGroup tone_lib_level_b_group[] = {
     {-1, NULL, tone_lib_level_b_settings, G_N_ELEMENTS(tone_lib_level_b_settings)},
 };
-
 
 static EffectGroup pickup_group[] = {
     {PICKUP_TYPE_HB_SC, "HB>SC", NULL, -1},
@@ -2855,10 +2871,6 @@ static Effect rp355_lfo2_effect[] = {
     {NULL, -1, LFO_TYPE, LFO2_POSITION, rp355_lfo2_group, G_N_ELEMENTS(rp355_lfo2_group)},
 };
 
-/*
- * The elements of this group are discovered dynamically from the
- * MODIFIER_LINKABLE_LIST message.
- */
 static Effect rp355_pedal1_assign_effect[] = {
     {NULL, -1, EXP_TYPE, EXP_POSITION, rp355_pedal1_assign_group, G_N_ELEMENTS(rp355_pedal1_assign_group)},
 };
@@ -2979,7 +2991,7 @@ static Effect rp500_eq_effect[] = {
 };
 
 static Effect global_effect[] = {
-    {NULL, -1, USB_AUDIO_LEVEL, USB_POSITION, global_group, G_N_ELEMENTS(global_group)},
+    {NULL, -1, 0, GLOBAL_POSITION, global_group, G_N_ELEMENTS(global_group)},
 };
 
 static Effect pickup_misc_effect[] = {
@@ -2995,6 +3007,12 @@ static Effect pickup_effect[] = {
 
 static Effect gnx3k_amp_channel_effect[] = {
     {NULL, -1, -1, -1, gnx3k_amp_channel_group, G_N_ELEMENTS(gnx3k_amp_channel_group)},
+};
+
+static Effect tone_lib_effect_a[] = {
+    {NULL, -1, TONE_LIB_TYPE, LIB_POSITION_A, tone_lib_group, G_N_ELEMENTS(tone_lib_group)},
+    {NULL, -1, FX_LIB_TYPE, LIB_POSITION_A, effects_lib_group, G_N_ELEMENTS(effects_lib_group)},
+    {NULL, -1, FX_LIB_LEVEL, LIB_POSITION_A, tone_lib_level_a_group, G_N_ELEMENTS(tone_lib_level_a_group)},
 };
 
 static Effect tone_lib_effect_b[] = {
@@ -3076,6 +3094,7 @@ static EffectList rp355_effects[] = {
     {"LFO1", rp355_lfo1_effect, G_N_ELEMENTS(rp355_lfo1_effect)},
     {"LFO2", rp355_lfo2_effect, G_N_ELEMENTS(rp355_lfo2_effect)},
     {"Global Settings", global_effect, G_N_ELEMENTS(global_effect)},
+    {"Tone Library", tone_lib_effect_a, G_N_ELEMENTS(tone_lib_effect_a)},
 };
 
 static EffectList rp500_effects[] = {
@@ -4299,8 +4318,6 @@ ModifierGroup *modifier_linkable_list(GString *msg)
     guint group_id;
     guint count;
     guint i;
-
-    //send_message(REQUEST_MODIFIER_LINKABLE_LIST, "\x00\x01", 2);
 
     unsigned char *str = (unsigned char*)msg->str;
 
