@@ -30,5 +30,6 @@ void gui_free();
 gboolean unsupported_device_dialog(Device **device);
 gint select_device_dialog (GList *devices);
 const gchar* get_message_name(MessageID msgid);
+void create_modifier_group (guint pos, guint id);
 
 #endif /* GDIGI_GUI_H */

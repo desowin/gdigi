@@ -52,7 +52,7 @@ gboolean set_debug_flags (const gchar *option_name, const gchar *value,
 {
     if (strchr(value, 'd')) {
         DebugFlags |= DEBUG_MSG2DEV;
-    }
+    } 
     if (strchr(value, 'h')) {
         DebugFlags |= DEBUG_MSG2HOST;
     }
@@ -91,7 +91,7 @@ debug_msg (debug_flags_t flags, char *fmt, ...)
         va_start(ap, fmt);
         vsnprintf(buf, 1024, fmt, ap);
         va_end(ap);
-
+        
         fprintf(stderr, "%s\n", buf);
     }
 }
@@ -101,7 +101,7 @@ debug_msg (debug_flags_t flags, char *fmt, ...)
  * Returns an allocated buffer that must be freed by the caller.
  */
 GString *
-format_value (XmlSettings *xml, gint value)
+format_value (XmlSettings *xml, guint value)
 {
     GString        *buf = g_string_sized_new(1);
     EffectValues   *values = NULL;
@@ -142,10 +142,10 @@ format_value (XmlSettings *xml, gint value)
     switch (vtype) {
     case VALUE_TYPE_LABEL:
     {
-        char *textp = map_xml_value(xml, value);
+        char *textp = map_xml_value(xml, values, value);
         if (!textp) {
-            g_warning("Unable to map %s value %d for id %d position %d",
-                      xml->label, value, xml->id, xml->position);
+            g_warning("%s: Unable to map %s value %d for id %d position %d",
+                      __FUNCTION__, xml->label, value, xml->id, xml->position);
             textp = "";
         }
         g_string_printf(buf, "%s", textp);
@@ -164,6 +164,10 @@ format_value (XmlSettings *xml, gint value)
     }
     case VALUE_TYPE_NONE:
         g_string_printf(buf, "%s", "");
+        break;
+
+    case VALUE_TYPE_POSID:
+        g_string_printf(buf, "%d", value);
         break;
 
     default:
@@ -190,7 +194,7 @@ format_ipv (guint id, guint pos, guint val)
     }
     val_buf = format_value(xml, val);
 
-    g_string_printf(vec_buf, "(%2d, %4d, %d)", pos, id, val);
+    g_string_printf(vec_buf, "(%d, %d, %d)", pos, id, val);
     g_string_printf(buf, "%-16s %s: %s: %s",
                           vec_buf->str,
                           get_position(pos), xml->label, val_buf->str);
@@ -427,7 +431,7 @@ void push_message(GString *msg)
                 GString *ipv = format_ipv(param->id,
                                           param->position,
                                           param->value);
-                debug_msg(DEBUG_MSG2HOST, "Receive RECEIVE_PARAMETER_VALUE: %s",
+                debug_msg(DEBUG_MSG2HOST, "RECEIVE_PARAMETER_VALUE\n%s",
                                           ipv->str);
                 g_string_free(ipv, TRUE);
             }
@@ -442,10 +446,8 @@ void push_message(GString *msg)
         }
 
         case RECEIVE_DEVICE_NOTIFICATION:
-        {
-            unsigned char *str = (unsigned char*)msg->str;
-
             unpack_message(msg);
+            unsigned char *str = (unsigned char*)msg->str;
             switch (str[8]) {
             case NOTIFY_PRESET_MOVED:
                 if (str[11] == PRESETS_EDIT_BUFFER && str[12] == 0) {
@@ -454,12 +456,12 @@ void push_message(GString *msg)
                     g_timeout_add(0, apply_current_preset_to_gui, NULL);
                     GDK_THREADS_LEAVE();
                     debug_msg(DEBUG_MSG2HOST,
-                              "Receive RECEIVE_DEVICE_NOTIFICATION: Loaded preset "
+                              "RECEIVE_DEVICE_NOTIFICATION: Loaded preset "
                               "%d from bank %d",
-                                  str[10], str[9]);
+                              str[10], str[9]);
                 } else {
-                    debug_msg(DEBUG_MSG2HOST,
-                              "Receive RECEIVE_DEVICE_NOTIFICATION: %d %d moved to "
+                    debug_msg(DEBUG_MSG2HOST, 
+                              "RECEIVE_DEVICE_NOTIFICATION: %d %d moved to "
                               "%d %d",
                               str[9], str[10],
                               str[11], str[12]);
@@ -476,26 +478,29 @@ void push_message(GString *msg)
                     }
                     printf("\n");
                 }
-                debug_msg(DEBUG_MSG2HOST,
-                          "Receive NOTIFY_MODIFIER_GROUP_CHANGED: Modifier group "
+
+                debug_msg(DEBUG_MSG2HOST, 
+                          "NOTIFY_MODIFIER_GROUP_CHANGED: Modifier group "
                           "id %d changed",
                           (str[9] << 8) | (str[10]));
+
+                if (ModifierLinkableList) {
+                    modifier_group_free(ModifierLinkableList);
+                    ModifierLinkableList = NULL;
+                }
+
+                send_message(REQUEST_MODIFIER_LINKABLE_LIST, "\x00\x01", 2);
                 break;
             }
-
             default:
-                g_warning("Received unhandled device notification 0x%x", str[11]);
-                break;
+                g_warning("Received unhandled device notification 0x%x",
+                          str[11]);
             }
             g_string_free(msg, TRUE);
             return;
-        }
-
         case RECEIVE_GLOBAL_PARAMETERS:
-        {
-            gint tot, n, x;
-
             unpack_message(msg);
+            gint tot, n, x;
             tot = (unsigned char)msg->str[9];
             if (debug_flag_is_set(DEBUG_HEX)) {
                 for (n = 0; n < msg->len; n++) {
@@ -509,21 +514,18 @@ void push_message(GString *msg)
             do {
                 param = setting_param_new_from_data(&msg->str[x], &x);
                 debug_msg(DEBUG_MSG2HOST,
-                          "Receive RECEIVE_GLOBAL_PARAMETERS ID: %5d "
+                          "RECEIVE_GLOBAL_PARAMETERS ID: %5d "
                           "Position: %2.1d Value: %6.1d: %s",
                           param->id,
                           param->position, param->value, "XXX");
                 setting_param_free(param);
             } while ( (x < msg->len) && n < tot);
-
+                             
             g_string_free(msg, TRUE);
             return;
-        }
+
 
         case RECEIVE_MODIFIER_LINKABLE_LIST:
-        {
-            gint tot, n;
-
             unpack_message(msg);
             tot = (unsigned char)msg->str[9];
 
@@ -535,10 +537,19 @@ void push_message(GString *msg)
             }
 
             modifier_linkable_list(msg);
-
+                             
             g_string_free(msg, TRUE);
+
+            GDK_THREADS_ENTER();
+
+            create_modifier_group(EXP_POSITION, EXP_ASSIGN1);
+            create_modifier_group(LFO1_POSITION, LFO_TYPE);
+            create_modifier_group(LFO2_POSITION, LFO_TYPE);
+
+            GDK_THREADS_LEAVE();
+
             return;
-        }
+
 
         default:
             g_mutex_lock(message_queue_mutex);
@@ -931,7 +942,7 @@ void set_option(guint id, guint position, guint value)
     append_value(msg, value);
     if (debug_flag_is_set(DEBUG_MSG2DEV)) {
         GString *ipv = format_ipv(id, position, value);
-        debug_msg(DEBUG_MSG2DEV, "Send RECEIVE_PARAMETER_VALUE: %s", ipv->str);
+        debug_msg(DEBUG_MSG2DEV, "RECEIVE_PARAMETER_VALUE\n%s", ipv->str);
         g_string_free(ipv, TRUE);
     }
     send_message(RECEIVE_PARAMETER_VALUE, msg->str, msg->len);
@@ -1140,6 +1151,7 @@ GList *get_message_list(MessageID id)
                     g_error("get_message_list() doesn't support followning id: %d", id);
                     g_string_free(data, TRUE);
                     g_list_free(list);
+                    g_assert(!"BUG");
                     return NULL;
             }
 
@@ -1352,10 +1364,6 @@ static gboolean request_who_am_i(unsigned char *device_id, unsigned char *family
         *device_id = data->str[8];
         *family_id = data->str[9];
         *product_id = data->str[10];
-        debug_msg(DEBUG_STARTUP, "Found device id %d family %d product id %d.",
-                                 *device_id,
-                                 *family_id,
-                                 *product_id);
         g_string_free(data, TRUE);
         return TRUE;
     }
@@ -1447,6 +1455,7 @@ static gint get_digitech_devices(GList **devices)
             number++;
             *devices = g_list_append(*devices, GINT_TO_POINTER(card_num));
         }
+        free(name);
     }
 
     return number;
@@ -1474,12 +1483,12 @@ int main(int argc, char *argv[]) {
 
     if (device_port == NULL) {
         /* port not given explicitly in commandline - search for devices */
-        GList  *devices = NULL;
-        GList  *device = NULL;
-        int     num_devices = 0;
-        int     chosen_device = 0;
-        if ((num_devices = get_digitech_devices(&devices)) <= 0) {
-            g_message("Couldn't find any DigiTech devices!");
+        GList *devices = NULL;
+        GList *device = NULL;
+        int    num_devices = 0;
+        int    chosen_device = 0;
+        if (get_digitech_devices(&devices) <= 0) {
+            g_warning("Couldn't find DigiTech devices!");
             exit(EXIT_FAILURE);
         }
         if (num_devices > 1) {
@@ -1544,7 +1553,7 @@ int main(int argc, char *argv[]) {
         g_mutex_free(message_queue_mutex);
     }
 
-    if (message_queue != NULL) {
+    if (message_queue != NULL && g_queue_get_length(message_queue)) {
         g_warning("%d unread messages in queue",
                   g_queue_get_length(message_queue));
         g_queue_foreach(message_queue, (GFunc) message_free_func, NULL);

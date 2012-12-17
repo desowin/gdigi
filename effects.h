@@ -27,7 +27,8 @@ typedef enum {
   VALUE_TYPE_LABEL  = 1 << 3, /**< use value labels (overrides any other option) */
   VALUE_TYPE_EXTRA  = 1 << 4, /**< use extra values */
   VALUE_TYPE_DECIMAL= 1 << 5, /**< display decimal places */
-  VALUE_TYPE_NONE   = 1 << 6, /**< no value displayed */
+  VALUE_TYPE_POSID  = 1 << 6, /**< Packed Position/ID: (pos << 16) | id */
+  VALUE_TYPE_NONE   = 1 << 7, /**< no value displayed */
 } ValueType;
 
 typedef struct _EffectValues {
@@ -118,11 +119,13 @@ typedef struct {
 
 gchar *get_position(guint position);
 ModifierGroup *modifier_linkable_list();
+extern ModifierGroup *ModifierLinkableList;
 void modifier_group_free(ModifierGroup *modifier_group);
 void get_values_info(EffectValues *values,
                      gdouble *min, gdouble *max, gboolean *custom);
 gboolean get_device_info(unsigned char device_id, unsigned char family_id,
                          unsigned char product_id,
                          Device **device);
+
 
 #endif /* GDIGI_EFFECTS_H */

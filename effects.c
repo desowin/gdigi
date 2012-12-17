@@ -305,6 +305,14 @@ static EffectValues values_0_to_99 = {
     .min = 0.0, .max = 99.0, .type = VALUE_TYPE_PLAIN,
 };
 
+static EffectValues values_0_to_255 = {
+    .min = 0.0, .max = 255.0, .type = VALUE_TYPE_PLAIN,
+};
+
+static EffectValues values_0_to_29 = {
+    .min = 0.0, .max = 29.0, .type = VALUE_TYPE_PLAIN,
+};
+
 static EffectValues values_1_to_4 = {
     .min = 0.0, .max = 3.0,
     .type = VALUE_TYPE_OFFSET,
@@ -554,6 +562,10 @@ EffectValues values_on_off = {
     .labels = on_off_labels,
 };
 
+EffectValues values_posid = {
+    .type = VALUE_TYPE_POSID,
+};
+
 static EffectValues values_odd_even = {
     .min = 0.0, .max = 1.0,
     .type = VALUE_TYPE_LABEL,
@@ -634,20 +646,19 @@ static EffectValues values_wah_type = {
     .type = VALUE_TYPE_LABEL,
 };
 
-// 4259839 is 0x40 FFFF, i.e. 0x<pos> <val>.
 static EffectValues values_exp_assign = {
-    .min = 0.0, .max = 4259839.0,
-    .type = VALUE_TYPE_LABEL,
+    .min = 0.0, .max = 0x7fffffff,
+    .type = VALUE_TYPE_POSID,
 };
 
 static EffectValues values_vswitch_pedal_assign = {
-    .min = 0.0, .max = 4259839.0,
-    .type = VALUE_TYPE_LABEL,
+    .min = 0.0, .max = 0x7fffffff,
+    .type = VALUE_TYPE_POSID,
 };
 
 static EffectValues values_vswitch_assign = {
-    .min = 0.0, .max = 4259839.0,
-    .type = VALUE_TYPE_LABEL,
+    .min = 0.0, .max = 0x7fffffff,
+    .type = VALUE_TYPE_POSID,
 };
 
 static EffectValues values_vswitch_type = {
@@ -656,8 +667,8 @@ static EffectValues values_vswitch_type = {
 };
 
 static EffectValues values_lfo_assign = {
-    .min = 0.0, .max = 1.0,
-    .type = VALUE_TYPE_LABEL,
+    .min = 0.0, .max = 0x7fffffff,
+    .type = VALUE_TYPE_POSID,
 };
 
 static EffectValues values_lfo_none = {
@@ -668,13 +679,13 @@ static EffectValues values_lfo_none = {
 static EffectValues values_lfo_speed_extra = {
     .min = 95.0, .max = 185.0,
     .type = VALUE_TYPE_PLAIN | VALUE_TYPE_OFFSET | VALUE_TYPE_STEP | VALUE_TYPE_DECIMAL,
-    .offset = 5.0, .step = 0.1, .decimal = 1, .suffix = "Hz",
+    .offset = -85.0, .step = 0.1, .decimal = 1, .suffix = "Hz",
 };
 
 static EffectValues values_lfo_speed = {
     .min = 0.0, .max = 94.0,
     .type = VALUE_TYPE_PLAIN | VALUE_TYPE_OFFSET | VALUE_TYPE_STEP | VALUE_TYPE_DECIMAL | VALUE_TYPE_EXTRA | VALUE_TYPE_SUFFIX,
-    .offset = 5, .step = 0.01, .decimal = 1, .suffix = "Hz",
+    .offset = 5, .step = 0.01, .decimal = 2, .suffix = "Hz",
     .extra = &values_lfo_speed_extra,
 };
 
@@ -709,9 +720,14 @@ static EffectValues values_rp_mix = {
     .min = 0.0, .max = 100.0, .type = VALUE_TYPE_PLAIN,
 };
 
-static EffectSettings usb_settings[] = {
+static EffectSettings global_settings[] = {
     {"USB/RP Mix", USB_AUDIO_PLAYBACK_MIX, GLOBAL_POSITION, &values_rp_mix},
     {"USB Level", USB_AUDIO_LEVEL, GLOBAL_POSITION, &values_m12_to_24},
+    {"GUI Mode", GUI_MODE_ON_OFF, GLOBAL_POSITION, &values_on_off},
+    {"Tuning Reference", TUNING_REFERENCE, GLOBAL_POSITION, &values_0_to_29},
+    {"Pedal Position", EXP_PEDAL_LEVEL, USB_POSITION, &values_0_to_255},
+    {"Stomp", STOMP_MODE, GLOBAL_POSITION, &values_on_off},
+    {"Wah Pedal Position", WAH_PEDAL_POSITION, WAH_POSITION, &values_0_to_99},
 };
 
 static EffectSettings misc_settings[] = {
@@ -1467,7 +1483,7 @@ static EffectSettings delay_tape_settings[] = {
     {"Time", DELAY_TIME, DELAY_POSITION, &values_delay_time},
     {"Level", DELAY_LEVEL, DELAY_POSITION, &values_0_to_99},
     {"Repeats", DELAY_REPEATS, DELAY_POSITION, &values_delay_repeats},
-    {"Wow", DELAY_TAPE_WOW, DELAY_POSITION, &values_0_to_99},
+    {"Delay Tape Wow", DELAY_TAPE_WOW, DELAY_POSITION, &values_0_to_99},
     {"Flutter", DELAY_TAPE_FLUTTER, DELAY_POSITION, &values_0_to_99},
 };
 
@@ -1528,8 +1544,8 @@ static EffectSettings rp500_delay_tape_settings[] = {
     {"Tap Time", DELAY_TAP_TIME_0_4990, DELAY_POSITION, &values_delay_time_0_4990},
     {"Repeats", DELAY_REPEATS, DELAY_POSITION, &values_delay_repeats},
     {"Level", DELAY_LEVEL, DELAY_POSITION, &values_0_to_99},
-    {"Tape Wow", DELAY_TAPE_WOW, DELAY_POSITION, &values_0_to_99},
-    {"Tape Flutter", DELAY_TAPE_FLUTTER, DELAY_POSITION, &values_0_to_99},
+    {"Delay Tape Wow", DELAY_TAPE_WOW, DELAY_POSITION, &values_0_to_99},
+    {"Delay Tape Flutter", DELAY_TAPE_FLUTTER, DELAY_POSITION, &values_0_to_99},
 };
 
 static EffectSettings rp1000_delay_lo_fi_settings[] = {
@@ -1555,6 +1571,25 @@ static EffectSettings gnx3k_reverb_settings[] = {
     {"Damping", REVERB_DAMPING, REVERB_POSITION, &values_0_to_99},
     {"Balance", REVERB_BALANCE, REVERB_POSITION, &values_balance},
     {"Level", REVERB_LEVEL, REVERB_POSITION, &values_0_to_99},
+};
+
+static EffectSettings pedal1_assign_settings[] = {
+    {"Pedal Min 1", EXP_MIN, EXP_POSITION, &values_0_to_99,},
+    {"Pedal Max 1", EXP_MAX, EXP_POSITION, &values_0_to_99,},
+};
+
+static EffectSettings lfo1_settings[] = {
+    {"Heel", LFO_MIN, LFO1_POSITION, &values_0_to_99},
+    {"Toe", LFO_MAX, LFO1_POSITION, &values_0_to_99},
+    {"Waveform", LFO_WAVEFORM, LFO1_POSITION, &values_waveform},
+    {"Speed(HZ)", LFO_SPEED, LFO1_POSITION, &values_lfo_speed},
+};
+
+static EffectSettings lfo2_settings[] = {
+    {"Heel", LFO_MIN, LFO2_POSITION, &values_0_to_99},
+    {"Toe", LFO_MAX, LFO2_POSITION, &values_0_to_99},
+    {"Waveform", LFO_WAVEFORM, LFO2_POSITION, &values_waveform},
+    {"Speed(HZ)", LFO_SPEED, LFO2_POSITION, &values_lfo_speed},
 };
 
 static EffectSettings reverb_lex_settings[] = {
@@ -1600,8 +1635,8 @@ static EffectGroup gnx3k_amp_channel_group[] = {
 };
 
 /** \todo it's not part of Preset, but should appear in GUI */
-static EffectGroup usb_group[] = {
-    {-1, NULL, usb_settings, G_N_ELEMENTS(usb_settings)},
+static EffectGroup global_group[] = {
+    {-1, NULL, global_settings, G_N_ELEMENTS(global_settings)},
 };
 
 static EffectGroup misc_group[] = {
@@ -1921,6 +1956,21 @@ static EffectGroup rp355_chorusfx_group[] = {
     {CHORUS_TYPE_DETUNE, "Detune", chorusfx_detune_settings, G_N_ELEMENTS(chorusfx_detune_settings)},
     {CHORUS_TYPE_IPS, "Harmony Pitch", chorusfx_ips_settings, G_N_ELEMENTS(chorusfx_ips_settings)},
     {CHORUS_TYPE_OCTAVER, "Octaver", chorusfx_octaver_settings, G_N_ELEMENTS(chorusfx_octaver_settings)},
+};
+
+static EffectGroup rp355_pedal1_assign_group[] = {
+    { 0, NULL, pedal1_assign_settings, G_N_ELEMENTS(pedal1_assign_settings)},
+    { 0, "None", NULL, 0},
+};
+
+static EffectGroup rp355_lfo2_group[] = {
+    { 0, NULL, lfo2_settings, G_N_ELEMENTS(lfo2_settings)},
+    { 0, "None", NULL, 0},
+};
+
+static EffectGroup rp355_lfo1_group[] = {
+    { 0, NULL, lfo1_settings, G_N_ELEMENTS(lfo1_settings)},
+    { 0, "None", NULL, 0},
 };
 
 static EffectGroup rp500_chorusfx_group[] = {
@@ -2793,8 +2843,24 @@ static Effect rp255_chorusfx_effect[] = {
 };
 
 static Effect rp355_chorusfx_effect[] = {
-    {"Position",-1, CHORUSFX_PRE_POST,CHORUSFX_POSITION, pre_post_group,G_N_ELEMENTS(pre_post_group)},
     {NULL, CHORUSFX_ON_OFF,CHORUSFX_TYPE, CHORUSFX_POSITION, rp355_chorusfx_group, G_N_ELEMENTS(rp355_chorusfx_group)},
+    {"Position",-1, CHORUSFX_PRE_POST,CHORUSFX_POSITION, pre_post_group,G_N_ELEMENTS(pre_post_group)},
+};
+
+static Effect rp355_lfo1_effect[] = {
+    {NULL, -1, LFO_TYPE, LFO1_POSITION, rp355_lfo1_group, G_N_ELEMENTS(rp355_lfo1_group)},
+};
+
+static Effect rp355_lfo2_effect[] = {
+    {NULL, -1, LFO_TYPE, LFO2_POSITION, rp355_lfo2_group, G_N_ELEMENTS(rp355_lfo2_group)},
+};
+
+/*
+ * The elements of this group are discovered dynamically from the
+ * MODIFIER_LINKABLE_LIST message.
+ */
+static Effect rp355_pedal1_assign_effect[] = {
+    {NULL, -1, EXP_TYPE, EXP_POSITION, rp355_pedal1_assign_group, G_N_ELEMENTS(rp355_pedal1_assign_group)},
 };
 
 static Effect rp500_chorusfx_effect[] = {
@@ -2912,6 +2978,10 @@ static Effect rp500_eq_effect[] = {
     {"Enable Equalizer", EQ_ENABLE, -1, EQ_A_POSITION, rp500_eq_group, G_N_ELEMENTS(rp500_eq_group)},
 };
 
+static Effect global_effect[] = {
+    {NULL, -1, USB_AUDIO_LEVEL, USB_POSITION, global_group, G_N_ELEMENTS(global_group)},
+};
+
 static Effect pickup_misc_effect[] = {
     {NULL, PICKUP_ON_OFF, PICKUP_TYPE, PICKUP_POSITION, pickup_group, G_N_ELEMENTS(pickup_group)},
     {NULL, -1, PRESET_LEVEL, PRESET_POSITION,  misc_group, G_N_ELEMENTS(misc_group)},
@@ -3002,6 +3072,10 @@ static EffectList rp355_effects[] = {
     {"Chorus/FX", rp355_chorusfx_effect, G_N_ELEMENTS(rp355_chorusfx_effect)},
     {"Delay", rp355_delay_effect, G_N_ELEMENTS(rp355_delay_effect)},
     {"Reverb", reverb_effect, G_N_ELEMENTS(reverb_effect)},
+    {"Pedal1 Assign", rp355_pedal1_assign_effect, G_N_ELEMENTS(rp355_pedal1_assign_effect)},
+    {"LFO1", rp355_lfo1_effect, G_N_ELEMENTS(rp355_lfo1_effect)},
+    {"LFO2", rp355_lfo2_effect, G_N_ELEMENTS(rp355_lfo2_effect)},
+    {"Global Settings", global_effect, G_N_ELEMENTS(global_effect)},
 };
 
 static EffectList rp500_effects[] = {
@@ -3093,7 +3167,7 @@ static EffectPage rp255_pages[] = {
 };
 
 static EffectPage rp355_pages[] = {
-    {"Effects", rp355_effects, G_N_ELEMENTS(rp355_effects), 2},
+    {"Effects", rp355_effects, G_N_ELEMENTS(rp355_effects), 3},
 };
 
 static EffectPage rp500_pages[] = {
@@ -3237,6 +3311,8 @@ static Modifier modifiers[] = {
     {"Compressor Tone", COMP_TONE, COMP_POSITION, &values_0_to_99},
     {"Compressor Level", COMP_LEVEL, COMP_POSITION, &values_0_to_99},
     {"Compressor Attack", COMP_ATTACK, COMP_POSITION, &values_0_to_99},
+    {"Compressor Sensitivity", COMP_SENSITIVITY, COMP_POSITION, &values_0_to_99},
+    {"Compressor Output", COMP_OUTPUT, COMP_POSITION, &values_0_to_99},
     {"Dist Enable", DIST_ON_OFF, DIST_POSITION, &values_on_off},
     {"Dist Drive", DIST_SCREAMER_DRIVE, DIST_POSITION, &values_0_to_99},
     {"Dist Tone", DIST_SCREAMER_TONE, DIST_POSITION, &values_0_to_99},
@@ -3279,22 +3355,22 @@ static Modifier modifiers[] = {
     {"Dist Sustain", DIST_MP_SUSTAIN, DIST_POSITION, &values_0_to_99},
     {"Dist Tone", DIST_MP_TONE, DIST_POSITION, &values_0_to_99},
     {"Dist Volume", DIST_MP_VOLUME, DIST_POSITION, &values_0_to_99},
-    {"Amp Channel Enable", AMP_ON_OFF, AMP_A_POSITION, &values_on_off},
+    {"Amp Enable", AMP_ON_OFF, AMP_A_POSITION, &values_on_off},
     {"Amp Gain", AMP_GAIN, AMP_A_POSITION, &values_0_to_99},
     {"Amp Level", AMP_LEVEL, AMP_A_POSITION, &values_0_to_99},
-    {"Amp Channel Enable", AMP_ON_OFF, AMP_B_POSITION, &values_on_off},
-    {"Amp Gain", AMP_GAIN, AMP_B_POSITION, &values_0_to_99},
-    {"Amp Level", AMP_LEVEL, AMP_B_POSITION, &values_0_to_99},
+    {"Amp B Enable", AMP_ON_OFF, AMP_B_POSITION, &values_on_off},
+    {"Amp B Gain", AMP_GAIN, AMP_B_POSITION, &values_0_to_99},
+    {"Amp B Level", AMP_LEVEL, AMP_B_POSITION, &values_0_to_99},
     {"EQ Enable", EQ_ENABLE, EQ_A_POSITION, &values_on_off},
     {"EQ Bass", EQ_BASS, EQ_A_POSITION, &values_eq_db},
     {"EQ Mid", EQ_MID, EQ_A_POSITION, &values_eq_db},
     {"EQ Treb", EQ_TREB, EQ_A_POSITION, &values_eq_db},
     {"EQ Treb", EQ_PRESENCE, EQ_A_POSITION, &values_eq_db},
-    {"EQ Enable", EQ_ENABLE, EQ_B_POSITION, &values_on_off},
-    {"EQ Bass", EQ_BASS, EQ_B_POSITION, &values_eq_db},
-    {"EQ Mid", EQ_MID, EQ_B_POSITION, &values_eq_db},
-    {"EQ Treb", EQ_TREB, EQ_B_POSITION, &values_eq_db},
-    {"EQ Treb", EQ_PRESENCE, EQ_B_POSITION, &values_eq_db},
+    {"EQ B Enable", EQ_ENABLE, EQ_B_POSITION, &values_on_off},
+    {"EQ B Bass", EQ_BASS, EQ_B_POSITION, &values_eq_db},
+    {"EQ B Mid", EQ_MID, EQ_B_POSITION, &values_eq_db},
+    {"EQ B Treb", EQ_TREB, EQ_B_POSITION, &values_eq_db},
+    {"EQ B Treb", EQ_PRESENCE, EQ_B_POSITION, &values_eq_db},
     {"Gate Enable", NOISEGATE_ON_OFF, NOISEGATE_POSITION, &values_on_off},
     {"Gate Pluck Sens", NOISEGATE_SWELL_SENS, NOISEGATE_POSITION, &values_0_to_99},
     {"Gate Threshold", NOISEGATE_GATE_TRESHOLD, NOISEGATE_POSITION, &values_0_to_99},
@@ -3307,10 +3383,19 @@ static Modifier modifiers[] = {
     {"Phaser Regen", PHASER_REGEN, CHORUSFX_POSITION, &values_0_to_99},
     {"Phaser Waveform", PHASER_WAVE, CHORUSFX_POSITION, &values_waveform},
     {"Phaser Level", PHASER_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
+    {"Phaser Intensity", MX_PHASER_INTENSITY, CHORUSFX_POSITION, &values_0_to_99},
+    {"Trig Phaser Speed", TRIG_PHASER_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Trig Phaser Sens", TRIG_PHASER_SENS, CHORUSFX_POSITION, &values_0_to_99},
+    {"Trig Phaser LFO", TRIG_PHASER_LFO_START, CHORUSFX_POSITION, &values_0_to_99},
+    {"Trig Phaser Level", TRIG_PHASER_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
+    {"EH Phaser Rate", EH_PHASER_RATE, CHORUSFX_POSITION, &values_0_to_99},
+    {"EH Phaser Color", EH_PHASER_COLOR, CHORUSFX_POSITION, &values_on_off},
     {"Chorus Speed", CHORUS_SPEED, CHORUSFX_POSITION, &values_0_to_99},
     {"Chorus Depth", CHORUS_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
     {"Chorus Level", CHORUS_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
     {"Chorus Waveform", CHORUS_WAVE, CHORUSFX_POSITION, &values_waveform},
+    {"Chorus Width", CHORUS_WIDTH, CHORUSFX_POSITION, &values_0_to_99},
+    {"Chorus Intensity", CHORUS_INTENSITY, CHORUSFX_POSITION, &values_0_to_99},
     {"Flanger Speed", FLANGER_SPEED, CHORUSFX_POSITION, &values_0_to_99},
     {"Flanger Depth", FLANGER_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
     {"Flanger Regen", FLANGER_REGEN, CHORUSFX_POSITION, &values_0_to_99},
@@ -3318,6 +3403,13 @@ static Modifier modifiers[] = {
     {"Flanger Level", FLANGER_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
     {"Flanger Width", MXR_FLANGER_WIDTH, CHORUSFX_POSITION, &values_0_to_99},
     {"Flanger Manual", MXR_FLANGER_MANUAL, CHORUSFX_POSITION, &values_0_to_99},
+    {"Flanger Level", TRIG_FLANGER_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
+    {"Flanger Sens", TRIG_FLANGER_SENS, CHORUSFX_POSITION, &values_0_to_99},
+    {"Flanger LFO Start", TRIG_FLANGER_LFO_START, CHORUSFX_POSITION, &values_0_to_99},
+    {"Flanger Speed", TRIG_FLANGER_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Flanger Range", EH_FLANGER_RANGE, CHORUSFX_POSITION, &values_0_to_99},
+    {"Flanger Rate", EH_FLANGER_RATE, CHORUSFX_POSITION, &values_0_to_99},
+    {"Flanger Color", EH_FLANGER_COLOR, CHORUSFX_POSITION, &values_0_to_99},
     {"Vibrato Speed", VIBRATO_SPEED, CHORUSFX_POSITION, &values_0_to_99},
     {"Vibrato Depth", VIBRATO_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
     {"Rotary Speed", ROTARY_SPEED, CHORUSFX_POSITION, &values_0_to_99},
@@ -3328,6 +3420,10 @@ static Modifier modifiers[] = {
     {"VibroPan Depth", VIBROPAN_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
     {"VibroPan VibratoPan", VIBROPAN_VIBRA, CHORUSFX_POSITION, &values_0_to_99},
     {"VibroPan Waveform", VIBROPAN_WAVE, CHORUSFX_POSITION, &values_waveform},
+    {"Unovibe Speed", UNOVIBE_PEDAL_SPEED, CHORUSFX_POSITION, &values_0_to_99},
+    {"Unovibe Intensity", UNOVIBE_INTENSITY, CHORUSFX_POSITION, &values_0_to_99},
+    {"Unovibe Volume", UNOVIBE_VOLUME, CHORUSFX_POSITION, &values_0_to_99},
+    {"Unovibe Chorus/Vibrato", UNOVIBE_CHORUS_VIBRATO, CHORUSFX_POSITION, &values_chorus_vibrato},
     {"Tremolo Speed", TREMOLO_SPEED, CHORUSFX_POSITION, &values_0_to_99},
     {"Tremolo Depth", TREMOLO_DEPTH, CHORUSFX_POSITION, &values_0_to_99},
     {"Tremolo Waveform", TREMOLO_WAVE, CHORUSFX_POSITION, &values_waveform},
@@ -3336,6 +3432,7 @@ static Modifier modifiers[] = {
     {"Panner Waveform", PANNER_WAVE, CHORUSFX_POSITION, &values_waveform},
     {"Envelope Sens.", ENVELOPE_SENSITIVITY, CHORUSFX_POSITION, &values_0_to_99},
     {"Envelope Range", ENVELOPE_RANGE, CHORUSFX_POSITION, &values_0_to_99},
+    {"Envelope Blend", ENVELOPE_BLEND, CHORUSFX_POSITION, &values_0_to_99},
     {"AutoYa Speed", AUTOYA_SPEED, CHORUSFX_POSITION, &values_0_to_99},
     {"AutoYa Intensity", AUTOYA_INTENSITY, CHORUSFX_POSITION, &values_0_to_99},
     {"AutoYa Range", AUTOYA_RANGE, CHORUSFX_POSITION, &values_0_to_49},
@@ -3344,6 +3441,11 @@ static Modifier modifiers[] = {
     {"YaYa Range", YAYA_RANGE, CHORUSFX_POSITION, &values_0_to_49},
     {"Step Filter Speed", STEP_FILTER_SPEED, CHORUSFX_POSITION, &values_0_to_99},
     {"Step Filter Intensity", STEP_FILTER_INTENSITY, CHORUSFX_POSITION, &values_0_to_99},
+    {"Synth Talk Attack", SYNTH_TALK_ATTACK, CHORUSFX_POSITION, &values_0_to_99},
+    {"Synth Talk Release", SYNTH_TALK_RELEASE, CHORUSFX_POSITION, &values_0_to_99},
+    {"Synth Talk Sens", SYNTH_TALK_SENS, CHORUSFX_POSITION, &values_0_to_99},
+    {"Synth Talk Vox", SYNTH_TALK_VOX, CHORUSFX_POSITION, &values_0_to_99},
+    {"Synth Talk Balance", SYNTH_TALK_BALANCE, CHORUSFX_POSITION, &values_balance},
     {"Whammy Amount", WHAMMY_AMOUNT, CHORUSFX_POSITION, &values_whammy_amount},
     {"Whammy Pedal", WHAMMY_PEDAL, CHORUSFX_POSITION, &values_0_to_99},
     {"Whammy Mix", WHAMMY_MIX, CHORUSFX_POSITION, &values_0_to_99},
@@ -3355,6 +3457,10 @@ static Modifier modifiers[] = {
     {"IPS Key", IPS_KEY, CHORUSFX_POSITION, &values_ips_key},
     {"IPS Scale", IPS_SCALE, CHORUSFX_POSITION, &values_ips_scale},
     {"IPS Level", IPS_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
+    {"Octaver Octave 1", OCTAVER_OCTAVE1, CHORUSFX_POSITION, &values_0_to_99},
+    {"Octaver Octave 2", OCTAVER_OCTAVE2, CHORUSFX_POSITION, &values_0_to_99},
+    {"Octaver Dry Level", OCTAVER_DRY_LEVEL, CHORUSFX_POSITION, &values_0_to_99},
+
     {"Delay Enable", DELAY_ON_OFF, DELAY_POSITION, &values_on_off},
     {"Delay Time", DELAY_TIME, DELAY_POSITION, &values_delay_time},
     {"Delay Repeats", DELAY_REPEATS, DELAY_POSITION, &values_delay_repeats},
@@ -3369,8 +3475,8 @@ static Modifier modifiers[] = {
     {"Reverb Liveliness", REVERB_LIVELINESS, REVERB_POSITION, &values_0_to_99},
     {"Reverb Level", REVERB_LEVEL, REVERB_POSITION, &values_0_to_99},
     {"Reverb Predelay", REVERB_PREDELAY, REVERB_POSITION, &values_0_to_15},
-    {"Volume Pre FX", 2626, 13, &values_0_to_99},
-    {"Volume Post FX", 2626, 17, &values_0_to_99},
+    {"Volume Pre FX", PRESET_LEVEL, VOLUME_PRE_FX_POSITION, &values_0_to_99},
+    {"Volume Post FX", PRESET_LEVEL, VOLUME_POST_FX_POSITION, &values_0_to_99},
 };
 
 int n_modifiers = G_N_ELEMENTS(modifiers);
@@ -3820,6 +3926,9 @@ static XmlLabel xml_fx_lib_labels[] = {
     {EFFECTS_LIB_ROTARY_TAPE, "Rotary + Tape Delay"},
 };
 
+static XmlLabel xml_rhold_labels[] = {
+    {100, "RHold"},
+};
 /* Array to map id/position pairs to labels and settings. */
 XmlSettings xml_settings[] = {
     {0, 0, "None", NULL,},
@@ -3914,6 +4023,9 @@ XmlSettings xml_settings[] = {
     {PHASER_REGEN, CHORUSFX_POSITION, "Phaser Regen", &values_0_to_99,},
     {PHASER_WAVE, CHORUSFX_POSITION, "Phaser Waveform", &values_waveform, xml_waveform_labels, G_N_ELEMENTS(xml_waveform_labels)},
     {PHASER_LEVEL, CHORUSFX_POSITION, "Phaser Level", &values_0_to_99,},
+    {EH_PHASER_RATE, CHORUSFX_POSITION, "Phaser Rate", &values_0_to_99,},
+    {EH_PHASER_COLOR, CHORUSFX_POSITION, "Phaser xml Color", &values_on_off, xml_on_off_labels,G_N_ELEMENTS(xml_on_off_labels)},
+    {MX_PHASER_INTENSITY, CHORUSFX_POSITION, "Intensity", &values_1_to_4,},
     {CHORUS_SPEED, CHORUSFX_POSITION, "Chorus Speed", &values_0_to_99,},
     {CHORUS_DEPTH, CHORUSFX_POSITION, "Chorus Depth", &values_0_to_99,},
     {CHORUS_LEVEL, CHORUSFX_POSITION, "Chorus Level", &values_0_to_99,},
@@ -3975,7 +4087,7 @@ XmlSettings xml_settings[] = {
     {DELAY_TYPE, DELAY_POSITION, "Delay Type", &values_delay_type, xml_delay_labels, G_N_ELEMENTS(xml_delay_labels)},
     {DELAY_ON_OFF, DELAY_POSITION, "Delay Enable", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
     {DELAY_TIME, DELAY_POSITION, "Delay Time", &values_delay_time,},
-    {DELAY_REPEATS, DELAY_POSITION, "Delay Repeats", &values_delay_repeats,},
+    {DELAY_REPEATS, DELAY_POSITION, "Delay Repeats", &values_delay_repeats, xml_rhold_labels, G_N_ELEMENTS(xml_rhold_labels)},
     {DELAY_LEVEL, DELAY_POSITION, "Delay Level", &values_0_to_99,},
     {DELAY_DUCK_THRESH, DELAY_POSITION, "Delay Duck Thresh", &values_0_to_99,},
     {DELAY_DUCK_LEVEL, DELAY_POSITION, "Delay Duck Level", &values_0_to_99,},
@@ -3991,7 +4103,7 @@ XmlSettings xml_settings[] = {
     {REVERB_PREDELAY, REVERB_POSITION, "Reverb Predelay", &values_0_to_15,},
 
     {PRESET_LEVEL, VOLUME_PRE_FX_POSITION, "Volume Pre FX", &values_0_to_99,},
-    {PRESET_LEVEL, VOLUME_POST_FX_POSITION, "Volume Post FX", &values_0_to_99,},
+    {PRESET_LEVEL, VOLUME_POST_FX_POSITION, "Volume Post FX", &values_0_to_99,}, 
 
     {WAH_TYPE, WAH_POSITION, "Wah Type", &values_wah_type, xml_wah_labels, G_N_ELEMENTS(xml_wah_labels)},
     {WAH_ON_OFF, WAH_POSITION, "Wah Enable", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
@@ -4172,21 +4284,25 @@ static void effect_settings_free(EffectSettings *settings)
 }
 
 /**
+ * Global holding the list of linkable parameters.
+ *
+ * Used for Pedal Assignment and the LFO's.
+ */
+ModifierGroup *ModifierLinkableList;
+/**
  *  Retrieves modifier linkable group from device.
  *
  *  \return ModifierGroup which must be freed using modifier_group_free.
  **/
-ModifierGroup *modifier_linkable_list()
+ModifierGroup *modifier_linkable_list(GString *msg)
 {
     guint group_id;
     guint count;
     guint i;
 
-    send_message(REQUEST_MODIFIER_LINKABLE_LIST, "\x00\x01", 2);
+    //send_message(REQUEST_MODIFIER_LINKABLE_LIST, "\x00\x01", 2);
 
-    GString *data = get_message_by_id(RECEIVE_MODIFIER_LINKABLE_LIST);
-
-    unsigned char *str = (unsigned char*)data->str;
+    unsigned char *str = (unsigned char*)msg->str;
 
     group_id = (str[8] << 8) | str[9];
     count = (str[10] << 8) | str[11];
@@ -4222,12 +4338,14 @@ ModifierGroup *modifier_linkable_list()
             group[i].settings_amt = 0;
 
         debug_msg(DEBUG_MSG2HOST|DEBUG_GROUP,
-                  "ID: %4d Position: %2d: %s",
-                  id, position, modifier ? modifier->label : NULL);
+                  "Position : %d\nID       : %d\nName     : %s\n",
+                  position, id, modifier ? modifier->label : NULL);
     }
 
     modifier_group->group = group;
     modifier_group->group_amt = count;
+
+    ModifierLinkableList = modifier_group;
 
     return modifier_group;
 }
@@ -4291,7 +4409,6 @@ gboolean get_device_info(unsigned char device_id, unsigned char family_id,
     for (x = 0; x < G_N_ELEMENTS(supported_devices); x++) {
         if (supported_devices[x]->product_id == product_id && supported_devices[x]->family_id == family_id) {
             *device = supported_devices[x];
-            debug_msg(DEBUG_STARTUP, "Device name %s.", (*device)->name);
             return TRUE;
         }
     }

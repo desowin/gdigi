@@ -24,6 +24,7 @@
 #include "preset.h"
 #include "gtkknob.h"
 #include "images/gdigi_icon.h"
+#include "gdigi_xml.h"
 
 
 static gchar* MessageID_names[] = {
@@ -372,8 +373,9 @@ static void apply_widget_setting(WidgetTreeElem *el, SettingParam *param)
         else if (GTK_IS_ADJUSTMENT(el->widget))
             gtk_adjustment_set_value(GTK_ADJUSTMENT(el->widget), (gdouble)param->value);
     } else { /* combo box */
-        if (el->value == param->value)
+        if (el->value == param->value) {
             gtk_combo_box_set_active(GTK_COMBO_BOX(el->widget), el->x);
+        }
     }
 }
 
@@ -540,8 +542,9 @@ void effect_settings_group_free(EffectSettingsGroup *group)
 {
     if (group->child != NULL) {
         /* destroy widget without parent */
-        if (gtk_widget_get_parent(group->child) == NULL)
+        if (gtk_widget_get_parent(group->child) == NULL) {
             gtk_widget_destroy(group->child);
+        }
 
         g_object_unref(group->child);
     }
@@ -562,6 +565,7 @@ void combo_box_changed_cb(GtkComboBox *widget, gpointer data)
     EffectSettingsGroup *settings = NULL;
     gchar *name = NULL;
     gint x;
+
     g_object_get(G_OBJECT(widget), "active", &x, NULL);
 
     vbox = g_object_get_data(G_OBJECT(widget), "vbox");
@@ -619,7 +623,7 @@ GtkWidget *create_widget_container(EffectGroup *group, gint amt, gint id, gint p
     gint x;
     gint cmbox_no = -1;
 
-    vbox = gtk_vbox_new(FALSE, 0);
+    vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
     widget_table = g_hash_table_new(g_direct_hash, g_direct_equal);
 
@@ -631,15 +635,22 @@ GtkWidget *create_widget_container(EffectGroup *group, gint amt, gint id, gint p
                 g_signal_connect(G_OBJECT(combo_box), "changed", G_CALLBACK(combo_box_changed_cb), group);
                 g_object_set_data(G_OBJECT(combo_box), "vbox", vbox);
             }
-            gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(combo_box),
-                                      NULL, group[x].label);
+
+            gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_box), group[x].label);
             cmbox_no++;
 
             if ((group[x].settings != NULL) && (group[x].settings_amt > 0)) {
-                widget = create_grid(group[x].settings, group[x].settings_amt, widget_table);
+                /*
+                 * Create a grid for each combo box entry to contain per
+                 * combo box entry settings.
+                 */
+                widget = create_grid(group[x].settings,
+                                     group[x].settings_amt,
+                                     widget_table);
                 g_object_ref_sink(widget);
-            } else
+            } else {
                 widget = NULL;
+            }
 
             settings = g_slice_new(EffectSettingsGroup);
             settings->id = id;
@@ -650,11 +661,15 @@ GtkWidget *create_widget_container(EffectGroup *group, gint amt, gint id, gint p
             widget_tree_add(G_OBJECT(combo_box), id, position, group[x].type, x);
 
             name = g_strdup_printf("SettingsGroup%d", cmbox_no);
-            g_object_set_data_full(G_OBJECT(combo_box), name, settings, ((GDestroyNotify)effect_settings_group_free));
+            g_object_set_data_full(G_OBJECT(combo_box),
+                                   name, settings,
+                                   ((GDestroyNotify)effect_settings_group_free));
             g_free(name);
         } else {
             if ((group[x].settings != NULL) && (group[x].settings_amt > 0)) {
-                widget = create_grid(group[x].settings, group[x].settings_amt, widget_table);
+                widget = create_grid(group[x].settings,
+                                     group[x].settings_amt,
+                                     widget_table);
                 gtk_box_pack_end(GTK_BOX(vbox), widget, FALSE, TRUE, 0);
             }
         }
@@ -664,6 +679,123 @@ GtkWidget *create_widget_container(EffectGroup *group, gint amt, gint id, gint p
 
     return vbox;
 }
+
+/**
+ * Populate a combo box with text entries from the modifier group.
+ */
+void update_modifier_combo_box(GObject *combo_box, EffectGroup *group, gint amt, gint id, gint position)
+{
+    gint x;
+    EffectSettingsGroup *settings = NULL;
+
+    for (x = 0; x<amt; x++) {
+        gchar *name;
+        g_assert(group[x].label);
+
+        settings = g_slice_new(EffectSettingsGroup);
+        settings->id = id;
+        settings->type = group[x].type;
+        settings->position = position;
+        settings->child = NULL;
+
+        name = g_strdup_printf("SettingsGroup%d", x);
+        g_object_set_data(G_OBJECT(combo_box), name, settings);
+        g_free(name);
+
+        gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_box), group[x].label);
+        widget_tree_add(combo_box, id, position, group[x].type, x);
+    }
+
+    return;
+}
+
+static void widget_tree_elem_free(GList *);
+
+static void clean_modifier_combo_box (GObject *ComboBox, GList *list)
+{
+    EffectSettingsGroup *settings = NULL;
+    WidgetTreeElem *el;
+    gchar *name;
+    GList *link, *next;
+
+    link = g_list_first(list);
+
+    while (link != NULL) {
+        next = link->next;
+        el = link->data;
+        if (el->value != -1) {
+            /* Useless assignment, but silences compiler warning. */
+            link = g_list_remove_link(list, link);
+            
+            g_assert(ComboBox == el->widget);
+            name = g_strdup_printf("SettingsGroup%d", el->x);
+            settings = g_object_steal_data(G_OBJECT(ComboBox), name);
+
+            g_free(name);
+            g_slice_free(EffectSettingsGroup, settings);
+            g_slice_free(WidgetTreeElem, el);
+        }
+        link = next;
+    }
+    gtk_combo_box_text_remove_all(GTK_COMBO_BOX_TEXT(ComboBox));
+}
+
+/**
+ * Given a linkable effect, update the combo box for the linkable parameters.
+ *
+ * @param[in] pos Position
+ * @param[in] id Id
+ */
+void
+create_modifier_group (guint pos, guint id)
+{
+    
+    GtkWidget *vbox;
+    gpointer key;
+    WidgetTreeElem *el;
+    GList *list;
+    GObject *AssignComboBox;
+
+    debug_msg(DEBUG_GROUP, "Building modifier group for position %d id %d \"%s\"",
+                           pos, id, get_xml_settings(id, pos)->label);
+
+    key = GINT_TO_POINTER((pos << 16) | id);
+    list = g_tree_lookup(widget_tree, key);
+
+    /* 
+     * The list will be destroyed and recreated, but we don't want to 
+     * handle the teardown ourselves. So steal it from the tree.
+     */
+    g_tree_steal(widget_tree, key);
+    if (!list) {
+        g_warning("No widget tree entry for position %d id %d!\n",
+                   pos, id);
+        return;
+    }
+
+    el = g_list_nth_data(list, 0);
+    if (!el) {
+        g_warning("No effect settings group for position %d id %d!\n",
+                   pos, id);
+        return;
+    }
+
+    AssignComboBox = el->widget;
+    g_assert(AssignComboBox != NULL);
+
+    vbox = g_object_get_data(AssignComboBox, "vbox");
+    g_assert(vbox != NULL);
+
+    clean_modifier_combo_box(AssignComboBox, list);
+
+    update_modifier_combo_box(AssignComboBox,
+                              ModifierLinkableList->group,
+                              ModifierLinkableList->group_amt,
+                              id, pos);
+
+    get_option(id, pos);
+}
+
 
 /**
  *  \param widgets Effect descriptions
@@ -686,13 +818,14 @@ GtkWidget *create_vbox(Effect *widgets, gint amt, gchar *label)
 
     frame = gtk_frame_new(label);
 
-    vbox = gtk_vbox_new(FALSE, 0);
+    vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
     grid = gtk_grid_new();
     gtk_grid_set_column_spacing(GTK_GRID(grid), 2);
 
     for (x = 0; x<amt; x++) {
         if ((widgets[x].id != -1) && (widgets[x].position != -1)) {
+
             widget = create_on_off_button(&widgets[x]);
             gtk_grid_attach(GTK_GRID(grid), widget, 0, x, 1, 1);
 
@@ -702,21 +835,29 @@ GtkWidget *create_vbox(Effect *widgets, gint amt, gchar *label)
                 y = 0;
 
         } else if (widgets[x].label) {
+
             widget = gtk_label_new(widgets[x].label);
             gtk_grid_attach(GTK_GRID(grid), widget, 0, x, 1, 1);
             y = 0;
+
         } else {
+
             /* Default to 1 */
             if (x == 0)
                 y = 1;
         }
 
-        container = create_widget_container(widgets[x].group, widgets[x].group_amt, widgets[x].type, widgets[x].position);
+        container = create_widget_container(widgets[x].group,
+                                            widgets[x].group_amt,
+                                            widgets[x].type,
+                                            widgets[x].position);
+
         gtk_grid_attach(GTK_GRID(grid), container, 1-y, x+y, 1, 1);
     }
+    
     gtk_box_pack_start(GTK_BOX(vbox), grid, FALSE, FALSE, 2);
-
     gtk_container_add(GTK_CONTAINER(frame), vbox);
+
     return frame;
 }
 
@@ -1318,12 +1459,12 @@ void gui_create(Device *device)
     icon = gdk_pixbuf_new_from_inline(-1, gdigi_icon, FALSE, NULL);
     gtk_window_set_icon(GTK_WINDOW(window), icon);
 
-    vbox = gtk_vbox_new(FALSE, 0);
+    vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     gtk_container_add(GTK_CONTAINER(window), vbox);
 
     add_menubar(window, vbox);
 
-    hbox = gtk_hbox_new(FALSE, 0);
+    hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_container_add(GTK_CONTAINER(vbox), hbox);
 
     sw = gtk_scrolled_window_new(NULL, NULL);
@@ -1347,14 +1488,14 @@ void gui_create(Device *device)
 
     for (i = 0; i<device->n_pages; i++) {
         GtkWidget *label = NULL;
-        vbox = gtk_vbox_new(FALSE, 0);
+        vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
         label = gtk_label_new(device->pages[i].name);
 
         gtk_notebook_append_page(GTK_NOTEBOOK(notebook), vbox, label);
 
         for (x = 0; x<device->pages[i].n_effects; x++) {
             if ((x % ((device->pages[i].n_effects+1)/device->pages[i].n_rows)) == 0) {
-                hbox = gtk_hbox_new(FALSE, 0);
+                hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
                 gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 2);
             }
             widget = create_vbox(device->pages[i].effects[x].effect, device->pages[i].effects[x].amt, device->pages[i].effects[x].label);
@@ -1366,6 +1507,16 @@ void gui_create(Device *device)
     gtk_widget_show_all(window);
 
     g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(gtk_main_quit), NULL);
+
+    /* Not part of the preset, but update from the device. */
+    get_option(TUNING_REFERENCE, GLOBAL_POSITION);
+    get_option(USB_AUDIO_PLAYBACK_MIX, GLOBAL_POSITION);
+    get_option(GUI_MODE_ON_OFF, GLOBAL_POSITION);
+    get_option(USB_AUDIO_LEVEL, GLOBAL_POSITION);
+    get_option(EXP_PEDAL_LEVEL, GLOBAL_POSITION);
+    get_option(STOMP_MODE, GLOBAL_POSITION);
+
+    send_message(REQUEST_MODIFIER_LINKABLE_LIST, "\x00\x01", 2);
 }
 
 /**
