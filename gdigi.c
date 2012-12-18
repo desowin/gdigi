@@ -52,7 +52,7 @@ gboolean set_debug_flags (const gchar *option_name, const gchar *value,
 {
     if (strchr(value, 'd')) {
         DebugFlags |= DEBUG_MSG2DEV;
-    } 
+    }
     if (strchr(value, 'h')) {
         DebugFlags |= DEBUG_MSG2HOST;
     }
@@ -91,7 +91,7 @@ debug_msg (debug_flags_t flags, char *fmt, ...)
         va_start(ap, fmt);
         vsnprintf(buf, 1024, fmt, ap);
         va_end(ap);
-        
+
         fprintf(stderr, "%s\n", buf);
     }
 }
@@ -460,7 +460,7 @@ void push_message(GString *msg)
                               "%d from bank %d",
                               str[10], str[9]);
                 } else {
-                    debug_msg(DEBUG_MSG2HOST, 
+                    debug_msg(DEBUG_MSG2HOST,
                               "RECEIVE_DEVICE_NOTIFICATION: %d %d moved to "
                               "%d %d",
                               str[9], str[10],
@@ -479,15 +479,10 @@ void push_message(GString *msg)
                     printf("\n");
                 }
 
-                debug_msg(DEBUG_MSG2HOST, 
+                debug_msg(DEBUG_MSG2HOST,
                           "NOTIFY_MODIFIER_GROUP_CHANGED: Modifier group "
                           "id %d changed",
                           (str[9] << 8) | (str[10]));
-
-                if (ModifierLinkableList) {
-                    modifier_group_free(ModifierLinkableList);
-                    ModifierLinkableList = NULL;
-                }
 
                 send_message(REQUEST_MODIFIER_LINKABLE_LIST, "\x00\x01", 2);
                 break;
@@ -518,9 +513,14 @@ void push_message(GString *msg)
                           "Position: %2.1d Value: %6.1d: %s",
                           param->id,
                           param->position, param->value, "XXX");
+
+                GDK_THREADS_ENTER();
+                apply_setting_param_to_gui(param);
+                GDK_THREADS_LEAVE();
+
                 setting_param_free(param);
             } while ( (x < msg->len) && n < tot);
-                             
+
             g_string_free(msg, TRUE);
             return;
 
@@ -536,8 +536,8 @@ void push_message(GString *msg)
                 printf("\n");
             }
 
-            modifier_linkable_list(msg);
-                             
+            update_modifier_linkable_list(msg);
+
             g_string_free(msg, TRUE);
 
             GDK_THREADS_ENTER();
@@ -1365,6 +1365,10 @@ static gboolean request_who_am_i(unsigned char *device_id, unsigned char *family
         *family_id = data->str[9];
         *product_id = data->str[10];
         g_string_free(data, TRUE);
+        debug_msg(DEBUG_STARTUP, "Found device id %d family %d product id %d.",
+                                *device_id,
+                                *family_id,
+                                *product_id);
         return TRUE;
     }
     return FALSE;
@@ -1487,7 +1491,7 @@ int main(int argc, char *argv[]) {
         GList *device = NULL;
         int    num_devices = 0;
         int    chosen_device = 0;
-        if (get_digitech_devices(&devices) <= 0) {
+        if ((num_devices = get_digitech_devices(&devices)) <= 0) {
             g_warning("Couldn't find DigiTech devices!");
             exit(EXIT_FAILURE);
         }

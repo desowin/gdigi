@@ -118,9 +118,10 @@ typedef struct {
 } Device;
 
 gchar *get_position(guint position);
-ModifierGroup *modifier_linkable_list();
+void update_modifier_linkable_list(GString* msg);
 extern ModifierGroup *ModifierLinkableList;
-void modifier_group_free(ModifierGroup *modifier_group);
+EffectGroup *get_modifier_group(void);
+guint get_modifier_amt(void);
 void get_values_info(EffectValues *values,
                      gdouble *min, gdouble *max, gboolean *custom);
 gboolean get_device_info(unsigned char device_id, unsigned char family_id,

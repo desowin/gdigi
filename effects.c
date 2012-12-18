@@ -723,7 +723,9 @@ static EffectValues values_rp_mix = {
 static EffectSettings global_settings[] = {
     {"USB/RP Mix", USB_AUDIO_PLAYBACK_MIX, GLOBAL_POSITION, &values_rp_mix},
     {"USB Level", USB_AUDIO_LEVEL, GLOBAL_POSITION, &values_m12_to_24},
+#if defined(DEVELOPMENT_MODE)
     {"GUI Mode", GUI_MODE_ON_OFF, GLOBAL_POSITION, &values_on_off},
+#endif /* DEVELOPMENT_MODE */
     {"Tuning Reference", TUNING_REFERENCE, GLOBAL_POSITION, &values_0_to_29},
     {"Pedal Position", EXP_PEDAL_LEVEL, GLOBAL_POSITION, &values_0_to_255},
     {"Stomp", STOMP_MODE, GLOBAL_POSITION, &values_on_off},
@@ -4308,12 +4310,52 @@ static void effect_settings_free(EffectSettings *settings)
  * Used for Pedal Assignment and the LFO's.
  */
 ModifierGroup *ModifierLinkableList;
+
+EffectGroup *get_modifier_group(void)
+{
+    EffectGroup *group = NULL;
+    if (ModifierLinkableList) {
+        group = ModifierLinkableList->group;
+    }
+    return group;
+}
+
+guint get_modifier_amt(void)
+{
+    guint amt = 0;
+    if (ModifierLinkableList) {
+        amt = ModifierLinkableList->group_amt;
+    }
+    return amt;
+}
+
 /**
- *  Retrieves modifier linkable group from device.
+ *  \param modifier_group group to be freed
  *
- *  \return ModifierGroup which must be freed using modifier_group_free.
+ *  Frees all memory used by ModifierGroup.
  **/
-ModifierGroup *modifier_linkable_list(GString *msg)
+static void modifier_group_free(ModifierGroup *modifier_group)
+{
+    g_return_if_fail(modifier_group != NULL);
+
+    int x;
+    for (x=0; x<modifier_group->group_amt; x++) {
+        if (modifier_group->group[x].settings)
+            effect_settings_free(modifier_group->group[x].settings);
+    }
+    g_slice_free1(modifier_group->group_amt * sizeof(EffectGroup),
+                  modifier_group->group);
+    g_slice_free(ModifierGroup, modifier_group);
+}
+/**
+ *  Retrieves modifier linkable group from device and updates the
+ *  global list of linkable parameters. The old list is freed.
+ *
+ *  \param msg    A buffer containing the message with the list of
+ *                linkable parameters.
+ *  
+ **/
+void update_modifier_linkable_list(GString *msg)
 {
     guint group_id;
     guint count;
@@ -4362,29 +4404,13 @@ ModifierGroup *modifier_linkable_list(GString *msg)
     modifier_group->group = group;
     modifier_group->group_amt = count;
 
-    ModifierLinkableList = modifier_group;
-
-    return modifier_group;
-}
-
-/**
- *  \param modifier_group group to be freed
- *
- *  Frees all memory used by ModifierGroup.
- **/
-void modifier_group_free(ModifierGroup *modifier_group)
-{
-    g_return_if_fail(modifier_group != NULL);
-
-    int x;
-    for (x=0; x<modifier_group->group_amt; x++) {
-        if (modifier_group->group[x].settings)
-            effect_settings_free(modifier_group->group[x].settings);
+    if (ModifierLinkableList) {
+        modifier_group_free(ModifierLinkableList);
+        ModifierLinkableList = NULL;
     }
-    g_slice_free1(modifier_group->group_amt * sizeof(EffectGroup),
-                  modifier_group->group);
-    g_slice_free(ModifierGroup, modifier_group);
+    ModifierLinkableList = modifier_group;
 }
+
 
 /**
  *  \param values EffectValues to examine

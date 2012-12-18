@@ -683,10 +683,12 @@ GtkWidget *create_widget_container(EffectGroup *group, gint amt, gint id, gint p
 /**
  * Populate a combo box with text entries from the modifier group.
  */
-void update_modifier_combo_box(GObject *combo_box, EffectGroup *group, gint amt, gint id, gint position)
+void update_modifier_combo_box(GObject *combo_box, gint id, gint position)
 {
     gint x;
     EffectSettingsGroup *settings = NULL;
+    EffectGroup *group = get_modifier_group();
+    guint amt = get_modifier_amt();
 
     for (x = 0; x<amt; x++) {
         gchar *name;
@@ -711,7 +713,7 @@ void update_modifier_combo_box(GObject *combo_box, EffectGroup *group, gint amt,
 
 static void widget_tree_elem_free(GList *);
 
-static void clean_modifier_combo_box (GObject *ComboBox, GList *list)
+static void clean_modifier_combo_box (GObject *combo_box, GList *list)
 {
     EffectSettingsGroup *settings = NULL;
     WidgetTreeElem *el;
@@ -727,9 +729,9 @@ static void clean_modifier_combo_box (GObject *ComboBox, GList *list)
             /* Useless assignment, but silences compiler warning. */
             link = g_list_remove_link(list, link);
             
-            g_assert(ComboBox == el->widget);
+            g_assert(combo_box == el->widget);
             name = g_strdup_printf("SettingsGroup%d", el->x);
-            settings = g_object_steal_data(G_OBJECT(ComboBox), name);
+            settings = g_object_steal_data(G_OBJECT(combo_box), name);
 
             g_free(name);
             g_slice_free(EffectSettingsGroup, settings);
@@ -737,7 +739,7 @@ static void clean_modifier_combo_box (GObject *ComboBox, GList *list)
         }
         link = next;
     }
-    gtk_combo_box_text_remove_all(GTK_COMBO_BOX_TEXT(ComboBox));
+    gtk_combo_box_text_remove_all(GTK_COMBO_BOX_TEXT(combo_box));
 }
 
 /**
@@ -754,7 +756,7 @@ create_modifier_group (guint pos, guint id)
     gpointer key;
     WidgetTreeElem *el;
     GList *list;
-    GObject *AssignComboBox;
+    GObject *modifier_combo_box;
 
     debug_msg(DEBUG_GROUP, "Building modifier group for position %d id %d \"%s\"",
                            pos, id, get_xml_settings(id, pos)->label);
@@ -780,18 +782,15 @@ create_modifier_group (guint pos, guint id)
         return;
     }
 
-    AssignComboBox = el->widget;
-    g_assert(AssignComboBox != NULL);
+    modifier_combo_box = el->widget;
+    g_assert(modifier_combo_box != NULL);
 
-    vbox = g_object_get_data(AssignComboBox, "vbox");
+    vbox = g_object_get_data(modifier_combo_box, "vbox");
     g_assert(vbox != NULL);
 
-    clean_modifier_combo_box(AssignComboBox, list);
+    clean_modifier_combo_box(modifier_combo_box, list);
 
-    update_modifier_combo_box(AssignComboBox,
-                              ModifierLinkableList->group,
-                              ModifierLinkableList->group_amt,
-                              id, pos);
+    update_modifier_combo_box(modifier_combo_box, id, pos);
 
     get_option(id, pos);
 }
@@ -1508,15 +1507,9 @@ void gui_create(Device *device)
 
     g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(gtk_main_quit), NULL);
 
-    /* Not part of the preset, but update from the device. */
-    get_option(TUNING_REFERENCE, GLOBAL_POSITION);
-    get_option(USB_AUDIO_PLAYBACK_MIX, GLOBAL_POSITION);
-    get_option(GUI_MODE_ON_OFF, GLOBAL_POSITION);
-    get_option(USB_AUDIO_LEVEL, GLOBAL_POSITION);
-    get_option(EXP_PEDAL_LEVEL, GLOBAL_POSITION);
-    get_option(STOMP_MODE, GLOBAL_POSITION);
-
+    /* Get the initial values for the linkable parameters and the globals. */
     send_message(REQUEST_MODIFIER_LINKABLE_LIST, "\x00\x01", 2);
+    send_message(REQUEST_GLOBAL_PARAMETERS, "\x00\x01", 2);
 }
 
 /**
