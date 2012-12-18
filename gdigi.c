@@ -388,6 +388,8 @@ MessageID get_message_id(GString *msg)
 
 #define HEX_WIDTH 26
 
+static guint modifier_linkable_list_request_pending;
+
 void push_message(GString *msg)
 {
     MessageID msgid = get_message_id(msg);
@@ -484,7 +486,11 @@ void push_message(GString *msg)
                           "id %d changed",
                           (str[9] << 8) | (str[10]));
 
-                send_message(REQUEST_MODIFIER_LINKABLE_LIST, "\x00\x01", 2);
+                if (!modifier_linkable_list_request_pending) {
+                    send_message(REQUEST_MODIFIER_LINKABLE_LIST, "\x00\x01", 2);
+                    modifier_linkable_list_request_pending = 1;
+                }
+
                 break;
             }
             default:
@@ -526,6 +532,8 @@ void push_message(GString *msg)
 
 
         case RECEIVE_MODIFIER_LINKABLE_LIST:
+
+            modifier_linkable_list_request_pending = 0;
             unpack_message(msg);
             tot = (unsigned char)msg->str[9];
 
@@ -535,6 +543,7 @@ void push_message(GString *msg)
                 }
                 printf("\n");
             }
+
 
             update_modifier_linkable_list(msg);
 
