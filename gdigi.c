@@ -154,10 +154,10 @@ format_value (XmlSettings *xml, guint value)
     case VALUE_TYPE_PLAIN:
     {
         if (decimal) {
-            double dvalue = (value + offset) * step;
+            double dvalue = ((gint)value + offset) * step;
                 g_string_printf(buf, "%0.2f%s", dvalue, suffix);
         } else {
-            gint ivalue = (value + offset) * step;
+            gint ivalue = ((gint)value + offset) * step;
             g_string_printf(buf, "%d%s", ivalue, suffix);
         }
         break;

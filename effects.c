@@ -1575,11 +1575,6 @@ static EffectSettings gnx3k_reverb_settings[] = {
     {"Level", REVERB_LEVEL, REVERB_POSITION, &values_0_to_99},
 };
 
-static EffectSettings pedal1_assign_settings[] = {
-    {"Pedal Min 1", EXP_MIN, EXP_POSITION, &values_0_to_99,},
-    {"Pedal Max 1", EXP_MAX, EXP_POSITION, &values_0_to_99,},
-};
-
 static EffectSettings lfo1_settings[] = {
     {"Heel", LFO_MIN, LFO1_POSITION, &values_0_to_99},
     {"Toe", LFO_MAX, LFO1_POSITION, &values_0_to_99},
@@ -1974,7 +1969,6 @@ static EffectGroup rp355_chorusfx_group[] = {
  * effect changes.
  */
 static EffectGroup rp355_pedal1_assign_group[] = {
-    { 0, NULL, pedal1_assign_settings, G_N_ELEMENTS(pedal1_assign_settings)},
     { 0, "None", NULL, 0},
 };
 
@@ -2676,6 +2670,7 @@ static EffectGroup gnx3k_ch2_amp_eq_group[] = {
 
 /* LIBRARY_TONE, LIBRARY_POSITION */
 static EffectGroup tone_lib_group[] = {
+    {TONE_LIB_CUSTOM, "None", NULL, -1},
     {TONE_LIB_OVERDRIVE, "Overdrive", NULL, -1},
     {TONE_LIB_ROCK1, "Rock 1", NULL, -1},
     {TONE_LIB_ROCK2, "Rock 2", NULL, -1},
@@ -2710,6 +2705,7 @@ static EffectGroup tone_lib_group[] = {
 
 /* LIBRARY_EFFECTS, LIBRARY_POSITION */
 static EffectGroup effects_lib_group[] = {
+    {EFFECTS_LIB_CUSTOM, "None", NULL, -1},
     {EFFECTS_LIB_CHORUS, "Chorus", NULL, -1},
     {EFFECTS_LIB_PHASER, "Phaser", NULL, -1},
     {EFFECTS_LIB_FLANGER, "Flanger", NULL, -1},

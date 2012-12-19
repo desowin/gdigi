@@ -681,14 +681,24 @@ GtkWidget *create_widget_container(EffectGroup *group, gint amt, gint id, gint p
 }
 
 /**
- * Populate a combo box with text entries from the modifier group.
+ * Populate the vbox for an effect dependent on the modifier list.
+ *
+ * \param vbox          The vbox for the effect.
+ * \param combo_box     The combo box to repopulate.
+ * \param id            The id of the effect.
+ * \param position      The position of the effect.
  */
-void update_modifier_combo_box(GObject *combo_box, gint id, gint position)
+static void update_modifier_vbox(GtkWidget *vbox, GObject *combo_box, gint id, gint position)
 {
     gint x;
     EffectSettingsGroup *settings = NULL;
     EffectGroup *group = get_modifier_group();
     guint amt = get_modifier_amt();
+    GtkWidget *child = NULL;
+    GHashTable *widget_table;
+    guint needs_settings = (position == EXP_POSITION);
+
+    widget_table = g_hash_table_new(g_direct_hash, g_direct_equal);
 
     for (x = 0; x<amt; x++) {
         gchar *name;
@@ -698,7 +708,17 @@ void update_modifier_combo_box(GObject *combo_box, gint id, gint position)
         settings->id = id;
         settings->type = group[x].type;
         settings->position = position;
-        settings->child = NULL;
+
+        if (needs_settings) {
+            /* EXP_ASSIGN has unique settings per combo box entry. */ 
+            child = create_grid(group[x].settings, group[x].settings_amt,
+                                widget_table);
+            g_object_ref_sink(child);
+            settings->child = child;
+        } else {
+            /* LFO has one settings group.*/
+            settings->child = NULL;
+        }
 
         name = g_strdup_printf("SettingsGroup%d", x);
         g_object_set_data(G_OBJECT(combo_box), name, settings);
@@ -708,12 +728,14 @@ void update_modifier_combo_box(GObject *combo_box, gint id, gint position)
         widget_tree_add(combo_box, id, position, group[x].type, x);
     }
 
+    g_hash_table_destroy(widget_table);
+
     return;
 }
 
 static void widget_tree_elem_free(GList *);
 
-static void clean_modifier_combo_box (GObject *combo_box, GList *list)
+static void clean_modifier_combo_box(GObject *combo_box, GList *list)
 {
     EffectSettingsGroup *settings = NULL;
     WidgetTreeElem *el;
@@ -726,17 +748,20 @@ static void clean_modifier_combo_box (GObject *combo_box, GList *list)
         next = link->next;
         el = link->data;
         if (el->value != -1) {
-            /* Useless assignment, but silences compiler warning. */
             link = g_list_remove_link(list, link);
             
             g_assert(combo_box == el->widget);
             name = g_strdup_printf("SettingsGroup%d", el->x);
             settings = g_object_steal_data(G_OBJECT(combo_box), name);
 
+            if (settings) {
+                effect_settings_group_free(settings);
+            }
             g_free(name);
-            g_slice_free(EffectSettingsGroup, settings);
             g_slice_free(WidgetTreeElem, el);
+            g_list_free_1(link);
         }
+
         link = next;
     }
     gtk_combo_box_text_remove_all(GTK_COMBO_BOX_TEXT(combo_box));
@@ -790,9 +815,14 @@ create_modifier_group (guint pos, guint id)
 
     clean_modifier_combo_box(modifier_combo_box, list);
 
-    update_modifier_combo_box(modifier_combo_box, id, pos);
+    update_modifier_vbox(vbox, modifier_combo_box, id, pos);
 
     get_option(id, pos);
+
+    if (pos == EXP_POSITION) {
+        get_option(EXP_MIN, EXP_POSITION);
+        get_option(EXP_MAX, EXP_POSITION);
+    }
 }
 
 
