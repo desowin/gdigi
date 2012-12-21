@@ -15,6 +15,7 @@
  */
 
 #include "gdigi.h"
+#include "gui.h"
 #include "effects.h"
 #include "gdigi_xml.h"
 
@@ -4097,7 +4098,7 @@ XmlSettings xml_settings[] = {
     {UNOVIBE_PEDAL_SPEED, CHORUSFX_POSITION, "Unovibe Speed", &values_0_to_99,},
     {UNOVIBE_INTENSITY, CHORUSFX_POSITION, "Unovibe Intensity", &values_0_to_99,},
     {UNOVIBE_VOLUME, CHORUSFX_POSITION, "Unovibe Volume", &values_0_to_99,},
-    {UNOVIBE_CHORUS_VIBRATO, CHORUSFX_POSITION, "Unovibe Chorus/Vibrato", &values_chorus_vibrato, &xml_chorus_vibrato_labels, G_N_ELEMENTS(xml_chorus_vibrato_labels)},
+    {UNOVIBE_CHORUS_VIBRATO, CHORUSFX_POSITION, "Unovibe Chorus/Vibrato", &values_chorus_vibrato, xml_chorus_vibrato_labels, G_N_ELEMENTS(xml_chorus_vibrato_labels)},
 
     {TREMOLO_SPEED, CHORUSFX_POSITION, "Tremolo Speed", &values_0_to_99,},
     {TREMOLO_DEPTH, CHORUSFX_POSITION, "Tremolo Depth", &values_0_to_99,},

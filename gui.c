@@ -858,8 +858,6 @@ create_modifier_group (guint pos, guint id)
      */
     g_tree_steal(widget_tree, key);
     if (!list) {
-        g_warning("No widget tree entry for position %d id %d!\n",
-                   pos, id);
         return;
     }
 
