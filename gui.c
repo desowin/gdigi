@@ -444,6 +444,56 @@ gboolean apply_current_preset_to_gui(gpointer data)
 }
 
 /**
+ * Free the data associated with the dynamically allocated settings
+ * for the EXP_POSITION.
+ */
+void modifier_settings_exp_free(EffectSettings *settings)
+{
+    guint i;
+    guint id = settings->id;
+    guint pos = settings->position;
+    gpointer key;
+    GList *link, *next, *orig_list;
+    WidgetTreeElem *el;
+    GObject *widget;
+
+    for (i = 0; i < 2; i++) {
+
+        id = settings[i].id;
+        pos = settings[i].position;
+        key = GINT_TO_POINTER(pos <<16| id);
+        orig_list = g_tree_lookup(widget_tree, key);
+        if (!orig_list) {
+            continue;
+        }
+
+        link = g_list_first(orig_list);
+        while (link != NULL) {
+            next = link->next;
+
+            el = link->data;
+            if (el) {
+
+                widget = el->widget;
+                if (g_object_get_data(G_OBJECT(widget), "exp")) {
+                    g_slice_free(WidgetTreeElem, el);
+                    link->data = NULL;
+                }
+            }
+            link = next;
+        }
+        
+        /* Remove all the list elements from which we freed data. */
+        orig_list = g_list_remove_all(orig_list, NULL);
+
+        /* The list should be empty at this point. */
+        g_assert(!orig_list);
+
+        /* Removed them all, so remove the key from the tree.*/
+        g_tree_steal(widget_tree, key);
+    }
+}
+/**
  *  \param settings effect parameters
  *  \param amt amount of effect parameters
  *  \param widget_table hash table matching settings pointer with created grid (may be NULL)
@@ -492,6 +542,12 @@ GtkWidget *create_grid(EffectSettings *settings, gint amt, GHashTable *widget_ta
 
         widget_tree_add(G_OBJECT(adj), settings[x].id,
                         settings[x].position, -1, -1);
+
+        if (settings[x].position == EXP_POSITION) {
+            /* Tag the adj so we can free it when we free the modifier group. */
+            g_object_set_data(G_OBJECT(adj), "exp", GINT_TO_POINTER(1));
+        }
+
         gtk_grid_attach(GTK_GRID(grid), label, 0, x, 1, 1);
         gtk_grid_attach(GTK_GRID(grid), knob, 1, x, 1, 1);
         gtk_grid_attach(GTK_GRID(grid), widget, 2, x, 1, 1);
@@ -696,7 +752,6 @@ static void update_modifier_vbox(GtkWidget *vbox, GObject *combo_box, gint id, g
     guint amt = get_modifier_amt();
     GtkWidget *child = NULL;
     GHashTable *widget_table;
-    guint needs_settings = (position == EXP_POSITION);
 
     widget_table = g_hash_table_new(g_direct_hash, g_direct_equal);
 
@@ -709,8 +764,8 @@ static void update_modifier_vbox(GtkWidget *vbox, GObject *combo_box, gint id, g
         settings->type = group[x].type;
         settings->position = position;
 
-        if (needs_settings) {
-            /* EXP_ASSIGN has unique settings per combo box entry. */ 
+        if (position == EXP_POSITION) {
+            child = g_object_steal_data(G_OBJECT(combo_box), "active_child");
             child = create_grid(group[x].settings, group[x].settings_amt,
                                 widget_table);
             g_object_ref_sink(child);
@@ -733,33 +788,41 @@ static void update_modifier_vbox(GtkWidget *vbox, GObject *combo_box, gint id, g
     return;
 }
 
-static void widget_tree_elem_free(GList *);
-
 static void clean_modifier_combo_box(GObject *combo_box, GList *list)
 {
     EffectSettingsGroup *settings = NULL;
     WidgetTreeElem *el;
     gchar *name;
-    GList *link, *next;
+    GList *link, *next, *stale_link;
 
     link = g_list_first(list);
 
     while (link != NULL) {
         next = link->next;
         el = link->data;
+        stale_link = NULL;
+
+        /* We need to clean the data associated with a combo box.
+         * This may include the per-entry settings widgets.
+         */
         if (el->value != -1) {
+            /* This is a combo box entry. Remove the associated data. */
+            stale_link = link;
             link = g_list_remove_link(list, link);
             
-            g_assert(combo_box == el->widget);
             name = g_strdup_printf("SettingsGroup%d", el->x);
             settings = g_object_steal_data(G_OBJECT(combo_box), name);
-
-            if (settings) {
-                effect_settings_group_free(settings);
+            if (settings && settings->child) {
+                gtk_widget_destroy(settings->child);
             }
+
+            g_slice_free(EffectSettingsGroup, settings);
             g_free(name);
             g_slice_free(WidgetTreeElem, el);
-            g_list_free_1(link);
+        }
+
+        if (stale_link) {
+            g_list_free_1(stale_link);
         }
 
         link = next;

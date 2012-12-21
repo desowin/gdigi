@@ -3382,12 +3382,12 @@ static Modifier modifiers[] = {
     {"EQ Bass", EQ_BASS, EQ_A_POSITION, &values_eq_db},
     {"EQ Mid", EQ_MID, EQ_A_POSITION, &values_eq_db},
     {"EQ Treb", EQ_TREB, EQ_A_POSITION, &values_eq_db},
-    {"EQ Treb", EQ_PRESENCE, EQ_A_POSITION, &values_eq_db},
+    {"EQ Presence", EQ_PRESENCE, EQ_A_POSITION, &values_eq_db},
     {"EQ B Enable", EQ_ENABLE, EQ_B_POSITION, &values_on_off},
     {"EQ B Bass", EQ_BASS, EQ_B_POSITION, &values_eq_db},
     {"EQ B Mid", EQ_MID, EQ_B_POSITION, &values_eq_db},
     {"EQ B Treb", EQ_TREB, EQ_B_POSITION, &values_eq_db},
-    {"EQ B Treb", EQ_PRESENCE, EQ_B_POSITION, &values_eq_db},
+    {"EQ B Presence", EQ_PRESENCE, EQ_B_POSITION, &values_eq_db},
     {"Gate Enable", NOISEGATE_ON_OFF, NOISEGATE_POSITION, &values_on_off},
     {"Gate Pluck Sens", NOISEGATE_SWELL_SENS, NOISEGATE_POSITION, &values_0_to_99},
     {"Gate Threshold", NOISEGATE_GATE_TRESHOLD, NOISEGATE_POSITION, &values_0_to_99},
@@ -3729,6 +3729,11 @@ static XmlLabel xml_waveform_labels[] = {
     {CHORUS_WAVEFORM_SQUARE, "Square"},
 };
 
+static XmlLabel xml_chorus_vibrato_labels[] = {
+    {0, "Chorus"},
+    {1, "Vibrato"},
+};
+
 static XmlLabel xml_whammy_amount_labels[] = {
     {WHAMMY_TYPE_OCT_UP, "OctUp"},
     {WHAMMY_TYPE_2OCT_UP, "2OctUp"},
@@ -4029,77 +4034,121 @@ XmlSettings xml_settings[] = {
     {NOISEGATE_RELEASE, NOISEGATE_POSITION, "Gate Release", &values_0_to_99,},
     {NOISEGATE_ATTN, NOISEGATE_POSITION, "Gate Attenuation", &values_0_to_99,},
 
-
     {MOD_PRE_POST, CHORUSFX_POSITION, "Mod Pre/Post", &values_pre_post, xml_chorus_pre_post_labels, G_N_ELEMENTS(xml_chorus_pre_post_labels)},
 
     {CHORUSFX_ON_OFF, CHORUSFX_POSITION, "Chorus/FX Enable", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
     {CHORUSFX_PRE_POST, CHORUSFX_POSITION, "Mod Pre/Post", &values_pre_post, xml_chorus_pre_post_labels, G_N_ELEMENTS(xml_chorus_pre_post_labels)},
     {CHORUSFX_TYPE, CHORUSFX_POSITION, "Mod Type", &values_mod_type, xml_chorusfx_labels, G_N_ELEMENTS(xml_chorusfx_labels)},
+
     {PHASER_SPEED, CHORUSFX_POSITION, "Phaser Speed", &values_0_to_99,},
     {PHASER_DEPTH, CHORUSFX_POSITION, "Phaser Depth", &values_0_to_99,},
     {PHASER_REGEN, CHORUSFX_POSITION, "Phaser Regen", &values_0_to_99,},
     {PHASER_WAVE, CHORUSFX_POSITION, "Phaser Waveform", &values_waveform, xml_waveform_labels, G_N_ELEMENTS(xml_waveform_labels)},
     {PHASER_LEVEL, CHORUSFX_POSITION, "Phaser Level", &values_0_to_99,},
+
     {EH_PHASER_RATE, CHORUSFX_POSITION, "Phaser Rate", &values_0_to_99,},
     {EH_PHASER_COLOR, CHORUSFX_POSITION, "Phaser xml Color", &values_on_off, xml_on_off_labels,G_N_ELEMENTS(xml_on_off_labels)},
+
     {MX_PHASER_INTENSITY, CHORUSFX_POSITION, "Intensity", &values_1_to_4,},
+
+    {TRIG_PHASER_SPEED, CHORUSFX_POSITION, "Trig Phaser Speed", &values_0_to_99,},
+    {TRIG_PHASER_SENS, CHORUSFX_POSITION, "Trig Phaser Sens", &values_0_to_99,},
+    {TRIG_PHASER_LFO_START, CHORUSFX_POSITION, "Trig Phaser LFO", &values_0_to_99,},
+    {TRIG_PHASER_LEVEL, CHORUSFX_POSITION, "Trig Phaser Level", &values_0_to_99,},
+
     {CHORUS_SPEED, CHORUSFX_POSITION, "Chorus Speed", &values_0_to_99,},
     {CHORUS_DEPTH, CHORUSFX_POSITION, "Chorus Depth", &values_0_to_99,},
     {CHORUS_LEVEL, CHORUSFX_POSITION, "Chorus Level", &values_0_to_99,},
+    {CHORUS_WIDTH, CHORUSFX_POSITION, "Chorus Width", &values_0_to_99,},
+    {CHORUS_INTENSITY, CHORUSFX_POSITION, "Chorus Intensity", &values_0_to_99,},
     {CHORUS_WAVE, CHORUSFX_POSITION, "Chorus Waveform", &values_waveform, xml_waveform_labels, G_N_ELEMENTS(xml_waveform_labels)},
+
     {FLANGER_SPEED, CHORUSFX_POSITION, "Flanger Speed", &values_0_to_99,},
     {FLANGER_DEPTH, CHORUSFX_POSITION, "Flanger Depth", &values_0_to_99,},
     {FLANGER_REGEN, CHORUSFX_POSITION, "Flanger Regen", &values_0_to_99,},
     {FLANGER_WAVE, CHORUSFX_POSITION, "Flanger Waveform", &values_waveform,  xml_waveform_labels, G_N_ELEMENTS(xml_waveform_labels)},
     {FLANGER_LEVEL, CHORUSFX_POSITION, "Flanger Level", &values_0_to_99,},
+
+    {TRIG_FLANGER_SPEED, CHORUSFX_POSITION, "Trig Flanger Speed", &values_0_to_99,},
+    {TRIG_FLANGER_SENS, CHORUSFX_POSITION, "Trig Flanger Sens", &values_0_to_99,},
+    {TRIG_FLANGER_LFO_START, CHORUSFX_POSITION, "Trig Flanger LFO Start", &values_0_to_99,},
+    {TRIG_FLANGER_LEVEL, CHORUSFX_POSITION, "Trig Flanger Level", &values_0_to_99,},
+    
+    {EH_FLANGER_RATE, CHORUSFX_POSITION, "EH Flanger Rate", &values_0_to_99,},
+    {EH_FLANGER_RANGE, CHORUSFX_POSITION, "EH Flanger Range", &values_0_to_99,},
+    {EH_FLANGER_COLOR, CHORUSFX_POSITION, "EH Flanger Color", &values_0_to_99,},
+
     {MXR_FLANGER_WIDTH, CHORUSFX_POSITION, "Flanger Width", &values_0_to_99,},
     {MXR_FLANGER_MANUAL, CHORUSFX_POSITION, "Flanger Manual", &values_0_to_99,},
+
     {VIBRATO_SPEED, CHORUSFX_POSITION, "Vibrato Speed", &values_0_to_99,},
     {VIBRATO_DEPTH, CHORUSFX_POSITION, "Vibrato Depth", &values_0_to_99,},
+
     {ROTARY_SPEED, CHORUSFX_POSITION, "Rotary Speed", &values_0_to_99,},
     {ROTARY_INTENSITY, CHORUSFX_POSITION, "Rotary Intensity", &values_0_to_99,},
     {ROTARY_DOPPLER, CHORUSFX_POSITION, "Rotary Doppler", &values_0_to_99,},
     {ROTARY_CROSSOVER, CHORUSFX_POSITION, "Rotary Crossover", &values_0_to_99,},
+
     {VIBROPAN_SPEED, CHORUSFX_POSITION, "VibroPan Speed", &values_0_to_99,},
     {VIBROPAN_DEPTH, CHORUSFX_POSITION, "VibroPan Depth", &values_0_to_99,},
     {VIBROPAN_VIBRA, CHORUSFX_POSITION, "VibroPan VibratoPan", &values_0_to_99,},
     {VIBROPAN_WAVE, CHORUSFX_POSITION, "VibroPan Waveform", &values_waveform, xml_waveform_labels, G_N_ELEMENTS(xml_waveform_labels)},
+
+    {UNOVIBE_PEDAL_SPEED, CHORUSFX_POSITION, "Unovibe Speed", &values_0_to_99,},
+    {UNOVIBE_INTENSITY, CHORUSFX_POSITION, "Unovibe Intensity", &values_0_to_99,},
+    {UNOVIBE_VOLUME, CHORUSFX_POSITION, "Unovibe Volume", &values_0_to_99,},
+    {UNOVIBE_CHORUS_VIBRATO, CHORUSFX_POSITION, "Unovibe Chorus/Vibrato", &values_chorus_vibrato, &xml_chorus_vibrato_labels, G_N_ELEMENTS(xml_chorus_vibrato_labels)},
+
     {TREMOLO_SPEED, CHORUSFX_POSITION, "Tremolo Speed", &values_0_to_99,},
     {TREMOLO_DEPTH, CHORUSFX_POSITION, "Tremolo Depth", &values_0_to_99,},
     {TREMOLO_WAVE, CHORUSFX_POSITION, "Tremolo Waveform", &values_waveform, xml_waveform_labels, G_N_ELEMENTS(xml_waveform_labels)},
+
     {PANNER_SPEED, CHORUSFX_POSITION, "Panner Speed", &values_0_to_99,},
     {PANNER_DEPTH, CHORUSFX_POSITION, "Panner Depth", &values_0_to_99,},
     {PANNER_WAVE, CHORUSFX_POSITION, "Panner Waveform", &values_waveform, xml_waveform_labels, G_N_ELEMENTS(xml_waveform_labels)},
+
     {ENVELOPE_SENSITIVITY, CHORUSFX_POSITION, "Envelope Sens.", &values_0_to_99,},
     {ENVELOPE_RANGE, CHORUSFX_POSITION, "Envelope Range", &values_0_to_99,},
+    {ENVELOPE_BLEND, CHORUSFX_POSITION, "Envelope Blend", &values_0_to_99,},
+
     {AUTOYA_SPEED, CHORUSFX_POSITION, "AutoYa Speed", &values_0_to_99,},
     {AUTOYA_INTENSITY, CHORUSFX_POSITION, "AutoYa Intensity", &values_0_to_99,},
     {AUTOYA_RANGE, CHORUSFX_POSITION, "AutoYa Range", &values_0_to_49,},
+
     {YAYA_PEDAL, CHORUSFX_POSITION, "YaYa Pedal", &values_0_to_99,},
     {YAYA_INTENSITY, CHORUSFX_POSITION, "YaYa Intensity", &values_0_to_99,},
     {YAYA_RANGE, CHORUSFX_POSITION, "YaYa Range", &values_0_to_49,},
+
     {STEP_FILTER_SPEED, CHORUSFX_POSITION, "Step Filter Speed", &values_0_to_99,},
     {STEP_FILTER_INTENSITY, CHORUSFX_POSITION, "Step Filter Intensity", &values_0_to_99,},
+
     {WHAMMY_AMOUNT, CHORUSFX_POSITION, "Whammy Amount", &values_whammy_amount, xml_whammy_amount_labels, G_N_ELEMENTS(xml_whammy_amount_labels)},
     {WHAMMY_PEDAL, CHORUSFX_POSITION, "Whammy Pedal", &values_0_to_99,},
     {WHAMMY_MIX, CHORUSFX_POSITION, "Whammy Mix", &values_0_to_99,},
 
-    {CHORUSFX_PRE_POST, CHORUSFX_POSITION, "Mod Pre/Post", &values_pre_post, xml_chorus_pre_post_labels, G_N_ELEMENTS(xml_chorus_pre_post_labels)},
     {PITCH_AMOUNT, CHORUSFX_POSITION, "Pitch Shift Amount", &values_m24_to_24,},
     {PITCH_MIX, CHORUSFX_POSITION, "Pitch Shift Mix", &values_0_to_99,},
+
     {DETUNE_AMOUNT, CHORUSFX_POSITION, "Detune Amount", &values_m24_to_24,},
     {DETUNE_LEVEL, CHORUSFX_POSITION, "Detune Level", &values_0_to_99,},
+
     {IPS_SHIFT_AMOUNT, CHORUSFX_POSITION, "IPS Amount", &values_ips_shift, xml_ips_shift_labels, G_N_ELEMENTS(xml_ips_shift_labels)},
     {IPS_KEY, CHORUSFX_POSITION, "IPS Key", &values_ips_key, xml_ips_key_labels, G_N_ELEMENTS(xml_ips_key_labels)},
     {IPS_SCALE, CHORUSFX_POSITION, "IPS Scale", &values_ips_scale, xml_ips_scale_labels, G_N_ELEMENTS(xml_ips_scale_labels)},
     {IPS_LEVEL, CHORUSFX_POSITION, "IPS Level", &values_0_to_99,},
 
+
     {SYNTH_TALK_ATTACK, CHORUSFX_POSITION, "Synth Talk Attack", &values_0_to_99,},
-    {GNX3K_SYNTH_TALK_RELEASE, CHORUSFX_POSITION, "Synth Talk Release", &values_0_to_99,},
     {SYNTH_TALK_RELEASE, CHORUSFX_POSITION, "Synth Talk Release", &values_0_to_99,},
     {SYNTH_TALK_SENS, CHORUSFX_POSITION, "Synth Talk Sens", &values_0_to_99,},
     {SYNTH_TALK_VOX, CHORUSFX_POSITION, "Synth Talk Vox", &values_0_to_99,},
     {SYNTH_TALK_BALANCE, CHORUSFX_POSITION, "Synth Talk Balance", &values_0_to_99,},
+
+    {GNX3K_SYNTH_TALK_RELEASE, CHORUSFX_POSITION, "Synth Talk Release", &values_0_to_99,},
+
+    {OCTAVER_OCTAVE1 , CHORUSFX_POSITION, "Octaver Octave 1", &values_0_to_99},
+    {OCTAVER_OCTAVE2 , CHORUSFX_POSITION, "Octaver Octave 2", &values_0_to_99},
+    {OCTAVER_DRY_LEVEL, CHORUSFX_POSITION, "Octaver Dry Level", &values_0_to_99},
 
     {DELAY_TYPE, DELAY_POSITION, "Delay Type", &values_delay_type, xml_delay_labels, G_N_ELEMENTS(xml_delay_labels)},
     {DELAY_ON_OFF, DELAY_POSITION, "Delay Enable", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
@@ -4337,6 +4386,8 @@ static void modifier_group_free(ModifierGroup *modifier_group)
     int x;
     for (x=0; x<modifier_group->group_amt; x++) {
         if (modifier_group->group[x].settings)
+            /* The settings for the EXP_POSITION are dynamically allocated. */
+            modifier_settings_exp_free(modifier_group->group[x].settings);
             effect_settings_free(modifier_group->group[x].settings);
     }
     g_slice_free1(modifier_group->group_amt * sizeof(EffectGroup),
