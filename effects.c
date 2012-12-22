@@ -1969,7 +1969,7 @@ static EffectGroup rp355_chorusfx_group[] = {
  * and are sent this message asynchronously whenever the selected chorus/FX
  * effect changes.
  */
-static EffectGroup rp355_pedal1_assign_group[] = {
+static EffectGroup expression_pedal_assign_group[] = {
     { 0, "None", NULL, 0},
 };
 
@@ -2773,6 +2773,10 @@ static Effect wah_effect[] = {
     {NULL, WAH_ON_OFF, WAH_TYPE, WAH_POSITION, wah_group, G_N_ELEMENTS(wah_group)},
 };
 
+static Effect expression_pedal_assign_effect[] = {
+    {NULL, -1, EXP_TYPE, EXP_POSITION, expression_pedal_assign_group, G_N_ELEMENTS(expression_pedal_assign_group)},
+};
+
 static Effect gnx3k_whammy_effect[] = {
     {NULL, GNX3K_WHAM_ENABLE, GNX3K_WHAM_TYPE, GNX3K_WHAM_POSITION, gnx3k_whammy_group, G_N_ELEMENTS(gnx3k_whammy_group)},
 };
@@ -2868,10 +2872,6 @@ static Effect rp355_lfo1_effect[] = {
 
 static Effect rp355_lfo2_effect[] = {
     {NULL, -1, LFO_TYPE, LFO2_POSITION, rp355_lfo2_group, G_N_ELEMENTS(rp355_lfo2_group)},
-};
-
-static Effect rp355_pedal1_assign_effect[] = {
-    {NULL, -1, EXP_TYPE, EXP_POSITION, rp355_pedal1_assign_group, G_N_ELEMENTS(rp355_pedal1_assign_group)},
 };
 
 static Effect rp500_chorusfx_effect[] = {
@@ -3058,6 +3058,7 @@ static EffectList rp250_effects[] = {
     {"Delay", rp250_delay_effect, G_N_ELEMENTS(rp250_delay_effect)},
     {"Reverb", reverb_effect, G_N_ELEMENTS(reverb_effect)},
     {"Pickup/Misc", pickup_misc_effect, G_N_ELEMENTS(pickup_misc_effect)},
+    {"Expression Pedal", expression_pedal_assign_effect, G_N_ELEMENTS(expression_pedal_assign_effect)},
 };
 
 /* Almost like rp250, except for Amplifier and Chorus/FX */
@@ -3073,6 +3074,7 @@ static EffectList rp255_effects[] = {
     {"Delay", rp250_delay_effect, G_N_ELEMENTS(rp250_delay_effect)},
     {"Reverb", reverb_effect, G_N_ELEMENTS(reverb_effect)},
     {"Pickup/Misc", pickup_misc_effect, G_N_ELEMENTS(pickup_misc_effect)},
+    {"Expression Pedal", expression_pedal_assign_effect, G_N_ELEMENTS(expression_pedal_assign_effect)},
 };
 
 static EffectList rp355_effects[] = {
@@ -3089,7 +3091,7 @@ static EffectList rp355_effects[] = {
     {"Chorus/FX", rp355_chorusfx_effect, G_N_ELEMENTS(rp355_chorusfx_effect)},
     {"Delay", rp355_delay_effect, G_N_ELEMENTS(rp355_delay_effect)},
     {"Reverb", reverb_effect, G_N_ELEMENTS(reverb_effect)},
-    {"Pedal1 Assign", rp355_pedal1_assign_effect, G_N_ELEMENTS(rp355_pedal1_assign_effect)},
+    {"Pedal1 Assign", expression_pedal_assign_effect, G_N_ELEMENTS(expression_pedal_assign_effect)},
     {"LFO1", rp355_lfo1_effect, G_N_ELEMENTS(rp355_lfo1_effect)},
     {"LFO2", rp355_lfo2_effect, G_N_ELEMENTS(rp355_lfo2_effect)},
     {"Global Settings", global_effect, G_N_ELEMENTS(global_effect)},
@@ -3106,6 +3108,7 @@ static EffectList rp500_effects[] = {
     {"Chorus/FX", rp500_chorusfx_effect, G_N_ELEMENTS(rp500_chorusfx_effect)},
     {"Delay", rp500_delay_effect, G_N_ELEMENTS(rp500_delay_effect)},
     {"Reverb", reverb_effect, G_N_ELEMENTS(reverb_effect)},
+    {"Expression Pedal", expression_pedal_assign_effect, G_N_ELEMENTS(expression_pedal_assign_effect)},
 };
 
 static EffectList rp1000_effects[] = {
@@ -3118,6 +3121,7 @@ static EffectList rp1000_effects[] = {
     {"Chorus/FX", rp1000_chorusfx_effect, G_N_ELEMENTS(rp1000_chorusfx_effect)},
     {"Delay", rp1000_delay_effect, G_N_ELEMENTS(rp1000_delay_effect)},
     {"Reverb", reverb_effect, G_N_ELEMENTS(reverb_effect)},
+    {"Expression Pedal", expression_pedal_assign_effect, G_N_ELEMENTS(expression_pedal_assign_effect)},
 };
 
 static EffectList gnx4_effects[] = {
