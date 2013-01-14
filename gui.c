@@ -1164,9 +1164,9 @@ static void action_show_about_dialog_cb(GtkAction *action)
         NULL
     };
 
-    static const gchar copyright[] = "Copyright \xc2\xa9 2009 Tomasz Moń";
+    static const gchar copyright[] = "Copyright \xc2\xa9 2009-2013 Tomasz Moń";
     static const gchar website[] = "http://desowin.org/gdigi/";
-    static const gchar version[] = "0.3.0";
+    static const gchar version[] = "0.4.0";
 
     GtkWidget *window = g_object_get_data(G_OBJECT(action), "window");
 
