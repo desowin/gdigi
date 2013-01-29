@@ -3,6 +3,7 @@ Version=1.0
 Type=Application
 Name=gdigi
 Exec=gdigi
-Categories=GNOME;Audio;AudioVideo;
+Categories=GTK;Audio;AudioVideo;
 Icon=gdigi
+X-Desktop-File-Install-Version=0.20
 
