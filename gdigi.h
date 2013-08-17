@@ -441,7 +441,7 @@ enum {
 #define EQ_ENABLE 3212
 
 #define EQ_LOW_FREQ 3213
-#define EQ_MID_FREQ_XXX 3214
+#define EQ_MID_FREQ_RP500 3214
 #define EQ_HIGH_FREQ 3215
 
 #define EQ_TREBLE_FREQ 3215

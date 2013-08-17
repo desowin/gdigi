@@ -4028,6 +4028,11 @@ XmlSettings xml_settings[] = {
     {AMP_GAIN, AMP_B_POSITION, "Amp B Gain", &values_0_to_99,},
     {AMP_LEVEL, AMP_B_POSITION, "Amp B Level", &values_0_to_99,},
 
+    
+    {AMP_BASS, AMP_A_POSITION, "Amp B Level", &values_1_to_10_step_0p1,},
+    {AMP_MID, AMP_A_POSITION, "Amp B Level", &values_1_to_10_step_0p1,},
+    {AMP_TREBLE, AMP_A_POSITION, "Amp B Level", &values_1_to_10_step_0p1,},
+
     {AMP_CAB_TYPE, AMP_CAB_POSITION, "Cab A Type", &values_cab_type, xml_amp_cab_labels, G_N_ELEMENTS(xml_amp_cab_labels)},
     {AMP_CAB_TYPE, AMP_CAB_B_POSITION, "Cab B Type", &values_cab_type, xml_amp_cab_labels, G_N_ELEMENTS(xml_amp_cab_labels)},
 
@@ -4217,6 +4222,12 @@ XmlSettings xml_settings[] = {
     {EQ_PRESENCE, EQ_A_POSITION, "EQ A Presence", &values_eq_db,},
     {EQ_MID_FREQ, EQ_A_POSITION, "EQ A Mid Freq", &values_eq_mid_hz,},
     {EQ_TREB_FREQ, EQ_A_POSITION, "EQ A Treb Freq", &values_eq_treb_hz,},
+
+    // RP500 values
+    {EQ_LOW_FREQ, EQ_A_POSITION, "EQ A Low Freq", &values_eq_low_freq,},
+    {EQ_MID_FREQ_RP500, EQ_A_POSITION, "EQ A Mid Freq", &values_eq_mid_freq,},
+    {EQ_HIGH_FREQ, EQ_A_POSITION, "EQ A High Freq", &values_eq_high_freq,},
+
 
     {EQ_ENABLE, EQ_B_POSITION, "EQ B Enable", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
     {EQ_TYPE, EQ_B_POSITION, "EQ B Type", &values_eq_type, xml_eq_labels, G_N_ELEMENTS(xml_eq_labels)},
