@@ -3380,6 +3380,11 @@ static Modifier modifiers[] = {
     {"Amp Enable", AMP_ON_OFF, AMP_A_POSITION, &values_on_off},
     {"Amp Gain", AMP_GAIN, AMP_A_POSITION, &values_0_to_99},
     {"Amp Level", AMP_LEVEL, AMP_A_POSITION, &values_0_to_99},
+
+    {"Bass", AMP_BASS, AMP_A_POSITION, &values_1_to_10_step_0p1},
+    {"Mid", AMP_MID, AMP_A_POSITION, &values_1_to_10_step_0p1},
+    {"Treble", AMP_TREBLE, AMP_A_POSITION, &values_1_to_10_step_0p1},
+ 
     {"Amp B Enable", AMP_ON_OFF, AMP_B_POSITION, &values_on_off},
     {"Amp B Gain", AMP_GAIN, AMP_B_POSITION, &values_0_to_99},
     {"Amp B Level", AMP_LEVEL, AMP_B_POSITION, &values_0_to_99},
@@ -3388,6 +3393,11 @@ static Modifier modifiers[] = {
     {"EQ Mid", EQ_MID, EQ_A_POSITION, &values_eq_db},
     {"EQ Treb", EQ_TREB, EQ_A_POSITION, &values_eq_db},
     {"EQ Presence", EQ_PRESENCE, EQ_A_POSITION, &values_eq_db},
+
+    {"Low Freq", EQ_LOW_FREQ, EQ_A_POSITION, &values_eq_low_freq},
+    {"Mid Freq", EQ_MID_FREQ_RP500, EQ_A_POSITION, &values_eq_mid_freq},
+    {"High Freq", EQ_HIGH_FREQ, EQ_A_POSITION, &values_eq_high_freq},
+
     {"EQ B Enable", EQ_ENABLE, EQ_B_POSITION, &values_on_off},
     {"EQ B Bass", EQ_BASS, EQ_B_POSITION, &values_eq_db},
     {"EQ B Mid", EQ_MID, EQ_B_POSITION, &values_eq_db},
