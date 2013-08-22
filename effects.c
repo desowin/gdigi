@@ -2948,7 +2948,8 @@ static Effect rp355_amp_effect_B[] = {
 };
 
 static Effect rp500_amp_effect[] = {
-    {NULL, AMP_ON_OFF, AMP_TYPE, AMP_A_POSITION, rp500_amp_group, G_N_ELEMENTS(rp500_amp_group)},
+    {"Amp/Cab Bypass", AMP_BYPASS_ON_OFF, -1, AMP_BYPASS_POSITION, NULL, -1},
+    {NULL, -1, AMP_TYPE, AMP_A_POSITION, rp500_amp_group, G_N_ELEMENTS(rp500_amp_group)},
     {"Cabinet", -1, AMP_CAB_TYPE, AMP_CAB_POSITION, rp500_amp_cab_group, G_N_ELEMENTS(rp500_amp_cab_group)},
 };
 
@@ -4156,6 +4157,8 @@ XmlSettings xml_settings[] = {
     {AMP_ON_OFF, AMP_A_POSITION, "Amp A Enable", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
     {AMP_GAIN, AMP_A_POSITION, "Amp A Gain", &values_0_to_99,},
     {AMP_LEVEL, AMP_A_POSITION, "Amp A Level", &values_0_to_99,},
+
+    {AMP_BYPASS_ON_OFF, AMP_BYPASS_POSITION, "Amp Bypass", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
 
     {AMP_TYPE, AMP_B_POSITION, "Amp B Type", &values_amp_type, xml_amp_labels, G_N_ELEMENTS(xml_amp_labels)},
     {AMP_ON_OFF, AMP_B_POSITION, "Amp B Enable", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
