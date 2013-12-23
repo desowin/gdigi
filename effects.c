@@ -291,6 +291,15 @@ static gchar *rhold_labels[] = {
     NULL,
 };
 
+static gchar *delay_mult_labels[] = {
+    "Half",
+    "Quarter",
+    "Dot Eighth",
+    "Eighth",
+    "3 Quarter",
+    NULL,
+};
+
 static EffectValues values_1_2_warp = {
     .min = 0.0, .max = 2.0,
     .type = VALUE_TYPE_LABEL,
@@ -324,6 +333,10 @@ static EffectValues values_warp_0_to_98 = {
     .min = 0.0, .max = 98.0,
     .type = VALUE_TYPE_OFFSET,
     .offset = 1,
+};
+
+static EffectValues values_0_to_1 = {
+    .min = 0.0, .max = 1.0, .type = VALUE_TYPE_PLAIN,
 };
 
 static EffectValues values_0_to_9 = {
@@ -555,6 +568,12 @@ static EffectValues values_delay_repeat_rate_24_310 = {
 static EffectValues values_delay_spread_0_49 = {
     /** \todo make this display properly */
     0.0, 49.0, .type = VALUE_TYPE_PLAIN,
+};
+
+static EffectValues values_delay_mult = {
+    .min = 2176.0, .max = 2180.0,
+    .type = VALUE_TYPE_LABEL,
+    .labels = delay_mult_labels,
 };
 
 EffectValues values_on_off = {
@@ -3510,6 +3529,13 @@ static Modifier modifiers[] = {
     {"Reverb Predelay", REVERB_PREDELAY, REVERB_POSITION, &values_0_to_15},
     {"Volume Pre FX", PRESET_LEVEL, VOLUME_PRE_FX_POSITION, &values_0_to_99},
     {"Volume Post FX", PRESET_LEVEL, VOLUME_POST_FX_POSITION, &values_0_to_99},
+    
+    {"Delay Intensity", DELAY_INTENSITY, DELAY_POSITION, &values_0_to_99},
+    {"Delay Tempo Division", DELAY_MULTIPLIER, DELAY_POSITION, &values_delay_mult},
+    {"Delay Echo", DELAY_ECHO, DELAY_POSITION, &values_0_to_99},
+    
+    {"Amp Loop Enable", AMP_LOOP_ON_OFF, AMP_LOOP_POSITION, &values_on_off},
+    {"Stomp Loop Enable", STOMP_LOOP_ON_OFF, STOMP_LOOP_POSITION, &values_0_to_1},
 };
 
 int n_modifiers = G_N_ELEMENTS(modifiers);
@@ -3693,7 +3719,7 @@ static XmlLabel xml_noisegate_labels[] = {
     {NOISEGATE_SWELL, "Swell"},
 };
 
-static XmlLabel xml_chorus_pre_post_labels[] = {
+static XmlLabel xml_pre_post_labels[] = {
     {CHORUSFX_PRE, "Pre"},
     {CHORUSFX_POST, "Post"},
 };
@@ -4091,6 +4117,14 @@ static XmlLabel xml_eq_bandwidth_labels[] = {
     {2, "Narrow"},
 };
 
+static XmlLabel xml_delay_mult_labels[] = {
+    {DELAY_HALF, "Half"},
+    {DELAY_QUARTER, "Quarter"},
+    {DELAY_DOTEIGHT, "Dot Eighth"},
+    {DELAY_EIGHT, "Eighth"},
+    {DELAY_3_QUARTR, "3 Quarter"},
+};
+
 /* Array to map id/position pairs to labels and settings. */
 XmlSettings xml_settings[] = {
     {0, 0, "None", NULL,},
@@ -4180,10 +4214,10 @@ XmlSettings xml_settings[] = {
     {NOISEGATE_RELEASE, NOISEGATE_POSITION, "Gate Release", &values_0_to_99,},
     {NOISEGATE_ATTN, NOISEGATE_POSITION, "Gate Attenuation", &values_0_to_99,},
 
-    {MOD_PRE_POST, CHORUSFX_POSITION, "Mod Pre/Post", &values_pre_post, xml_chorus_pre_post_labels, G_N_ELEMENTS(xml_chorus_pre_post_labels)},
+    {MOD_PRE_POST, CHORUSFX_POSITION, "Mod Pre/Post", &values_pre_post, xml_pre_post_labels, G_N_ELEMENTS(xml_pre_post_labels)},
 
     {CHORUSFX_ON_OFF, CHORUSFX_POSITION, "Chorus/FX Enable", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
-    {CHORUSFX_PRE_POST, CHORUSFX_POSITION, "Mod Pre/Post", &values_pre_post, xml_chorus_pre_post_labels, G_N_ELEMENTS(xml_chorus_pre_post_labels)},
+    {CHORUSFX_PRE_POST, CHORUSFX_POSITION, "Mod Pre/Post", &values_pre_post, xml_pre_post_labels, G_N_ELEMENTS(xml_pre_post_labels)},
     {CHORUSFX_TYPE, CHORUSFX_POSITION, "Mod Type", &values_mod_type, xml_chorusfx_labels, G_N_ELEMENTS(xml_chorusfx_labels)},
 
     {PHASER_SPEED, CHORUSFX_POSITION, "Phaser Speed", &values_0_to_99,},
@@ -4393,6 +4427,30 @@ XmlSettings xml_settings[] = {
     {FX_LIB_LEVEL_MAX1, LIB_POSITION_B, "FxLib B LvlMax1", &values_0_to_99,},
     {FX_LIB_LEVEL_MAX2, LIB_POSITION_B, "FxLib B LvlMax2", &values_0_to_99,},
     {FX_LIB_LEVEL_MAX3, LIB_POSITION_B, "FxLib B LvlMax3", &values_0_to_99,},
+    
+    // RP1000 values
+    {DELAY_TAP_TIME, DELAY_POSITION, "Delay Tap Time", &values_delay_time,},
+    {DELAY_MULTIPLIER, DELAY_POSITION, "Delay Tempo Division", &values_delay_mult, xml_delay_mult_labels, G_N_ELEMENTS(xml_delay_mult_labels)},
+    {MOD_PRE_POST, STOMP_LOOP_POSITION, "Stomp Pre/Post", &values_pre_post, xml_pre_post_labels, G_N_ELEMENTS(xml_pre_post_labels)},
+    {STOMP_LOOP_ON_OFF, STOMP_LOOP_POSITION, "Stomp Loop Enable", &values_0_to_1,},
+    {AMP_LOOP_ON_OFF, AMP_LOOP_POSITION, "Amp Loop Enable", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
+    
+    {VSWITCH_ASSIGN, FOOTSWITCH_6_POSITION, "Footswitch 6 Param", &values_vswitch_assign, xml_vswitch_assign_labels, G_N_ELEMENTS(xml_vswitch_assign_labels)},
+    {VSWITCH_MIN, FOOTSWITCH_6_POSITION, "Footswitch 6 Min", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
+    {VSWITCH_MAX, FOOTSWITCH_6_POSITION, "Footswitch 6 Max", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
+    {VSWITCH_ASSIGN, FOOTSWITCH_7_POSITION, "Footswitch 7 Param", &values_vswitch_assign, xml_vswitch_assign_labels, G_N_ELEMENTS(xml_vswitch_assign_labels)},
+    {VSWITCH_MIN, FOOTSWITCH_7_POSITION, "Footswitch 7 Min", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
+    {VSWITCH_MAX, FOOTSWITCH_7_POSITION, "Footswitch 7 Max", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
+    {VSWITCH_ASSIGN, FOOTSWITCH_8_POSITION, "Footswitch 8 Param", &values_vswitch_assign, xml_vswitch_assign_labels, G_N_ELEMENTS(xml_vswitch_assign_labels)},
+    {VSWITCH_MIN, FOOTSWITCH_8_POSITION, "Footswitch 8 Min", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
+    {VSWITCH_MAX, FOOTSWITCH_8_POSITION, "Footswitch 8 Max", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
+    {VSWITCH_ASSIGN, FOOTSWITCH_9_POSITION, "Footswitch 9 Param", &values_vswitch_assign, xml_vswitch_assign_labels, G_N_ELEMENTS(xml_vswitch_assign_labels)},
+    {VSWITCH_MIN, FOOTSWITCH_9_POSITION, "Footswitch 9 Min", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
+    {VSWITCH_MAX, FOOTSWITCH_9_POSITION, "Footswitch 9 Max", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
+    {VSWITCH_ASSIGN, FOOTSWITCH_10_POSITION, "Footswitch 10 Param", &values_vswitch_assign, xml_vswitch_assign_labels, G_N_ELEMENTS(xml_vswitch_assign_labels)},
+    {VSWITCH_MIN, FOOTSWITCH_10_POSITION, "Footswitch 10 Min", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
+    {VSWITCH_MAX, FOOTSWITCH_10_POSITION, "Footswitch 10 Max", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
+
 
     // Global settings, not part of presets or standard XML.
     {TUNING_REFERENCE, GLOBAL_POSITION, "Tuning Reference", &values_0_to_99,},
@@ -4435,6 +4493,7 @@ gchar *Positions[] = {
     [ LIB_POSITION_A ] = "Library A",
     [ LIB_POSITION_B ] = "Library B",
     [ AMP_LOOP_POSITION ] = "Amp Loop",
+    [ STOMP_LOOP_POSITION ] = "Stomp Loop",
 };
 
 guint max_position = G_N_ELEMENTS(Positions);
