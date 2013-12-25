@@ -188,7 +188,7 @@ format_ipv (guint id, guint pos, guint val)
 
     if (!xml) {
         g_warning("Failed to find xml settings for position %d id %d.",
-                   id, pos);
+                   pos, id);
         g_string_printf(buf, "%s", "error");
         return buf;
     }

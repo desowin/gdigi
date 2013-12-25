@@ -637,6 +637,11 @@ static EffectValues values_delay_type = {
     .type = VALUE_TYPE_LABEL,
 };
 
+static EffectValues values_delay_multiplier = {
+    .min = 2176.0, .max = 2180.0,
+    .type = VALUE_TYPE_LABEL,
+};
+
 static EffectValues values_reverb_type = {
     .min = 1107.0, .max = 1151.0,
     .type = VALUE_TYPE_LABEL,
@@ -3389,6 +3394,7 @@ static Modifier modifiers[] = {
     {"Amp B Enable", AMP_ON_OFF, AMP_B_POSITION, &values_on_off},
     {"Amp B Gain", AMP_GAIN, AMP_B_POSITION, &values_0_to_99},
     {"Amp B Level", AMP_LEVEL, AMP_B_POSITION, &values_0_to_99},
+    {"Amp Loop Enable", AMP_LOOP_ON_OFF, AMP_LOOP_POSITION, &values_on_off},
     {"EQ Enable", EQ_ENABLE, EQ_A_POSITION, &values_on_off},
     {"EQ Bass", EQ_BASS, EQ_A_POSITION, &values_eq_db},
     {"EQ Mid", EQ_MID, EQ_A_POSITION, &values_eq_db},
@@ -3838,6 +3844,14 @@ static XmlLabel xml_delay_labels[] = {
     {DELAY_GNX3K_TYPE_SPREAD, "Spread"},
 };
 
+static XmlLabel xml_delay_multiplier_labels[] = {
+    {DELAY_HALF, "Half"},
+    {DELAY_QUARTER, "Quarter"},
+    {DELAY_DOTEIGHT, "DotEight"},
+    {DELAY_EIGHT, "Eight"},
+    {DELAY_3_QUARTR, "3 Quarter"},
+};
+
 static XmlLabel xml_reverb_labels[] = {
     {REVERB_TYPE_TWIN, "Twin"},
     {REVERB_TYPE_LEX_AMBIENCE, "Lexicon Ambience"},
@@ -4172,6 +4186,8 @@ XmlSettings xml_settings[] = {
     {AMP_CAB_TYPE, AMP_CAB_POSITION, "Cab A Type", &values_cab_type, xml_amp_cab_labels, G_N_ELEMENTS(xml_amp_cab_labels)},
     {AMP_CAB_TYPE, AMP_CAB_B_POSITION, "Cab B Type", &values_cab_type, xml_amp_cab_labels, G_N_ELEMENTS(xml_amp_cab_labels)},
 
+    {AMP_LOOP_ON_OFF, AMP_LOOP_POSITION, "Amp Loop Enable", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
+
     {NOISEGATE_TYPE, NOISEGATE_POSITION, "Gate Type", &values_gate_type, xml_noisegate_labels, G_N_ELEMENTS(xml_noisegate_labels)},
     {NOISEGATE_ON_OFF, NOISEGATE_POSITION, "Gate Enable", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
     {NOISEGATE_SWELL_SENS, NOISEGATE_POSITION, "Gate Pluck Sens", &values_0_to_99,},
@@ -4307,6 +4323,8 @@ XmlSettings xml_settings[] = {
     {DELAY_TAPE_WOW, DELAY_POSITION, "Delay Tape Wow", &values_0_to_99,},
     {DELAY_TAPE_FLUTTER, DELAY_POSITION, "Delay Tape Flut", &values_0_to_99,},
     {DELAY_TAP_TIME_0_4990, DELAY_POSITION, "Tap Time", &values_delay_time_0_4990,},
+    {DELAY_TAP_TIME, DELAY_POSITION, "Tap Time", &values_delay_time_0_5000,},
+    {DELAY_MULTIPLIER, DELAY_POSITION, "Multiplier", &values_delay_multiplier, xml_delay_multiplier_labels, G_N_ELEMENTS(xml_delay_multiplier_labels)},
 
     {REVERB_TYPE, REVERB_POSITION, "Reverb Type", &values_reverb_type, xml_reverb_labels, G_N_ELEMENTS(xml_reverb_labels)},
     {REVERB_ON_OFF, REVERB_POSITION, "Reverb Enable", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
@@ -4467,6 +4485,8 @@ static Modifier *get_modifier(guint id, guint position)
         if ((modifiers[x].id == id) && (modifiers[x].position == position))
             return &(modifiers[x]);
 
+    g_warning("Failed to find modifier for id %d position %d", id, position);
+
     return NULL;
 }
 
@@ -4594,7 +4614,7 @@ void update_modifier_linkable_list(GString *msg)
             group[i].settings = get_modifier_settings(modifier->values);
             group[i].settings_amt = 2;
         } else {
-            group[i].label = NULL;
+            group[i].label = "Unknown";
             group[i].settings = NULL;
         }
 
