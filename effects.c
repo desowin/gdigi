@@ -4614,7 +4614,8 @@ void update_modifier_linkable_list(GString *msg)
             group[i].settings = get_modifier_settings(modifier->values);
             group[i].settings_amt = 2;
         } else {
-            group[i].label = "Unknown";
+            // The string is leaked when the modifier list is updated. 
+            group[i].label = g_strdup_printf("Unknown pos %d id %d", position, id);
             group[i].settings = NULL;
         }
 

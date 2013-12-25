@@ -763,6 +763,8 @@ static void update_modifier_vbox(GtkWidget *vbox, GObject *combo_box, gint id, g
         settings->type = group[x].type;
         settings->position = position;
 
+        g_assert(group[x].label);
+
         if (position == EXP_POSITION) {
             child = g_object_steal_data(G_OBJECT(combo_box), "active_child");
             child = create_grid(group[x].settings, group[x].settings_amt,
@@ -778,12 +780,7 @@ static void update_modifier_vbox(GtkWidget *vbox, GObject *combo_box, gint id, g
         g_object_set_data(G_OBJECT(combo_box), name, settings);
         g_free(name);
 
-        if (group[x].label) {
-            gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_box), group[x].label);
-        } else {
-            // If a device is not fully supported, mark the effect as unknown.
-            gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_box), "unknown");
-        }
+        gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_box), group[x].label);
         widget_tree_add(combo_box, id, position, group[x].type, x);
     }
 
