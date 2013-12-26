@@ -656,11 +656,6 @@ static EffectValues values_delay_type = {
     .type = VALUE_TYPE_LABEL,
 };
 
-static EffectValues values_delay_multiplier = {
-    .min = 2176.0, .max = 2180.0,
-    .type = VALUE_TYPE_LABEL,
-};
-
 static EffectValues values_reverb_type = {
     .min = 1107.0, .max = 1151.0,
     .type = VALUE_TYPE_LABEL,
@@ -3870,14 +3865,6 @@ static XmlLabel xml_delay_labels[] = {
     {DELAY_GNX3K_TYPE_SPREAD, "Spread"},
 };
 
-static XmlLabel xml_delay_multiplier_labels[] = {
-    {DELAY_HALF, "Half"},
-    {DELAY_QUARTER, "Quarter"},
-    {DELAY_DOTEIGHT, "DotEight"},
-    {DELAY_EIGHT, "Eight"},
-    {DELAY_3_QUARTR, "3 Quarter"},
-};
-
 static XmlLabel xml_reverb_labels[] = {
     {REVERB_TYPE_TWIN, "Twin"},
     {REVERB_TYPE_LEX_AMBIENCE, "Lexicon Ambience"},
@@ -4356,10 +4343,6 @@ XmlSettings xml_settings[] = {
     {DELAY_DEPTH, DELAY_POSITION, "Delay Mod Depth", &values_0_to_99,},
     {DELAY_TAPE_WOW, DELAY_POSITION, "Delay Tape Wow", &values_0_to_99,},
     {DELAY_TAPE_FLUTTER, DELAY_POSITION, "Delay Tape Flut", &values_0_to_99,},
-    {DELAY_TAP_TIME_0_4990, DELAY_POSITION, "Tap Time", &values_delay_time_0_4990,},
-    {DELAY_TAP_TIME, DELAY_POSITION, "Tap Time", &values_delay_time_0_5000,},
-    {DELAY_MULTIPLIER, DELAY_POSITION, "Multiplier", &values_delay_multiplier, xml_delay_multiplier_labels, G_N_ELEMENTS(xml_delay_multiplier_labels)},
-
     {REVERB_TYPE, REVERB_POSITION, "Reverb Type", &values_reverb_type, xml_reverb_labels, G_N_ELEMENTS(xml_reverb_labels)},
     {REVERB_ON_OFF, REVERB_POSITION, "Reverb Enable", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
     {REVERB_DECAY, REVERB_POSITION, "Reverb Decay", &values_0_to_99,},
