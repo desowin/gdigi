@@ -757,13 +757,12 @@ static void update_modifier_vbox(GtkWidget *vbox, GObject *combo_box, gint id, g
 
     for (x = 0; x<amt; x++) {
         gchar *name;
+        g_assert(group[x].label);
 
         settings = g_slice_new(EffectSettingsGroup);
         settings->id = id;
         settings->type = group[x].type;
         settings->position = position;
-
-        g_assert(group[x].label);
 
         if (position == EXP_POSITION) {
             child = g_object_steal_data(G_OBJECT(combo_box), "active_child");

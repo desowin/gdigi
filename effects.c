@@ -3408,7 +3408,6 @@ static Modifier modifiers[] = {
     {"Amp B Enable", AMP_ON_OFF, AMP_B_POSITION, &values_on_off},
     {"Amp B Gain", AMP_GAIN, AMP_B_POSITION, &values_0_to_99},
     {"Amp B Level", AMP_LEVEL, AMP_B_POSITION, &values_0_to_99},
-    {"Amp Loop Enable", AMP_LOOP_ON_OFF, AMP_LOOP_POSITION, &values_on_off},
     {"EQ Enable", EQ_ENABLE, EQ_A_POSITION, &values_on_off},
     {"EQ Bass", EQ_BASS, EQ_A_POSITION, &values_eq_db},
     {"EQ Mid", EQ_MID, EQ_A_POSITION, &values_eq_db},
@@ -4206,8 +4205,6 @@ XmlSettings xml_settings[] = {
 
     {AMP_CAB_TYPE, AMP_CAB_POSITION, "Cab A Type", &values_cab_type, xml_amp_cab_labels, G_N_ELEMENTS(xml_amp_cab_labels)},
     {AMP_CAB_TYPE, AMP_CAB_B_POSITION, "Cab B Type", &values_cab_type, xml_amp_cab_labels, G_N_ELEMENTS(xml_amp_cab_labels)},
-
-    {AMP_LOOP_ON_OFF, AMP_LOOP_POSITION, "Amp Loop Enable", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
 
     {NOISEGATE_TYPE, NOISEGATE_POSITION, "Gate Type", &values_gate_type, xml_noisegate_labels, G_N_ELEMENTS(xml_noisegate_labels)},
     {NOISEGATE_ON_OFF, NOISEGATE_POSITION, "Gate Enable", &values_on_off, xml_on_off_labels, G_N_ELEMENTS(xml_on_off_labels)},
