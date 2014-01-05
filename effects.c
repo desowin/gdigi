@@ -1089,7 +1089,7 @@ static EffectSettings rp500_eq_settings[] = {
     {"Mid Level", EQ_MID, EQ_A_POSITION, &values_eq_db},
     {"High Level", EQ_TREB, EQ_A_POSITION, &values_eq_db},
     {"Low Freq", EQ_LOW_FREQ, EQ_A_POSITION, &values_eq_low_freq},
-    {"Mid Freq", EQ_MID_FREQ, EQ_A_POSITION, &values_eq_mid_freq},
+    {"Mid Freq", EQ_MID_FREQ_RP500, EQ_A_POSITION, &values_eq_mid_freq},
     {"High Freq", EQ_HIGH_FREQ, EQ_A_POSITION, &values_eq_high_freq},
     {"Low Bandwidth", EQ_LOW_BANDWIDTH, EQ_A_POSITION, &values_eq_bandwidth},
     {"Mid Bandwidth", EQ_MID_BANDWIDTH, EQ_A_POSITION, &values_eq_bandwidth},
