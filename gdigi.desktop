@@ -2,8 +2,9 @@
 Version=1.0
 Type=Application
 Name=gdigi
+Comment=utility to control some DigiTech effect pedals
+Comment[fr]=Utilitaire pour contrôler certaines pédales d'effets Digitech
 Exec=gdigi
 Categories=GTK;Audio;AudioVideo;
 Icon=gdigi
 X-Desktop-File-Install-Version=0.20
-
