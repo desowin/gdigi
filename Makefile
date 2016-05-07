@@ -1,4 +1,4 @@
-CC = gcc
+CC ?= gcc
 EXTRA_CFLAGS ?=
 EXTRA_LDFLAGS ?=
 CFLAGS := $(shell pkg-config --cflags glib-2.0 gio-2.0 gtk+-3.0 libxml-2.0) -Wall -g -ansi -std=c99 $(EXTRA_CFLAGS)
@@ -16,7 +16,7 @@ DEPFILES = $(foreach m,$(OBJECTS:.o=),.$(m).m)
 
 all: gdigi
 
-gdigi: $(OBJECTS) 
+gdigi: $(OBJECTS)
 	$(CC) $(LDFLAGS) -o $@ $+ $(LDADD)
 
 images/gdigi_icon.h: images/icon.png
