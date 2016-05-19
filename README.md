@@ -38,8 +38,11 @@ make
 ## Usage
 
 Command line options:
+
 --device (-d)
 
 Example:
+``` sh
 gdigi -d hw:1,0,0
 gdigi --device=hw:1,0,0
+```
