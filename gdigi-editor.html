@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/css" href="style.css"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type"
+  content="application/xhtml+xml; charset=utf-8" />
+<meta name="keywords" content="digitech, rp250, xedit, gdigi, opensource, linux" />
+<link rel="stylesheet" type="text/css" href="style.css" />
+<title>gdigi-editor proposal</title>
+</head>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-6085094-1");
+pageTracker._trackPageview();
+</script>
+
+<body xml:lang="en">
+
+<p>This website contains proposal of gdigi-editor. This tool is not implemented yet.</p>
+
+<h1>Introduction</h1>
+
+<p>
+gdigi is a tool that allows users to control their DigiTech guitar effect pedal connected to USB port of Linux computer.
+The communication protocol remains the same between all devices, but there the actual effects need to be discovered for new devices.
+Currently supported devices are: RP150, RP155, RP250, RP255, RP355, RP500, RP1000, GNX3000 and GNX4K.
+</p>
+
+<p>
+Currently the solution is to use USBPcap with Wireshark and X-Edit (DigiTech's official Windows software). Start USB capture, set Wireshark filter to sysex commands and then turn the knobs in X-Edit (alternatively one can turn the knobs on the device itself but there are some "X-Edit only" parameters). In the proces look for <Parameter, Position, Value> and determine the values. Parameter and Position uniquely identify selected effect (for example Reverb Delay) whilst the values (range and meaning) needs to be determined by user.
+See official <a href="https://github.com/desowin/gdigi/blob/master/HACKING">HACKING</a> file for more information.
+</p>
+
+<p>
+To get information about effects for currently supported devices please consult effects.[ch] files. Start with the structures definition and comments in <a href="https://github.com/desowin/gdigi/blob/master/effects.h">effects.h</a>, then proceed to their definitions in <a href="https://github.com/desowin/gdigi/blob/master/effects.c">effects.c</a>.
+</p>
+
+<h1>Project goal</h1>
+
+<p>
+The goal of gdigi-editor project is to allow standard users (who are not that familiar with tools like Wireshark or with defining structures in C language) to create "device support file" for their DigiTech device of choice. It would also help more advanced users and even developers as the current process is really tiresome.
+</p>
+
+<h1>Project proposal target audcience</h1>
+
+<p>
+This proposal is directed to any volounteers willing to participate in Open Source development. Tomasz Moń is happy to mentor any interested volounteers. If you're a student you can try to convince the professor to do this as a final project for computer programming course. If your school supervisor wishes I can set up a call with him/her and/or provide evaluation of your work.
+</p>
+
+<p>
+In order to create this project you don't need to have actual DigiTech device. For this project the device can be easily simulated. Tomasz Moń will perform any neccessary tests on DigiTech RP250.
+</p>
+
+<h1>Project steps</h1>
+
+<ol>
+<li>Define "device support file" format and add support for it in gdigi.
+
+<p>
+   XML-based format is recommended as gdigi already uses XML for other purposes. The goal is to have parser that would load up the file and create in memory the structures found in effects.c file.
+</p>
+</li>
+
+<li>Start gdigi-editor design and development and implement data acqusition module.
+
+<p>
+   In the very first version reading triples (Parameter, Position, Value) on standard input is perfectly fine. The module should record any received (Parameter, Position) pair and keep track of allowed values (the user is supposed to trun the knob from minimum value to maximum value).
+</p>
+
+<p>
+   The data acqusition module should be easily changeable to more complicated ones (actual MIDI client as implemented in gdigi or USBPcap/Wireshark capture) so it can be revised at later development stage.
+</p>
+</li>
+
+<li>Design gdigi-editor UI.
+
+<p>
+   Design the UI. Please note that DigiTech seems to use unique (Parameter, Position) pairs. If given parameter is already known, the built-in gdigi values should be used. If parameter is not known it should be marked as such and user should be prompted for its name. Later the user should be able to define values meaning.
+</p>
+</li>
+
+<li>Implement the UI.
+
+<p>
+   gdigi uses GTK+ so it is recommended. Tomasz Moń is familiar with GTK+ and has some Qt experience.
+</p>
+</li>
+
+<li>Add support for generating "device support file"
+
+<p>
+The goal of this project is to make it easy to generate "device support file" so this is crucial feature.
+</p>
+</li>
+
+<li>Make first release.
+
+<p>
+   Prepare user guide and announce gdigi-editor! Wait for first (non-developer) users (Tomasz Moń is being contacted by various users regarding support for new DigiTech devices from time to time) to use it and provide their feedback.
+</p>
+</li>
+
+</ol>
+
+<h1>Contact information</h1>
+
+<p>Tomasz Moń can be contacted by sending email to desowin@gmail.com</p>
+
+</body>
+</html>
