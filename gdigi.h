@@ -42,7 +42,7 @@ gboolean debug_flag_is_set (debug_flags_t flag);
 #define GNX_CABINET_WARP 263
 #define GNX_CHANNEL_FS_MODE 264
 
-unsigned char product_id;
+extern unsigned char product_id;
 
 enum {
   GNX3K_WAH_TYPE_CRY = 129,
@@ -1120,7 +1120,7 @@ enum {
     GENETX_CHANNEL1_CUSTOM = 2,
     GENETX_CHANNEL2_CUSTOM = 3,
     GENETX_CHANNEL_CURRENT = 4
-} ChannelBankIndex;
+};
 
 typedef struct {
     int version;
